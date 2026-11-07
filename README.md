@@ -3,10 +3,11 @@
 Portada que reúne los juegos y laboratorios de matemáticas interactivos de Juan Antonio Campos Jiménez
 (ESO y Bachillerato). Web estática: HTML, CSS y JavaScript, sin frameworks, sin registro y sin recoger datos personales.
 
-## Qué incluye (versión 0.1.0)
+## Qué incluye (versión 0.2.0)
 | Juego | Curso | Estado |
 |---|---|---|
 | πCHU Exprés · El reino de la divisibilidad | 1.º ESO | Disponible |
+| Fraction Royale v0.4 (cartas de fracciones con predicción y el Gigante del Denominador) | 1.º ESO | Disponible |
 | Integer Ninja | 1.º ESO | Enlazado a la versión de Netlify (v0.5); pendiente de copiar aquí |
 | Laboratorio de Proporcionalidad · cartas de ecuaciones · cartas de funciones | 1.º ESO · 4.º ESO · 1.º Bach | En diseño |
 
@@ -31,6 +32,7 @@ node tests/comprobar.mjs
 Prueba completa en navegador (opcional, Python + Playwright):
 ```
 pip install playwright && python3 tests/prueba_navegador.py . capturas
+python3 tests/prueba_fraction_royale.py . capturas
 ```
 
 ## Publicar en GitHub Pages
