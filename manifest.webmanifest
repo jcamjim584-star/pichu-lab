@@ -1,0 +1,15 @@
+{
+  "name": "πCHU · Matemáticas que no te esperabas",
+  "short_name": "πCHU",
+  "description": "Juegos y laboratorios de matemáticas para ESO y Bachillerato.",
+  "lang": "es",
+  "start_url": "./",
+  "scope": "./",
+  "display": "standalone",
+  "background_color": "#F4EDD7",
+  "theme_color": "#332B2A",
+  "icons": [
+    { "src": "compartido/img/icono-192.png", "sizes": "192x192", "type": "image/png", "purpose": "any" },
+    { "src": "compartido/img/icono-512.png", "sizes": "512x512", "type": "image/png", "purpose": "any maskable" }
+  ]
+}

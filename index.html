@@ -1,0 +1,250 @@
+<!doctype html>
+<html lang="es">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>πCHU · Matemáticas que no te esperabas</title>
+  <meta name="description" content="Juegos y laboratorios de matemáticas interactivos para ESO y Bachillerato. Sin registro y sin recoger datos personales.">
+  <meta name="theme-color" content="#332B2A">
+  <link rel="manifest" href="manifest.webmanifest">
+  <link rel="icon" href="compartido/img/icono-192.png">
+  <link rel="apple-touch-icon" href="compartido/img/icono-192.png">
+  <link rel="stylesheet" href="compartido/marca.css">
+  <style>
+    /* ---------- Cabecera ---------- */
+    .cabecera { padding: 1.2rem 0 .5rem; }
+    .cabecera .fila { display: flex; align-items: center; justify-content: space-between; gap: 1rem; flex-wrap: wrap; }
+    .logo { display: block; width: min(340px, 70vw); }
+    .alias-chip { display: inline-flex; align-items: center; gap: .5em; background: var(--papel);
+      border: 1px solid var(--linea); border-radius: 999px; padding: .3em .4em .3em 1em; }
+    .alias-chip strong { font-weight: 900; }
+    .alias-chip[hidden] { display: none; }
+
+    /* ---------- Portada ---------- */
+    .portada { display: grid; grid-template-columns: 1.3fr 1fr; gap: 1.5rem; align-items: center; padding: 1rem 0 1.5rem; }
+    .portada h1 { font-size: clamp(1.9rem, 4.5vw, 3rem); font-weight: 900; }
+    .portada h1 .pi { color: var(--coral); }
+    .portada p { font-size: 1.15rem; max-width: 34ch; }
+    .portada img { width: min(260px, 60vw); justify-self: center; }
+    @media (max-width: 700px) { .portada { grid-template-columns: 1fr; } .portada img { order: -1; width: 160px; } }
+
+    /* ---------- Filtros ---------- */
+    .filtros { display: flex; flex-wrap: wrap; gap: .5rem; margin: .5rem 0 1rem; padding: 0; list-style: none; }
+    .filtros button { min-height: 40px; padding: .35em 1em; border-radius: 999px; border: 2px solid var(--espresso);
+      background: transparent; color: var(--espresso); font: inherit; font-weight: 700; cursor: pointer; }
+    .filtros button[aria-pressed="true"] { background: var(--espresso); color: var(--crema); }
+
+    /* ---------- Juegos ---------- */
+    .curso { margin: 1.4rem 0 2rem; }
+    .curso h2 { font-size: 1.5rem; font-weight: 900; display: flex; align-items: center; gap: .5em; }
+    .curso h2::before { content: ""; width: 14px; height: 14px; border-radius: 50%; background: var(--coral); }
+    .rejilla { display: grid; grid-template-columns: repeat(auto-fill, minmax(260px, 1fr)); gap: 1rem; }
+    .juego { display: flex; flex-direction: column; padding: 1.1rem; gap: .5rem; }
+    .juego .cab { display: flex; gap: .8rem; align-items: center; }
+    .simbolo { flex: none; width: 56px; height: 56px; border-radius: 16px; display: grid; place-items: center;
+      font-size: 1.9rem; font-weight: 900; background: var(--espresso); color: var(--crema); }
+    .juego.pronto .simbolo { background: var(--linea); color: var(--espresso); }
+    .juego h3 { font-size: 1.2rem; font-weight: 900; margin: 0; }
+    .juego .sub { margin: 0; font-size: .95rem; }
+    .juego .saber { font-size: .9rem; color: var(--salvia-oscuro); font-weight: 700; margin: 0; }
+    .juego .desc { margin: 0; flex: 1; }
+    .juego .acciones { display: flex; justify-content: space-between; align-items: center; gap: .5rem; margin-top: .3rem; }
+    .juego .boton { align-self: flex-start; }
+
+    /* ---------- Mis datos ---------- */
+    .datos { padding: 1.2rem; margin: 2rem 0; }
+    .datos h2 { font-size: 1.35rem; font-weight: 900; }
+    .datos .botones { display: flex; flex-wrap: wrap; gap: .6rem; margin: .8rem 0; }
+    .estado { min-height: 1.5em; font-weight: 700; }
+    form.alias { display: flex; flex-wrap: wrap; gap: .6rem; align-items: end; }
+    form.alias label { display: grid; gap: .2rem; font-weight: 700; }
+    form.alias input { min-height: 44px; padding: .4em .8em; border-radius: 12px; border: 2px solid var(--espresso);
+      font: inherit; background: #fff; color: var(--espresso); width: 16ch; }
+    .error { color: var(--coral-oscuro); font-weight: 700; }
+
+    /* ---------- Aviso de versión nueva ---------- */
+    .novedad { position: fixed; left: 50%; bottom: 16px; transform: translateX(-50%); z-index: 50;
+      display: flex; gap: .8rem; align-items: center; padding: .7rem .7rem .7rem 1.1rem; border-radius: 999px;
+      background: var(--espresso); color: var(--crema); box-shadow: var(--sombra); }
+    .novedad[hidden] { display: none; }
+    .novedad .boton { background: var(--coral); color: var(--espresso); }
+
+    /* ---------- Pie ---------- */
+    footer { padding: 1.5rem 0 2.5rem; border-top: 1px solid var(--linea); font-size: .95rem; }
+    footer nav { display: flex; flex-wrap: wrap; gap: 1rem; margin-bottom: .5rem; }
+  </style>
+</head>
+<body>
+  <a class="salto" href="#juegos">Saltar a los juegos</a>
+
+  <header class="cabecera">
+    <div class="contenedor fila">
+      <a href="./" aria-label="πCHU, inicio"><img class="logo" src="compartido/img/logo.png" alt="πCHU · Matemáticas que no te esperabas" width="1200" height="450"></a>
+      <div class="alias-chip" id="chipAlias" hidden>
+        <span>Juegas como <strong id="aliasActual"></strong></span>
+        <a class="boton secundario" href="#mis-datos" style="min-height:36px;padding:.2em .9em">Cambiar</a>
+      </div>
+    </div>
+  </header>
+
+  <main id="contenido">
+    <section class="contenedor portada" aria-labelledby="titulo">
+      <div>
+        <h1 id="titulo">Juega, prueba y <span class="pi">descubre</span> matemáticas</h1>
+        <p>Laboratorios y juegos para ESO y Bachillerato. No necesitas cuenta: tu progreso se guarda solo en este dispositivo.</p>
+      </div>
+      <img src="compartido/img/mascota.png" alt="" width="600" height="620">
+    </section>
+
+    <section class="contenedor" id="juegos" aria-labelledby="titJuegos">
+      <h2 id="titJuegos" class="solo-lector">Juegos y laboratorios</h2>
+      <ul class="filtros" id="filtros" aria-label="Filtrar por curso"></ul>
+      <div id="listaCursos"></div>
+    </section>
+
+    <section class="contenedor" id="mis-datos" aria-labelledby="titDatos">
+      <div class="tarjeta datos">
+        <h2 id="titDatos">Mis datos</h2>
+        <p>Usa un <strong>alias</strong>, nunca tu nombre real. Tu progreso se queda en este navegador: nadie más lo ve y no se envía a ningún sitio.</p>
+
+        <form class="alias" id="formAlias" novalidate>
+          <label for="campoAlias">Tu alias
+            <input id="campoAlias" name="alias" autocomplete="off" maxlength="16" aria-describedby="errorAlias">
+          </label>
+          <button class="boton" type="submit">Guardar alias</button>
+          <p class="error" id="errorAlias" role="alert" style="flex-basis:100%;margin:0"></p>
+        </form>
+
+        <h3 style="margin-top:1.2rem">Copia de seguridad</h3>
+        <p>Si cambias de ordenador o vas a limpiar el navegador, descarga tus datos y vuelve a cargarlos después.</p>
+        <div class="botones">
+          <button class="boton secundario" id="btnExportar" type="button">Descargar mis datos</button>
+          <label class="boton secundario" for="archivoImportar" tabindex="0" id="lblImportar">Cargar una copia</label>
+          <input type="file" id="archivoImportar" accept="application/json,.json" class="solo-lector">
+          <button class="boton peligro" id="btnBorrar" type="button">Borrar mis datos de este dispositivo</button>
+        </div>
+        <p class="estado" id="estadoDatos" role="status" aria-live="polite"></p>
+        <p style="font-size:.95rem;margin:0">En un ordenador compartido del aula, pulsa <strong>Borrar mis datos</strong> al terminar para que el siguiente compañero empiece de cero.</p>
+      </div>
+    </section>
+  </main>
+
+  <footer>
+    <div class="contenedor">
+      <nav aria-label="Información">
+        <a href="privacidad.html">Privacidad</a>
+        <a href="accesibilidad.html">Accesibilidad</a>
+      </nav>
+      <p style="margin:0">πCHU · <span id="version"></span> · Esta web no usa cookies ni analítica y no recoge datos personales.</p>
+    </div>
+  </footer>
+
+  <div class="novedad" id="novedad" role="status" hidden>
+    <span>Hay una versión nueva de πCHU.</span>
+    <button class="boton" id="btnActualizar" type="button">Actualizar</button>
+  </div>
+
+  <script src="compartido/marca.js"></script>
+  <script src="compartido/componentes.js"></script>
+  <script>
+  (function () {
+    "use strict";
+    const { Perfil, Datos, Almacen, confirmarDoble, activarSinConexion } = window.Pichu;
+    const $ = s => document.querySelector(s);
+    const esc = s => String(s).replace(/[&<>"']/g, c => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" }[c]));
+
+    document.title = MARCA.nombre + " · " + MARCA.lema;
+    $("#version").textContent = "versión " + MARCA.version;
+
+    // ---------- Catálogo agrupado por curso ----------
+    const cursosConJuegos = MARCA.cursos.filter(c => MARCA.juegos.some(j => j.curso === c));
+    let filtro = "Todos";
+
+    function pintarFiltros() {
+      $("#filtros").innerHTML = ["Todos", ...cursosConJuegos].map(c =>
+        `<li><button type="button" aria-pressed="${c === filtro}" data-curso="${esc(c)}">${esc(c)}</button></li>`).join("");
+    }
+
+    function tarjeta(j) {
+      const disponible = j.estado === "jugar";
+      return `<article class="tarjeta juego ${disponible ? "" : "pronto"}">
+        <div class="cab">
+          <div class="simbolo" aria-hidden="true">${esc(j.simbolo)}</div>
+          <div><h3>${esc(j.titulo)}</h3><p class="sub">${esc(j.subtitulo)}</p></div>
+        </div>
+        <p class="saber">${esc(j.saber)}</p>
+        <p class="desc">${esc(j.descripcion)}</p>
+        <div class="acciones">
+          ${disponible
+            ? `<a class="boton" href="${esc(j.externo ? j.url : (j.url.endsWith("/") ? j.url + "index.html" : j.url))}">Jugar<span class="solo-lector"> a ${esc(j.titulo)}</span></a><span class="etiqueta">${j.externo ? "En línea" : "Disponible"}</span>`
+            : `<span class="etiqueta pronto">Próximamente</span>`}
+        </div>
+      </article>`;
+    }
+
+    function pintarCursos() {
+      const cursos = filtro === "Todos" ? cursosConJuegos : [filtro];
+      $("#listaCursos").innerHTML = cursos.map(c => {
+        const juegos = MARCA.juegos.filter(j => j.curso === c)
+          .sort((a, b) => (a.estado === "jugar" ? 0 : 1) - (b.estado === "jugar" ? 0 : 1));
+        const id = "curso-" + c.replace(/[^\p{L}\p{N}]+/gu, "-");
+        return `<section class="curso" aria-labelledby="${id}"><h2 id="${id}">${esc(c)}</h2>
+          <div class="rejilla">${juegos.map(tarjeta).join("")}</div></section>`;
+      }).join("");
+    }
+
+    $("#filtros").addEventListener("click", e => {
+      const b = e.target.closest("button[data-curso]");
+      if (!b) return;
+      filtro = b.dataset.curso; pintarFiltros(); pintarCursos();
+    });
+
+    // ---------- Alias ----------
+    function pintarAlias() {
+      const p = Perfil.leer();
+      $("#chipAlias").hidden = !p;
+      if (p) { $("#aliasActual").textContent = p.alias; $("#campoAlias").value = p.alias; }
+    }
+    $("#formAlias").addEventListener("submit", e => {
+      e.preventDefault();
+      const error = Perfil.guardar($("#campoAlias").value);
+      $("#errorAlias").textContent = error;
+      if (!error) { pintarAlias(); $("#estadoDatos").textContent = "Alias guardado."; }
+    });
+
+    // ---------- Copia de seguridad ----------
+    const estado = t => { $("#estadoDatos").textContent = t; };
+    if (!Almacen.disponible()) estado("Este navegador no permite guardar datos (¿modo privado?). Puedes jugar, pero el progreso no se guardará.");
+
+    $("#btnExportar").addEventListener("click", () => {
+      const n = Datos.exportar();
+      estado(n ? `Descargado: ${n} ${n === 1 ? "registro" : "registros"} de πCHU.` : "Todavía no hay datos guardados, pero se ha descargado una copia vacía.");
+    });
+    $("#lblImportar").addEventListener("keydown", e => {
+      if (e.key === "Enter" || e.key === " ") { e.preventDefault(); $("#archivoImportar").click(); }
+    });
+    $("#archivoImportar").addEventListener("change", e => {
+      const f = e.target.files[0];
+      if (!f) return;
+      Datos.importar(f).then(n => { estado(`Copia cargada: ${n} ${n === 1 ? "registro" : "registros"}.`); pintarAlias(); })
+        .catch(err => estado(err.message))
+        .finally(() => { e.target.value = ""; });
+    });
+    confirmarDoble($("#btnBorrar"), "Pulsa otra vez para borrar", () => {
+      const n = Datos.borrarTodo();
+      $("#campoAlias").value = "";
+      pintarAlias();
+      estado(n ? "Datos de πCHU borrados de este dispositivo." : "No había datos de πCHU que borrar.");
+    });
+
+    // ---------- Sin conexión ----------
+    activarSinConexion("sw.js", aplicar => {
+      $("#novedad").hidden = false;
+      $("#btnActualizar").onclick = aplicar;
+    });
+
+    pintarFiltros(); pintarCursos(); pintarAlias();
+  })();
+  </script>
+</body>
+</html>

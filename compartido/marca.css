@@ -1,0 +1,83 @@
+/* =========================================================
+   πCHU · marca.css
+   Identidad visual común de la portada y de las páginas
+   compartidas. Para cambiar de marca, edita SOLO este bloque
+   :root (colores, tipografía, radios) y compartido/marca.js.
+   Los juegos NO cargan este archivo: así no se rompe su estilo.
+   ========================================================= */
+
+@font-face { font-family: "Lato"; font-weight: 400; font-style: normal; font-display: swap;
+  src: url("fuentes/lato-latin-400-normal.woff2") format("woff2"); }
+@font-face { font-family: "Lato"; font-weight: 700; font-style: normal; font-display: swap;
+  src: url("fuentes/lato-latin-700-normal.woff2") format("woff2"); }
+@font-face { font-family: "Lato"; font-weight: 900; font-style: normal; font-display: swap;
+  src: url("fuentes/lato-latin-900-normal.woff2") format("woff2"); }
+
+:root {
+  /* Paleta oficial πCHU (30/10/2026) */
+  --espresso: #332B2A;
+  --salvia: #5A8A78;
+  --coral: #E46D4D;
+  --crema: #F4EDD7;
+  /* Variantes accesibles (contraste AA sobre crema/blanco) */
+  --coral-oscuro: #A8402A;   /* texto pequeño en coral */
+  --salvia-oscuro: #3F6E5C;  /* botones con texto blanco */
+  --papel: #FFFCF3;
+  --linea: #D9CFB4;
+  --salvia-claro: #DCE8E1;
+
+  --fuente: "Lato", system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
+  --radio: 18px;
+  --sombra: 0 2px 0 rgba(51,43,42,.08), 0 8px 24px rgba(51,43,42,.08);
+}
+
+*, *::before, *::after { box-sizing: border-box; }
+html { -webkit-text-size-adjust: 100%; }
+body {
+  margin: 0; font-family: var(--fuente); color: var(--espresso);
+  background: var(--crema); line-height: 1.5; font-size: 1.0625rem;
+}
+img { max-width: 100%; height: auto; }
+a { color: var(--salvia-oscuro); font-weight: 700; }
+a:hover { color: var(--espresso); }
+h1, h2, h3 { line-height: 1.15; margin: 0 0 .4em; }
+
+/* Foco siempre visible al navegar con teclado */
+:focus-visible { outline: 3px solid var(--coral-oscuro); outline-offset: 3px; border-radius: 6px; }
+
+.salto { position: absolute; left: -999px; top: 8px; background: var(--espresso); color: #fff;
+  padding: .6em 1em; border-radius: 10px; z-index: 100; }
+.salto:focus { left: 8px; }
+
+.contenedor { width: min(1100px, 100% - 2rem); margin-inline: auto; }
+
+/* Botones */
+.boton {
+  display: inline-flex; align-items: center; justify-content: center; gap: .45em;
+  min-height: 44px; padding: .55em 1.1em; border-radius: 999px; border: 2px solid transparent;
+  font: inherit; font-weight: 700; cursor: pointer; text-decoration: none;
+  background: var(--salvia-oscuro); color: #fff;
+}
+.boton:hover { background: var(--espresso); color: #fff; }
+.boton.secundario { background: transparent; color: var(--espresso); border-color: var(--espresso); }
+.boton.secundario:hover { background: var(--espresso); color: #fff; }
+.boton.peligro { background: transparent; color: var(--coral-oscuro); border-color: var(--coral-oscuro); }
+.boton.peligro:hover { background: var(--coral-oscuro); color: #fff; }
+.boton[disabled], .boton[aria-disabled="true"] { opacity: .55; cursor: not-allowed; }
+
+.tarjeta { background: var(--papel); border: 1px solid var(--linea); border-radius: var(--radio);
+  box-shadow: var(--sombra); }
+
+.etiqueta { display: inline-block; font-size: .8rem; font-weight: 700; letter-spacing: .02em;
+  padding: .2em .7em; border-radius: 999px; background: var(--salvia-claro); color: var(--salvia-oscuro); }
+.etiqueta.pronto { background: #F1E1D9; color: var(--coral-oscuro); }
+
+.aviso { padding: .8em 1em; border-radius: 12px; background: var(--salvia-claro); }
+
+/* Respeta "reducir movimiento" del sistema y el ajuste propio */
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after { animation: none !important; transition: none !important; scroll-behavior: auto !important; }
+}
+.sin-movimiento *, .sin-movimiento *::before, .sin-movimiento *::after { animation: none !important; transition: none !important; }
+
+.solo-lector { position: absolute !important; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0); white-space: nowrap; }
