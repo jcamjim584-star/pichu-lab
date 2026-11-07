@@ -11,5 +11,5 @@
 
 ### Pendiente
 - Integer Ninja: enlazado a Netlify (v0.5); copiarlo a applets/ con su src/.
-- Subir Laboratorio de Fracciones v0.1 y Fraccionario v0.2.
+- Fracciones: el Laboratorio se replanteará y Fraccionario queda aparcado (fuera de la portada por ahora).
 - Prueba en aula y en la red del centro.

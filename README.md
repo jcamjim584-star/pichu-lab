@@ -8,8 +8,6 @@ Portada que reúne los juegos y laboratorios de matemáticas interactivos de Jua
 |---|---|---|
 | πCHU Exprés · El reino de la divisibilidad | 1.º ESO | Disponible |
 | Integer Ninja | 1.º ESO | Enlazado a la versión de Netlify (v0.5); pendiente de copiar aquí |
-| Laboratorio de Fracciones | 1.º ESO | Pendiente de subir |
-| Fraccionario | 1.º ESO | Pendiente de subir |
 | Laboratorio de Proporcionalidad · cartas de ecuaciones · cartas de funciones | 1.º ESO · 4.º ESO · 1.º Bach | En diseño |
 
 Funciones comunes:

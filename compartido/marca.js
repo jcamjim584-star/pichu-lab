@@ -24,7 +24,7 @@ window.MARCA = {
       simbolo: "÷",
       url: "applets/expres/",
       estado: "jugar",
-      claves: ["pichu.expres.v3", "pichu.expres.v4"]
+      claves: ["pichu.expres.v3"]
     },
     {
       id: "integer-ninja",
@@ -39,30 +39,6 @@ window.MARCA = {
       url: "https://tourmaline-frangipane-a48492.netlify.app",
       externo: true,
       estado: "jugar",
-      claves: []
-    },
-    {
-      id: "fracciones",
-      titulo: "Laboratorio de Fracciones",
-      subtitulo: "Explora, parte y compara",
-      curso: "1.º ESO",
-      saber: "Fracciones, equivalencia y comparación",
-      descripcion: "Manipula círculos, barras y la recta numérica para descubrir cuándo dos fracciones valen lo mismo.",
-      simbolo: "½",
-      url: "applets/fracciones/",
-      estado: "pronto",
-      claves: []
-    },
-    {
-      id: "fraccionario",
-      titulo: "Fraccionario",
-      subtitulo: "Juego de cartas de fracciones",
-      curso: "1.º ESO",
-      saber: "Fracciones equivalentes y comparación",
-      descripcion: "Juega cartas de fracciones y llega a la meta antes que tu rival.",
-      simbolo: "¾",
-      url: "applets/fraccionario/",
-      estado: "pronto",
       claves: []
     },
     {
