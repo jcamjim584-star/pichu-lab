@@ -91,14 +91,13 @@
     <section class="contenedor portada" aria-labelledby="titulo">
       <div>
         <h1 id="titulo">Juega, prueba y <span class="pi">descubre</span> matemáticas</h1>
-        <p>Laboratorios y juegos para ESO y Bachillerato. No necesitas cuenta: tu progreso se guarda solo en este dispositivo.</p>
+        <p>Juegos para aprender matemáticas jugando. No necesitas cuenta: tu progreso se guarda solo en este dispositivo.</p>
       </div>
       <img src="compartido/img/mascota.png" alt="" width="600" height="620">
     </section>
 
     <section class="contenedor" id="juegos" aria-labelledby="titJuegos">
       <h2 id="titJuegos" class="solo-lector">Juegos y laboratorios</h2>
-      <ul class="filtros" id="filtros" aria-label="Filtrar por curso"></ul>
       <div id="listaCursos"></div>
     </section>
 
@@ -156,17 +155,10 @@
     document.title = MARCA.nombre + " · " + MARCA.lema;
     $("#version").textContent = "versión " + MARCA.version;
 
-    // ---------- Catálogo agrupado por curso ----------
-    const cursosConJuegos = MARCA.cursos.filter(c => MARCA.juegos.some(j => j.curso === c));
-    let filtro = "Todos";
-
-    function pintarFiltros() {
-      $("#filtros").innerHTML = ["Todos", ...cursosConJuegos].map(c =>
-        `<li><button type="button" aria-pressed="${c === filtro}" data-curso="${esc(c)}">${esc(c)}</button></li>`).join("");
-    }
-
+    // ---------- Catálogo: por juegos (los cursos se activarán con MARCA.mostrarCursos) ----------
     function tarjeta(j) {
       const disponible = j.estado === "jugar";
+      const href = j.externo ? j.url : (j.url.endsWith("/") ? j.url + "index.html" : j.url);
       return `<article class="tarjeta juego ${disponible ? "" : "pronto"}">
         <div class="cab">
           <div class="simbolo" aria-hidden="true">${esc(j.simbolo)}</div>
@@ -176,28 +168,23 @@
         <p class="desc">${esc(j.descripcion)}</p>
         <div class="acciones">
           ${disponible
-            ? `<a class="boton" href="${esc(j.externo ? j.url : (j.url.endsWith("/") ? j.url + "index.html" : j.url))}">Jugar<span class="solo-lector"> a ${esc(j.titulo)}</span></a><span class="etiqueta">${j.externo ? "En línea" : "Disponible"}</span>`
+            ? `<a class="boton" href="${esc(href)}">Jugar<span class="solo-lector"> a ${esc(j.titulo)}</span></a><span class="etiqueta">${j.externo ? "En línea" : "Disponible"}</span>`
             : `<span class="etiqueta pronto">Próximamente</span>`}
         </div>
       </article>`;
     }
 
-    function pintarCursos() {
-      const cursos = filtro === "Todos" ? cursosConJuegos : [filtro];
-      $("#listaCursos").innerHTML = cursos.map(c => {
-        const juegos = MARCA.juegos.filter(j => j.curso === c)
-          .sort((a, b) => (a.estado === "jugar" ? 0 : 1) - (b.estado === "jugar" ? 0 : 1));
-        const id = "curso-" + c.replace(/[^\p{L}\p{N}]+/gu, "-");
-        return `<section class="curso" aria-labelledby="${id}"><h2 id="${id}">${esc(c)}</h2>
-          <div class="rejilla">${juegos.map(tarjeta).join("")}</div></section>`;
-      }).join("");
+    function seccion(id, titulo, juegos) {
+      if (!juegos.length) return "";
+      return `<section class="curso" aria-labelledby="${id}"><h2 id="${id}">${esc(titulo)}</h2>
+        <div class="rejilla">${juegos.map(tarjeta).join("")}</div></section>`;
     }
 
-    $("#filtros").addEventListener("click", e => {
-      const b = e.target.closest("button[data-curso]");
-      if (!b) return;
-      filtro = b.dataset.curso; pintarFiltros(); pintarCursos();
-    });
+    function pintarCatalogo() {
+      const listos = MARCA.juegos.filter(j => j.estado === "jugar");
+      const pronto = MARCA.juegos.filter(j => j.estado !== "jugar");
+      $("#listaCursos").innerHTML = seccion("sec-juegos", "Juegos", listos) + seccion("sec-pronto", "Próximamente", pronto);
+    }
 
     // ---------- Alias ----------
     function pintarAlias() {
@@ -243,7 +230,7 @@
       $("#btnActualizar").onclick = aplicar;
     });
 
-    pintarFiltros(); pintarCursos(); pintarAlias();
+    pintarCatalogo(); pintarAlias();
   })();
   </script>
 </body>

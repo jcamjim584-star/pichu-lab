@@ -33,16 +33,15 @@ with sync_playwright() as p:
     pag.goto(BASE)
     pag.wait_for_load_state("networkidle")
     ok("Portada carga sin errores de consola", not errores, "; ".join(errores))
-    ok("6 tarjetas en el catálogo", pag.locator("article.juego").count() == 6, pag.locator("article.juego").count())
+    ok("5 tarjetas en el catálogo", pag.locator("article.juego").count() == 5, pag.locator("article.juego").count())
     ok("Integer Ninja enlaza a Netlify", pag.locator("a.boton[href^='https://tourmaline']").count() == 1)
     ok("Exprés tiene botón Jugar", pag.locator("a.boton[href='applets/expres/index.html']").count() == 1)
     ok("Lato cargada en local", pag.evaluate("document.fonts.check('900 16px Lato')"))
     pag.screenshot(path=f"{CAP}/portada_escritorio.png", full_page=True)
 
-    # Filtro por curso
-    pag.click("button[data-curso='4.º ESO']")
-    ok("Filtro 4.º ESO muestra 1 tarjeta", pag.locator("article.juego").count() == 1)
-    pag.click("button[data-curso='Todos']")
+    # Organizado por juegos, sin cursos
+    ok("Secciones Juegos y Próximamente", pag.locator("#sec-juegos").count() == 1 and pag.locator("#sec-pronto").count() == 1)
+    ok("No muestra cursos", "ESO" not in pag.text_content("#juegos"))
 
     # Alias
     pag.fill("#campoAlias", "x")
@@ -91,10 +90,10 @@ with sync_playwright() as p:
     pag.evaluate("caches.keys()")
     time.sleep(1.5)
     claves = pag.evaluate("caches.keys()")
-    ok("Caché versionada creada", "pichu-v0.2.0" in claves, claves)
+    ok("Caché versionada creada", "pichu-v0.3.0" in claves, claves)
     ctx.set_offline(True)
     pag.reload(); pag.wait_for_load_state("domcontentloaded")
-    ok("Portada funciona sin conexión", pag.locator("article.juego").count() == 6)
+    ok("Portada funciona sin conexión", pag.locator("article.juego").count() == 5)
     pag.goto(BASE + "applets/expres/"); pag.wait_for_load_state("domcontentloaded")
     ok("Exprés funciona sin conexión", "Exprés" in pag.title())
     ctx.set_offline(False)

@@ -6,11 +6,13 @@
 window.MARCA = {
   nombre: "πCHU",
   lema: "Matemáticas que no te esperabas",
-  version: "0.2.0",
+  version: "0.3.0",
   autor: "Juan Antonio Campos Jiménez",
 
-  // Orden en que aparecen los cursos en la portada
+  // Cursos: de momento la portada NO los muestra (se organiza por juegos).
+  // Se guardan en cada juego para poder agruparlos más adelante.
   cursos: ["1.º ESO", "2.º ESO", "3.º ESO", "4.º ESO", "1.º Bachillerato CCSS"],
+  mostrarCursos: false,
 
   // estado: "jugar" (disponible) | "pronto" (aún no subido o en diseño)
   juegos: [
@@ -40,18 +42,6 @@ window.MARCA = {
       externo: true,
       estado: "jugar",
       claves: []
-    },
-    {
-      id: "fraction-royale",
-      titulo: "Fraction Royale",
-      subtitulo: "Cartas, combos y un jefe gigante",
-      curso: "1.º ESO",
-      saber: "Suma, equivalencia y orden de fracciones",
-      descripcion: "Forma combinaciones con cartas de fracciones, predice cuánto suman antes de jugar y vence al Gigante del Denominador.",
-      simbolo: "½",
-      url: "applets/fraction-royale/",
-      estado: "jugar",
-      claves: ["pichu.fraction-royale.ajustes", "pichu.fraction-royale.coleccion", "pichu.fraction-royale.partida"]
     },
     {
       id: "proporcionalidad",

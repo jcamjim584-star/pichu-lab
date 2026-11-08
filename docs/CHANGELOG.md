@@ -1,5 +1,9 @@
 # Registro de cambios
 
+## 0.3.0 · 08/11/2026
+- La portada se organiza por **juegos** (Juegos · Próximamente), sin cursos ni filtro. Los cursos siguen guardados en `marca.js` (`mostrarCursos: false`) para usarlos más adelante.
+- Se retira Fraction Royale de la portada: el juego de fracciones se replantea sin cartas. Su código queda en el historial de git (versión 0.2.0).
+
 ## 0.2.0 · 07/11/2026
 - Nuevo juego: **Fraction Royale v0.4** (`applets/fraction-royale/`).
   - Predicción obligatoria de la suma antes de jugar 2 o más cartas (+1 al multiplicador si acierta, +1 extra cada 3 aciertos).
