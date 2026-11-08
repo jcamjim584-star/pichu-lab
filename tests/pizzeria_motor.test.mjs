@@ -22,11 +22,40 @@ function minBruto(porciones, t) {
     for (let c = 0; c <= cnt[i]; c++) rec(i + 1, suma + c * tam[i], k + c); };
   rec(0, 0, 0); return mejor;
 }
-function mostrador(j, pizzas = j.pizzas) {
+function mostrador(j, pizzas = j.pizzas || 4) {
   const p = [];
   for (let i = 0; i < pizzas; i++) { const d = azar(j.dens), quedan = 1 + Math.floor(Math.random() * d); for (let k = 0; k < quedan; k++) p.push(M.U / d); }
   return p;
 }
+
+// ---------- Pizza Rush: tickets siempre servibles con pizzas recién hechas de los cortes del turno ----------
+for (const j of M.TURNOS) {
+  for (let i = 0; i < 1500; i++) {
+    const t = M.generarTicket(j);
+    ok(`Turno ${j.id}: siempre hay ticket`, !!t);
+    if (!t) continue;
+    if (t.tipo !== "div_cuantas") {
+      // con 2 pizzas recién hechas de cada corte útil se puede servir
+      const utiles = M.cortesUtiles(t, j.dens);
+      ok(`Turno ${j.id} ${t.tipo}: tiene cortes útiles`, utiles.length > 0, JSON.stringify(t));
+      const stock = []; for (const d of utiles) for (let k = 0; k < d * 2; k++) stock.push(24 / d);
+      ok(`Turno ${j.id} ${t.tipo}: servible con pizzas de cortes útiles`, M.sePuede(stock, t.objetivo), JSON.stringify(t));
+      ok(`Turno ${j.id}: tipo permitido`, j.tipos.includes(t.tipo));
+    }
+  }
+  // El horno prefiere cortes útiles
+  const t = { tipo: "suma", objetivo: 8 };   // 1/3 → útiles: tercios, sextos, doceavos
+  if (j.dens.includes(3)) { let utiles = 0; for (let i = 0; i < 2000; i++) if ([3, 6, 12].includes(M.elegirHorneado([t, t, t], j.dens))) utiles++;
+    ok(`Turno ${j.id}: el horno prefiere cortes útiles`, utiles > 1000, utiles); }
+}
+ok("Monedas con combo y perfecto", M.monedas({ tipo: "suma", combo: 0, perfecto: false }) === 10 && M.monedas({ tipo: "suma", combo: 3, perfecto: true }) === 25 && M.monedas({ tipo: "condicion", combo: 10, perfecto: true, propinaOro: true, rapido: true }) === 95);
+for (let t = 1; t <= 48; t++) for (const dens of [[2, 4], [2, 3, 4, 6], [2, 3, 4, 6, 8, 12]]) {
+  const dm = M.descomposicionMinima(t, dens);
+  if (dm) ok("Descomposición mínima suma el objetivo", dm.reduce((a, d) => a + 24 / d, 0) === t);
+  if (dm && t <= 24) ok("Descomposición mínima = mínimo por fuerza bruta", dm.length === minBruto(M.stockVirtual(dens), t), `${t} ${dens}`);
+}
+ok("Rangos", M.rango(0) === "Puesto callejero" && M.rango(24) === "Imperio πCHU");
+ok("Mejoras", M.intervaloHorno(3) === 3.5 && M.huecosMostrador(2) === 6 && M.factorPaciencia(2) === 1.5);
 
 const conteo = {};
 for (const j of M.JORNADAS) {

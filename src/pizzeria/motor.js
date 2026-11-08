@@ -73,6 +73,8 @@
   }
 
   const PARTES = { 2: "la mitad", 3: "la tercera parte", 4: "la cuarta parte" };
+  // "3/4 de pizza", "una pizza entera", "2 pizzas"
+  const cant = f => { const s = simplificar(f.n, f.d); return s.d === 1 ? (s.n === 1 ? "una pizza entera" : `${s.n} pizzas`) : `${texto(s)} de pizza`; };
 
   /* Crea un pedido que SE PUEDE servir con las porciones del mostrador.
      cfg: { tipos, dens, maxU, sinSimplificar, mixtos, minU }
@@ -81,7 +83,9 @@
     const disponible = porciones.reduce((a, b) => a + b, 0);
     const maxU = Math.min(cfg.maxU, disponible);
     const dp = cantidadesPosibles(porciones, maxU);
-    const ok = t => t >= (cfg.minU || 1) && t <= maxU && dp[t].size > 0;
+    // El resultado tiene que poder escribirse con los cortes del turno (nada de 5/24 en 1.º ESO)
+    const denOk = t => { const d = deU(t).d; return d === 1 || cfg.dens.includes(d); };
+    const ok = t => t >= (cfg.minU || 1) && t <= maxU && dp[t].size > 0 && denOk(t);
     const pedibles = fraccionesPedibles(cfg.dens, maxU);
 
     for (let intento = 0; intento < 60; intento++) {
@@ -122,7 +126,7 @@
         if (!ok(t)) continue;
         const nombre = fr.n === 1 && PARTES[fr.d] ? PARTES[fr.d] : texto(fr);
         p = { tipo, objetivo: t, base, fr, escrito: texto(base),
-              texto: `Quiero ${nombre} de ${texto(base)} de pizza.`,
+              texto: `Quiero ${nombre} de ${cant(base)}.`,
               op: `${texto(fr)} × ${texto(base)} = ${prodN}/${prodD}` + (simplificar(prodN, prodD).d !== prodD ? ` = ${texto({ n: prodN, d: prodD })}` : "") };
       }
 
@@ -132,7 +136,7 @@
         const t = aU(base.n, base.d * k);
         if (!ok(t)) continue;
         p = { tipo, objetivo: t, k, base, escrito: texto(base),
-              texto: `Hemos pedido ${texto(base)} de pizza para ${k} personas. Sírveme mi parte.`,
+              texto: `Hemos pedido ${cant(base)} para ${k} personas. Sírveme mi parte.`,
               op: `${texto(base)} ÷ ${k} = ${base.n}/${base.d * k}` + (simplificar(base.n, base.d * k).d !== base.d * k ? ` = ${texto({ n: base.n, d: base.d * k })}` : "") };
       }
 
@@ -143,9 +147,10 @@
         if (!base || !trozo) continue;
         const tb = aU(base.n, base.d), tt = aU(trozo.n, trozo.d);
         if (tb % tt || tb / tt < 2 || tb / tt > 12) continue;
+        if (simplificar(base.n, base.d).d === trozo.d) continue;   // sería solo contar porciones iguales
         const r = tb / tt;
         p = { tipo, objetivo: tb, respuesta: r, base, trozo, escrito: texto(base),
-              texto: `Tengo ${texto(base)} de pizza. ¿Cuántas porciones de ${texto(trozo)} salen?`,
+              texto: `Tengo ${cant(base)}. ¿Cuántas porciones de ${texto(trozo)} salen?`,
               op: `${texto(base)} ÷ ${texto(trozo)} = ${texto(base)} × ${trozo.d}/${trozo.n} = ${r}`,
               opciones: opcionesNumero(r, base, trozo) };
       }
@@ -243,16 +248,79 @@
 
   function comparar(total, objetivo) { return total < objetivo ? "corto" : total > objetivo ? "pasado" : "exacto"; }
 
-  // ---------- Jornadas ----------
-  const JORNADAS = [
-    { id: 1, nombre: "Primer día", tema: "Mitades y cuartos", dens: [2, 4], pizzas: 3, clientes: 5, tipos: ["suma"], maxU: 24, vista: "plato" },
-    { id: 2, nombre: "Hora punta", tema: "Tercios y sextos", dens: [2, 3, 4, 6], pizzas: 3, clientes: 6, tipos: ["suma"], maxU: 24, vista: "plato" },
-    { id: 3, nombre: "Cortes finos", tema: "Octavos, doceavos y equivalencias", dens: [2, 3, 4, 6, 8, 12], pizzas: 4, clientes: 6, tipos: ["suma"], maxU: 24, vista: "caja", sinSimplificar: true },
-    { id: 4, nombre: "Mesas grandes", tema: "Más de una pizza", dens: [2, 3, 4, 6, 8], pizzas: 5, clientes: 6, tipos: ["suma"], maxU: 48, minU: 18, vista: "caja", mixtos: true },
-    { id: 5, nombre: "Pedidos en grupo", tema: "Multiplicar fracciones", dens: [2, 3, 4, 6, 8, 12], pizzas: 5, clientes: 6, tipos: ["mult_entero", "fraccion_de"], maxU: 48, vista: "caja", mixtos: true },
-    { id: 6, nombre: "A repartir", tema: "Dividir fracciones", dens: [2, 3, 4, 6, 8, 12], pizzas: 5, clientes: 6, tipos: ["div_entero", "div_cuantas"], maxU: 36, vista: "caja" },
-    { id: 7, nombre: "El Crítico", tema: "Jefe: pedidos con condiciones", dens: [2, 3, 4, 6, 8, 12], pizzas: 5, clientes: 5, tipos: ["condicion", "condicion", "fraccion_de", "div_entero"], maxU: 36, vista: "caja", jefe: true }
+  // ---------- Pizza Rush: tickets, horno, turnos y mejoras ----------
+  // Los tickets se generan como si hubiera pizzas de todos los cortes del turno:
+  // así siempre se pueden servir con lo que va sacando el horno.
+  function stockVirtual(dens) { const p = []; for (const d of dens) for (let k = 0; k < d * 2; k++) p.push(U / d); return p; }
+  function generarTicket(cfg) {
+    for (let i = 0; i < 20; i++) { const t = generarPedido(stockVirtual(cfg.dens), cfg); if (t) return t; }
+    return null;
+  }
+  // ¿Qué pizza hornear? Preferimos cortes que sirvan para los tickets abiertos.
+  // Forma de servir con el menor número de porciones (cortes de "dens", sin el prohibido)
+  function descomposicionMinima(objetivo, dens, prohibido) {
+    const tam = dens.map(d => U / d).filter(x => x !== prohibido);
+    const mejor = Array(objetivo + 1).fill(null); mejor[0] = [];
+    for (let t = 1; t <= objetivo; t++) for (const x of tam) if (x <= t && mejor[t - x] && (!mejor[t] || mejor[t - x].length + 1 < mejor[t].length)) mejor[t] = [...mejor[t - x], x];
+    return mejor[objetivo] ? mejor[objetivo].map(x => U / x) : null;
+  }
+  function cortesUtiles(ticket, dens) {
+    if (!ticket || ticket.tipo === "div_cuantas") return [];
+    const prohib = ticket.cond && ticket.cond.modo === "sin" ? ticket.cond.tam : null;
+    const permitido = d => U / d !== prohib;
+    const exactos = dens.filter(d => permitido(d) && ticket.objetivo % (U / d) === 0);
+    const minima = descomposicionMinima(ticket.objetivo, dens, prohib) || [];
+    // Los cortes de la solución más corta (p. ej. 1 y 7/8 = 1/2 + 1/2 + 1/2 + 1/4 + 1/8) y los que sirven solos
+    const u = [...new Set([...minima, ...exactos])];
+    return u.length ? dens.filter(d => u.includes(d)) : dens.filter(d => permitido(d) && U / d <= ticket.objetivo);
+  }
+  function elegirHorneado(tickets, dens) {
+    const peso = d => 1 + 3 * tickets.filter(t => cortesUtiles(t, dens).includes(d)).length;
+    const total = dens.reduce((a, d) => a + peso(d), 0);
+    let r = Math.random() * total;
+    for (const d of dens) { r -= peso(d); if (r <= 0) return d; }
+    return dens[dens.length - 1];
+  }
+  // ¿Se puede servir este ticket con las porciones del mostrador (más las que ya estén en su caja)?
+  const servibleCon = (ticket, porciones) => ticket.tipo === "div_cuantas" || sePuede(porciones, ticket.objetivo);
+
+  // Monedas de un ticket bien servido
+  const BASE_TIPO = { suma: 10, mult_entero: 15, fraccion_de: 15, div_entero: 15, div_cuantas: 12, condicion: 20 };
+  function monedas({ tipo, combo, perfecto, rapido, propinaOro }) {
+    const mult = combo >= 10 ? 4 : combo >= 6 ? 3 : combo >= 3 ? 2 : 1;
+    return BASE_TIPO[tipo] * mult + (perfecto ? (propinaOro ? 10 : 5) : 0) + (rapido ? 5 : 0);
+  }
+  const multiplicador = combo => combo >= 10 ? 4 : combo >= 6 ? 3 : combo >= 3 ? 2 : 1;
+
+  const TURNOS = [
+    { id: 1, nombre: "Gran apertura", tema: "Mitades y cuartos", dens: [2, 4], tickets: 6, simult: 2, tipos: ["suma"], maxU: 24, vista: "plato", paciencia: 70 },
+    { id: 2, nombre: "Hora punta", tema: "Tercios y sextos", dens: [2, 3, 4, 6], tickets: 8, simult: 3, tipos: ["suma"], maxU: 24, vista: "plato", paciencia: 65 },
+    { id: 3, nombre: "Cortes finos", tema: "Octavos, doceavos y equivalencias", dens: [2, 3, 4, 6, 8, 12], tickets: 8, simult: 3, tipos: ["suma"], maxU: 24, vista: "caja", sinSimplificar: true, paciencia: 65 },
+    { id: 4, nombre: "Mesas grandes", tema: "Más de una pizza", dens: [2, 3, 4, 6, 8], tickets: 8, simult: 3, tipos: ["suma"], maxU: 48, minU: 18, vista: "caja", mixtos: true, paciencia: 75 },
+    { id: 5, nombre: "Pedidos en grupo", tema: "Multiplicar fracciones", dens: [2, 3, 4, 6, 8, 12], tickets: 8, simult: 3, tipos: ["mult_entero", "fraccion_de"], maxU: 48, vista: "caja", mixtos: true, paciencia: 80 },
+    { id: 6, nombre: "A repartir", tema: "Dividir fracciones", dens: [2, 3, 4, 6, 8, 12], tickets: 8, simult: 3, tipos: ["div_entero", "div_cuantas", "div_cuantas"], maxU: 36, vista: "caja", paciencia: 80 },
+    { id: 7, nombre: "Noche de fiesta", tema: "Todo mezclado", dens: [2, 3, 4, 6, 8, 12], tickets: 10, simult: 3, tipos: ["suma", "suma", "mult_entero", "fraccion_de", "div_entero", "div_cuantas"], maxU: 48, vista: "caja", mixtos: true, sinSimplificar: true, paciencia: 70 },
+    { id: 8, nombre: "Inspección del Crítico", tema: "Jefe: pedidos con condiciones", dens: [2, 3, 4, 6, 8, 12], tickets: 8, simult: 3, tipos: ["condicion", "condicion", "fraccion_de", "div_entero"], maxU: 36, vista: "caja", jefe: true, paciencia: 75 }
   ];
+  const JORNADAS = TURNOS;   // compatibilidad con la v0.1
+
+  // Mejoras de la tienda. nivel: lo que tiene el jugador; precio por nivel.
+  const MEJORAS = [
+    { id: "horno", nombre: "Horno turbo", icono: "🔥", desc: "El horno saca pizzas más rápido.", precios: [120, 260, 450], tipo: "juego" },
+    { id: "mostrador", nombre: "Mostrador XL", icono: "🍽️", desc: "Caben más pizzas en el mostrador.", precios: [150, 350], tipo: "juego" },
+    { id: "campana", nombre: "Campanita de paciencia", icono: "🔔", desc: "Los clientes esperan un 25 % más por nivel.", precios: [100, 240], tipo: "juego" },
+    { id: "cortador", nombre: "Cortador mágico", icono: "🔪", desc: "Vuelve a cortar una pizza entera en el corte que elijas (¡equivalencias!).", precios: [300], tipo: "juego" },
+    { id: "oro", nombre: "Propina de oro", icono: "🪙", desc: "El servicio perfecto da el doble de propina.", precios: [220], tipo: "juego" },
+    { id: "luces", nombre: "Luces de verbena", icono: "💡", desc: "Decoración: guirnalda de luces en la cocina.", precios: [80], tipo: "deco" },
+    { id: "mantel", nombre: "Mantel de cuadros", icono: "🟥", desc: "Decoración: mostrador con mantel de cuadros.", precios: [80], tipo: "deco" },
+    { id: "neon", nombre: "Letrero de neón", icono: "✨", desc: "Decoración: letrero πCHU de neón.", precios: [150], tipo: "deco" },
+    { id: "plantas", nombre: "Plantas de albahaca", icono: "🌿", desc: "Decoración: macetas de albahaca.", precios: [60], tipo: "deco" }
+  ];
+  const intervaloHorno = nivel => [7, 5.5, 4.5, 3.5][nivel || 0];
+  const huecosMostrador = nivel => 4 + (nivel || 0);
+  const factorPaciencia = nivel => 1 + 0.25 * (nivel || 0);
+  const RANGOS = [[0, "Puesto callejero"], [6, "Pizzería de barrio"], [12, "Trattoria famosa"], [18, "Restaurante con estrella"], [24, "Imperio πCHU"]];
+  const rango = estrellasTotales => RANGOS.filter(r => estrellasTotales >= r[0]).pop()[1];
 
   // Estrellas de una jornada: servir al menos el 60 % para superarla
   function estrellas(servidos, perfectos, total) {
@@ -263,6 +331,7 @@
   }
 
   const motor = { U, CORTES, NOMBRE_CORTE, mcd, mcm, simplificar, aU, deU, texto, cantidadesPosibles, sePuede, minPorciones,
-    generarPedido, evaluar, detectarError, pasos, comparar, JORNADAS, estrellas, fraccionesPedibles, opcionesNumero };
+    generarPedido, evaluar, detectarError, pasos, comparar, JORNADAS, TURNOS, estrellas, fraccionesPedibles, opcionesNumero,
+    generarTicket, stockVirtual, cortesUtiles, descomposicionMinima, elegirHorneado, servibleCon, monedas, multiplicador, MEJORAS, intervaloHorno, huecosMostrador, factorPaciencia, rango, RANGOS };
   if (typeof module !== "undefined" && module.exports) module.exports = motor; else raiz.Motor = motor;
 })(typeof window !== "undefined" ? window : globalThis);

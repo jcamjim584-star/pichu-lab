@@ -1,85 +1,63 @@
-# Ficha · Pizzería πCHU
-Versión 0.1 · 08/11/2026 · Estado: **En pruebas** (en la portada πCHU 0.4.0) · Juego de fracciones elegido por Juan Antonio (sustituye a Fraction Royale: no se quiere otro juego de cartas)
+# Ficha · Pizza Rush (Pizzería πCHU)
+Versión 0.2 · 08/11/2026 · Estado: **En pruebas** (portada πCHU 0.5.0) · Juego de fracciones de 1.º ESO
 
 ---
 
-## 1. Idea
-πCHU abre una pizzería. Llegan clientes con pedidos («3/4 de pizza, por favor») y el alumno los sirve **exactos** juntando porciones de pizzas cortadas en trozos de distinto tamaño. Si sirve de menos o de más, el cliente reacciona y πCHU explica por qué con el dibujo y con el cálculo.
+## 1. Por qué la v0.2
+La v0.1 (un cliente cada vez, sin ritmo) le resultó aburrida a Juan Antonio. La v0.2 mezcla una **cocina frenética** (lo jugable) con una **pizzería que se mejora** entre turnos (lo que hace volver). Sin personajes. Las matemáticas y su motor son los de la v0.1.
 
-Pregunta clave: ¿qué entiende el alumno jugando que le costaría más con una explicación? Que **1/8 es más pequeño que 1/4 aunque 8 sea mayor que 4**, que **2/4 y 1/2 son la misma cantidad de pizza** y que para juntar trozos distintos hay que **pensar en trozos del mismo tamaño** (denominador común).
+## 2. Objetivos y errores que ataca
+- Comparar fracciones, reconocer equivalencias, sumar con distinto denominador, fracciones mayores que 1, multiplicar y dividir fracciones.
+- Errores: «denominador mayor = trozo mayor» (3/4 servido con 3 octavos), servir la parte de una sola persona al multiplicar, servir todo o multiplicar en vez de dividir.
 
-## 2. Curso y objetivos
-1.º ESO (de momento la portada no muestra cursos).
-- Comparar fracciones con ayuda visual y sin ella.
-- Reconocer y usar fracciones equivalentes.
-- Sumar fracciones con distinto denominador hasta llegar a una cantidad exacta.
-- Más adelante: fracciones mayores que la unidad (1 y 1/4 = 5/4).
+## 3. Cómo se juega
+- **Tickets** (2 o 3 a la vez) con pedidos y una barra de paciencia. Se elige un ticket tocándolo (o con 1, 2, 3).
+- El **horno** saca pizzas cortadas de distintas formas a una **cinta/mostrador**. Prefiere los cortes que sirven para los pedidos abiertos.
+- Se tocan porciones para meterlas en la **caja** del ticket y se pulsa **Enviar**. Tiene que ser exacto.
+- Fallo: explicación breve (suma con denominador común + error típico), las porciones vuelven y se pierde un poco de paciencia. Al segundo fallo o si se acaba la paciencia, el pedido se pierde y se enseña una forma de servirlo.
+- Preguntas «¿Cuántas porciones de 1/8 salen de 3/4?»: se contesta con un número en el propio ticket.
+- **Racha**: aciertos seguidos multiplican las monedas (x2 desde 3, x3 desde 6, x4 desde 10). **Perfecto**: menor número de porciones posible.
+- 🗑 tira una pizza que no sirve; desde el turno 3 la caja está cerrada (hay que calcular, no mirar).
+- Modo **tranquilo** (Ajustes): sin cuenta atrás. Pausa con P o al cambiar de pestaña.
 
-Errores que ataca:
-1. «Denominador mayor = trozo mayor» (1/8 > 1/4).
-2. Sumar numeradores y denominadores (1/2 + 1/4 = 2/6).
-3. No ver la equivalencia (pedido de 1/2 cuando solo quedan cuartos u octavos).
+## 4. Turnos
+| Turno | Contenido | Pedidos (a la vez) |
+|---|---|---|
+| 1 · Gran apertura | Mitades y cuartos (tutorial) | 6 (2) |
+| 2 · Hora punta | Tercios y sextos | 8 (3) |
+| 3 · Cortes finos | Octavos, doceavos, 6/8 sin simplificar; caja cerrada | 8 (3) |
+| 4 · Mesas grandes | Mayores que 1 (5/4, «1 y 1/2») | 8 (3) |
+| 5 · Pedidos en grupo | Multiplicar: «somos 3, 1/4 cada uno», «la mitad de 3/4», «2/3 de 3/4» | 8 (3) |
+| 6 · A repartir | Dividir: «3/4 para 3, mi parte», «¿cuántas de 1/8 en 3/4?» | 8 (3) |
+| 7 · Noche de fiesta | Todo mezclado | 10 (3) |
+| 8 · Inspección del Crítico (jefe) | Condiciones: exactamente k porciones, sin 1/d, el mínimo de porciones | 8 (3) |
 
-## 3. Bucle de juego
-- **Jornada** = un nivel: llegan de 5 a 8 clientes, uno detrás de otro.
-- En el **mostrador** hay de 2 a 4 pizzas, cada una cortada de una forma (mitades, tercios, cuartos, sextos, octavos o doceavos). Se ven las porciones que quedan.
-- El alumno toca porciones para ponerlas en el **plato** (y las quita tocándolas otra vez) y pulsa **Servir**.
-- **Sin ayuda en vivo**: el plato no dice cuánto lleva. La ayuda es el propio dibujo (las porciones se ven de su tamaño real). Así se razona y no se prueba a ciegas.
-- **Exacto** → cliente contento, propina (puntos) y estrellas.
-- **De menos o de más** → el cliente se queja; πCHU muestra la suma con denominador común y la compara con el pedido sobre una pizza «fantasma». Las porciones vuelven al mostrador y se puede intentar otra vez. Al segundo fallo el cliente se va sin propina.
-- **Bonus «servicio perfecto»**: servir con el menor número de porciones posible (ataca la equivalencia: mejor 1/2 que 4/8).
-- Las porciones se gastan: los pedidos siguientes tienen que apañarse con lo que queda, lo que obliga a usar equivalencias.
+Estrellas: ★ 60 % servidos · ★★ 80 % · ★★★ todos y la mitad perfectos. Cada turno se desbloquea con ★ en el anterior.
 
-## 4. Jornadas
-| Jornada | Pizzas en el mostrador | Pedidos | Novedad |
-|---|---|---|---|
-| 1 · Primer día | mitades y cuartos | hasta 1 | Tutorial jugando (3/4 = 1/2 + 1/4) |
-| 2 · Hora punta | + tercios y sextos | hasta 1 | Pedidos que obligan a mezclar |
-| 3 · Cortes finos | + octavos y doceavos | hasta 1 | Pedidos sin simplificar (6/8); **servicio en caja** (ya no se ve el plato: hay que calcular) |
-| 4 · Mesas grandes | todas | de 3/4 a 2 | Mayores que 1 (5/4, «1 y 1/2») |
-| 5 · Pedidos en grupo | todas | hasta 2 | **Multiplicar**: «Somos 3 y queremos 1/4 cada uno», «la mitad de 3/4», «2/3 de 3/4» |
-| 6 · A repartir | todas | hasta 1 y 1/2 | **Dividir**: «3/4 para 3 personas, sírveme mi parte» y «¿cuántas porciones de 1/8 salen de 3/4?» (se contesta con un número) |
-| 7 · El Crítico (jefe) | todas | — | Pedidos con condición: «con exactamente k porciones», «sin porciones de 1/d», «con el menor número de porciones» (siempre más de una) |
+## 5. Tienda y pizzería
+| Mejora | Efecto | Precio |
+|---|---|---|
+| 🔥 Horno turbo (3 niveles) | Pizza cada 7 → 5,5 → 4,5 → 3,5 s | 120 · 260 · 450 |
+| 🍽️ Mostrador XL (2) | 4 → 5 → 6 huecos | 150 · 350 |
+| 🔔 Campanita de paciencia (2) | +25 % de paciencia por nivel | 100 · 240 |
+| 🔪 Cortador mágico | Volver a cortar una pizza entera (equivalencias) | 300 |
+| 🪙 Propina de oro | Perfecto da el doble | 220 |
+| Decoración | Luces, mantel, neón, plantas (se ven en la cocina y en «Mi pizzería») | 60–150 |
 
-Cada jornada se desbloquea al superar la anterior (servir al menos al 60 % de los clientes). Estrellas: 1 = 60 %, 2 = 80 %, 3 = todos y la mitad con servicio perfecto. Propina: 10 + 5 si es al primer intento + 5 si es servicio perfecto (+5 por rapidez en contra reloj).
+Monedas por pedido: 10 (suma), 12 (¿cuántas?), 15 (multiplicar/dividir), 20 (Crítico), por la racha, +5 perfecto (+10 con Propina de oro), +5 si se sirve con más de la mitad de paciencia. Categorías por estrellas totales: Puesto callejero → Pizzería de barrio (6) → Trattoria famosa (12) → Restaurante con estrella (18) → Imperio πCHU (24).
 
-Cada pedido se genera solo si **se puede servir** con las porciones que quedan (se comprueba con enteros, denominador común 24).
+## 6. Técnico
+- `src/pizzeria/motor.js` (matemáticas, turnos, mejoras; con enteros: 1 pizza = 24/24) + `src/pizzeria/juego.html` → `python3 src/pizzeria/build.py` → `applets/pizzeria/index.html` (78 KB, sin imágenes externas).
+- Guardado `pichu.pizzeria.v2` (estrellas, monedas, mejoras, decoración, ajustes); lee el alias `pichu.perfil.v1`.
+- Música y sonidos generados con Web Audio. Animaciones desactivables y respeto a «reducir movimiento».
+- Las imágenes de personajes de la v0.1 siguen en `src/pizzeria/personajes/` por si se usan más adelante, pero el juego no las carga.
 
-## 5. Tiempo y accesibilidad (DUA)
-- Modo **Contra reloj**: cada cliente espera un tiempo; servir rápido da más propina.
-- Modo **Tranquilo** (sin reloj), recomendado para empezar y para quien lo necesite.
-- Teclado: Tab por las porciones, Enter para poner o quitar, S para servir. Botones de 44 px o más.
-- Las fracciones se escriben siempre además del dibujo (nunca solo color o forma). Reducir movimiento.
+## 7. Pruebas (08/11/2026)
+- Motor (Node): 150.885 comprobaciones. Tickets de los 8 turnos siempre servibles con los cortes que da el horno; descomposición mínima comparada con fuerza bruta; horno que prefiere cortes útiles; monedas, rangos y mejoras.
+- Chrome: 48/48. Tutorial, error del denominador, teclado (1, Enter, E, P, Esc), racha x2, tienda y decoración, cortador, tirar, pérdida por paciencia, los 8 turnos con 3 estrellas, los 6 tipos de pedido, categoría «Imperio πCHU», móvil de 390 px, sin errores ni peticiones externas.
+- Pendiente: prueba con alumnado de 1.º ESO (sobre todo, el ritmo de la paciencia).
 
-## 6. Integración en la portada πCHU
-- `applets/pizzeria/index.html`: un solo HTML sin librerías, con dibujos en SVG.
-- Guardado `pichu.pizzeria.v1`; lee el alias común `pichu.perfil.v1`.
-- Botón ← πCHU (`volver.js`); Lato local; sin servidores externos.
-- Motor matemático separado dentro del archivo (aritmética exacta con enteros) y ganchos de prueba.
-
-## 7. Criterios de aceptación
-- [x] Todos los pedidos generados se pueden servir con lo que queda (comprobación masiva).
-- [x] La comprobación «exacto / de menos / de más» es exacta con enteros.
-- [x] El bonus de menor número de porciones calcula el mínimo real.
-- [x] Los detectores de errores saltan solo cuando corresponde.
-- [x] Escritorio y móvil (390 px), teclado de principio a fin, modo tranquilo, sin errores en consola.
-- [ ] Prueba con alumnado de 1.º ESO.
-
-## 8. Decisiones de Juan Antonio (08/11/2026)
-1. Modo **tranquilo** por defecto (contra reloj en Ajustes).
-2. Al segundo fallo **el cliente se va**, sin más castigo (se le enseña una forma correcta de servirlo).
-3. Fracciones **mayores que 1** incluidas.
-4. Se añaden **multiplicación y división** de fracciones.
-5. Personajes dibujados por Juan Antonio. Nombres provisionales (se cambian en la lista `CLIENTES` de `src/pizzeria/juego.html`): Salsita, Capitán Porciones, Pizarrín, Reina Ración, Don Compás, Profesora Malabares, Dama del Escudo y El Crítico Gastronómico (jefe).
-
-## 9. Errores típicos que detecta
-- Pide 3/4 y sirve 3 porciones de 1/8 (o al revés): explica que con denominador mayor los trozos son más pequeños.
-- Multiplicar: sirve la parte de una sola persona.
-- «La mitad de…» o repartos: sirve la cantidad entera, o multiplica en vez de dividir.
-- Crítico: incumple la condición aunque la cantidad sea correcta.
-- Siempre: suma de lo servido con denominador común y barras «pedido / servido».
-
-## 10. Pruebas (08/11/2026)
-- Motor (Node): 97.242 comprobaciones; todos los pedidos de las 7 jornadas se pueden servir con lo que hay; mínimo de porciones comparado con fuerza bruta; evaluación exacta en 20.000 platos al azar; detectores de errores; condiciones del Crítico siempre posibles.
-- Navegador (Chrome): 45/45; tutorial, fallos, cliente que se va, teclado (Enter y S), las 7 jornadas jugadas dos veces con 3 estrellas, los 6 tipos de pedido, contra reloj, móvil de 390 px, sin errores de consola ni peticiones externas.
-- Pendiente: prueba con alumnado de 1.º ESO.
+## 8. Decisiones abiertas
+1. Ritmo por defecto: ahora hay cuenta atrás (antes se acordó modo tranquilo por defecto). ¿Lo dejamos así o tranquilo por defecto?
+2. ¿Precios y velocidad de la tienda adecuados tras probarlo en clase?
+3. ¿Añadir un ranking de clase por turno (como Integer Ninja)?

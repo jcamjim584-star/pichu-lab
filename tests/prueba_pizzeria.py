@@ -1,4 +1,4 @@
-"""Pruebas de la Pizzería πCHU en Chrome (Playwright).
+"""Pruebas de Pizza Rush (Pizzería πCHU v0.2) en Chrome (Playwright).
 Uso: python3 tests/prueba_pizzeria.py <carpeta_web> <carpeta_capturas>"""
 import os, sys, threading, functools, http.server, socketserver, time
 from playwright.sync_api import sync_playwright
@@ -13,34 +13,50 @@ URL = f"http://127.0.0.1:{srv.server_address[1]}/applets/pizzeria/index.html"
 res = []
 def ok(n, c, e=""): res.append((n, bool(c), e))
 
-# Resuelve el pedido actual con el menor número de porciones (o la respuesta correcta)
-RESOLVER = """() => { const Z = __pizzeria, E = Z.E, p = E.pedido;
-  if (p.tipo === 'div_cuantas') return {resp: p.respuesta};
-  const items = []; E.pizzas.forEach(z => z.porciones.forEach((st, i) => { if (st === 'mostrador') items.push({pid: z.id, i, d: z.d}); }));
+# Prepara la caja del ticket activo con la combinación mínima del mostrador.
+# Si el mostrador no alcanza, añade pizzas de cortes útiles (como haría el horno con tiempo).
+PREPARAR = """() => { const Z = __pizzeria, G = Z.G, M = Z.M, t = G.tickets.find(x => x.id === G.activo && !x.saliendo) || G.tickets.find(x => !x.saliendo);
+  if (!t) return null; Z.elegirTicket(t.id);
+  const p = t.ped; if (p.tipo === 'div_cuantas') return {id: t.id, resp: p.respuesta};
   const prohib = p.cond && p.cond.modo === 'sin' ? p.cond.tam : null, exactas = p.cond && p.cond.modo === 'exactas' ? p.cond.k : null;
-  const usar = items.filter(x => 24 / x.d !== prohib).sort((a, b) => a.d - b.d);
-  let mejor = null;
-  const rec = (k, suma, sel) => {
-    if (suma === p.objetivo && (!exactas || sel.length === exactas)) { if (!mejor || sel.length < mejor.length) mejor = [...sel]; return; }
-    if (suma > p.objetivo || k >= usar.length || sel.length > 14 || (mejor && !exactas && sel.length >= mejor.length)) return;
-    sel.push(usar[k]); rec(k + 1, suma + 24 / usar[k].d, sel); sel.pop();
-    let j = k + 1; while (j < usar.length && usar[j].d === usar[k].d) j++; rec(j, suma, sel);
-  };
-  rec(0, 0, []); return {sel: mejor}; }"""
+  const buscar = () => {
+    const items = []; G.pizzas.forEach(z => z.por.forEach((st, i) => { if (st === 'm' && 24 / z.d !== prohib) items.push({pid: z.id, i, d: z.d}); }));
+    items.sort((a, b) => a.d - b.d); let mejor = null;
+    const rec = (k, s, sel) => { if (s === p.objetivo && (!exactas || sel.length === exactas)) { if (!mejor || sel.length < mejor.length) mejor = [...sel]; return; }
+      if (s > p.objetivo || k >= items.length || sel.length > 24 || (mejor && !exactas && sel.length >= mejor.length)) return;
+      sel.push(items[k]); rec(k + 1, s + 24 / items[k].d, sel); sel.pop(); let j = k + 1; while (j < items.length && items[j].d === items[k].d) j++; rec(j, s, sel); };
+    rec(0, 0, []); return mejor; };
+  let sel = buscar();
+  if (!sel || (!exactas && p.minimo && sel.length > p.minimo)) { for (const d of M.cortesUtiles(p, G.cfg.dens)) { G.pizzas.push({id: 9000 + Math.floor(Math.random() * 1e6), d, por: Array(d).fill('m')}); G.pizzas.push({id: 9000 + Math.floor(Math.random() * 1e6), d, por: Array(d).fill('m')}); } Z.renderTodo(); sel = buscar(); }
+  if (!sel) return {id: t.id, error: JSON.stringify(p)};
+  sel.forEach(x => Z.meterPorcion(x.pid, x.i));
+  return {id: t.id, n: sel.length}; }"""
 
-def resolver(pag, clic_real=False):
-    r = pag.evaluate(RESOLVER)
+def servir_activo(pag, clic=False):
+    r = pag.evaluate(PREPARAR)
+    if r is None: return None
+    if "error" in r: return r
     if "resp" in r:
-        pag.click(f"[data-resp='{r['resp']}']"); return True
-    if not r["sel"]: return False
-    for x in r["sel"]:
-        if clic_real: pag.locator(f".porcion[data-p='{x['pid']}'][data-i='{x['i']}']").dispatch_event("click")
-        else: pag.evaluate(f"__pizzeria.alternarPorcion({x['pid']},{x['i']})")
-    pag.click("#btnServir"); return True
+        pag.locator(f"[data-resp='{r['id']}:{r['resp']}']").dispatch_event("click")
+    else:
+        if clic: pag.locator(f"[data-enviar='{r['id']}']").click()
+        else: pag.evaluate(f"__pizzeria.enviar({r['id']})")
+    return r
+
+def jugar_turno(pag, ver=None, max_vueltas=200):
+    for _ in range(max_vueltas):
+        if pag.evaluate("__pizzeria.G.fin"): return True
+        if pag.evaluate("__pizzeria.G.tickets.filter(t=>!t.saliendo).length") == 0:
+            pag.evaluate("__pizzeria.G.espera = 0"); time.sleep(.12); continue
+        if ver is not None: ver.add(pag.evaluate("(__pizzeria.G.tickets.find(t=>t.id===__pizzeria.G.activo)||__pizzeria.G.tickets[0]).ped.tipo"))
+        r = servir_activo(pag)
+        if r and "error" in r: ok("Pedido sin solución posible", False, r["error"]); return False
+        time.sleep(.05)
+    return pag.evaluate("__pizzeria.G.fin")
 
 with sync_playwright() as p:
     chrome = "/usr/bin/google-chrome"
-    nav = p.chromium.launch(**({"executable_path": chrome} if os.path.exists(chrome) else {}), args=["--no-sandbox"])
+    nav = p.chromium.launch(**({"executable_path": chrome} if os.path.exists(chrome) else {}), args=["--no-sandbox", "--autoplay-policy=no-user-gesture-required"])
     ctx = nav.new_context(viewport={"width": 1280, "height": 900})
     pag = ctx.new_page()
     errores = []
@@ -48,99 +64,119 @@ with sync_playwright() as p:
     pag.on("pageerror", lambda e: errores.append(str(e)))
     pag.goto(URL); pag.evaluate("localStorage.clear(); localStorage.setItem('pichu.perfil.v1', JSON.stringify({alias:'Tigre_7'}))"); pag.reload()
     pag.wait_for_load_state("networkidle")
-    ok("Menú con 7 jornadas", pag.locator("[data-jornada]").count() == 7)
-    ok("Solo la jornada 1 abierta al empezar", pag.locator("[data-jornada]:not([disabled])").count() == 1)
-    ok("Saluda con el alias común", "Tigre_7" in pag.text_content(".portada"))
-    ok("Modo tranquilo por defecto", pag.evaluate("__pizzeria.AJ.reloj") is False)
+    ok("Pantalla Mi pizzería con 8 turnos", pag.locator("[data-turno]").count() == 8)
+    ok("Solo el turno 1 abierto", pag.locator("[data-turno]:not([disabled])").count() == 1)
+    ok("Categoría inicial: Puesto callejero", pag.text_content("#rango") == "Puesto callejero")
+    ok("Saluda con el alias común", "Tigre_7" in pag.text_content(".logo-rush"))
     ok("Sin peticiones externas", pag.evaluate("performance.getEntriesByType('resource').every(r=>r.name.startsWith(location.origin))"))
-    pag.screenshot(path=f"{CAP}/pz_menu.png", full_page=True)
+    pag.screenshot(path=f"{CAP}/rush_inicio.png", full_page=True)
 
-    # ---------- Jornada 1 con tutorial ----------
-    pag.click("[data-jornada='1']")
-    ok("Tutorial: el primer pedido es 3/4", pag.evaluate("__pizzeria.E.pedido.escrito") == "3/4")
-    ok("Tutorial: πCHU explica", "Bienvenido" in pag.text_content("#narradorTxt"))
-    mitad = pag.evaluate("__pizzeria.E.pizzas.find(z=>z.d===2).id"); cuarto = pag.evaluate("__pizzeria.E.pizzas.find(z=>z.d===4).id")
-    pag.locator(f".porcion[data-p='{mitad}'][data-i='0']").dispatch_event("click")
-    pag.screenshot(path=f"{CAP}/pz_j1_plato.png")
-    ok("Plato sin total escrito", "3/4" not in pag.text_content("#zonaPlato") and "suma" not in pag.text_content("#zonaPlato").lower())
-    pag.locator(f".porcion[data-p='{cuarto}'][data-i='0']").dispatch_event("click")
-    pag.click("#btnServir")
-    ok("1/2 + 1/4 = 3/4: servido", "propina" in pag.text_content("#feedback") and pag.evaluate("__pizzeria.E.servidos") == 1)
-    ok("Servicio perfecto y propina 20", pag.evaluate("[__pizzeria.E.perfectos, __pizzeria.E.propinas]") == [1, 20])
-    ok("Se marca el tutorial como visto", pag.evaluate("__pizzeria.DATOS.tutorial") is True)
-    pag.screenshot(path=f"{CAP}/pz_j1_bien.png")
-    pag.click("#btnSiguiente")
-
-    # Fallo: error del denominador (3 octavos para un pedido de 3/4)
-    pag.evaluate("""()=>{const E=__pizzeria.E; E.pedido={tipo:'suma',objetivo:18,escrito:'3/4',texto:'Quiero 3/4 de pizza, por favor.',op:null,minimo:2};
-      E.pizzas.push({id:999,d:8,porciones:Array(8).fill('mostrador'),sal:1}); E.plato=[];}""")
-    for i in range(3): pag.evaluate(f"__pizzeria.alternarPorcion(999,{i})")
-    pag.click("#btnServir")
-    fb = pag.text_content("#feedback")
-    ok("Detecta el error del denominador", "más PEQUEÑAS" in fb, fb)
-    ok("Muestra la suma con denominador común y las barras", "3/8" in fb.replace(" ", "") or "3\n8" in fb, fb) if False else ok("Muestra las barras de comparación", pag.locator("#feedback svg.barras").count() == 1)
-    ok("Primer fallo: las porciones vuelven al mostrador", pag.evaluate("__pizzeria.E.plato.length") == 0)
-    pag.screenshot(path=f"{CAP}/pz_fallo.png")
-    for i in range(3): pag.evaluate(f"__pizzeria.alternarPorcion(999,{i})")
-    pag.click("#btnServir")
-    ok("Segundo fallo: el cliente se va", "se ha ido" in pag.text_content("#feedback") and pag.evaluate("__pizzeria.E.servidos") == 1)
-    ok("Enseña una forma de servirlo", "Una forma de servirlo" in pag.text_content("#feedback"))
-    pag.click("#btnSiguiente")
-
-    # Teclado: Enter en una porción y S para servir
-    pag.evaluate("__pizzeria.E.plato.length")
+    # ---------- Turno 1 con tutorial ----------
+    pag.click("#btnJugar"); time.sleep(.8)
+    ok("Tutorial: primer ticket 3/4", pag.evaluate("__pizzeria.G.tickets[0].ped.escrito") == "3/4")
+    ok("Tutorial: aviso de bienvenida", "Bienvenido" in pag.text_content("#aviso"))
+    ok("Mostrador con pizzas", pag.locator(".pizza svg").count() >= 3)
+    pag.screenshot(path=f"{CAP}/rush_cocina.png")
+    # Error típico: 3 octavos para 3/4
+    pag.evaluate("__pizzeria.G.pizzas.push({id:777,d:8,por:Array(8).fill('m')}); __pizzeria.renderTodo()")
+    for i in range(3): pag.locator(f".porcion[data-p='777'][data-i='{i}']").dispatch_event("click")
+    ok("Las porciones entran en la caja del ticket", pag.evaluate("__pizzeria.G.tickets[0].caja.length") == 3)
+    pag.click("[data-enviar]")
+    ok("Detecta el error del denominador", "más PEQUEÑAS" in pag.text_content("#aviso"), pag.text_content("#aviso"))
+    ok("Fallo: las porciones vuelven al mostrador", pag.evaluate("__pizzeria.G.tickets[0].caja.length") == 0)
+    pag.screenshot(path=f"{CAP}/rush_fallo.png")
+    servir_activo(pag, clic=True); time.sleep(.6)
+    ok("Acierto: monedas y pedido servido", pag.evaluate("__pizzeria.G.servidos") == 1 and pag.evaluate("__pizzeria.G.monedas") > 0)
+    ok("Tutorial completado", pag.evaluate("__pizzeria.D.tutorial") is True)
+    # Teclado: 1 elige ticket, Enter mete porción, E envía
+    pag.evaluate("__pizzeria.G.espera = 0"); time.sleep(.4)
+    pag.keyboard.press("1")
     pag.focus(".porcion"); pag.keyboard.press("Enter")
-    ok("Teclado: Enter pone la porción en el plato", pag.evaluate("__pizzeria.E.plato.length") == 1)
+    ok("Teclado: Enter mete la porción", pag.evaluate("__pizzeria.G.tickets.reduce((a,t)=>a+t.caja.length,0)") >= 1)
     pag.evaluate("document.activeElement.blur()")
-    antes = pag.evaluate("__pizzeria.E.intentos + __pizzeria.E.servidos")
-    pag.keyboard.press("s")
-    ok("Teclado: S sirve", pag.evaluate("__pizzeria.E.intentos + __pizzeria.E.servidos") == antes + 1)
-    if pag.locator("#btnSiguiente").count() == 0:   # si falló, resolver bien
-        resolver(pag, clic_real=True)
-    pag.click("#btnSiguiente")
-    while pag.locator("#capa:not(.oculto)").count() == 0:
-        resolver(pag, clic_real=True); pag.click("#btnSiguiente")
-    ok("Fin de jornada con estrellas", "estrellas" in (pag.get_attribute(".capa .estr", "aria-label") or ""))
-    ok("Jornada 1 superada y guardada", pag.evaluate("JSON.parse(localStorage.getItem('pichu.pizzeria.v1')).estrellas['1']") >= 1)
-    pag.screenshot(path=f"{CAP}/pz_fin.png")
+    antes = pag.evaluate("__pizzeria.G.servidos + __pizzeria.G.tickets.reduce((a,t)=>a+t.intentos,0)")
+    pag.keyboard.press("e"); time.sleep(.6)
+    ok("Teclado: E envía", pag.evaluate("__pizzeria.G.servidos + __pizzeria.G.tickets.reduce((a,t)=>a+t.intentos,0) + __pizzeria.G.resueltos") > antes)
+    # Pausa
+    pag.keyboard.press("p")
+    ok("Pausa con P", pag.evaluate("__pizzeria.G.pausa") is True and pag.is_visible("#capa"))
+    pag.keyboard.press("Escape")
+    ok("Escape reanuda", pag.evaluate("__pizzeria.G.pausa") is False)
+    ok("Termina el turno 1", jugar_turno(pag))
+    ok("Fin de turno con estrellas", "estrellas" in (pag.get_attribute(".caja-capa .estrellas", "aria-label") or ""))
+    pag.screenshot(path=f"{CAP}/rush_fin.png")
+    ok("Monedas guardadas", pag.evaluate("JSON.parse(localStorage.getItem('pichu.pizzeria.v2')).monedas") > 0)
     pag.click("#fMenu")
-    ok("La jornada 2 se desbloquea", pag.locator("[data-jornada='2']:not([disabled])").count() == 1)
+    ok("Turno 2 desbloqueado", pag.locator("[data-turno='2']:not([disabled])").count() == 1)
 
-    # ---------- Todas las jornadas, jugando perfecto ----------
+    # ---------- Combo ----------
+    pag.evaluate("__pizzeria.AJ.tranquilo = true; __pizzeria.empezarTurno(2)"); time.sleep(.3)
+    for _ in range(3):
+        pag.evaluate("__pizzeria.G.espera = 0"); time.sleep(.15)
+        servir_activo(pag); time.sleep(.55)
+    ok("Racha de 3: multiplicador x2", "x2" in pag.text_content("#hCombo"), pag.text_content("#hCombo"))
+    pag.screenshot(path=f"{CAP}/rush_racha.png")
+
+    # ---------- Tienda ----------
+    pag.evaluate("__pizzeria.inicio(); __pizzeria.D.monedas = 3000")
+    pag.click("[data-abre='tienda']")
+    for mid in ["horno", "mostrador", "cortador", "luces", "mantel", "neon", "plantas"]:
+        pag.click(f"[data-comprar='{mid}']")
+    ok("Compras en la tienda", pag.evaluate("[__pizzeria.D.mejoras.horno, __pizzeria.D.mejoras.mostrador, __pizzeria.D.mejoras.cortador]") == [1, 1, 1])
+    ok("Se descuentan las monedas", pag.evaluate("__pizzeria.D.monedas") == 3000 - 120 - 150 - 300 - 80 - 80 - 150 - 60)
+    pag.screenshot(path=f"{CAP}/rush_tienda.png")
+    pag.click("#tCerrar")
+    ok("La decoración se ve en Mi pizzería", pag.locator("#escaparate .neon").count() == 1)
+    pag.screenshot(path=f"{CAP}/rush_inicio_deco.png", full_page=True)
+    pag.evaluate("__pizzeria.empezarTurno(3)"); time.sleep(.5)
+    ok("Mostrador XL: 5 huecos", pag.locator("#huecos .pizza").count() == 5)
+    ok("Decoración en la cocina", pag.is_visible("#decoLuces") and "mantel" in pag.get_attribute("#mostrador", "class"))
+    entera = pag.evaluate("(__pizzeria.G.pizzas.find(z=>z.por.every(s=>s==='m'))||{}).id")
+    if entera:
+        pag.click(f"[data-cortar='{entera}']")
+        antes_d = pag.evaluate(f"__pizzeria.G.pizzas.find(z=>z.id==={entera}).d")
+        pag.locator("[data-nuevo]").first.click()
+        ok("Cortador mágico cambia el corte", pag.evaluate(f"__pizzeria.G.pizzas.find(z=>z.id==={entera}).d") != antes_d)
+        n = pag.evaluate("__pizzeria.G.pizzas.length"); pag.click(f"[data-tirar='{entera}']")
+        ok("Tirar quita la pizza", pag.evaluate("__pizzeria.G.pizzas.length") == n - 1)
+    pag.screenshot(path=f"{CAP}/rush_t3_caja.png")
+
+    # ---------- Paciencia (sin modo tranquilo) ----------
+    pag.evaluate("__pizzeria.AJ.tranquilo = false; __pizzeria.empezarTurno(2)"); time.sleep(.3)
+    pag.evaluate("__pizzeria.G.tickets[0].resto = 0.05"); time.sleep(.8)
+    ok("Se acaba la paciencia: pedido perdido", "perdido" in pag.text_content("#aviso").lower() and pag.evaluate("__pizzeria.G.resueltos") == 1)
+    pag.evaluate("__pizzeria.AJ.tranquilo = true")
+
+    # ---------- Los 8 turnos jugando perfecto ----------
     vistos = set()
-    for j in range(1, 8):
-        for vuelta in range(2):
-            pag.evaluate(f"__pizzeria.empezarJornada({j})")
-            n = pag.evaluate("__pizzeria.J.clientes")
-            for k in range(n):
-                vistos.add(pag.evaluate("__pizzeria.E.pedido.tipo"))
-                if j == 5 and k == 0 and vuelta == 0: pag.screenshot(path=f"{CAP}/pz_j5_caja.png")
-                if pag.evaluate("__pizzeria.E.pedido.tipo") == "div_cuantas" and "pz_j6" not in str(vistos): vistos.add("pz_j6"); pag.screenshot(path=f"{CAP}/pz_j6_pregunta.png")
-                if pag.evaluate("__pizzeria.E.pedido.tipo") == "condicion" and "pz_j7" not in str(vistos): vistos.add("pz_j7"); pag.screenshot(path=f"{CAP}/pz_j7_critico.png")
-                if not resolver(pag): ok(f"J{j}: pedido sin solución", False, pag.evaluate("JSON.stringify(__pizzeria.E.pedido)")); break
-                if "propina" not in pag.text_content("#feedback"): ok(f"J{j}: solución rechazada", False, pag.text_content("#feedback")); break
-                pag.click("#btnSiguiente")
-            est = pag.evaluate(f"JSON.parse(localStorage.getItem('pichu.pizzeria.v1')).estrellas['{j}']")
-            ok(f"Jornada {j} (vuelta {vuelta+1}) jugando perfecto: 3 estrellas", est == 3, est)
-            pag.click("#fMenu")
-    for t in ["suma", "mult_entero", "fraccion_de", "div_entero", "div_cuantas", "condicion"]:
-        ok(f"Aparece el tipo de pedido «{t}»", t in vistos)
-
-    # Contra reloj
-    pag.evaluate("__pizzeria.AJ.reloj = true; __pizzeria.empezarJornada(2)")
-    time.sleep(.6)
-    ok("Contra reloj: barra de paciencia visible", pag.is_visible("#paciencia"))
-    pag.evaluate("__pizzeria.AJ.reloj = false")
-    pag.click("#btnMenu")
+    for t in range(1, 9):
+        pag.evaluate(f"__pizzeria.empezarTurno({t})"); time.sleep(.2)
+        fin = jugar_turno(pag, vistos)
+        est = pag.evaluate(f"__pizzeria.D.estrellas['{t}']")
+        ok(f"Turno {t} jugando perfecto: 3 estrellas", fin and est == 3, est)
+        if t in (5, 6, 8): pass
+    for tipo in ["suma", "mult_entero", "fraccion_de", "div_entero", "div_cuantas", "condicion"]:
+        ok(f"Aparece el pedido «{tipo}»", tipo in vistos)
+    pag.evaluate("__pizzeria.inicio()")
+    ok("Categoría sube con las estrellas", pag.text_content("#rango") == "Imperio πCHU", pag.text_content("#rango"))
+    # capturas de turnos con multiplicar, dividir y jefe
+    for t, nombre in [(5, "rush_t5"), (6, "rush_t6"), (8, "rush_t8")]:
+        pag.evaluate(f"__pizzeria.empezarTurno({t})"); time.sleep(.3)
+        pag.evaluate("__pizzeria.G.espera = 0"); time.sleep(.3); pag.evaluate("__pizzeria.G.espera = 0"); time.sleep(.6)
+        pag.screenshot(path=f"{CAP}/{nombre}.png")
+    pag.evaluate("__pizzeria.inicio()")
     ok("Botón ← πCHU presente", pag.locator("#pichu-volver").count() == 1)
     ok("Sin errores de consola", not errores, "; ".join(errores))
 
     # Móvil
     m = nav.new_context(viewport={"width": 390, "height": 844}, device_scale_factor=2, is_mobile=True, has_touch=True)
-    pm = m.new_page(); pm.goto(URL); pm.evaluate("localStorage.setItem('pichu.pizzeria.v1', JSON.stringify({tutorial:true,estrellas:{1:1,2:1,3:1,4:1,5:1,6:1}}))"); pm.reload()
-    pm.click("[data-jornada='3']"); time.sleep(.3)
+    pm = m.new_page(); pm.goto(URL)
+    pm.evaluate("localStorage.setItem('pichu.pizzeria.v2', JSON.stringify({tutorial:true,estrellas:{1:2,2:1},monedas:50,ajustes:{tranquilo:true,musica:false}}))"); pm.reload()
+    pm.screenshot(path=f"{CAP}/rush_movil_inicio.png", full_page=True)
+    pm.click("[data-turno='3']"); time.sleep(1.2)
+    pm.evaluate("__pizzeria.G.espera = 0"); time.sleep(.4)
     pm.locator(".porcion").first.dispatch_event("click")
-    pm.screenshot(path=f"{CAP}/pz_movil.png", full_page=True)
+    pm.screenshot(path=f"{CAP}/rush_movil.png", full_page=True)
     ok("Móvil sin desbordamiento horizontal", pm.evaluate("document.documentElement.scrollWidth") <= 392, pm.evaluate("document.documentElement.scrollWidth"))
     nav.close()
 

@@ -6,7 +6,7 @@
 window.MARCA = {
   nombre: "πCHU",
   lema: "Matemáticas que no te esperabas",
-  version: "0.4.0",
+  version: "0.5.0",
   autor: "Juan Antonio Campos Jiménez",
 
   // Cursos: de momento la portada NO los muestra (se organiza por juegos).
@@ -45,11 +45,11 @@ window.MARCA = {
     },
     {
       id: "pizzeria",
-      titulo: "Pizzería πCHU",
-      subtitulo: "Sirve los pedidos exactos",
+      titulo: "Pizza Rush",
+      subtitulo: "La cocina de fracciones de πCHU",
       curso: "1.º ESO",
       saber: "Fracciones: equivalencias, suma, multiplicación y división",
-      descripcion: "Sirve pedidos exactos juntando porciones, reparte pizzas entre amigos y supera al Crítico Gastronómico. Suma, multiplica y divide fracciones.",
+      descripcion: "Cocina a toda prisa: tickets con cuenta atrás, horno, rachas y una pizzería que mejoras con tus monedas. Suma, multiplica y divide fracciones.",
       simbolo: "🍕",
       url: "applets/pizzeria/",
       estado: "jugar",

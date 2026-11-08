@@ -3,11 +3,11 @@
 Portada que reúne los juegos y laboratorios de matemáticas interactivos de Juan Antonio Campos Jiménez
 (ESO y Bachillerato). Web estática: HTML, CSS y JavaScript, sin frameworks, sin registro y sin recoger datos personales.
 
-## Qué incluye (versión 0.4.0)
+## Qué incluye (versión 0.5.0)
 | Juego | Curso (de momento no se muestra) | Estado |
 |---|---|---|
 | πCHU Exprés · El reino de la divisibilidad | 1.º ESO | Disponible |
-| Pizzería πCHU v0.1 (fracciones: equivalencias, suma, multiplicación y división) | 1.º ESO | Disponible |
+| Pizza Rush · Pizzería πCHU v0.2 (fracciones: equivalencias, suma, multiplicación y división) | 1.º ESO | Disponible |
 | Integer Ninja | 1.º ESO | Enlazado a la versión de Netlify (v0.5); pendiente de copiar aquí |
 | Laboratorio de Proporcionalidad · cartas de ecuaciones · cartas de funciones | 1.º ESO · 4.º ESO · 1.º Bach | En diseño |
 
@@ -36,13 +36,13 @@ pip install playwright && python3 tests/prueba_navegador.py . capturas
 python3 tests/prueba_pizzeria.py . capturas
 ```
 
-## Pizzería πCHU: cómo modificarla
+## Pizza Rush (Pizzería πCHU): cómo modificarla
 El juego se edita en `src/pizzeria/` (`motor.js` = matemáticas, `juego.html` = pantalla, `personajes/` = imágenes).
 Después se genera el archivo final con:
 ```
 python3 src/pizzeria/build.py
 ```
-Los nombres de los personajes están al principio del código de `juego.html` (lista `CLIENTES`).
+Los turnos, las mejoras de la tienda y sus precios están en `motor.js` (`TURNOS` y `MEJORAS`).
 
 ## Publicar en GitHub Pages
 1. Sube esta carpeta a un repositorio **público** de GitHub (rama `main`).
