@@ -1,0 +1,664 @@
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Pizzería πCHU · Fracciones</title>
+<meta name="theme-color" content="#332B2A">
+<!-- πCHU: botón para volver a la portada -->
+<script src="../../compartido/volver.js" defer></script>
+<style>
+@font-face{font-family:"Lato";font-weight:400;font-display:swap;src:url("../../compartido/fuentes/lato-latin-400-normal.woff2") format("woff2")}
+@font-face{font-family:"Lato";font-weight:700;font-display:swap;src:url("../../compartido/fuentes/lato-latin-700-normal.woff2") format("woff2")}
+@font-face{font-family:"Lato";font-weight:900;font-display:swap;src:url("../../compartido/fuentes/lato-latin-900-normal.woff2") format("woff2")}
+:root{
+  --espresso:#332B2A; --salvia:#5A8A78; --coral:#E46D4D; --crema:#F4EDD7;
+  --coral-oscuro:#A8402A; --salvia-oscuro:#3F6E5C; --papel:#FFFCF3; --linea:#D9CFB4; --oro:#E8B04B;
+  --masa:#D9A55B; --queso:#F6D58E; --salsa:#E46D4D; --peperoni:#A8402A;
+  --fuente:"Lato",system-ui,-apple-system,"Segoe UI",Roboto,sans-serif;
+}
+*,*::before,*::after{box-sizing:border-box}
+body{margin:0;font-family:var(--fuente);background:var(--crema);color:var(--espresso);line-height:1.45;min-height:100vh}
+button{font:inherit}
+:focus-visible{outline:3px solid var(--coral-oscuro);outline-offset:3px}
+.oculto{display:none!important}
+.solo-lector{position:absolute!important;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0);white-space:nowrap}
+.btn{display:inline-flex;align-items:center;justify-content:center;gap:.4em;min-height:46px;padding:.5em 1.2em;border-radius:999px;border:2px solid transparent;background:var(--salvia-oscuro);color:#fff;font-weight:900;cursor:pointer;text-decoration:none}
+.btn:hover{background:var(--espresso)}
+.btn.sec{background:transparent;color:var(--espresso);border-color:var(--espresso)}
+.btn.sec:hover{background:var(--espresso);color:#fff}
+.btn.coral{background:var(--coral-oscuro)}
+.btn[disabled]{opacity:.45;cursor:not-allowed}
+.btn.peq{min-height:40px;padding:.3em .9em;font-size:.95rem}
+.tarjeta{background:var(--papel);border:1px solid var(--linea);border-radius:18px;box-shadow:0 2px 0 rgba(51,43,42,.08),0 8px 24px rgba(51,43,42,.08)}
+/* fracciones apiladas */
+.fr{display:inline-flex;flex-direction:column;align-items:center;vertical-align:middle;line-height:1;margin:0 .12em;font-weight:900}
+.fr>span:first-child{border-bottom:2px solid currentColor;padding:0 .12em .08em}
+.fr>span:last-child{padding:.08em .12em 0}
+
+/* ---------- Cabecera ---------- */
+header.hud{display:flex;flex-wrap:wrap;align-items:center;gap:.6rem 1rem;padding:.6rem 1rem;background:var(--espresso);color:var(--crema)}
+.hud .titulo{font-weight:900;font-size:1.15rem;margin-right:auto}
+.hud .titulo .pi{color:var(--coral)}
+.dato{display:flex;flex-direction:column;align-items:center;min-width:64px;line-height:1.1}
+.dato small{font-size:.7rem;letter-spacing:.06em;text-transform:uppercase;opacity:.8}
+.dato b{font-size:1.15rem}
+.hud .btn{background:transparent;border-color:var(--crema);color:var(--crema)}
+.hud .btn:hover{background:var(--crema);color:var(--espresso)}
+
+/* ---------- Inicio ---------- */
+#inicio{max-width:1000px;margin:0 auto;padding:1.5rem 1rem 3rem}
+.portada{display:grid;grid-template-columns:auto 1fr;gap:1.2rem;align-items:center;margin-bottom:1.5rem}
+.portada img{width:150px}
+.portada h1{font-size:clamp(2rem,5vw,3rem);margin:0;font-weight:900}
+.portada h1 .pi{color:var(--coral)}
+.portada p{margin:.3rem 0 0;font-size:1.1rem;max-width:46ch}
+.jornadas{display:grid;grid-template-columns:repeat(auto-fill,minmax(210px,1fr));gap:.9rem;padding:0;list-style:none}
+.jornada{display:flex;flex-direction:column;gap:.3rem;padding:1rem;text-align:left;cursor:pointer;color:inherit;border:2px solid var(--linea)}
+.jornada:hover:not([disabled]){border-color:var(--espresso)}
+.jornada[disabled]{opacity:.55;cursor:not-allowed}
+.jornada .num{font-size:.8rem;font-weight:900;color:var(--coral-oscuro);letter-spacing:.05em;text-transform:uppercase}
+.jornada b{font-size:1.15rem}
+.jornada .estr{font-size:1.2rem;letter-spacing:.1em}
+.acciones-inicio{display:flex;flex-wrap:wrap;gap:.6rem;margin-top:1.4rem}
+
+/* ---------- Juego ---------- */
+#juego{max-width:1180px;margin:0 auto;padding:1rem;display:grid;grid-template-columns:300px 1fr;gap:1rem;align-items:start}
+@media (max-width:860px){#juego{grid-template-columns:1fr}}
+.cliente{padding:1rem;display:flex;flex-direction:column;align-items:center;text-align:center;gap:.5rem;position:relative}
+.cliente img{width:min(200px,50vw);height:auto;transition:transform .3s}
+.cliente img.contento{transform:translateY(-8px) rotate(-3deg)}
+.cliente img.enfadado{transform:rotate(4deg) scale(.96)}
+.cliente .nombre{font-weight:900}
+.bocadillo{position:relative;background:#fff;border:2px solid var(--espresso);border-radius:16px;padding:.8rem 1rem;font-size:1.2rem;font-weight:700;width:100%}
+.bocadillo::before{content:"";position:absolute;top:-12px;left:50%;transform:translateX(-50%);border:10px solid transparent;border-bottom-color:var(--espresso);border-top:0}
+.bocadillo .fr{font-size:1.25em}
+.paciencia{width:100%;height:10px;border-radius:999px;background:var(--linea);overflow:hidden}
+.paciencia>span{display:block;height:100%;background:var(--salvia);transition:width .25s linear}
+.intentos{font-size:.9rem}
+.lado{display:flex;flex-direction:column;gap:1rem}
+.zona{padding:1rem}
+.zona h2{margin:0 0 .6rem;font-size:1.1rem;font-weight:900;display:flex;justify-content:space-between;align-items:center;gap:.5rem;flex-wrap:wrap}
+.zona h2 small{font-weight:700;font-size:.85rem;color:var(--salvia-oscuro)}
+.mostrador{display:flex;flex-wrap:wrap;gap:.6rem 1rem;justify-content:center}
+.pizza{display:flex;flex-direction:column;align-items:center;gap:.2rem;width:150px}
+.pizza svg{width:150px;height:150px;overflow:visible}
+.pizza .corte{font-size:.9rem;font-weight:700}
+.porcion{cursor:pointer;transition:transform .15s}
+.porcion:hover{filter:brightness(1.07)}
+.porcion:focus{outline:none}
+.porcion:focus-visible path.borde{stroke:var(--coral-oscuro);stroke-width:5}
+.hueco path{fill:rgba(51,43,42,.06);stroke:var(--espresso);stroke-dasharray:4 4;stroke-width:1.5}
+.plato-wrap{display:flex;flex-wrap:wrap;gap:1rem;align-items:center;justify-content:center}
+.plato-wrap svg{width:170px;height:170px}
+.chips{display:flex;flex-wrap:wrap;gap:.4rem;justify-content:center;min-height:44px;align-items:center}
+.chip{display:inline-flex;align-items:center;gap:.3em;min-height:44px;padding:.2em .7em;border-radius:12px;border:2px solid var(--espresso);background:#fff;color:var(--espresso);cursor:pointer;font-size:1.05rem}
+.chip:hover{background:var(--crema)}
+.caja{display:flex;flex-direction:column;align-items:center;gap:.3rem;font-size:.95rem;text-align:center;max-width:260px}
+.caja svg{width:120px;height:90px}
+.vacio{opacity:.7;font-style:italic}
+.botones{display:flex;flex-wrap:wrap;gap:.6rem;justify-content:center;margin-top:.8rem}
+.respuestas{display:flex;flex-wrap:wrap;gap:.6rem;justify-content:center;margin-top:.6rem}
+.respuestas .btn{min-width:72px;font-size:1.3rem}
+.feedback{padding:1rem;font-size:1.05rem}
+.feedback.bien{border-color:var(--salvia);background:#EEF5F1}
+.feedback.mal{border-color:var(--coral-oscuro);background:#FBEDE7}
+.feedback h3{margin:0 0 .4rem;font-size:1.2rem}
+.feedback .op{font-size:1.1rem;font-weight:700;margin:.3rem 0}
+.barras{display:block;margin:.5rem 0}
+.narrador{display:flex;gap:.6rem;align-items:flex-start;padding:.8rem}
+.narrador img{width:56px;flex:none}
+.narrador p{margin:0}
+
+/* ---------- Capa ---------- */
+.capa{position:fixed;inset:0;background:rgba(51,43,42,.65);display:grid;place-items:center;padding:1rem;z-index:50}
+.capa .caja-capa{background:var(--papel);border-radius:20px;padding:1.4rem;max-width:560px;width:100%;max-height:90vh;overflow:auto;text-align:center}
+.capa h2{margin:.2rem 0 .6rem;font-weight:900}
+.capa .estr{font-size:2.4rem;letter-spacing:.15em}
+.capa ul{text-align:left}
+.capa label{display:flex;gap:.6rem;align-items:flex-start;text-align:left;margin:.7rem 0}
+.capa input[type=checkbox]{width:22px;height:22px;flex:none;margin-top:2px}
+
+/* ---------- Animaciones ---------- */
+@keyframes salto{0%,100%{transform:translateY(0)}50%{transform:translateY(-10px)}}
+.celebra{animation:salto .5s ease 2}
+@keyframes temblor{0%,100%{transform:translateX(0)}25%{transform:translateX(-6px)}75%{transform:translateX(6px)}}
+.tiembla{animation:temblor .3s ease 2}
+.sin-mov *,.sin-mov *::before,.sin-mov *::after{animation:none!important;transition:none!important}
+@media (prefers-reduced-motion:reduce){*,*::before,*::after{animation:none!important;transition:none!important}}
+</style>
+</head>
+<body>
+
+<header class="hud">
+  <span class="titulo">🍕 Pizzería <span class="pi">π</span>CHU</span>
+  <span class="dato oculto" id="hJornada"><small>Jornada</small><b></b></span>
+  <span class="dato oculto" id="hClientes"><small>Clientes</small><b></b></span>
+  <span class="dato oculto" id="hPropinas"><small>Propinas</small><b></b></span>
+  <button class="btn peq" id="btnAyuda" type="button">Cómo se juega</button>
+  <button class="btn peq" id="btnAjustes" type="button">Ajustes</button>
+  <button class="btn peq oculto" id="btnMenu" type="button">Jornadas</button>
+</header>
+
+<!-- ================= INICIO ================= -->
+<main id="inicio">
+  <section class="portada">
+    <img src="{{IMG:pichu}}" alt="">
+    <div>
+      <h1>Pizzería <span class="pi">π</span>CHU</h1>
+      <p>Llegan clientes con pedidos de pizza. Junta porciones para servir cada pedido <b>exacto</b>: ni de más ni de menos.</p>
+    </div>
+  </section>
+  <h2>Elige jornada</h2>
+  <ul class="jornadas" id="listaJornadas"></ul>
+  <div class="acciones-inicio">
+    <button class="btn sec" type="button" data-abre="ayuda">Cómo se juega</button>
+    <button class="btn sec" type="button" data-abre="ajustes">Ajustes</button>
+  </div>
+  <p style="margin-top:1.5rem;font-size:.9rem">Tu progreso se guarda solo en este navegador. No se recogen datos personales.</p>
+</main>
+
+<!-- ================= JUEGO ================= -->
+<main id="juego" class="oculto">
+  <section class="tarjeta cliente" aria-labelledby="nomCliente">
+    <img id="imgCliente" src="" alt="">
+    <div class="nombre" id="nomCliente"></div>
+    <div class="bocadillo" id="pedido" aria-live="polite"></div>
+    <div class="paciencia oculto" id="paciencia" role="progressbar" aria-label="Paciencia del cliente" aria-valuemin="0" aria-valuemax="100"><span></span></div>
+    <div class="intentos" id="intentos"></div>
+  </section>
+
+  <div class="lado">
+    <section class="tarjeta narrador oculto" id="narrador" aria-live="polite">
+      <img src="{{IMG:pichu}}" alt="πCHU"><p id="narradorTxt"></p>
+    </section>
+
+    <section class="tarjeta zona" id="zonaMostrador" aria-labelledby="titMostrador">
+      <h2 id="titMostrador">Mostrador <small>Toca una porción para ponerla en el plato</small></h2>
+      <div class="mostrador" id="mostrador"></div>
+    </section>
+
+    <section class="tarjeta zona" id="zonaPlato" aria-labelledby="titPlato">
+      <h2 id="titPlato">Plato del cliente <small id="ayudaPlato"></small></h2>
+      <div class="plato-wrap" id="plato"></div>
+      <div class="botones">
+        <button class="btn sec" id="btnVaciar" type="button">Vaciar plato</button>
+        <button class="btn" id="btnServir" type="button">Servir <span aria-hidden="true">🍕</span></button>
+      </div>
+    </section>
+
+    <section class="tarjeta zona oculto" id="zonaPregunta" aria-labelledby="titPregunta">
+      <h2 id="titPregunta">Piensa y contesta</h2>
+      <div class="plato-wrap" id="dibujoPregunta"></div>
+      <div class="respuestas" id="respuestas" role="group" aria-label="Respuestas"></div>
+    </section>
+
+    <section class="tarjeta feedback oculto" id="feedback" aria-live="polite"></section>
+  </div>
+</main>
+
+<div class="capa oculto" id="capa" role="dialog" aria-modal="true"><div class="caja-capa" id="capaCaja"></div></div>
+
+<script>
+/*MOTOR*/
+</script>
+<script>
+(function () {
+"use strict";
+const M = window.Motor, U = M.U;
+const $ = s => document.querySelector(s);
+const esc = s => String(s).replace(/[&<>"']/g, c => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" }[c]));
+const fx = s => esc(s).replace(/(\d+)\/(\d+)/g, '<span class="fr" aria-label="$1 entre $2"><span>$1</span><span>$2</span></span>');
+const azar = a => a[Math.floor(Math.random() * a.length)];
+
+/* ---------------- Personajes (cambia aquí los nombres) ---------------- */
+const IMG = { pichu:"{{IMG:pichu}}", critico:"{{IMG:critico}}", salsita:"{{IMG:salsita}}", pirata:"{{IMG:pirata}}", pizarra:"{{IMG:pizarra}}",
+  reina:"{{IMG:reina}}", compas:"{{IMG:compas}}", malabares:"{{IMG:malabares}}", escudo:"{{IMG:escudo}}" };
+const CLIENTES = [
+  { id: "salsita", nombre: "Salsita" }, { id: "pirata", nombre: "Capitán Porciones" }, { id: "pizarra", nombre: "Pizarrín" },
+  { id: "reina", nombre: "Reina Ración" }, { id: "compas", nombre: "Don Compás" }, { id: "malabares", nombre: "Profesora Malabares" },
+  { id: "escudo", nombre: "Dama del Escudo" }
+];
+const CRITICO = { id: "critico", nombre: "El Crítico Gastronómico" };
+const GRACIAS = ["¡Perfecto, justo lo que pedí!", "¡Qué rica! Gracias.", "¡Exacto! Volveré.", "¡Bravo, ni una miga de más!"];
+const QUEJAS_CORTO = ["¡Eh, esto es poco!", "Me falta pizza…", "Mi pedido era más grande."];
+const QUEJAS_PASADO = ["¡Esto es demasiado!", "Yo no pedí tanto.", "¡Me sobra pizza!"];
+
+/* ---------------- Guardado ---------------- */
+const CLAVE = "pichu.pizzeria.v1";
+const cargar = () => { try { return JSON.parse(localStorage.getItem(CLAVE)) || null; } catch (e) { return null; } };
+const DATOS = Object.assign({ estrellas: {}, record: {}, tutorial: false, ajustes: { reloj: false, sonido: true, movimiento: true } }, cargar() || {});
+const guardar = () => { try { localStorage.setItem(CLAVE, JSON.stringify(DATOS)); } catch (e) {} };
+const AJ = DATOS.ajustes;
+const alias = (() => { try { const p = JSON.parse(localStorage.getItem("pichu.perfil.v1")); return p && p.alias; } catch (e) { return null; } })();
+function aplicarMovimiento() { document.body.classList.toggle("sin-mov", !AJ.movimiento); }
+
+/* ---------------- Sonido (generado en el navegador) ---------------- */
+let ctxAudio = null;
+function tono(f, dur = .12, tipo = "sine", vol = .12, retraso = 0) {
+  if (!AJ.sonido) return;
+  try {
+    ctxAudio = ctxAudio || new (window.AudioContext || window.webkitAudioContext)();
+    const o = ctxAudio.createOscillator(), g = ctxAudio.createGain(), t = ctxAudio.currentTime + retraso;
+    o.type = tipo; o.frequency.value = f; g.gain.setValueAtTime(vol, t); g.gain.exponentialRampToValueAtTime(.001, t + dur);
+    o.connect(g); g.connect(ctxAudio.destination); o.start(t); o.stop(t + dur);
+  } catch (e) {}
+}
+const sfx = {
+  coger: () => tono(660, .06, "triangle"), soltar: () => tono(440, .06, "triangle"),
+  bien: () => { tono(523, .12); tono(659, .12, "sine", .12, .1); tono(784, .2, "sine", .12, .2); },
+  mal: () => { tono(220, .2, "sawtooth", .06); tono(196, .25, "sawtooth", .06, .15); },
+  moneda: () => { tono(988, .07, "square", .05); tono(1319, .12, "square", .05, .07); }
+};
+
+/* ---------------- Estado de la jornada ---------------- */
+let J = null, E = null, temporizador = null, sigId = 1;
+
+function nuevaPizza(d) { return { id: sigId++, d, porciones: Array.from({ length: d }, () => "mostrador"), sal: Math.random() * 1000 }; }
+const enMostrador = () => E.pizzas.flatMap(p => p.porciones.map((st, i) => st === "mostrador" ? U / p.d : 0)).filter(Boolean);
+
+function empezarJornada(id) {
+  J = M.JORNADAS.find(j => j.id === id);
+  E = { cliente: 0, servidos: 0, perfectos: 0, propinas: 0, pizzas: [], plato: [], pedido: null, quien: null, intentos: 0, resuelto: false, ultimo: null };
+  const tutorial = id === 1 && !DATOS.tutorial;
+  if (tutorial) E.pizzas = [nuevaPizza(2), nuevaPizza(4), nuevaPizza(4)];
+  else for (let i = 0; i < J.pizzas; i++) E.pizzas.push(nuevaPizza(azar(J.dens)));
+  E.tutorial = tutorial;
+  $("#inicio").classList.add("oculto"); $("#juego").classList.remove("oculto");
+  ["#hJornada", "#hClientes", "#hPropinas", "#btnMenu"].forEach(s => $(s).classList.remove("oculto"));
+  siguienteCliente();
+}
+
+function hornear() {
+  // Quita pizzas vacías y añade una recién hecha
+  E.pizzas = E.pizzas.filter(p => p.porciones.some(s => s === "mostrador"));
+  while (E.pizzas.length >= J.pizzas + 1) E.pizzas.shift();
+  E.pizzas.push(nuevaPizza(azar(J.dens)));
+}
+
+function siguienteCliente() {
+  pararReloj();
+  if (E.cliente >= J.clientes) return finJornada();
+  E.cliente++; E.intentos = 0; E.resuelto = false; E.plato = [];
+  E.pizzas = E.pizzas.filter(p => p.porciones.some(s => s === "mostrador"));
+  let pedido = null, vueltas = 0;
+  if (E.tutorial && E.cliente === 1) {
+    pedido = { tipo: "suma", objetivo: 18, escrito: "3/4", texto: "Quiero 3/4 de pizza, por favor.", op: null, minimo: 2 };
+  }
+  while (!pedido && vueltas < 12) {
+    if (enMostrador().reduce((a, b) => a + b, 0) < 12 || vueltas > 0) hornear();
+    pedido = M.generarPedido(enMostrador(), J);
+    vueltas++;
+  }
+  E.pedido = pedido;
+  const opciones = CLIENTES.filter(c => c.id !== E.ultimo);
+  E.quien = J.jefe && pedido.tipo === "condicion" ? CRITICO : azar(opciones);
+  E.ultimo = E.quien.id;
+  $("#feedback").classList.add("oculto");
+  render();
+  narrar(textoNarrador());
+  if (AJ.reloj) empezarReloj();
+  const primero = pedido.tipo === "div_cuantas" ? $("#respuestas button") : $(".porcion");
+  if (primero && document.activeElement && document.activeElement.closest && document.activeElement.closest("#feedback")) primero.focus();
+}
+
+function textoNarrador() {
+  const p = E.pedido;
+  if (E.tutorial && E.cliente === 1) return "¡Bienvenido a la pizzería! Este cliente quiere 3/4 de pizza. Toca porciones del mostrador para ponerlas en el plato. Fíjate en el tamaño: 1/2 es más grande que 1/4. Cuando creas que está justo, pulsa Servir.";
+  if (E.tutorial && E.cliente === 2) return "¡Muy bien! Hay muchas formas de servir lo mismo. Si usas el menor número de porciones, ganas propina extra por servicio perfecto.";
+  if (J.vista === "caja" && E.cliente === 1 && J.id === 3) return "Desde hoy servimos en caja: ya no ves cómo se llena el plato. ¡Calcula tú cuánto llevas antes de servir!";
+  if (p.tipo === "div_cuantas" && !E.vistoCuantas) { E.vistoCuantas = true; return "Pregunta de reparto: no hay que servir, solo pensar cuántas porciones salen. Mira el dibujo."; }
+  if (p.tipo === "condicion" && !E.vistoCritico) { E.vistoCritico = true; return "¡Ha llegado el Crítico Gastronómico! Sus pedidos tienen condiciones: léelas bien."; }
+  return "";
+}
+function narrar(t) { $("#narrador").classList.toggle("oculto", !t); $("#narradorTxt").innerHTML = fx(t); }
+
+/* ---------------- Dibujo de pizzas (SVG) ---------------- */
+const R = 66, C = 75;
+function punto(ang, r) { const a = (ang - 90) * Math.PI / 180; return [C + r * Math.cos(a), C + r * Math.sin(a)]; }
+function sector(a0, a1, r = R) {
+  if (a1 - a0 >= 359.99) return `M ${C} ${C - r} A ${r} ${r} 0 1 1 ${C - .01} ${C - r} Z`;
+  const [x0, y0] = punto(a0, r), [x1, y1] = punto(a1, r);
+  return `M ${C} ${C} L ${x0} ${y0} A ${r} ${r} 0 ${a1 - a0 > 180 ? 1 : 0} 1 ${x1} ${y1} Z`;
+}
+function rodaja(a0, a1, d, semilla) {
+  // masa, queso y peperoni de una porción
+  let s = `<path class="borde" d="${sector(a0, a1)}" fill="var(--masa)" stroke="var(--espresso)" stroke-width="2"/>`;
+  s += `<path d="${sector(a0 + .8, a1 - .8, R - 7)}" fill="var(--queso)"/>`;
+  const n = d <= 4 ? 2 : 1;
+  for (let k = 0; k < n; k++) {
+    const t = (k + 1) / (n + 1), ang = a0 + (a1 - a0) * t, r = R * (d <= 4 ? (k % 2 ? .62 : .42) : .66);
+    const [x, y] = punto(ang + ((semilla * 7 + k * 13) % 7 - 3), r);
+    s += `<circle cx="${x.toFixed(1)}" cy="${y.toFixed(1)}" r="${d <= 6 ? 6 : 4.5}" fill="var(--peperoni)" opacity=".9"/>`;
+  }
+  const [lx, ly] = punto((a0 + a1) / 2, R * (d >= 8 ? .8 : .5));
+  const fs = d >= 12 ? 9.5 : d >= 8 ? 11 : 14;
+  s += `<text x="${lx.toFixed(1)}" y="${(ly + fs / 3).toFixed(1)}" font-size="${fs}" font-weight="900" text-anchor="middle" fill="var(--espresso)" paint-order="stroke" stroke="#FFF7E3" stroke-width="3">1/${d}</text>`;
+  return s;
+}
+function pizzaSVG(p) {
+  const paso = 360 / p.d;
+  let s = `<svg viewBox="0 0 150 150" aria-hidden="false" role="group" aria-label="Pizza cortada en ${M.NOMBRE_CORTE[p.d]}">`;
+  s += `<circle cx="${C}" cy="${C}" r="${R + 4}" fill="#E9DFC6"/>`;
+  p.porciones.forEach((st, i) => {
+    const a0 = i * paso, a1 = (i + 1) * paso;
+    if (st === "mostrador") {
+      s += `<g class="porcion" role="button" tabindex="0" data-p="${p.id}" data-i="${i}" aria-label="Porción de 1/${p.d}, de la pizza cortada en ${M.NOMBRE_CORTE[p.d]}. Ponerla en el plato">${rodaja(a0, a1, p.d, p.sal + i)}</g>`;
+    } else {
+      s += `<g class="hueco"><path d="${sector(a0, a1)}"/></g>`;
+    }
+  });
+  return s + "</svg>";
+}
+function platoSVG(plato) {
+  // Las porciones servidas se colocan una tras otra; si pasan de 1, se usa otro plato
+  const total = plato.reduce((a, x) => a + U / x.d, 0), platos = Math.max(1, Math.ceil(total / U));
+  let out = "", acum = 0;
+  for (let k = 0; k < platos; k++) {
+    let s = `<svg viewBox="0 0 150 150" role="img" aria-label="Plato ${k + 1}"><circle cx="${C}" cy="${C}" r="${R + 6}" fill="#fff" stroke="var(--espresso)" stroke-width="2"/><circle cx="${C}" cy="${C}" r="${R}" fill="none" stroke="var(--linea)" stroke-dasharray="3 4"/>`;
+    plato.forEach((x, j) => {
+      const v = U / x.d, ini = acum, fin = acum + v;
+      const desde = Math.max(ini, k * U), hasta = Math.min(fin, (k + 1) * U);
+      if (hasta > desde) s += `<g>${rodaja((desde - k * U) * 15, (hasta - k * U) * 15, x.d, j)}</g>`;
+      acum = fin;
+    });
+    acum = 0;
+    out += s + "</svg>";
+  }
+  return out;
+}
+
+/* ---------------- Pintar ---------------- */
+function render() {
+  const p = E.pedido;
+  $("#hJornada b").textContent = `${J.id}/7`;
+  $("#hClientes b").textContent = `${E.cliente}/${J.clientes}`;
+  $("#hPropinas b").textContent = E.propinas;
+  $("#imgCliente").src = IMG[E.quien.id]; $("#imgCliente").alt = E.quien.nombre;
+  $("#imgCliente").className = "";
+  $("#nomCliente").textContent = E.quien.nombre;
+  $("#pedido").innerHTML = fx(p.texto);
+  $("#intentos").textContent = E.resuelto ? "" : E.intentos ? "⚠️ Último intento: si fallas, el cliente se va." : "";
+  const pregunta = p.tipo === "div_cuantas";
+  $("#zonaMostrador").classList.toggle("oculto", pregunta);
+  $("#zonaPlato").classList.toggle("oculto", pregunta);
+  $("#zonaPregunta").classList.toggle("oculto", !pregunta);
+  if (pregunta) return renderPregunta();
+  $("#mostrador").innerHTML = E.pizzas.map(z => `<div class="pizza">${pizzaSVG(z)}<span class="corte">Cortada en ${M.NOMBRE_CORTE[z.d]}</span></div>`).join("");
+  renderPlato();
+}
+function renderPlato() {
+  const chips = E.plato.length
+    ? E.plato.map((x, j) => `<button class="chip" type="button" data-quitar="${j}" aria-label="Quitar la porción de 1/${x.d} del plato">${fx("1/" + x.d)} <span aria-hidden="true">✕</span></button>`).join("")
+    : '<span class="vacio">El plato está vacío.</span>';
+  if (J.vista === "plato") {
+    $("#ayudaPlato").textContent = "Toca una porción del plato para devolverla";
+    $("#plato").innerHTML = platoSVG(E.plato) + `<div class="chips">${chips}</div>`;
+  } else {
+    $("#ayudaPlato").textContent = "En caja: calcula tú cuánto llevas";
+    $("#plato").innerHTML = `<div class="caja"><svg viewBox="0 0 120 90" aria-hidden="true"><rect x="6" y="22" width="108" height="62" rx="6" fill="#E9C99A" stroke="var(--espresso)" stroke-width="3"/><path d="M6 22 L20 6 H100 L114 22" fill="#F2DDB8" stroke="var(--espresso)" stroke-width="3"/><text x="60" y="62" font-size="20" font-weight="900" text-anchor="middle" fill="var(--espresso)">πCHU</text></svg>Porciones en la caja:</div><div class="chips">${chips}</div>`;
+  }
+  $("#btnServir").disabled = E.resuelto || !E.plato.length;
+  $("#btnVaciar").disabled = E.resuelto || !E.plato.length;
+}
+function dibujoCantidad(base) {
+  // Dibuja a/b de pizza con pizzas cortadas en b partes (sin pistas de la respuesta)
+  const total = M.aU(base.n, base.d), pizzas = Math.ceil(total / U);
+  let out = "";
+  for (let k = 0; k < pizzas; k++) {
+    const llenas = Math.min(base.d, base.n - k * base.d), paso = 360 / base.d;
+    let s = `<svg viewBox="0 0 150 150" role="img" aria-label="${llenas} porciones de 1/${base.d}"><circle cx="${C}" cy="${C}" r="${R + 4}" fill="#E9DFC6"/>`;
+    for (let i = 0; i < base.d; i++) s += i < llenas ? rodaja(i * paso, (i + 1) * paso, base.d, i) : `<g class="hueco"><path d="${sector(i * paso, (i + 1) * paso)}"/></g>`;
+    out += s + "</svg>";
+  }
+  return out;
+}
+function renderPregunta() {
+  const p = E.pedido;
+  $("#dibujoPregunta").innerHTML = dibujoCantidad(p.base) + `<p style="flex-basis:100%;text-align:center;margin:.2rem 0 0">Esto son ${fx(M.texto(p.base))} de pizza.</p>`;
+  $("#respuestas").innerHTML = p.opciones.map(o => `<button class="btn" type="button" data-resp="${o}" ${E.resuelto ? "disabled" : ""}>${o}</button>`).join("");
+}
+
+/* ---------------- Interacción ---------------- */
+function alternarPorcion(pid, i) {
+  if (E.resuelto) return;
+  const z = E.pizzas.find(p => p.id === pid);
+  if (!z || z.porciones[i] !== "mostrador") return;
+  z.porciones[i] = "plato"; E.plato.push({ pid, i, d: z.d }); sfx.coger();
+  render();
+  const sig = document.querySelector(`.porcion[data-p="${pid}"]`) || document.querySelector(".porcion");
+  if (sig) sig.focus(); else $("#btnServir").focus();
+}
+function quitarDelPlato(j) {
+  if (E.resuelto) return;
+  const x = E.plato.splice(j, 1)[0]; if (!x) return;
+  const z = E.pizzas.find(p => p.id === x.pid); if (z) z.porciones[x.i] = "mostrador";
+  sfx.soltar(); render();
+  const sig = document.querySelector("[data-quitar]") || document.querySelector(".porcion"); if (sig) sig.focus();
+}
+function vaciar() { while (E.plato.length) { const x = E.plato.pop(); const z = E.pizzas.find(p => p.id === x.pid); if (z) z.porciones[x.i] = "mostrador"; } render(); }
+
+function propinaDe(res) {
+  let t = 10; if (E.intentos === 0) t += 5; if (res.perfecto) t += 5;
+  if (AJ.reloj && E.paciencia > .5) t += 5;
+  return t;
+}
+
+function servir() {
+  if (E.resuelto || !E.plato.length) return;
+  const p = E.pedido, res = M.evaluar(p, E.plato.map(x => ({ d: x.d })));
+  if (res.ok) {
+    E.resuelto = true; pararReloj();
+    E.plato.forEach(x => { const z = E.pizzas.find(q => q.id === x.pid); if (z) z.porciones[x.i] = "servida"; });
+    const prop = propinaDe(res);
+    E.servidos++; if (res.perfecto) E.perfectos++; E.propinas += prop;
+    if (E.tutorial && E.cliente === 1) { DATOS.tutorial = true; guardar(); }
+    sfx.bien(); setTimeout(sfx.moneda, 350);
+    render(); $("#imgCliente").classList.add("contento", "celebra");
+    mostrarFeedback(true, `${azar(GRACIAS)} <b>+${prop}</b> de propina${res.perfecto ? " (¡servicio perfecto!)" : ""}.`,
+      `<p class="op">${fx(res.pasos)}</p>${p.op ? `<p class="op">${fx(p.op)}</p>` : ""}${!res.perfecto && p.minimo && p.minimo < E.plato.length ? `<p>Pista para la próxima: se podía servir con solo ${p.minimo} ${p.minimo === 1 ? "porción" : "porciones"}.</p>` : ""}`);
+    return;
+  }
+  // Fallo
+  E.intentos++;
+  sfx.mal();
+  const cmp = M.comparar(res.total, res.objetivo);
+  const queja = p.cond && res.total === res.objetivo ? "¡Eso no cumple mi condición!" : azar(cmp === "corto" ? QUEJAS_CORTO : QUEJAS_PASADO);
+  const detalle = `<p class="op">Has servido: ${fx(res.pasos)}</p>${barras(res.total, res.objetivo)}${res.pista ? `<p><b>Ojo:</b> ${fx(res.pista)}</p>` : ""}`;
+  if (E.intentos >= 2) {
+    E.resuelto = true; pararReloj();
+    const ejemplo = solucionEjemplo();
+    mostrarFeedback(false, `«${queja}» ${E.quien.nombre} se ha ido sin propina.`,
+      detalle + (p.op ? `<p class="op">La operación era: ${fx(p.op)}</p>` : "") + (ejemplo ? `<p>Una forma de servirlo: ${fx(ejemplo)}.</p>` : ""));
+    vaciar(); E.resuelto = true; renderPlato();
+    $("#imgCliente").classList.add("enfadado", "tiembla");
+  } else {
+    mostrarFeedback(false, `«${queja}» ${cmp === "corto" ? "Te has quedado corto." : cmp === "pasado" ? "Te has pasado." : ""} Inténtalo otra vez.`, detalle, false);
+    vaciar();
+    $("#imgCliente").classList.add("tiembla");
+  }
+}
+
+function responder(v) {
+  if (E.resuelto) return;
+  const p = E.pedido;
+  if (v === p.respuesta) {
+    E.resuelto = true; pararReloj();
+    const prop = 10 + (E.intentos === 0 ? 5 : 0);
+    E.servidos++; if (E.intentos === 0) E.perfectos++; E.propinas += prop;
+    sfx.bien(); render(); $("#imgCliente").classList.add("contento", "celebra");
+    mostrarFeedback(true, `¡Exacto, salen ${p.respuesta}! <b>+${prop}</b> de propina.`, `<p class="op">${fx(p.op)}</p><div class="plato-wrap">${dibujoTrozos(p)}</div>`);
+    return;
+  }
+  E.intentos++; sfx.mal();
+  const cuenta = `Dividir entre ${M.texto(p.trozo)} es preguntar cuántas veces cabe ${M.texto(p.trozo)} en ${M.texto(p.base)}.`;
+  if (E.intentos >= 2) {
+    E.resuelto = true; pararReloj(); render();
+    mostrarFeedback(false, `No eran ${v}. ${E.quien.nombre} se ha ido sin propina.`, `<p class="op">${fx(p.op)}</p><p>${fx(cuenta)}</p><div class="plato-wrap">${dibujoTrozos(p)}</div>`);
+    $("#imgCliente").classList.add("enfadado", "tiembla");
+  } else {
+    mostrarFeedback(false, `No son ${v}. Inténtalo otra vez.`, `<p>${fx(cuenta)}</p><p>${v > p.respuesta ? "Te salen demasiadas: ¿cuánto ocupan juntas?" : "Te salen pocas: las porciones son pequeñas, caben más."}</p>`, false);
+    render(); $("#imgCliente").classList.add("tiembla");
+  }
+}
+function dibujoTrozos(p) {
+  // la misma cantidad, cortada en porciones del tamaño pedido
+  const tt = M.aU(p.trozo.n, p.trozo.d), total = p.objetivo, pizzas = Math.ceil(total / U);
+  let out = "";
+  for (let k = 0; k < pizzas; k++) {
+    let s = `<svg viewBox="0 0 150 150" role="img" aria-label="${p.respuesta} porciones de ${M.texto(p.trozo)}"><circle cx="${C}" cy="${C}" r="${R + 4}" fill="#E9DFC6"/>`;
+    for (let t = k * U; t < Math.min(total, (k + 1) * U); t += tt) {
+      const a0 = (t - k * U) * 15, a1 = Math.min(t + tt - k * U, U) * 15;
+      s += rodaja(a0, a1, p.trozo.d, t).replace(/>1\/\d+</, `>${M.texto(p.trozo)}<`);
+    }
+    out += s + "</svg>";
+  }
+  return out;
+}
+
+function solucionEjemplo() {
+  // Busca una forma de servir el pedido con el menor número de porciones (para enseñarla)
+  const p = E.pedido, items = [];
+  E.pizzas.forEach(z => z.porciones.forEach((st, i) => { if (st !== "servida") items.push(z.d); }));
+  const objetivo = p.objetivo, prohib = p.cond && p.cond.modo === "sin" ? p.cond.tam : null, exactas = p.cond && p.cond.modo === "exactas" ? p.cond.k : null;
+  let mejor = null;
+  const usar = items.filter(d => U / d !== prohib).sort((a, b) => a - b);
+  const rec = (i, suma, sel) => {
+    if (suma === objetivo && (!exactas || sel.length === exactas)) { if (!mejor || sel.length < mejor.length) mejor = [...sel]; return; }
+    if (suma > objetivo || i >= usar.length || (mejor && sel.length >= mejor.length && !exactas) || sel.length > 12) return;
+    sel.push(usar[i]); rec(i + 1, suma + U / usar[i], sel); sel.pop();
+    let j = i + 1; while (j < usar.length && usar[j] === usar[i]) j++;
+    rec(j, suma, sel);
+  };
+  rec(0, 0, []);
+  return mejor ? mejor.map(d => "1/" + d).join(" + ") : "";
+}
+
+function barras(total, objetivo) {
+  // Compara lo servido con lo pedido en dos barras (1 pizza = 160 px)
+  const unidad = 160, max = Math.max(total, objetivo, U) / U, W = Math.ceil(max) * unidad + 40;
+  const bar = (y, v, color, txt) => `<text x="0" y="${y + 17}" font-size="13" font-weight="700" fill="var(--espresso)">${txt}</text><rect x="70" y="${y}" width="${Math.max(2, v / U * unidad)}" height="24" rx="5" fill="${color}" stroke="var(--espresso)" stroke-width="1.5"/>`;
+  let s = `<svg class="barras" viewBox="0 0 ${W + 70} 92" width="${W + 70}" style="max-width:100%;height:auto" role="img" aria-label="Comparación: pedido frente a lo servido">`;
+  s += bar(8, objetivo, "var(--salvia)", "Pedido") + bar(46, total, "var(--coral)", "Servido");
+  for (let k = 0; k <= Math.ceil(max); k++) { const x = 70 + k * unidad; s += `<line x1="${x}" y1="2" x2="${x}" y2="76" stroke="var(--espresso)" stroke-dasharray="3 3"/><text x="${x}" y="90" font-size="12" text-anchor="middle" fill="var(--espresso)">${k}</text>`; }
+  return s + "</svg>";
+}
+
+function mostrarFeedback(bien, titulo, cuerpo, conSiguiente = true) {
+  const f = $("#feedback");
+  f.className = "tarjeta feedback " + (bien ? "bien" : "mal");
+  f.innerHTML = `<h3>${bien ? "✔" : "✘"} ${titulo}</h3>${cuerpo}${conSiguiente ? `<div class="botones"><button class="btn" type="button" id="btnSiguiente">${E.cliente >= J.clientes ? "Terminar la jornada" : "Siguiente cliente"}</button></div>` : ""}`;
+  if (conSiguiente) { $("#btnSiguiente").onclick = siguienteCliente; $("#btnSiguiente").focus(); }
+  else f.scrollIntoView({ block: "nearest", behavior: AJ.movimiento ? "smooth" : "auto" });
+}
+
+/* ---------------- Reloj (opcional) ---------------- */
+function empezarReloj() {
+  const dur = 90000 + (J.id - 1) * 5000, ini = Date.now();
+  E.paciencia = 1; $("#paciencia").classList.remove("oculto");
+  temporizador = setInterval(() => {
+    E.paciencia = Math.max(0, 1 - (Date.now() - ini) / dur);
+    $("#paciencia span").style.width = (E.paciencia * 100) + "%";
+    $("#paciencia").setAttribute("aria-valuenow", Math.round(E.paciencia * 100));
+    if (E.paciencia <= 0 && !E.resuelto) {
+      pararReloj(); E.resuelto = true; vaciar(); E.resuelto = true; render();
+      sfx.mal(); mostrarFeedback(false, `${E.quien.nombre} se ha cansado de esperar y se ha ido.`, E.pedido.op ? `<p class="op">${fx(E.pedido.op)}</p>` : "");
+    }
+  }, 250);
+}
+function pararReloj() { clearInterval(temporizador); temporizador = null; if (!AJ.reloj) $("#paciencia").classList.add("oculto"); }
+
+/* ---------------- Fin de jornada ---------------- */
+function finJornada() {
+  pararReloj();
+  const est = M.estrellas(E.servidos, E.perfectos, J.clientes);
+  const previo = DATOS.estrellas[J.id] || 0;
+  DATOS.estrellas[J.id] = Math.max(previo, est);
+  DATOS.record[J.id] = Math.max(DATOS.record[J.id] || 0, E.propinas);
+  guardar();
+  const sig = M.JORNADAS.find(j => j.id === J.id + 1);
+  capa(`<img src="${IMG.pichu}" alt="" style="width:90px">
+    <h2>${est ? "¡Jornada superada!" : "Jornada terminada"}</h2>
+    <div class="estr" aria-label="${est} de 3 estrellas">${"★".repeat(est)}${"☆".repeat(3 - est)}</div>
+    <p>Has servido a <b>${E.servidos} de ${J.clientes}</b> clientes (${E.perfectos} con servicio perfecto) y has ganado <b>${E.propinas}</b> de propina.</p>
+    ${est ? "" : "<p>Para superar la jornada hay que servir al menos al 60 % de los clientes. ¡Inténtalo otra vez!</p>"}
+    <p style="font-size:.9rem">⭐ 1: servir al 60 % · ⭐⭐ 2: al 80 % · ⭐⭐⭐ 3: a todos, y la mitad con servicio perfecto.</p>
+    <div class="botones">
+      <button class="btn sec" type="button" id="fRepetir">Repetir</button>
+      ${sig && est ? `<button class="btn" type="button" id="fSiguiente">Jornada ${sig.id}: ${esc(sig.nombre)}</button>` : ""}
+      <button class="btn sec" type="button" id="fMenu">Jornadas</button>
+    </div>`);
+  $("#fRepetir").onclick = () => { cerrarCapa(); empezarJornada(J.id); };
+  if ($("#fSiguiente")) $("#fSiguiente").onclick = () => { cerrarCapa(); empezarJornada(sig.id); };
+  $("#fMenu").onclick = () => { cerrarCapa(); menu(); };
+  (sig && est ? $("#fSiguiente") : $("#fRepetir")).focus();
+}
+
+/* ---------------- Menú, capas y ajustes ---------------- */
+function menu() {
+  pararReloj();
+  $("#juego").classList.add("oculto"); $("#inicio").classList.remove("oculto");
+  ["#hJornada", "#hClientes", "#hPropinas", "#btnMenu"].forEach(s => $(s).classList.add("oculto"));
+  $("#listaJornadas").innerHTML = M.JORNADAS.map(j => {
+    const abierta = j.id === 1 || (DATOS.estrellas[j.id - 1] || 0) > 0, e = DATOS.estrellas[j.id] || 0;
+    return `<li><button class="tarjeta jornada" type="button" data-jornada="${j.id}" ${abierta ? "" : "disabled"} aria-label="Jornada ${j.id}: ${esc(j.nombre)}. ${esc(j.tema)}. ${abierta ? e + " de 3 estrellas" : "Bloqueada: supera la anterior"}">
+      <span class="num">Jornada ${j.id}${j.jefe ? " · Jefe" : ""}</span><b>${esc(j.nombre)}</b><span>${esc(j.tema)}</span>
+      <span class="estr" aria-hidden="true">${abierta ? "★".repeat(e) + "☆".repeat(3 - e) : "🔒"}</span></button></li>`;
+  }).join("");
+  const primera = $("#listaJornadas button:not([disabled])"); if (primera && !$("#capa").classList.contains("oculto") === false) primera.focus({ preventScroll: true });
+}
+let focoPrevio = null;
+function capa(html) { focoPrevio = document.activeElement; $("#capaCaja").innerHTML = html; $("#capa").classList.remove("oculto"); }
+function cerrarCapa() { $("#capa").classList.add("oculto"); if (focoPrevio && document.contains(focoPrevio)) focoPrevio.focus(); }
+function ayuda() {
+  capa(`<h2>Cómo se juega</h2><ul>
+    <li>Cada cliente pide una cantidad de pizza. Toca porciones del <b>mostrador</b> para ponerlas en su plato y pulsa <b>Servir</b>.</li>
+    <li>Tiene que ser <b>exacto</b>: ni de más ni de menos. Si fallas dos veces, el cliente se va.</li>
+    <li>Las porciones tienen tamaños distintos: <b>1/8 es más pequeña que 1/4</b>, aunque 8 sea mayor que 4.</li>
+    <li><b>Servicio perfecto</b>: si usas el menor número de porciones posible, ganas más propina.</li>
+    <li>Desde la jornada 3 sirves <b>en caja</b>: no ves el plato, así que calcula tú cuánto llevas.</li>
+    <li>Hay pedidos para varias personas (multiplicar), partes de una cantidad (la mitad de…), repartos (dividir) y, al final, el <b>Crítico Gastronómico</b>.</li>
+    <li>Teclado: <b>Tab</b> para moverte, <b>Enter</b> para coger una porción y <b>S</b> para servir.</li></ul>
+    <button class="btn" type="button" id="cCerrar">¡A cocinar!</button>`);
+  $("#cCerrar").onclick = cerrarCapa; $("#cCerrar").focus();
+}
+function ajustes() {
+  capa(`<h2>Ajustes</h2>
+    <label><input type="checkbox" id="aReloj" ${AJ.reloj ? "checked" : ""}> <span><b>Contra reloj</b>: los clientes esperan un tiempo limitado y servir rápido da más propina. Desactivado = modo tranquilo (recomendado para empezar).</span></label>
+    <label><input type="checkbox" id="aSonido" ${AJ.sonido ? "checked" : ""}> <span><b>Sonido</b></span></label>
+    <label><input type="checkbox" id="aMov" ${AJ.movimiento ? "checked" : ""}> <span><b>Animaciones</b> (desactívalas si prefieres menos movimiento)</span></label>
+    <button class="btn" type="button" id="aCerrar">Guardar</button>`);
+  $("#aCerrar").onclick = () => { AJ.reloj = $("#aReloj").checked; AJ.sonido = $("#aSonido").checked; AJ.movimiento = $("#aMov").checked; guardar(); aplicarMovimiento(); cerrarCapa(); };
+  $("#aCerrar").focus();
+}
+
+/* ---------------- Eventos ---------------- */
+document.addEventListener("click", e => {
+  const por = e.target.closest(".porcion"); if (por) return alternarPorcion(+por.dataset.p, +por.dataset.i);
+  const q = e.target.closest("[data-quitar]"); if (q) return quitarDelPlato(+q.dataset.quitar);
+  const r = e.target.closest("[data-resp]"); if (r && !r.disabled) return responder(+r.dataset.resp);
+  const j = e.target.closest("[data-jornada]"); if (j && !j.disabled) return empezarJornada(+j.dataset.jornada);
+  const a = e.target.closest("[data-abre]"); if (a) return a.dataset.abre === "ayuda" ? ayuda() : ajustes();
+});
+document.addEventListener("keydown", e => {
+  const por = e.target.closest && e.target.closest(".porcion");
+  if (por && (e.key === "Enter" || e.key === " ")) { e.preventDefault(); return alternarPorcion(+por.dataset.p, +por.dataset.i); }
+  if (!$("#capa").classList.contains("oculto")) { if (e.key === "Escape") cerrarCapa(); return; }
+  if ((e.key === "s" || e.key === "S") && !/INPUT|TEXTAREA/.test(e.target.tagName) && !$("#juego").classList.contains("oculto")) servir();
+});
+$("#btnServir").onclick = servir;
+$("#btnVaciar").onclick = vaciar;
+$("#btnAyuda").onclick = ayuda;
+$("#btnAjustes").onclick = ajustes;
+$("#btnMenu").onclick = menu;
+
+aplicarMovimiento();
+menu();
+if (alias) document.querySelector(".portada p").insertAdjacentHTML("beforeend", ` <br>¡Hola, <b>${esc(alias)}</b>!`);
+
+// Ganchos para las pruebas automáticas
+window.__pizzeria = { M, get E() { return E; }, get J() { return J; }, empezarJornada, siguienteCliente, servir, responder, alternarPorcion, solucionEjemplo, DATOS, AJ };
+})();
+</script>
+</body>
+</html>

@@ -21,7 +21,11 @@ compartido/marca.js     nombre, versión y LISTA DE JUEGOS (MARCA.juegos)
 compartido/componentes.js  alias, exportar/importar/borrar, confirmación doble
 compartido/volver.js    botón "← πCHU" que se añade a cada juego
 applets/<id>/index.html cada juego, autocontenido
+src/<juego>/            fuentes de los juegos que se compilan (p. ej. src/pizzeria: motor.js + juego.html + personajes)
+                        → python3 src/pizzeria/build.py genera applets/pizzeria/index.html (no editar el generado)
 tests/comprobar.mjs     comprobaciones (node tests/comprobar.mjs)
+tests/pizzeria_motor.test.mjs  pruebas del motor de la Pizzería
+docs/fichas/            una ficha por juego
 ```
 
 ## Reglas que no se rompen

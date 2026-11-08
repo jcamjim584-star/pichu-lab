@@ -1,5 +1,13 @@
 # Registro de cambios
 
+## 0.4.0 · 08/11/2026
+- Nuevo juego: **Pizzería πCHU v0.1** (`applets/pizzeria/`, fuentes en `src/pizzeria/`).
+  - 7 jornadas: mitades y cuartos · tercios y sextos · octavos, doceavos y equivalencias (servicio en caja) · más de una pizza · multiplicar · dividir · jefe (el Crítico Gastronómico).
+  - Modo tranquilo por defecto (contra reloj opcional); al segundo fallo el cliente se va.
+  - Detecta el error del denominador, «la parte de una sola persona» y «multiplicar en vez de dividir»; barras de comparación pedido/servido.
+  - Personajes de Juan Antonio; motor con enteros (1 pizza = 24/24).
+- Pruebas: 97.242 comprobaciones del motor en Node y 45/45 en Chrome.
+
 ## 0.3.0 · 08/11/2026
 - La portada se organiza por **juegos** (Juegos · Próximamente), sin cursos ni filtro. Los cursos siguen guardados en `marca.js` (`mostrarCursos: false`) para usarlos más adelante.
 - Se retira Fraction Royale de la portada: el juego de fracciones se replantea sin cartas. Su código queda en el historial de git (versión 0.2.0).

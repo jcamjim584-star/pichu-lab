@@ -6,7 +6,7 @@
 window.MARCA = {
   nombre: "πCHU",
   lema: "Matemáticas que no te esperabas",
-  version: "0.3.0",
+  version: "0.4.0",
   autor: "Juan Antonio Campos Jiménez",
 
   // Cursos: de momento la portada NO los muestra (se organiza por juegos).
@@ -48,12 +48,12 @@ window.MARCA = {
       titulo: "Pizzería πCHU",
       subtitulo: "Sirve los pedidos exactos",
       curso: "1.º ESO",
-      saber: "Fracciones: comparar, equivalencias y sumas",
-      descripcion: "Junta porciones de pizzas cortadas de distintas formas para servir cada pedido justo: ni de más ni de menos.",
+      saber: "Fracciones: equivalencias, suma, multiplicación y división",
+      descripcion: "Sirve pedidos exactos juntando porciones, reparte pizzas entre amigos y supera al Crítico Gastronómico. Suma, multiplica y divide fracciones.",
       simbolo: "🍕",
-      url: "",
-      estado: "pronto",
-      claves: []
+      url: "applets/pizzeria/",
+      estado: "jugar",
+      claves: ["pichu.pizzeria.v1"]
     },
     {
       id: "proporcionalidad",

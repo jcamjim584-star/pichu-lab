@@ -1,5 +1,5 @@
 # Ficha · Pizzería πCHU
-Versión 0.1 (propuesta, 08/11/2026) · Estado: **En diseño** · Juego de fracciones elegido por Juan Antonio (sustituye a Fraction Royale: no se quiere otro juego de cartas)
+Versión 0.1 · 08/11/2026 · Estado: **En pruebas** (en la portada πCHU 0.4.0) · Juego de fracciones elegido por Juan Antonio (sustituye a Fraction Royale: no se quiere otro juego de cartas)
 
 ---
 
@@ -30,15 +30,18 @@ Errores que ataca:
 - **Bonus «servicio perfecto»**: servir con el menor número de porciones posible (ataca la equivalencia: mejor 1/2 que 4/8).
 - Las porciones se gastan: los pedidos siguientes tienen que apañarse con lo que queda, lo que obliga a usar equivalencias.
 
-## 4. Jornadas (propuesta)
+## 4. Jornadas
 | Jornada | Pizzas en el mostrador | Pedidos | Novedad |
 |---|---|---|---|
-| 1 | mitades y cuartos | de 1/4 a 1 | Tutorial jugando |
-| 2 | + tercios y sextos | hasta 1 | Pedidos que obligan a mezclar (1/2 + 1/3) |
-| 3 | + octavos | hasta 1 | Pedidos escritos sin simplificar (6/8) |
-| 4 | + doceavos, mezcla de todo | hasta 1 | Porciones escasas: hay que usar equivalencias |
-| 5 | todas | hasta 2 | Fracciones mayores que 1 (5/4, «1 y 1/2») |
-| Jefe | todas | — | **El Crítico Gastronómico**: pedidos con condición («3/4 con exactamente 3 porciones», «2/3 sin usar tercios», «con la menor cantidad de porciones») |
+| 1 · Primer día | mitades y cuartos | hasta 1 | Tutorial jugando (3/4 = 1/2 + 1/4) |
+| 2 · Hora punta | + tercios y sextos | hasta 1 | Pedidos que obligan a mezclar |
+| 3 · Cortes finos | + octavos y doceavos | hasta 1 | Pedidos sin simplificar (6/8); **servicio en caja** (ya no se ve el plato: hay que calcular) |
+| 4 · Mesas grandes | todas | de 3/4 a 2 | Mayores que 1 (5/4, «1 y 1/2») |
+| 5 · Pedidos en grupo | todas | hasta 2 | **Multiplicar**: «Somos 3 y queremos 1/4 cada uno», «la mitad de 3/4», «2/3 de 3/4» |
+| 6 · A repartir | todas | hasta 1 y 1/2 | **Dividir**: «3/4 para 3 personas, sírveme mi parte» y «¿cuántas porciones de 1/8 salen de 3/4?» (se contesta con un número) |
+| 7 · El Crítico (jefe) | todas | — | Pedidos con condición: «con exactamente k porciones», «sin porciones de 1/d», «con el menor número de porciones» (siempre más de una) |
+
+Cada jornada se desbloquea al superar la anterior (servir al menos al 60 % de los clientes). Estrellas: 1 = 60 %, 2 = 80 %, 3 = todos y la mitad con servicio perfecto. Propina: 10 + 5 si es al primer intento + 5 si es servicio perfecto (+5 por rapidez en contra reloj).
 
 Cada pedido se genera solo si **se puede servir** con las porciones que quedan (se comprueba con enteros, denominador común 24).
 
@@ -55,15 +58,28 @@ Cada pedido se genera solo si **se puede servir** con las porciones que quedan (
 - Motor matemático separado dentro del archivo (aritmética exacta con enteros) y ganchos de prueba.
 
 ## 7. Criterios de aceptación
-- [ ] Todos los pedidos generados se pueden servir con lo que queda (comprobación masiva).
-- [ ] La comprobación «exacto / de menos / de más» es exacta con enteros.
-- [ ] El bonus de menor número de porciones calcula el mínimo real.
-- [ ] El detector del error 2 salta solo cuando corresponde.
-- [ ] Escritorio y móvil (390 px), teclado de principio a fin, modo tranquilo, sin errores en consola.
+- [x] Todos los pedidos generados se pueden servir con lo que queda (comprobación masiva).
+- [x] La comprobación «exacto / de menos / de más» es exacta con enteros.
+- [x] El bonus de menor número de porciones calcula el mínimo real.
+- [x] Los detectores de errores saltan solo cuando corresponde.
+- [x] Escritorio y móvil (390 px), teclado de principio a fin, modo tranquilo, sin errores en consola.
 - [ ] Prueba con alumnado de 1.º ESO.
 
-## 8. Decisiones abiertas (para Juan Antonio)
-1. ¿Modo por defecto Tranquilo o Contra reloj?
-2. ¿Fallar un pedido dos veces hace que el cliente se vaya (sin más castigo) o resta una «vida» de la jornada?
-3. ¿Incluimos la jornada 5 (mayores que 1) en la primera versión o la dejamos para después?
-4. Clientes: ¿personajes nuevos o los de la biblioteca de πCHU (Gauss, Ada, Turing…)?
+## 8. Decisiones de Juan Antonio (08/11/2026)
+1. Modo **tranquilo** por defecto (contra reloj en Ajustes).
+2. Al segundo fallo **el cliente se va**, sin más castigo (se le enseña una forma correcta de servirlo).
+3. Fracciones **mayores que 1** incluidas.
+4. Se añaden **multiplicación y división** de fracciones.
+5. Personajes dibujados por Juan Antonio. Nombres provisionales (se cambian en la lista `CLIENTES` de `src/pizzeria/juego.html`): Salsita, Capitán Porciones, Pizarrín, Reina Ración, Don Compás, Profesora Malabares, Dama del Escudo y El Crítico Gastronómico (jefe).
+
+## 9. Errores típicos que detecta
+- Pide 3/4 y sirve 3 porciones de 1/8 (o al revés): explica que con denominador mayor los trozos son más pequeños.
+- Multiplicar: sirve la parte de una sola persona.
+- «La mitad de…» o repartos: sirve la cantidad entera, o multiplica en vez de dividir.
+- Crítico: incumple la condición aunque la cantidad sea correcta.
+- Siempre: suma de lo servido con denominador común y barras «pedido / servido».
+
+## 10. Pruebas (08/11/2026)
+- Motor (Node): 97.242 comprobaciones; todos los pedidos de las 7 jornadas se pueden servir con lo que hay; mínimo de porciones comparado con fuerza bruta; evaluación exacta en 20.000 platos al azar; detectores de errores; condiciones del Crítico siempre posibles.
+- Navegador (Chrome): 45/45; tutorial, fallos, cliente que se va, teclado (Enter y S), las 7 jornadas jugadas dos veces con 3 estrellas, los 6 tipos de pedido, contra reloj, móvil de 390 px, sin errores de consola ni peticiones externas.
+- Pendiente: prueba con alumnado de 1.º ESO.

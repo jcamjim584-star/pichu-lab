@@ -27,6 +27,8 @@ jobs:
           node-version: 22
       - name: Comprobaciones de πCHU
         run: node tests/comprobar.mjs
+      - name: Motor de la Pizzería
+        run: node tests/pizzeria_motor.test.mjs
 
   publicar:
     needs: comprobar
