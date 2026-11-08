@@ -44,6 +44,18 @@ window.MARCA = {
       claves: []
     },
     {
+      id: "pizzeria",
+      titulo: "Pizzería πCHU",
+      subtitulo: "Sirve los pedidos exactos",
+      curso: "1.º ESO",
+      saber: "Fracciones: comparar, equivalencias y sumas",
+      descripcion: "Junta porciones de pizzas cortadas de distintas formas para servir cada pedido justo: ni de más ni de menos.",
+      simbolo: "🍕",
+      url: "",
+      estado: "pronto",
+      claves: []
+    },
+    {
       id: "proporcionalidad",
       titulo: "Laboratorio de Proporcionalidad",
       subtitulo: "Recetas, tablas y gráficas",
