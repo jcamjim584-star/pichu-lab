@@ -1,0 +1,9 @@
+node_modules/
+dist/
+privado/
+paquetes/
+trabajo/
+resultados/
+salidas/
+*.zip
+__pycache__/
