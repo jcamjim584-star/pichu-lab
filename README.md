@@ -1,5 +1,7 @@
 # πCHU · Matemáticas que no te esperabas
 
+**Web publicada:** https://jcamjim584-star.github.io/pichu-lab/
+
 Portada que reúne los juegos y laboratorios de matemáticas interactivos de Juan Antonio Campos Jiménez
 (ESO y Bachillerato). Web estática: HTML, CSS y JavaScript, sin frameworks, sin registro y sin recoger datos personales.
 
