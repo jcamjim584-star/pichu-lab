@@ -90,7 +90,7 @@ with sync_playwright() as p:
     pag.evaluate("caches.keys()")
     time.sleep(1.5)
     claves = pag.evaluate("caches.keys()")
-    ok("Caché versionada creada", "pichu-v0.5.0" in claves, claves)
+    ok("Caché versionada creada", "pichu-v0.5.1" in claves, claves)
     ctx.set_offline(True)
     pag.reload(); pag.wait_for_load_state("domcontentloaded")
     ok("Portada funciona sin conexión", pag.locator("article.juego").count() == 6)

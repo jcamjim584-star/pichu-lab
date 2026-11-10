@@ -6,7 +6,7 @@
 window.MARCA = {
   nombre: "πCHU",
   lema: "Matemáticas que no te esperabas",
-  version: "0.5.0",
+  version: "0.5.1",
   autor: "Juan Antonio Campos Jiménez",
 
   // Cursos: de momento la portada NO los muestra (se organiza por juegos).
@@ -18,8 +18,8 @@ window.MARCA = {
   juegos: [
     {
       id: "expres",
-      titulo: "πCHU Exprés",
-      subtitulo: "El reino de la divisibilidad",
+      titulo: "Factor Clash",
+      subtitulo: "Duelos de divisibilidad",
       curso: "1.º ESO",
       saber: "Múltiplos, divisores, primos, MCD y mcm",
       descripcion: "Combates de cartas rápidos contra cinco rivales. Elige compañero, cumple la misión y usa su poder.",

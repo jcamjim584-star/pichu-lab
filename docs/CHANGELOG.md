@@ -1,5 +1,8 @@
 # Registro de cambios
 
+## 0.5.1 · 10/11/2026
+- En la portada, «πCHU Exprés» pasa a llamarse **Factor Clash** (duelos de divisibilidad). El juego y su guardado no cambian.
+
 ## 10/11/2026 · Materiales de aula
 - `docs/aula/`: guía docente (sesiones, evidencias, lista de cotejo, rúbrica, DUA, errores típicos, registro de la prueba), fichas del alumnado de Exprés y Pizza Rush con solucionario, y cuestionario anónimo listo para Google Forms.
 - Web publicada en https://jcamjim584-star.github.io/pichu-lab/
