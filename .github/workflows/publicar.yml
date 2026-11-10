@@ -29,6 +29,10 @@ jobs:
         run: node tests/comprobar.mjs
       - name: Motor de la Pizzería
         run: node tests/pizzeria_motor.test.mjs
+      - name: Motor de Integer Ninja
+        run: node src/integer-ninja/tests/engine.test.js
+      - name: Apps Script de Integer Ninja (simulado)
+        run: node src/integer-ninja/tests/apps-script.test.js
 
   publicar:
     needs: comprobar

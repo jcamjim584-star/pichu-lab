@@ -1,0 +1,326 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover, user-scalable=no">
+<meta name="theme-color" content="#332B2A">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="description" content="INTEGER NINJA · πCHU ARCADE. Corta frutas con números enteros, alcanza objetivos exactos y derrota al Rey de los Signos. 1.º ESO.">
+<title>INTEGER NINJA · πCHU ARCADE</title>
+<style>
+@font-face{font-family:"Lato";font-weight:400;font-style:normal;font-display:swap;src:url("../../compartido/fuentes/lato-latin-400-normal.woff2") format("woff2")}
+@font-face{font-family:"Lato";font-weight:700;font-style:normal;font-display:swap;src:url("../../compartido/fuentes/lato-latin-700-normal.woff2") format("woff2")}
+@font-face{font-family:"Lato";font-weight:900;font-style:normal;font-display:swap;src:url("../../compartido/fuentes/lato-latin-900-normal.woff2") format("woff2")}
+</style>
+<style>/*{{CSS}}*/</style>
+<script src="../../compartido/volver.js" defer></script>
+</head>
+<body>
+<div id="app">
+  <canvas id="game" aria-label="Zona de juego: desliza el dedo o el ratón para cortar las frutas"></canvas>
+
+  <!-- ================= HUD (marcador durante la partida) ================= -->
+  <div id="hud" class="hidden" aria-live="polite">
+    <div class="hud-top">
+      <div class="hud-cell hud-left">
+        <div class="hud-score"><span class="lbl">PUNTOS</span><b id="hScore">0</b></div>
+        <div class="hud-mult" id="hMult">×1</div>
+      </div>
+      <div class="hud-goal" id="hGoalBox">
+        <div class="goal-kicker" id="hGoalKicker">OBJETIVO</div>
+        <div class="goal-main" id="hGoal">CONSIGUE +5</div>
+      </div>
+      <div class="hud-cell hud-right">
+        <div class="hud-time" id="hTime">90</div>
+        <div class="hud-lives" id="hLives" aria-label="Vidas">❤❤❤</div>
+      </div>
+    </div>
+    <div class="hud-acc" id="hAccBox">
+      <span class="lbl">ACUMULADOR</span>
+      <b id="hAcc">0</b>
+      <span class="hud-eq" id="hEq">Corta frutas para sumar</span>
+    </div>
+
+    <div class="hud-bottom">
+      <button class="hud-btn" id="bPause" aria-label="Pausa">❚❚</button>
+      <div class="hud-progress"><div class="bar"><i id="hProg"></i></div><span id="hProgTxt">0/6</span></div>
+      <div class="hud-streak" id="hStreak">Racha 0</div>
+      <button class="hud-btn" id="bHint" aria-label="Pista">💡</button>
+      <button class="hud-btn" id="bReset" aria-label="Volver el acumulador a 0">↺0</button>
+    </div>
+  </div>
+
+  <!-- Bocadillo de πCHU durante la partida -->
+  <div id="pichuPop" class="hidden" aria-live="polite">
+    <img class="pichu-img" alt="πCHU" src="{{PICHU}}">
+    <div class="bubble" id="pichuSay">¡Bien!</div>
+  </div>
+  <!-- Recta numérica explicativa (errores de comparación) -->
+  <div id="explain" class="hidden" aria-live="assertive"></div>
+
+  <!-- ================= MENÚ PRINCIPAL ================= -->
+  <section class="screen" id="sMenu">
+    <div class="menu-wrap">
+      <div class="brand-chip">πCHU ARCADE</div>
+      <h1 class="title"><span>INTEGER</span><span>NINJA</span></h1>
+      <p class="subtitle">¡Corta, calcula y conquista!</p>
+      <img class="pichu-img menu-pichu" alt="πCHU, la mascota, saluda" src="{{PICHU}}">
+      <button class="link alias-link" data-go="alias" id="menuAlias">👤 Elegir alias</button>
+      <div class="menu-stats" id="menuStats"></div>
+      <nav class="menu-buttons">
+        <button class="btn big primary" data-go="levels">▶ JUGAR <small>(aventura)</small></button>
+        <button class="btn" data-go="classic">🎯 MODO CLÁSICO</button>
+        <button class="btn" data-go="arcade">⚡ MODO ARCADE</button>
+        <button class="btn retos-btn" data-go="retos">🥊 RETOS Y RANKING<span class="badge hidden" id="retosBadge">0</span></button>
+        <button class="btn" data-go="custom">⚔️ PERSONALIZACIÓN</button>
+        <button class="btn" data-go="achievements">🏆 LOGROS</button>
+        <button class="btn" data-go="settings">⚙️ AJUSTES</button>
+      </nav>
+      <button class="link" data-go="howto">¿Cómo se juega?</button>
+    </div>
+  </section>
+
+  <!-- ================= ALIAS ================= -->
+  <section class="screen hidden overlay" id="sAlias">
+    <div class="panel small">
+      <div class="intro-head"><img class="pichu-img intro-pichu" alt="πCHU" src="{{PICHU}}"><div class="bubble big">¿Quién juega? Escribe tu alias: así se guarda tu progreso y sale en tu justificante.</div></div>
+      <label class="alias-field"><span>Alias</span><input id="aliasInput" maxlength="20" autocomplete="off" autocapitalize="off" spellcheck="false" placeholder="p. ej. Ninja7" aria-describedby="aliasHelp aliasError"></label>
+      <p class="muted" id="aliasHelp">Usa el alias que acordéis en clase. No escribas tu nombre completo ni otros datos personales.</p>
+      <p class="alias-error" id="aliasError" role="alert"></p>
+      <div class="alias-chips" id="aliasChips"></div>
+      <div class="row"><button class="btn" id="bAliasCancel">Cancelar</button><button class="btn primary big" id="bAliasOk">¡A jugar!</button></div>
+    </div>
+  </section>
+
+  <!-- ================= JUSTIFICANTE ================= -->
+  <section class="screen hidden overlay" id="sCert">
+    <div class="panel cert">
+      <h2>📜 Tu justificante</h2>
+      <p class="muted">Entrégalo en la tarea de Classroom: guarda la imagen y súbela, o copia el texto y pégalo como comentario. En el móvil también puedes mantener pulsada la imagen para guardarla.</p>
+      <img id="certImg" class="cert-img" alt="Justificante de la partida">
+      <div class="row">
+        <button class="btn primary" id="bCertSave">⬇ Guardar imagen</button>
+        <button class="btn" id="bCertShare">📤 Compartir</button>
+        <button class="btn" id="bCertCopy">📋 Copiar texto</button>
+      </div>
+      <details class="cert-details"><summary>Ver el texto</summary><pre id="certText"></pre></details>
+      <div class="row"><button class="btn" id="bCertBack">← Volver</button></div>
+    </div>
+  </section>
+
+  <!-- ================= RETOS Y RANKING ================= -->
+  <section class="screen hidden" id="sRetos">
+    <div class="panel">
+      <h2>🥊 Retos y ranking</h2>
+      <div class="tabs" role="tablist"><button data-tab="retos" role="tab">⚔️ Retos</button><button data-tab="rank" role="tab">🏆 Ranking</button></div>
+      <p class="online-status" id="onlineStatus"></p>
+      <div id="paneRetos">
+        <div id="inboxBox"><h3>📨 Retos que te han enviado</h3><div id="inbox"></div></div>
+        <h3>⚔️ Crear un reto</h3>
+        <p class="muted">Juegas 90 segundos. Tu compañero jugará con <b>los mismos objetivos, en el mismo orden</b>, y tendrá que superar tu puntuación.</p>
+        <label class="sel"><span>Dificultad</span><select id="duelMath"><option value="0">Suave (sumas)</option><option value="1">Media (sumas y −( ))</option><option value="2">Reto (con × y signos)</option></select></label>
+        <label class="sel" id="rivalRow"><span>Retar a (opcional)</span><input id="duelRival" list="rivalList" maxlength="20" placeholder="alias del compañero" autocomplete="off"><datalist id="rivalList"></datalist></label>
+        <div class="row"><button class="btn primary big" id="bDuelCreate">⚔️ Jugar mi partida de reto</button></div>
+        <h3>🔑 Tengo un código de reto</h3>
+        <label class="alias-field"><input id="duelCodeIn" maxlength="120" placeholder="K7Q2-M9XA" autocomplete="off" autocapitalize="characters" spellcheck="false"></label>
+        <p class="duel-info" id="duelInfo" aria-live="polite"></p>
+        <div class="row"><button class="btn primary" id="bDuelAccept">Comprobar código</button></div>
+        <h3>📜 Mis retos</h3>
+        <ul class="duel-history" id="duelHistory"></ul>
+      </div>
+      <div id="paneRank" class="hidden">
+        <div class="seg"><button data-rk="classic">Clásico</button><button data-rk="arcade">Arcade</button><button data-rk="duel">Retos</button><button data-rk="adventure">Aventura</button></div>
+        <p class="muted" id="rankSource"></p>
+        <ol class="rank-list" id="rankList"></ol>
+      </div>
+      <div class="row"><button class="btn" data-back>← Volver</button></div>
+    </div>
+  </section>
+
+  <!-- ================= CÓMO SE JUEGA ================= -->
+  <section class="screen hidden" id="sHowto">
+    <div class="panel">
+      <h2>¿Cómo se juega?</h2>
+      <div class="howto-grid">
+        <div class="howto-card"><div class="hi">👆</div><b>Desliza para cortar</b><p>Arrastra el dedo (o el ratón con el botón pulsado) a través de las frutas.</p></div>
+        <div class="howto-card"><div class="hi">🎯</div><b>Objetivo exacto</b><p>Cada fruta cortada se suma al <b>acumulador</b>. Llega <b>exactamente</b> al objetivo: <br><span class="mono">(+8) + (−3) = +5</span></p></div>
+        <div class="howto-card"><div class="hi">💣</div><b>Evita las bombas</b><p>Si cortas una bomba pierdes una vida y tu racha. Las bombas que quedan detrás de una fruta no cuentan: solo cuenta la que cortas de verdad.</p></div>
+        <div class="howto-card"><div class="hi">🌱</div><b>Semillas de decisión</b><p>Al cortar <b>−( )</b>, la piña (×) o el coco (÷), el tiempo se frena y salen dos semillas con resultados de signo contrario. Corta la correcta: ¡no vale adivinar!</p></div>
+        <div class="howto-card"><div class="hi">✨</div><b>Combos</b><p>Corta varias frutas en un solo gesto: <b>opuestos</b> (+7 y −7) dan COMBO CERO. Resolver la ronda de un solo gesto es COMBO EXACTO.</p></div>
+      </div>
+      <h3>Frutas especiales</h3>
+      <ul class="specials-list" id="specialsList"></ul>
+      <div class="row"><button class="btn primary" data-back>Entendido</button></div>
+    </div>
+  </section>
+
+  <!-- ================= MAPA DE AVENTURA ================= -->
+  <section class="screen hidden" id="sLevels">
+    <div class="panel">
+      <h2>👑 Modo aventura</h2>
+      <p class="muted">Supera cada nivel para desbloquear el siguiente. ¡Al final te espera el Rey de los Signos!</p>
+      <div class="levels" id="levelsList"></div>
+      <div class="row"><button class="btn" data-back>← Volver</button></div>
+    </div>
+  </section>
+
+  <!-- ================= PRESENTACIÓN DE NIVEL ================= -->
+  <section class="screen hidden" id="sIntro">
+    <div class="panel intro">
+      <div class="intro-head">
+        <img class="pichu-img intro-pichu" alt="πCHU presenta el nivel" src="{{PICHU}}">
+        <div class="bubble big" id="introSay"></div>
+      </div>
+      <div class="intro-kicker" id="introKicker">NIVEL 1</div>
+      <h2 id="introTitle"></h2>
+      <div class="intro-enemy hidden" id="introEnemy"><img id="introEnemyImg" alt="Guardián del nivel"><div><b id="introEnemyName"></b><span id="introEnemySay"></span></div></div>
+      <div class="intro-body" id="introBody"></div>
+      <div class="row"><button class="btn" data-back>← Mapa</button><button class="btn primary big" id="bIntroGo">¡A JUGAR!</button></div>
+    </div>
+  </section>
+
+  <!-- ================= PERSONALIZACIÓN ================= -->
+  <section class="screen hidden" id="sCustom">
+    <div class="panel">
+      <h2>⚔️ Personalización</h2>
+      <p class="muted">Las espadas y escenarios solo cambian el aspecto: no dan ventajas. Se consiguen con monedas del juego (sin compras reales).</p>
+      <div class="coins-line">🪙 <b id="cCoins">0</b> monedas · Nivel de jugador <b id="cLevel">1</b></div>
+      <h3>Espadas</h3>
+      <div class="shop" id="shopSwords"></div>
+      <h3>Escenarios</h3>
+      <div class="shop" id="shopBgs"></div>
+      <div class="row"><button class="btn" data-back>← Volver</button></div>
+    </div>
+  </section>
+
+  <!-- ================= LOGROS ================= -->
+  <section class="screen hidden" id="sAchievements">
+    <div class="panel">
+      <h2>🏆 Logros y récords</h2>
+      <div class="records" id="recordsBox"></div>
+      <div class="ach-grid" id="achList"></div>
+      <div class="row"><button class="btn" data-back>← Volver</button></div>
+    </div>
+  </section>
+
+  <!-- ================= AJUSTES ================= -->
+  <section class="screen hidden" id="sSettings">
+    <div class="panel">
+      <h2>⚙️ Ajustes</h2>
+      <div class="settings">
+        <label class="sw"><input type="checkbox" id="optSound"> <span>Efectos de sonido</span></label>
+        <label class="sw"><input type="checkbox" id="optMusic"> <span>Música</span></label>
+        <label class="sw"><input type="checkbox" id="optReduce"> <span>Reducir movimiento y efectos</span></label>
+        <label class="sw"><input type="checkbox" id="optTap"> <span>Permitir cortar con un toque</span></label>
+        <label class="sw"><input type="checkbox" id="optRelax"> <span>Modo relajado (sin reloj ni pérdida de vidas)</span></label>
+        <label class="sw"><input type="checkbox" id="optDecide"> <span>🌱 Elegir el resultado al cortar −( ), × y ÷ (recomendado)</span></label>
+        <label class="sel"><span>Dificultad matemática</span>
+          <select id="optMath"><option value="0">Suave</option><option value="1">Media</option><option value="2">Reto</option></select></label>
+        <label class="sel"><span>Velocidad de las frutas</span>
+          <select id="optMotor"><option value="0">Lenta</option><option value="1">Media</option><option value="2">Rápida</option></select></label>
+      </div>
+      <div class="row"><button class="btn" data-go="teacher">👩‍🏫 Configuración docente</button></div>
+      <div class="row"><button class="btn danger" id="bWipe">Borrar progreso de todos los alias</button><button class="btn primary" data-back>Guardar y volver</button></div>
+    </div>
+  </section>
+
+  <!-- ================= CONFIGURACIÓN DOCENTE ================= -->
+  <section class="screen hidden" id="sTeacher">
+    <div class="panel">
+      <h2>👩‍🏫 Configuración docente</h2>
+      <p class="muted">Afecta al <b>MODO CLÁSICO</b> y al <b>MODO ARCADE</b> cuando está activada. El modo aventura mantiene su progresión.</p>
+      <label class="sel"><span>Grupo (sale en los justificantes)</span><input type="text" id="tGroup" maxlength="30" placeholder="p. ej. 1.º ESO C"></label>
+      <label class="sw"><input type="checkbox" id="tOn"> <span><b>Usar esta configuración</b></span></label>
+      <fieldset><legend>Operaciones permitidas</legend>
+        <label class="sw"><input type="checkbox" id="tAdd"> <span>Sumas</span></label>
+        <label class="sw"><input type="checkbox" id="tSub"> <span>Restas (frutas “− (−4)”)</span></label>
+        <label class="sw"><input type="checkbox" id="tMul"> <span>Multiplicaciones (piña)</span></label>
+        <label class="sw"><input type="checkbox" id="tDiv"> <span>Divisiones exactas (coco)</span></label>
+      </fieldset>
+      <fieldset><legend>Contenidos</legend>
+        <label class="sw"><input type="checkbox" id="tExact"> <span>Objetivo exacto</span></label>
+        <label class="sw"><input type="checkbox" id="tFilter"> <span>Misiones “Corta solo…” (signo, comparación, valor absoluto, opuestos)</span></label>
+        <label class="sw"><input type="checkbox" id="tSpecials"> <span>Frutas especiales (limón, uva, cereza…)</span></label>
+        <label class="sw"><input type="checkbox" id="tBombs"> <span>Bombas</span></label>
+        <label class="sw"><input type="checkbox" id="tHints"> <span>Ayudas (botón 💡)</span></label>
+        <label class="sw"><input type="checkbox" id="tDecide"> <span>🌱 Semillas de decisión: elegir el resultado de −( ), × y ÷, con frutas gemelas de signo contrario</span></label>
+      </fieldset>
+      <fieldset><legend>Números y tiempo</legend>
+        <label class="sel"><span>Mínimo</span><input type="number" id="tMin" min="-50" max="-1" step="1"></label>
+        <label class="sel"><span>Máximo</span><input type="number" id="tMax" min="1" max="50" step="1"></label>
+        <label class="sel"><span>Velocidad</span><select id="tSpeed"><option value="0">Lenta</option><option value="1">Media</option><option value="2">Rápida</option></select></label>
+        <label class="sel"><span>Duración (clásico)</span><select id="tDur"><option value="60">60 s</option><option value="90">90 s</option><option value="120">120 s</option><option value="180">180 s</option></select></label>
+        <label class="sel"><span>Dificultad</span><select id="tDiff"><option value="0">Suave</option><option value="1">Media</option><option value="2">Reto</option></select></label>
+      </fieldset>
+      <div class="row"><button class="btn" id="tPreset">Preset: suma y resta (−20 a +20)</button></div>
+      <h3>🏆 Ranking en vivo y retos de la clase</h3>
+      <p class="muted">Las puntuaciones se guardan en una Hoja de Google <b>de tu cuenta</b> (solo alias, grupo y números). Pasos: 1) crea una Hoja, 2) Extensiones → Apps Script y pega el código, 3) cambia la CLAVE, 4) Implementar → Aplicación web (Ejecutar como: yo · Acceso: cualquier usuario), 5) pega aquí la URL /exec. <b>Funciona en la versión publicada en internet</b> (GitHub Pages, Netlify…), no dentro de claude.ai.</p>
+      <div class="row"><button class="btn" id="bOnScript">📋 Copiar código del Apps Script</button></div>
+      <label class="sel col"><span>URL de la aplicación web</span><input type="url" id="tOnUrl" placeholder="https://script.google.com/macros/s/…/exec" autocomplete="off"></label>
+      <label class="sel"><span>Clave de clase</span><input type="text" id="tOnKey" maxlength="60" autocomplete="off"></label>
+      <div class="row"><button class="btn primary" id="bOnSave">🔌 Conectar y probar</button><button class="btn danger" id="bOnOff">Desconectar</button></div>
+      <p class="verify-out" id="onOut" aria-live="polite"></p>
+      <label class="sel col"><span>Enlace de clase (publícalo en Classroom: conecta a cada alumno)</span><input type="text" id="tOnLink" readonly></label>
+      <div class="row"><button class="btn" id="bOnCopyLink">📋 Copiar enlace de clase</button></div>
+      <h3>Comprobar un justificante</h3>
+      <p class="muted">Pega aquí el texto que te ha enviado el alumno (botón «Copiar texto»). Si alguien ha cambiado una cifra, el código no coincidirá. Con una imagen, puedes copiar a mano los datos.</p>
+      <textarea id="tVerify" rows="6" placeholder="INTEGER NINJA · Justificante de partida&#10;Alias: …&#10;…&#10;Código: XXX-XXX"></textarea>
+      <div class="row"><button class="btn" id="bVerify">✔ Comprobar</button></div>
+      <p class="verify-out" id="verifyOut" aria-live="polite"></p>
+      <h3>Estadísticas de este dispositivo</h3>
+      <p class="muted">Anónimas: no se guarda ningún nombre ni dato personal. Solo en este navegador.</p>
+      <div class="stats-box" id="statsBox"></div>
+      <div class="row"><button class="btn" id="bCsv">⬇ Exportar CSV</button><button class="btn" id="bCsvCopy">📋 Copiar CSV</button><button class="btn danger" id="bClearStats">Borrar estadísticas</button></div>
+      <div class="row"><button class="btn primary" data-back>Guardar y volver</button></div>
+    </div>
+  </section>
+
+  <!-- ================= PAUSA ================= -->
+  <section class="screen hidden overlay" id="sPause">
+    <div class="panel small">
+      <h2>Pausa</h2>
+      <div class="pause-info" id="pauseInfo"></div>
+      <div class="row col">
+        <button class="btn primary big" id="bResume">▶ Continuar</button>
+        <button class="btn" id="bRestart">↻ Reiniciar</button>
+        <button class="btn" id="bEnd">⏹ Terminar partida</button>
+        <label class="sw"><input type="checkbox" id="pSound"> <span>Sonido</span></label>
+        <label class="sw"><input type="checkbox" id="pMusic"> <span>Música</span></label>
+      </div>
+    </div>
+  </section>
+
+  <!-- ================= RESULTADOS ================= -->
+  <section class="screen hidden overlay" id="sResult">
+    <div class="panel result">
+      <div class="result-head">
+        <img class="pichu-img result-pichu" alt="πCHU" src="{{PICHU}}">
+        <div>
+          <div class="result-kicker" id="rKicker">FIN DE LA PARTIDA</div>
+          <h2 id="rTitle">¡Buen trabajo!</h2>
+        </div>
+      </div>
+      <div class="trophy hidden" id="rTrophy">🏆</div>
+      <div class="stars" id="rStars"></div>
+      <div class="result-score"><span>PUNTOS</span><b id="rScore">0</b><em id="rRecord" class="hidden">¡NUEVO RÉCORD!</em></div>
+      <div class="result-grid" id="rGrid"></div>
+      <p class="rank-pos hidden" id="rRank"></p>
+      <div class="duel-box hidden" id="rDuel"></div>
+      <div class="result-learn" id="rLearn"></div>
+      <div class="row"><button class="btn primary big" id="bCert">📜 Justificante para Classroom</button></div>
+      <p class="muted hidden" id="rCertNote">Supera el nivel para conseguir tu justificante para Classroom.</p>
+      <div class="row">
+        <button class="btn" id="bMenu">⌂ Menú</button>
+        <button class="btn primary big" id="bAgain">↻ Jugar otra vez</button>
+        <button class="btn hidden" id="bNext">Siguiente nivel →</button>
+      </div>
+    </div>
+  </section>
+
+  <div id="toast" class="hidden" role="status"></div>
+</div>
+<script>window.PICHU_ASSETS = /*{{ASSETS}}*/null;</script>
+<script>/*{{ENGINE}}*/</script>
+<script>/*{{GAME}}*/</script>
+</body>
+</html>

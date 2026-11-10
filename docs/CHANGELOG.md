@@ -1,5 +1,17 @@
 # Registro de cambios
 
+## 0.6.0 · 10/11/2026
+- **Integer Ninja v0.5 entra en el portal** (`applets/integer-ninja/`, fuentes en `src/integer-ninja/`). Ya no se abre en Netlify.
+  - El botón principal **▶ JUGAR** abre el **modo aventura**; el clásico pasa a «🎯 MODO CLÁSICO».
+  - Se quita la misión «CORTA DE MENOR A MAYOR» (nivel 1 y motor).
+  - **Bombas detrás de las frutas:** su zona de corte es más pequeña, no explotan si en el mismo trazo cortas la fruta que las tapa
+    ni durante 150 ms junto a una fruta recién cortada, el gesto se corta al salir las semillas y el modo toque prefiere la fruta.
+  - Se recuperan las decisiones de la v0.5: un fallo de misión o de semilla resta 50 puntos (nunca por debajo de 0) y no quita vida;
+    las vidas solo se pierden con bombas y al acabarse el tiempo; estrellas 3 = sin perder vidas y ≤1 fallo, 2 = ≤1 vida y ≤4 fallos;
+    sello «✔ SUPERADO» en el mapa.
+  - Lato desde `compartido/fuentes` (sin Google Fonts) y botón «← πCHU». El ranking no viene preconfigurado.
+- Pruebas: motor 899.015 comprobaciones, navegador 101/101, retos 31/31, Apps Script 20/20, portada 23/23.
+
 ## 0.5.1 · 10/11/2026
 - En la portada, «πCHU Exprés» pasa a llamarse **Factor Clash** (duelos de divisibilidad). El juego y su guardado no cambian.
 

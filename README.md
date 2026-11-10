@@ -10,7 +10,7 @@ Portada que reúne los juegos y laboratorios de matemáticas interactivos de Jua
 |---|---|---|
 | Factor Clash (antes «πCHU Exprés») · duelos de divisibilidad | 1.º ESO | Disponible |
 | Pizza Rush · Pizzería πCHU v0.2 (fracciones: equivalencias, suma, multiplicación y división) | 1.º ESO | Disponible |
-| Integer Ninja | 1.º ESO | Enlazado a la versión de Netlify (v0.5); pendiente de copiar aquí |
+| Integer Ninja v0.5 · enteros: signos, comparar, sumas, −( ), productos y cocientes | 1.º ESO | Disponible |
 | Laboratorio de Proporcionalidad · cartas de ecuaciones · cartas de funciones | 1.º ESO · 4.º ESO · 1.º Bach | En diseño |
 
 Funciones comunes:
@@ -45,6 +45,17 @@ Después se genera el archivo final con:
 python3 src/pizzeria/build.py
 ```
 Los turnos, las mejoras de la tienda y sus precios están en `motor.js` (`TURNOS` y `MEJORAS`).
+
+## Integer Ninja: cómo modificarlo
+El juego se edita en `src/integer-ninja/src/` (`engine.js` = matemáticas, `game.js` = juego, `index.html` y `style.css` = pantalla).
+Después se genera el archivo final (también la copia del portal) con:
+```
+python3 src/integer-ninja/build.py
+```
+Pruebas: `node src/integer-ninja/tests/engine.test.js` (motor), `node src/integer-ninja/tests/browser.test.js`
+y `node src/integer-ninja/tests/retos.test.js` (navegador, necesitan Playwright).
+El ranking en vivo (Apps Script) **no viene configurado**: se activa desde *Retos y ranking* o con el enlace de clase
+cuando el centro lo autorice.
 
 ## Publicar en GitHub Pages
 1. Sube esta carpeta a un repositorio **público** de GitHub (rama `main`).

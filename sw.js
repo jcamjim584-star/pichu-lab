@@ -8,7 +8,7 @@
 
    Si añades un juego, añade su ruta a ARCHIVOS.
    ========================================================= */
-const VERSION = "pichu-v0.5.1";
+const VERSION = "pichu-v0.6.0";
 
 const ARCHIVOS = [
   "./",
@@ -29,7 +29,8 @@ const ARCHIVOS = [
   "compartido/img/icono-512.png",
   // Juegos
   "applets/expres/",
-  "applets/pizzeria/"
+  "applets/pizzeria/",
+  "applets/integer-ninja/"
 ];
 
 self.addEventListener("install", evento => {

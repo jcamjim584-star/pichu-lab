@@ -2,3 +2,5 @@ capturas/
 __pycache__/
 .DS_Store
 node_modules/
+src/integer-ninja/dist/
+src/integer-ninja/shots/

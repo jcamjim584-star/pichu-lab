@@ -6,7 +6,7 @@
 window.MARCA = {
   nombre: "πCHU",
   lema: "Matemáticas que no te esperabas",
-  version: "0.5.1",
+  version: "0.6.0",
   autor: "Juan Antonio Campos Jiménez",
 
   // Cursos: de momento la portada NO los muestra (se organiza por juegos).
@@ -36,12 +36,10 @@ window.MARCA = {
       saber: "Números enteros, signos y operaciones",
       descripcion: "Arcade de cortar frutas: decide antes de cortar, supera misiones y reta a tus compañeros con un código.",
       simbolo: "±",
-      // De momento se abre la versión publicada en Netlify (v0.5, con el ranking de clase).
-      // Cuando se copie a applets/integer-ninja/, quitar "externo" y cambiar la url.
-      url: "https://tourmaline-frangipane-a48492.netlify.app",
-      externo: true,
+      // Fuentes en src/integer-ninja/ → python3 src/integer-ninja/build.py genera applets/integer-ninja/index.html
+      url: "applets/integer-ninja/",
       estado: "jugar",
-      claves: []
+      claves: ["pichu.integerNinja.v1"]
     },
     {
       id: "pizzeria",
