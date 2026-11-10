@@ -1,5 +1,9 @@
 # Registro de cambios
 
+## 10/11/2026 · Materiales de aula
+- `docs/aula/`: guía docente (sesiones, evidencias, lista de cotejo, rúbrica, DUA, errores típicos, registro de la prueba), fichas del alumnado de Exprés y Pizza Rush con solucionario, y cuestionario anónimo listo para Google Forms.
+- Web publicada en https://jcamjim584-star.github.io/pichu-lab/
+
 ## 0.5.0 · 08/11/2026
 - La Pizzería se rehace como **Pizza Rush** (v0.2), porque la v0.1 resultaba aburrida. Sin personajes.
   - Turnos frenéticos: tickets con cuenta atrás, horno que saca pizzas a una cinta, cajas por pedido, rachas x2/x3/x4, «¡PERFECTO!», confeti, música y efectos generados en el navegador.
