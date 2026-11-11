@@ -29,7 +29,7 @@ const SCRIPT_ID = 'AKfycbTEST_1234567890abcdefghij';
   });
 
   /* ---------- 1. Retos por código (sin conexión) ---------- */
-  await page.goto(FILE);
+  await page.goto(FILE + '?menu');
   await sleep(900);
   await page.click('text=🥊 RETOS Y RANKING');
   await page.fill('#aliasInput', 'Ninja7');

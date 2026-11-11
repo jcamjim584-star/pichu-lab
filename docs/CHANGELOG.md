@@ -1,5 +1,10 @@
 # Registro de cambios
 
+## 0.6.1 · 11/11/2026
+- **Integer Ninja** arranca directamente en el **modo aventura** (mapa de niveles). Si no hay alias, lo pide primero. Con `?menu` se abre el menú.
+- **Factor Clash:** el juego ya no muestra el nombre «πCHU Exprés» (título, cabecera y récord). El guardado `pichu.expres.v3` no cambia.
+- **Pizza Rush** pasa a «Próximamente» en la portada. El juego sigue en `applets/pizzeria/` para seguir puliéndolo.
+
 ## 0.6.0 · 10/11/2026
 - **Integer Ninja v0.5 entra en el portal** (`applets/integer-ninja/`, fuentes en `src/integer-ninja/`). Ya no se abre en Netlify.
   - El botón principal **▶ JUGAR** abre el **modo aventura**; el clásico pasa a «🎯 MODO CLÁSICO».

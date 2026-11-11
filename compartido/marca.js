@@ -6,7 +6,7 @@
 window.MARCA = {
   nombre: "πCHU",
   lema: "Matemáticas que no te esperabas",
-  version: "0.6.0",
+  version: "0.6.1",
   autor: "Juan Antonio Campos Jiménez",
 
   // Cursos: de momento la portada NO los muestra (se organiza por juegos).
@@ -50,7 +50,7 @@ window.MARCA = {
       descripcion: "Cocina a toda prisa: tickets con cuenta atrás, horno, rachas y una pizzería que mejoras con tus monedas. Suma, multiplica y divide fracciones.",
       simbolo: "🍕",
       url: "applets/pizzeria/",
-      estado: "jugar",
+      estado: "pronto",
       claves: ["pichu.pizzeria.v1"]
     },
     {

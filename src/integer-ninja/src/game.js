@@ -2537,6 +2537,8 @@
   applyReduce();
   resize();
   openScreen('sMenu');
+  // Al entrar, se abre directamente el modo aventura (mapa de niveles); con ?menu se queda en el menú.
+  if (!/[?&]menu\b/.test(location.search) && !/[?&]clase=/.test(location.search)) askAliasIfNeeded(() => openScreen('sLevels'));
   const start = () => requestAnimationFrame((t) => { lastTime = t; loop(t); });
   if (document.fonts && document.fonts.load) document.fonts.load(`900 20px Lato`).then(() => { buildBackground(); }).catch(() => {});
   start();

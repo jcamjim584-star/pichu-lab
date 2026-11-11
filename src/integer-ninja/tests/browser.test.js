@@ -68,7 +68,7 @@ async function solveOneTarget(page, touch, maxMs) {
     const errors = [];
     page.on('pageerror', (e) => errors.push('pageerror: ' + e.message));
     page.on('console', (m) => { if (m.type() === 'error' && !/Failed to load resource|fonts\.g/.test(m.text())) errors.push('console: ' + m.text()); });
-    await page.goto(URL);
+    await page.goto(URL + '?menu');
     await sleep(1200);
     ok(await page.isVisible('#sMenu'), 'menú visible');
     ok(await page.isVisible('text=¡Corta, calcula y conquista!'), 'subtítulo del menú');
@@ -77,6 +77,16 @@ async function solveOneTarget(page, touch, maxMs) {
 
     // El botón principal JUGAR lleva al modo aventura (v0.5)
     ok((await page.getAttribute('.menu-buttons .btn.primary', 'data-go')) === 'levels', 'JUGAR abre el modo aventura');
+    {
+      const p2 = await browser.newPage();
+      await p2.goto(URL); await p2.waitForTimeout(500);
+      ok(await p2.isVisible('#sAlias'), 'al abrir el juego sin alias: pide el alias para ir a la aventura');
+      await p2.fill('#aliasInput', 'Inicio'); await p2.click('#bAliasOk'); await p2.waitForTimeout(300);
+      ok(await p2.isVisible('#sLevels'), 'después del alias se abre el mapa de la aventura');
+      await p2.reload(); await p2.waitForTimeout(500);
+      ok(await p2.isVisible('#sLevels'), 'con alias guardado, el juego arranca directamente en la aventura');
+      await p2.close();
+    }
     // MODO CLÁSICO (primera vez: pantalla de cómo se juega)
     await page.click('text=🎯 MODO CLÁSICO');
     ok(await page.isVisible('#sAlias'), 'el modo clásico pide el alias');

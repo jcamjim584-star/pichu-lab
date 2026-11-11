@@ -8,8 +8,8 @@ Portada que reúne los juegos y laboratorios de matemáticas interactivos de Jua
 ## Qué incluye (versión 0.5.0)
 | Juego | Curso (de momento no se muestra) | Estado |
 |---|---|---|
-| Factor Clash (antes «πCHU Exprés») · duelos de divisibilidad | 1.º ESO | Disponible |
-| Pizza Rush · Pizzería πCHU v0.2 (fracciones: equivalencias, suma, multiplicación y división) | 1.º ESO | Disponible |
+| Factor Clash · duelos de divisibilidad | 1.º ESO | Disponible |
+| Pizza Rush · Pizzería πCHU v0.2 (fracciones: equivalencias, suma, multiplicación y división) | 1.º ESO | Próximamente (en revisión) |
 | Integer Ninja v0.5 · enteros: signos, comparar, sumas, −( ), productos y cocientes | 1.º ESO | Disponible |
 | Laboratorio de Proporcionalidad · cartas de ecuaciones · cartas de funciones | 1.º ESO · 4.º ESO · 1.º Bach | En diseño |
 

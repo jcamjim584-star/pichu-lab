@@ -97,7 +97,7 @@ with sync_playwright() as p:
     pag.reload(); pag.wait_for_load_state("domcontentloaded")
     ok("Portada funciona sin conexión", pag.locator("article.juego").count() == 6)
     pag.goto(BASE + "applets/expres/"); pag.wait_for_load_state("domcontentloaded")
-    ok("Exprés funciona sin conexión", "Exprés" in pag.title())
+    ok("Factor Clash funciona sin conexión", "Factor Clash" in pag.title())
     ctx.set_offline(False)
 
     # Móvil
