@@ -70,6 +70,13 @@
     .novedad .boton { background: var(--coral); color: var(--espresso); }
 
     /* ---------- Pie ---------- */
+    .centro { display: flex; align-items: center; gap: 1rem; margin: 2rem auto 1.5rem; padding: 1rem 1.25rem;
+      background: #fff; border: 1px solid var(--linea); border-radius: 16px; }
+    .centro img { width: 72px; height: 72px; object-fit: contain; flex: none; }
+    .centro p { margin: 0; }
+    .centro-dep { font-weight: 700; font-size: .95rem; color: var(--espresso); }
+    .centro-nombre { font-weight: 900; font-size: 1.15rem; color: var(--espresso); }
+    .centro-lugar { font-size: .9rem; color: var(--espresso); opacity: .85; }
     footer { padding: 1.5rem 0 2.5rem; border-top: 1px solid var(--linea); font-size: .95rem; }
     footer nav { display: flex; flex-wrap: wrap; gap: 1rem; margin-bottom: .5rem; }
   </style>
@@ -128,6 +135,15 @@
     </section>
   </main>
 
+  <section class="contenedor centro" aria-label="Centro educativo" id="centro" hidden>
+    <img id="centroLogo" alt="" width="96" height="96" hidden>
+    <div>
+      <p class="centro-dep" id="centroDep"></p>
+      <p class="centro-nombre" id="centroNombre"></p>
+      <p class="centro-lugar" id="centroLugar"></p>
+    </div>
+  </section>
+
   <footer>
     <div class="contenedor">
       <nav aria-label="Información">
@@ -154,6 +170,20 @@
 
     document.title = MARCA.nombre + " · " + MARCA.lema;
     $("#version").textContent = "versión " + MARCA.version;
+    if (MARCA.centro) {
+      const c = MARCA.centro;
+      $("#centroDep").textContent = c.departamento || "";
+      $("#centroNombre").textContent = c.nombre || "";
+      $("#centroLugar").textContent = c.lugar || "";
+      $("#centro").hidden = false;
+      if (c.logo) {
+        const img = $("#centroLogo");
+        img.onload = () => { img.hidden = false; };
+        img.onerror = () => { img.remove(); };   // sin logo: solo texto
+        img.alt = "Logotipo del " + (c.nombre || "centro");
+        img.src = c.logo;
+      }
+    }
 
     // ---------- Catálogo: por juegos (los cursos se activarán con MARCA.mostrarCursos) ----------
     function tarjeta(j) {

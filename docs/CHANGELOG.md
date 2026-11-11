@@ -1,5 +1,9 @@
 # Registro de cambios
 
+## 0.6.3 · 11/11/2026
+- La portada muestra al pie un recuadro del **Departamento de Matemáticas · IES Alarifes Ruiz Florindo**. Los datos están en `MARCA.centro` (`compartido/marca.js`).
+  El logo del centro se añadirá en `compartido/img/centro.png` cuando se tenga la imagen; mientras tanto solo se ve el texto.
+
 ## 0.6.2 · 11/11/2026
 - **Arreglo de actualizaciones:** el modo sin conexión daba prioridad a la copia guardada y algunos dispositivos seguían viendo la versión antigua.
   Ahora, con Internet, siempre se carga lo último publicado; la copia guardada solo se usa sin conexión. La versión nueva se instala sola.
