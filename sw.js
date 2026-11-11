@@ -8,7 +8,7 @@
 
    Si añades un juego, añade su ruta a ARCHIVOS.
    ========================================================= */
-const VERSION = "pichu-v0.6.3";
+const VERSION = "pichu-v0.6.4";
 
 const ARCHIVOS = [
   "./",
@@ -27,6 +27,7 @@ const ARCHIVOS = [
   "compartido/img/mascota.png",
   "compartido/img/icono-192.png",
   "compartido/img/icono-512.png",
+  "compartido/img/centro.jpg",
   // Juegos
   "applets/expres/",
   "applets/pizzeria/",

@@ -72,7 +72,7 @@
     /* ---------- Pie ---------- */
     .centro { display: flex; align-items: center; gap: 1rem; margin: 2rem auto 1.5rem; padding: 1rem 1.25rem;
       background: #fff; border: 1px solid var(--linea); border-radius: 16px; }
-    .centro img { width: 72px; height: 72px; object-fit: contain; flex: none; }
+    .centro img { width: auto; height: 72px; max-width: 40%; object-fit: contain; flex: none; border-radius: 6px; }
     .centro p { margin: 0; }
     .centro-dep { font-weight: 700; font-size: .95rem; color: var(--espresso); }
     .centro-nombre { font-weight: 900; font-size: 1.15rem; color: var(--espresso); }
@@ -136,7 +136,7 @@
   </main>
 
   <section class="contenedor centro" aria-label="Centro educativo" id="centro" hidden>
-    <img id="centroLogo" alt="" width="96" height="96" hidden>
+    <img id="centroLogo" alt="" width="472" height="317" hidden>
     <div>
       <p class="centro-dep" id="centroDep"></p>
       <p class="centro-nombre" id="centroNombre"></p>

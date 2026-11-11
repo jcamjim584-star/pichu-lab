@@ -7,14 +7,14 @@ window.MARCA = {
   nombre: "πCHU",
   lema: "Matemáticas que no te esperabas",
   // Centro y departamento (aparecen al pie de la portada). Para poner el logo del centro,
-  // guarda la imagen como compartido/img/centro.png y escribe esa ruta en logo; vacío = solo texto.
+  // la imagen está en compartido/img/centro.jpg; con logo vacío ("") solo se ve el texto.
   centro: {
     nombre: "IES Alarifes Ruiz Florindo",
     departamento: "Departamento de Matemáticas",
     lugar: "Fuentes de Andalucía (Sevilla)",
-    logo: ""   // cuando tengamos la imagen: "compartido/img/centro.png"
+    logo: "compartido/img/centro.jpg"
   },
-  version: "0.6.3",
+  version: "0.6.4",
   autor: "Juan Antonio Campos Jiménez",
 
   // Cursos: de momento la portada NO los muestra (se organiza por juegos).
