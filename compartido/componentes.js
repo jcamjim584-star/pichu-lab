@@ -123,7 +123,8 @@
   // ---------- Modo sin conexión (service worker) ----------
   function activarSinConexion(rutaSW, alHaberNovedad) {
     if (!("serviceWorker" in navigator) || location.protocol === "file:") return;
-    navigator.serviceWorker.register(rutaSW).then(reg => {
+    navigator.serviceWorker.register(rutaSW, { updateViaCache: "none" }).then(reg => {
+      reg.update().catch(() => {});
       const avisar = w => w && w.addEventListener("statechange", () => {
         if (w.state === "installed" && navigator.serviceWorker.controller) alHaberNovedad(() => w.postMessage("activar"));
       });

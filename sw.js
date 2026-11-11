@@ -8,7 +8,7 @@
 
    Si añades un juego, añade su ruta a ARCHIVOS.
    ========================================================= */
-const VERSION = "pichu-v0.6.1";
+const VERSION = "pichu-v0.6.2";
 
 const ARCHIVOS = [
   "./",
@@ -33,10 +33,17 @@ const ARCHIVOS = [
   "applets/integer-ninja/"
 ];
 
+// Estrategia (desde 0.6.2): PRIMERO LA RED, y la copia guardada solo si no hay conexión.
+// Así, con Internet, siempre se ve la última versión publicada; sin Internet, la última que se guardó.
+// (Antes era "primero la copia guardada" y algunos dispositivos se quedaban con la versión antigua).
+
 self.addEventListener("install", evento => {
-  evento.waitUntil(caches.open(VERSION).then(c => c.addAll(ARCHIVOS)));
-  // No hacemos skipWaiting aquí: esperamos a que el usuario pulse "Actualizar"
-  // para no cambiar de versión en mitad de una partida.
+  // cache: "reload" → descarga los archivos de GitHub, no de la memoria del navegador.
+  evento.waitUntil(
+    caches.open(VERSION)
+      .then(c => Promise.all(ARCHIVOS.map(a => fetch(new Request(a, { cache: "reload" })).then(r => r.ok && c.put(a, r)).catch(() => {}))))
+      .then(() => self.skipWaiting())
+  );
 });
 
 self.addEventListener("message", evento => {
@@ -59,15 +66,22 @@ self.addEventListener("fetch", evento => {
   if (peticion.method !== "GET" || url.origin !== self.location.origin) return;
 
   evento.respondWith(
-    caches.match(peticion, { ignoreSearch: true }).then(guardada => {
-      if (guardada) return guardada;
-      return fetch(peticion).then(respuesta => {
-        if (respuesta && respuesta.ok && respuesta.type === "basic") {
-          const copia = respuesta.clone();
-          caches.open(VERSION).then(c => c.put(peticion, copia));
+    fetch(peticion, { cache: "no-cache" }).then(respuesta => {
+      if (respuesta && respuesta.ok && respuesta.type === "basic") {
+        const copia = respuesta.clone();
+        caches.open(VERSION).then(c => c.put(peticion, copia));
+      }
+      return respuesta;
+    }).catch(() =>
+      caches.match(peticion, { ignoreSearch: true }).then(guardada => {
+        if (guardada) return guardada;
+        // "applets/x/index.html" y "applets/x/" son la misma página
+        if (url.pathname.endsWith("/index.html")) {
+          const carpeta = url.pathname.slice(0, -"index.html".length);
+          return caches.match(carpeta).then(r => r || (peticion.mode === "navigate" ? caches.match("index.html") : Response.error()));
         }
-        return respuesta;
-      }).catch(() => (peticion.mode === "navigate" ? caches.match("index.html") : Response.error()));
-    })
+        return peticion.mode === "navigate" ? caches.match("index.html") : Response.error();
+      })
+    )
   );
 });
