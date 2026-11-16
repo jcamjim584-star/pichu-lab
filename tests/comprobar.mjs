@@ -53,11 +53,12 @@ ok("MathQuest: logros con id único", new Set(MQ.LOGROS.map(l => l.id)).size ===
 ok("MathQuest: niveles de experiencia", MQ.nivel(0).nivel === 1 && MQ.nivel(99).nivel === 1 && MQ.nivel(100).nivel === 2 && MQ.nivel(300).nivel === 3);
 
 // 3c. Los juegos que se compilan están al día con sus fuentes (no se ha olvidado ejecutar build.py)
-{
-  const d = join(raiz, "src/power-merge/"), gen = readFileSync(join(raiz, "applets/power-merge/index.html"), "utf8");
+for (const id of ["power-merge", "fraction-merge"]) {
+  const d = join(raiz, "src", id, "/"), gen = readFileSync(join(raiz, "applets", id, "index.html"), "utf8");
   const esperado = readFileSync(d + "juego.html", "utf8").replace("/*MOTOR*/", () => readFileSync(d + "motor.js", "utf8")).replace("/*NIVELES*/", () => readFileSync(d + "niveles.js", "utf8"));
-  ok("Power Merge: applets/ coincide con src/ (python3 src/power-merge/build.py)", gen === esperado);
+  ok(`${id}: applets/ coincide con src/ (python3 src/${id}/build.py)`, gen === esperado);
 }
+ok("MathQuest: solo un mundo marcado como «ahora en clase»", MQ.MUNDOS.filter(m => m.ahora).length <= 1);
 
 // 4. Nadie usa localStorage.clear() (borraría los datos de todos los juegos)
 const recorrer = d => readdirSync(d).flatMap(n => {

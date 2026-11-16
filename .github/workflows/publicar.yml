@@ -29,6 +29,10 @@ jobs:
         run: node tests/comprobar.mjs
       - name: Motor de la Pizzería
         run: node tests/pizzeria_motor.test.mjs
+      - name: Motor de Fraction Merge
+        run: node tests/fraction_merge_motor.test.mjs
+      - name: Motor de Ratio Run (juego aún sin publicar)
+        run: node tests/ratio_run_motor.test.mjs
       - name: Motor de Power Merge
         run: node tests/power_merge_motor.test.mjs
       - name: Motor de Integer Ninja

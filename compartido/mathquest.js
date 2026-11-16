@@ -3,7 +3,7 @@
    Progreso COMÚN de todos los juegos de MathQuest:
    experiencia (XP), nivel, monedas, logros, personaje y ajustes.
    Se guarda solo en este dispositivo, en la clave pichu.mathquest.v1.
-   Lo cargan el portal (mathquest/) y cada juego nuevo.
+   Lo cargan la portada (el mapa de mundos) y cada juego nuevo.
    No guarda nombres ni ningún dato personal.
    ========================================================= */
 (function () {
@@ -60,24 +60,39 @@
   const sinMovimiento = () => !leer().ajustes.animaciones ||
     (window.matchMedia && window.matchMedia("(prefers-reduced-motion: reduce)").matches);
 
-  // ---------- Mundos del portal ----------
+  // ---------- Mundos del mapa de la portada ----------
   // "juego" es el id en MARCA.juegos (compartido/marca.js). Sin juego = todavía no existe.
+  // El orden de esta lista es el orden del mapa. "ahora: true" marca el tema que se está dando en clase.
   const MUNDOS = [
-    { id: "divisibilidad", juego: "expres", nombre: "Factor Clash", tema: "Divisibilidad", icono: "÷", color: "#f59e0b", url: "applets/expres/" },
-    { id: "enteros", juego: "integer-ninja", nombre: "Integer Ninja", tema: "Números enteros", icono: "±", color: "#ef4444", url: "applets/integer-ninja/" },
-    { id: "fracciones", juego: "pizzeria", nombre: "Pizza Rush", tema: "Fracciones", icono: "½", color: "#fb7185", url: "applets/pizzeria/" },
-    { id: "potencias", juego: "power-merge", nombre: "Power Merge", tema: "Potencias y raíces", icono: "x²", color: "#8b5cf6", url: "applets/power-merge/", mq: true },
-    { id: "proporcionalidad", juego: "", nombre: "Ratio Run", tema: "Proporcionalidad", icono: "%", color: "#06b6d4" },
-    { id: "algebra", juego: "", nombre: "Algebra Royale", tema: "Expresiones algebraicas", icono: "3x", color: "#3b82f6" },
-    { id: "ecuaciones", juego: "", nombre: "Equation Quest", tema: "Ecuaciones", icono: "x=", color: "#10b981" },
-    { id: "funciones", juego: "", nombre: "Graph Dash", tema: "Funciones y gráficas", icono: "ƒ", color: "#ec4899" },
-    { id: "estadistica", juego: "", nombre: "Data Ninja", tema: "Estadística", icono: "x̄", color: "#f97316" },
-    { id: "probabilidad", juego: "", nombre: "Probability Arena", tema: "Probabilidad", icono: "🎲", color: "#a855f7" },
-    { id: "geometria", juego: "", nombre: "Geometry Builder", tema: "Geometría", icono: "△", color: "#14b8a6" }
+    { id: "divisibilidad", juego: "expres", nombre: "Factor Clash", tema: "Divisibilidad", icono: "÷", url: "applets/expres/" },
+    { id: "enteros", juego: "integer-ninja", nombre: "Integer Ninja", tema: "Números enteros", icono: "±", url: "applets/integer-ninja/" },
+    { id: "fracciones", juego: "fraction-merge", nombre: "Fraction Merge", tema: "Fracciones", icono: "½", url: "applets/fraction-merge/", mq: true, ahora: true },
+    { id: "ecuaciones", juego: "", nombre: "Equation Quest", tema: "Ecuaciones", icono: "x=" },
+    { id: "potencias", juego: "power-merge", nombre: "Power Merge", tema: "Potencias y raíces", icono: "x²", url: "applets/power-merge/", mq: true },
+    { id: "proporcionalidad", juego: "", nombre: "Ratio Run", tema: "Proporcionalidad", icono: "%" },
+    { id: "algebra", juego: "", nombre: "Algebra Royale", tema: "Expresiones algebraicas", icono: "3x" },
+    { id: "funciones", juego: "", nombre: "Graph Dash", tema: "Funciones y gráficas", icono: "ƒ" },
+    { id: "estadistica", juego: "", nombre: "Data Ninja", tema: "Estadística", icono: "x̄" },
+    { id: "probabilidad", juego: "", nombre: "Probability Arena", tema: "Probabilidad", icono: "🎲" },
+    { id: "geometria", juego: "", nombre: "Geometry Builder", tema: "Geometría", icono: "△" }
   ];
 
   // ---------- Logros y medallas ----------
   const LOGROS = [
+    { id: "fm.primera", juego: "fraction-merge", icono: "✨", titulo: "Primera suma", desc: "Junta dos fichas por primera vez." },
+    { id: "fm.unidad", juego: "fraction-merge", icono: "🍕", titulo: "¡Unidad completa!", desc: "Junta fichas que sumen exactamente 1." },
+    { id: "fm.equiv", juego: "fraction-merge", icono: "🪞", titulo: "Lo mismo con otro disfraz", desc: "Entrega un pedido usando fracciones equivalentes." },
+    { id: "fm.combo3", juego: "fraction-merge", icono: "⚡", titulo: "Reacción en cadena", desc: "Consigue 3 sumas en un solo movimiento." },
+    { id: "fm.limpio", juego: "fraction-merge", icono: "🎯", titulo: "Pulso de cirujano", desc: "Supera un nivel sin ningún error." },
+    { id: "fm.unidades25", juego: "fraction-merge", icono: "🧩", titulo: "Completista", desc: "Completa 25 unidades." },
+    { id: "fm.entregas100", juego: "fraction-merge", icono: "📦", titulo: "Repartidor de fracciones", desc: "Entrega 100 pedidos." },
+    { id: "fm.esc1", juego: "fraction-merge", icono: "🥉", titulo: "Medalla de bronce", desc: "Completa el escalón Principiante." },
+    { id: "fm.esc2", juego: "fraction-merge", icono: "🥈", titulo: "Medalla de plata", desc: "Completa el escalón Intermedio." },
+    { id: "fm.esc3", juego: "fraction-merge", icono: "🥇", titulo: "Medalla de oro", desc: "Completa el escalón Avanzado." },
+    { id: "fm.esc4", juego: "fraction-merge", icono: "🏅", titulo: "Medalla de platino", desc: "Completa el escalón Experto." },
+    { id: "fm.jefe", juego: "fraction-merge", icono: "👑", titulo: "Domador de Quebrón", desc: "Derrota al jefe final." },
+    { id: "fm.estrellas", juego: "fraction-merge", icono: "🌠", titulo: "Constelación completa", desc: "Consigue las 39 estrellas." },
+    { id: "fm.inf20", juego: "fraction-merge", icono: "♾️", titulo: "Sin fin", desc: "Entrega 20 pedidos en una partida infinita." },
     { id: "pm.primera", juego: "power-merge", icono: "✨", titulo: "Primera chispa", desc: "Haz tu primera fusión." },
     { id: "pm.combo3", juego: "power-merge", icono: "⚡", titulo: "Reacción en cadena", desc: "Consigue 3 fusiones en un solo movimiento." },
     { id: "pm.limpio", juego: "power-merge", icono: "🎯", titulo: "Pulso de cirujano", desc: "Supera un nivel sin ningún error." },

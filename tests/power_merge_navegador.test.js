@@ -135,7 +135,7 @@ const foto = async (p, n) => { if (CAP) await p.screenshot({ path: path.join(CAP
   ok("Poder √ con exponente impar: explica y no gasta el poder", /impar/.test(await p.locator("#ventana").innerText()) && await p.evaluate(() => __PM.J.cargas.raiz === 1));
   await p.locator('#ventana [data-a="cerrar"]').tap();
   for (let k = 0; k < 8; k++) await deslizar(["izq", "aba", "der", "arr"][k % 4]);
-  ok("El jefe ataca (roca o hielo)", await p.evaluate(() => __PM.J.t.g.some(c => c && (c.tipo === "roca" || c.hielo))));
+  ok("El jefe ataca (roca o hielo)", await p.evaluate(() => __PM.J.jefe.ataques >= 1));
   await foto(p, "pm_jefe");
   m = await encaja(); ok("Nivel del jefe en móvil: nada cortado", m.fuera === 0 && !m.scroll, JSON.stringify(m));
 
@@ -150,19 +150,23 @@ const foto = async (p, n) => { if (CAP) await p.screenshot({ path: path.join(CAP
   for (const t of ["ArrowLeft", "ArrowUp", "ArrowRight", "ArrowDown"]) { await p.keyboard.press(t); await p.waitForTimeout(200); }
   ok("También funciona con teclado (flechas)", await p.evaluate(n => __PM.J.nMov > n, nAntes));
 
-  // ---------- 7. Portal MathQuest ----------
+  // ---------- 7. La portada es el mapa de mundos ----------
   await p.setViewportSize({ width: 390, height: 844 });
-  await p.goto(BASE + "mathquest/index.html"); await p.waitForTimeout(500);
-  ok("Portal: 11 mundos", await p.locator(".mundo").count() === 11);
-  ok("Portal: 3 juegos que ya existían + Power Merge se pueden abrir; Pizza Rush sigue «En revisión»",
-    await p.locator("a.mundo").count() === 3 && /En revisión/.test(await p.locator(".mundo").nth(2).innerText()));
-  ok("Portal: enseña el progreso de Power Merge", /de 13 niveles/.test(await p.locator('a.mundo[href*="power-merge"]').innerText()));
-  ok("Portal: cabecera del centro", /IES Alarifes Ruiz Florindo/.test(await p.locator("header").innerText()) && /1\.º ESO/.test(await p.locator("header").innerText()));
-  ok("Portal: sin desplazamiento horizontal", await p.evaluate(() => document.documentElement.scrollWidth <= innerWidth));
-  if (CAP) await p.screenshot({ path: path.join(CAP, "portal_movil.png"), fullPage: true });
+  await p.goto(BASE + "index.html"); await p.waitForTimeout(600);
+  ok("Portada: mapa con 11 mundos", await p.locator(".mundo").count() === 11);
+  ok("Portada: 4 mundos se pueden abrir", await p.locator("a.mundo").count() === 4, await p.locator("a.mundo").count());
+  ok("Portada: enseña el progreso de Power Merge", /de 13 niveles/.test(await p.locator('a.mundo[href*="power-merge"]').innerText()));
+  ok("Portada: Fracciones marcado «Ahora en clase»", /Ahora en clase/.test(await p.locator(".mundo.ahora").innerText()) && /Fraction Merge/.test(await p.locator(".mundo.ahora").innerText()));
+  ok("Portada: logo, mascota y centro", await p.locator("img.logo").count() === 1 && await p.locator(".portada img").count() === 1 && /IES Alarifes Ruiz Florindo/.test(await p.locator("#centro").innerText()));
+  ok("Portada: sin desplazamiento horizontal", await p.evaluate(() => document.documentElement.scrollWidth <= innerWidth));
+  ok("Portada: botones de 44 px o más", await p.evaluate(() => [...document.querySelectorAll(".progreso .boton")].every(b => b.getBoundingClientRect().height >= 44)));
+  if (CAP) await p.screenshot({ path: path.join(CAP, "portada_movil.png"), fullPage: true });
   await p.locator("#bLogros").tap(); await p.waitForTimeout(200);
-  ok("Portal: lista de logros", await p.locator("#ventana .item").count() >= 14);
-  await foto(p, "portal_logros");
+  ok("Portada: lista de logros", await p.locator("#ventana .item").count() >= 28);
+  await foto(p, "portada_logros");
+  await p.locator("#ventana [data-cerrar]").tap();
+  await p.locator("#bContinuar").tap(); await p.waitForTimeout(500);
+  ok("Portada: «Continuar» abre el último juego", p.url().includes("power-merge"));
   ok("Sin errores de consola en toda la prueba", !errores.length, errores.join(" | "));
 
   await nav.close(); srv.close();

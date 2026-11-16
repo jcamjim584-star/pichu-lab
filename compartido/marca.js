@@ -14,7 +14,7 @@ window.MARCA = {
     lugar: "Fuentes de Andalucía (Sevilla)",
     logo: "compartido/img/centro.jpg"
   },
-  version: "0.7.0",
+  version: "0.8.0",
   autor: "Juan Antonio Campos Jiménez",
 
   // Cursos: de momento la portada NO los muestra (se organiza por juegos).
@@ -50,12 +50,25 @@ window.MARCA = {
       claves: ["pichu.integerNinja.v1"]
     },
     {
+      id: "fraction-merge",
+      titulo: "Fraction Merge",
+      subtitulo: "Suma y fusiona fracciones",
+      curso: "1.º ESO",
+      saber: "Fracciones: equivalentes, suma y resta, completar la unidad",
+      descripcion: "Desliza y junta fichas: las fracciones se suman, y si llegan a 1 desaparecen. 13 niveles, poderes, un jefe final y partida infinita.",
+      simbolo: "½",
+      // Fuentes en src/fraction-merge/ → python3 src/fraction-merge/build.py genera applets/fraction-merge/index.html
+      url: "applets/fraction-merge/",
+      estado: "jugar",
+      claves: ["pichu.fraction-merge.v1", "pichu.mathquest.v1"]
+    },
+    {
       id: "power-merge",
       titulo: "Power Merge",
       subtitulo: "Fusiona potencias y raíces",
       curso: "1.º ESO",
       saber: "Potencias, raíces cuadradas exactas y propiedades de las potencias",
-      descripcion: "Desliza y fusiona cristales: misma base, se suman los exponentes. 13 niveles, poderes, un jefe final y forja infinita. Forma parte de MathQuest.",
+      descripcion: "Desliza y fusiona cristales: misma base, se suman los exponentes. 13 niveles, poderes, un jefe final y forja infinita. ",
       simbolo: "x²",
       // Fuentes en src/power-merge/ → python3 src/power-merge/build.py genera applets/power-merge/index.html
       url: "applets/power-merge/",

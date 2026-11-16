@@ -5,13 +5,14 @@
 Portada que reúne los juegos y laboratorios de matemáticas interactivos de Juan Antonio Campos Jiménez
 (ESO y Bachillerato). Web estática: HTML, CSS y JavaScript, sin frameworks, sin registro y sin recoger datos personales.
 
-## Qué incluye (versión 0.7.0)
+## Qué incluye (versión 0.8.0)
 | Juego | Curso (de momento no se muestra) | Estado |
 |---|---|---|
 | Factor Clash · duelos de divisibilidad | 1.º ESO | Disponible |
 | Pizza Rush · Pizzería πCHU v0.2 (fracciones: equivalencias, suma, multiplicación y división) | 1.º ESO | Próximamente (en revisión) |
 | Integer Ninja v0.5 · enteros: signos, comparar, sumas, −( ), productos y cocientes | 1.º ESO | Disponible |
-| **Power Merge** · potencias y raíces (MathQuest) | 1.º ESO | Disponible |
+| **Fraction Merge** · fracciones: equivalentes, suma, resta y unidad | 1.º ESO | Disponible (tema actual) |
+| **Power Merge** · potencias y raíces | 1.º ESO | Disponible |
 | Laboratorio de Proporcionalidad · cartas de ecuaciones · cartas de funciones | 1.º ESO · 4.º ESO · 1.º Bach | En diseño |
 
 Funciones comunes:
@@ -39,22 +40,25 @@ pip install playwright && python3 tests/prueba_navegador.py . capturas
 python3 tests/prueba_pizzeria.py . capturas
 ```
 
-## MathQuest · Academia de los Números
-`mathquest/index.html` es un mapa de mundos para 1.º ESO (IES Alarifes Ruiz Florindo). Enlaza los juegos que ya existían
-(Factor Clash, Integer Ninja; Pizza Rush aparece «En revisión» mientras siga en Próximamente) y los juegos nuevos de MathQuest.
-De los ocho juegos nuevos previstos, **solo está hecho Power Merge**; los otros siete aparecen como «Próximamente».
-El progreso común (experiencia, nivel, monedas, logros, personaje y ajustes) está en `compartido/mathquest.js`
-y se guarda en `pichu.mathquest.v1`. Para añadir un mundo: edita `MUNDOS` en ese archivo.
+## El mapa de mundos (portada)
+La portada es un mapa con los temas de 1.º ESO. La lista de mundos y su orden están en `compartido/mathquest.js` (`MUNDOS`):
+- Para cambiar el tema marcado como **«Ahora en clase»**, mueve `ahora: true` a otro mundo.
+- Un mundo se puede abrir solo si su juego está en `compartido/marca.js` con `estado: "jugar"`.
+- Los juegos que no están en el mapa (otros cursos, en revisión) salen debajo, en «Más juegos» y «Próximamente».
+El progreso común (experiencia, nivel, monedas, logros y ajustes) se guarda en `pichu.mathquest.v1`.
 
-## Power Merge: cómo modificarlo
-Se edita en `src/power-merge/`: `motor.js` (matemáticas y reglas), `niveles.js` (los 13 niveles: movimientos, pedidos, bases…)
-y `juego.html` (pantalla, sonido, tienda). Después:
+## Fraction Merge y Power Merge: cómo modificarlos
+Los dos tienen la misma estructura en `src/<juego>/`: `motor.js` (matemáticas y reglas), `niveles.js` (los 13 niveles:
+movimientos, pedidos, denominadores o bases…) y `juego.html` (pantalla, sonido, tienda). Después:
 ```
-python3 src/power-merge/build.py
-node tests/power_merge_motor.test.mjs          # matemáticas y niveles
-node tests/power_merge_navegador.test.js       # partida completa con gestos táctiles (necesita Playwright)
+python3 src/fraction-merge/build.py
+node tests/fraction_merge_motor.test.mjs          # matemáticas y niveles
+node tests/fraction_merge_navegador.test.js       # partida completa con gestos táctiles (necesita Playwright)
 ```
-Ficha del juego: `docs/fichas/power-merge.md`.
+(igual con `power-merge` y `power_merge`). Fichas: `docs/fichas/fraction-merge.md` y `docs/fichas/power-merge.md`.
+
+Ratio Run (proporcionalidad) está **a medias**: en `src/ratio-run/` solo hay motor y niveles, ya probados
+(`node tests/ratio_run_motor.test.mjs`). Falta la pantalla del juego, así que no aparece como disponible.
 
 ## Pizza Rush (Pizzería πCHU): cómo modificarla
 El juego se edita en `src/pizzeria/` (`motor.js` = matemáticas, `juego.html` = pantalla, `personajes/` = imágenes).

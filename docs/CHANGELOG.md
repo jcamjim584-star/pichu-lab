@@ -1,5 +1,20 @@
 # Registro de cambios
 
+## 0.8.0 · 16/11/2026
+- **La portada pasa a ser el mapa de mundos** de 1.º ESO, con el logo, la mascota y los colores de πCHU. Se elimina la
+  subpágina `mathquest/`. El mundo de Fracciones va marcado «Ahora en clase». Los demás juegos salen debajo.
+- Nuevo juego **Fraction Merge** (`applets/fraction-merge/`, fuentes en `src/fraction-merge/`): las fichas son fracciones,
+  al chocar se suman y si llegan a 1 desaparecen. 13 niveles en 5 escalones, de mitades y cuartos con dibujos a sumas y
+  restas con distinto denominador. Estilo πCHU. Ver `docs/fichas/fraction-merge.md`.
+- Power Merge se mantiene en su mundo (potencias y raíces); su menú vuelve ahora al mapa.
+- Ratio Run: motor y niveles escritos y probados (`src/ratio-run/`), pero **sin pantalla todavía**; aparcado.
+- Pruebas: Fraction Merge motor 210 060 comprobaciones y navegador 39/39; Power Merge navegador 39/39; Ratio Run motor 928 024.
+  Fallos encontrados por las pruebas y corregidos: tablero vacío tras entregar todas las fichas; una puerta de Ratio Run sin texto.
+
+### Pendiente
+- Probar Fraction Merge en clase con móviles y tabletas reales.
+- Terminar la pantalla de Ratio Run cuando toque proporcionalidad. Siguiente tema: ecuaciones (Equation Quest).
+
 ## 0.7.0 · 16/11/2026
 - Nuevo portal **MathQuest · Academia de los Números** (`mathquest/`): mapa de 11 mundos de 1.º ESO con cabecera del
   IES Alarifes Ruiz Florindo, nivel, experiencia, monedas, logros, personajes desbloqueables y ajustes comunes.

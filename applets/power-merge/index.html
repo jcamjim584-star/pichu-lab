@@ -217,7 +217,7 @@ body.jugando #pichu-volver{display:none}
     <button class="btn gris" id="bComo">Cómo se juega</button>
     <button class="btn gris" id="bAjustes">Ajustes</button>
   </div>
-  <p class="pie"><a href="../../mathquest/index.html">← MathQuest · Academia de los Números</a><br>IES Alarifes Ruiz Florindo · Departamento de Matemáticas · 1.º ESO</p>
+  <p class="pie"><a href="../../index.html">← Volver al mapa de πCHU</a><br>IES Alarifes Ruiz Florindo · Departamento de Matemáticas · 1.º ESO</p>
 </main>
 
 <!-- ============ NIVELES ============ -->
@@ -974,6 +974,7 @@ function ataqueJefe() {
   if (libres.length > 4 && (Math.random() < 0.5 || !moviles.length)) { M.ponerRoca(J.t, M.elige(J.t.rng, libres), 1); avisar("👑 ¡Radikal lanza una roca!"); }
   else if (moviles.length) { J.t.g[M.elige(J.t.rng, moviles)].hielo = true; avisar("👑 ¡Radikal congela una ficha!"); }
   else return;
+  J.jefe.ataques = (J.jefe.ataques || 0) + 1;
   Son.ataque(); const tb = $("#tablero"); tb.classList.remove("temblor"); void tb.offsetWidth; tb.classList.add("temblor");
 }
 

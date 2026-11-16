@@ -7,11 +7,11 @@
 - Regla del proyecto: no se empieza algo nuevo sin probar y documentar lo anterior.
 
 ## Qué es este repositorio
-Portada (`index.html`) que enlaza juegos y laboratorios de matemáticas. Web estática, sin frameworks,
+Portada (`index.html`) con el mapa de mundos que enlaza juegos y laboratorios de matemáticas. Web estática, sin frameworks,
 publicada en GitHub Pages con `.github/workflows/publicar.yml`.
 
 ```
-index.html              portada / catálogo
+index.html              portada = MAPA DE MUNDOS de 1.º ESO (lista en compartido/mathquest.js → MUNDOS) + otros juegos
 privacidad.html         página de privacidad
 accesibilidad.html      declaración de accesibilidad
 sw.js                   modo sin conexión (lista ARCHIVOS + VERSION)
@@ -21,8 +21,7 @@ compartido/marca.js     nombre, versión y LISTA DE JUEGOS (MARCA.juegos)
 compartido/componentes.js  alias, exportar/importar/borrar, confirmación doble
 compartido/volver.js    botón "← πCHU" que se añade a cada juego
 compartido/mathquest.js progreso común de MathQuest (XP, monedas, logros, personaje, ajustes) en pichu.mathquest.v1;
-                        también la lista de MUNDOS del portal y de LOGROS
-mathquest/index.html    portal MathQuest · Academia de los Números (mapa de mundos de 1.º ESO)
+                        también la lista de MUNDOS del mapa (su orden es el del mapa; "ahora: true" = tema actual) y de LOGROS
 applets/<id>/index.html cada juego, autocontenido
 src/<juego>/            fuentes de los juegos que se compilan (p. ej. src/pizzeria: motor.js + juego.html + personajes)
                         → python3 src/pizzeria/build.py genera applets/pizzeria/index.html (no editar el generado)
@@ -30,6 +29,9 @@ tests/comprobar.mjs     comprobaciones (node tests/comprobar.mjs)
 tests/pizzeria_motor.test.mjs  pruebas del motor de la Pizzería
 src/power-merge/        Power Merge: motor.js (matemáticas) + niveles.js (dificultad) + juego.html (pantalla)
                         → python3 src/power-merge/build.py genera applets/power-merge/index.html (no editar el generado)
+src/fraction-merge/     Fraction Merge (fracciones): misma estructura y build.py que Power Merge
+src/ratio-run/          Ratio Run (proporcionalidad): SOLO motor y niveles, probados; falta la pantalla. Aparcado.
+tests/fraction_merge_motor.test.mjs · tests/fraction_merge_navegador.test.js · tests/ratio_run_motor.test.mjs
 tests/power_merge_motor.test.mjs      pruebas del motor de Power Merge
 tests/power_merge_navegador.test.js   partida completa en Chromium con gestos táctiles (necesita Playwright)
 docs/fichas/            una ficha por juego
