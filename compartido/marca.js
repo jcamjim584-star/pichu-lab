@@ -14,7 +14,7 @@ window.MARCA = {
     lugar: "Fuentes de Andalucía (Sevilla)",
     logo: "compartido/img/centro.jpg"
   },
-  version: "0.6.4",
+  version: "0.7.0",
   autor: "Juan Antonio Campos Jiménez",
 
   // Cursos: de momento la portada NO los muestra (se organiza por juegos).
@@ -48,6 +48,19 @@ window.MARCA = {
       url: "applets/integer-ninja/",
       estado: "jugar",
       claves: ["pichu.integerNinja.v1"]
+    },
+    {
+      id: "power-merge",
+      titulo: "Power Merge",
+      subtitulo: "Fusiona potencias y raíces",
+      curso: "1.º ESO",
+      saber: "Potencias, raíces cuadradas exactas y propiedades de las potencias",
+      descripcion: "Desliza y fusiona cristales: misma base, se suman los exponentes. 13 niveles, poderes, un jefe final y forja infinita. Forma parte de MathQuest.",
+      simbolo: "x²",
+      // Fuentes en src/power-merge/ → python3 src/power-merge/build.py genera applets/power-merge/index.html
+      url: "applets/power-merge/",
+      estado: "jugar",
+      claves: ["pichu.power-merge.v1", "pichu.mathquest.v1"]
     },
     {
       id: "pizzeria",

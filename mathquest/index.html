@@ -1,0 +1,243 @@
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>MathQuest · Academia de los Números</title>
+<meta name="description" content="Selección de mundos de MathQuest: videojuegos de Matemáticas para 1.º de ESO. Sin registro y sin recoger datos personales.">
+<meta name="theme-color" content="#0f1b4d">
+<link rel="manifest" href="../manifest.webmanifest">
+<link rel="icon" href="../compartido/img/icono-192.png">
+<style>
+@font-face{font-family:"Lato";font-weight:400;font-display:swap;src:url("../compartido/fuentes/lato-latin-400-normal.woff2") format("woff2")}
+@font-face{font-family:"Lato";font-weight:700;font-display:swap;src:url("../compartido/fuentes/lato-latin-700-normal.woff2") format("woff2")}
+@font-face{font-family:"Lato";font-weight:900;font-display:swap;src:url("../compartido/fuentes/lato-latin-900-normal.woff2") format("woff2")}
+:root{--noche:#0f1b4d;--noche2:#27357e;--panel:#1b2a6b;--linea:#4a5fc4;--texto:#f1f5ff;--suave:#c3ccf5;--oro:#fde047;--cian:#67e8f9;--verde:#4ade80}
+*,*::before,*::after{box-sizing:border-box}
+html{-webkit-text-size-adjust:100%}
+body{margin:0;font-family:"Lato",system-ui,-apple-system,"Segoe UI",Roboto,sans-serif;color:var(--texto);line-height:1.4;
+  background:#16215f;min-height:100vh;overflow-x:hidden}
+button{font:inherit;color:inherit;cursor:pointer}
+a{color:var(--cian);font-weight:700}
+:focus-visible{outline:3px solid var(--oro);outline-offset:3px;border-radius:8px}
+.cielo{position:fixed;inset:0;z-index:-1;pointer-events:none;background-color:#16215f;
+  background-image:radial-gradient(2px 2px at 12% 18%,#fff 50%,transparent 51%),radial-gradient(2px 2px at 78% 9%,#fff 50%,transparent 51%),
+    radial-gradient(1.5px 1.5px at 42% 30%,#fff 50%,transparent 51%),radial-gradient(2px 2px at 90% 42%,#fff 50%,transparent 51%),
+    radial-gradient(1.5px 1.5px at 25% 55%,#fff 50%,transparent 51%),radial-gradient(2px 2px at 62% 22%,#fff 50%,transparent 51%),
+    radial-gradient(1.5px 1.5px at 6% 40%,#fff 50%,transparent 51%),radial-gradient(1.5px 1.5px at 52% 8%,#fff 50%,transparent 51%),
+    linear-gradient(180deg,#0b1238 0,#1c2a78 45%,#3b4fb8 80%,#7c5cc4 100%);
+  animation:titila 4s ease-in-out infinite alternate}
+@keyframes titila{to{opacity:.55}}
+.ancho{width:min(760px,100% - 24px);margin-inline:auto}
+
+/* Cabecera del centro */
+.centro{display:flex;align-items:center;gap:12px;padding:12px 0 4px}
+.centro img{height:54px;width:auto;border-radius:8px;flex:none;background:#fff}
+.centro p{margin:0;font-size:.82rem;color:var(--suave);line-height:1.25}
+.centro b{display:block;font-size:1rem;color:#fff}
+h1{margin:10px 0 2px;text-align:center;font-weight:900;font-size:clamp(2.5rem,13vw,4.6rem);line-height:.95;letter-spacing:.01em;
+  background:linear-gradient(180deg,#fff 15%,#fde047 50%,#fb923c 95%);-webkit-background-clip:text;background-clip:text;color:transparent;
+  filter:drop-shadow(0 4px 0 #1e1b6b) drop-shadow(0 12px 20px rgba(0,0,0,.45))}
+h1 span{display:block;font-size:.3em;letter-spacing:.22em;color:var(--cian);-webkit-text-fill-color:var(--cian);margin-top:.5em}
+
+/* Ficha del jugador */
+.jugador{display:grid;grid-template-columns:auto 1fr;gap:6px 14px;align-items:center;margin:16px 0 8px;padding:12px 14px;border-radius:22px;
+  background:linear-gradient(160deg,rgba(40,58,140,.92),rgba(22,34,96,.92));border:2px solid var(--linea);box-shadow:0 10px 30px rgba(0,0,0,.35)}
+.avatar{width:76px;height:76px;border-radius:20px;border:2px solid var(--linea);background:#0f1b4d;padding:4px;grid-row:span 2}
+.jugador .linea1{display:flex;gap:8px;flex-wrap:wrap;align-items:center;font-weight:900}
+.chip{display:inline-flex;align-items:center;gap:.35em;padding:.25em .8em;border-radius:999px;background:rgba(0,0,0,.3);border:2px solid var(--linea);font-weight:900;font-size:.95rem}
+.xp{height:14px;border-radius:9px;background:#0b1238;overflow:hidden;border:1px solid var(--linea)}
+.xp i{display:block;height:100%;border-radius:9px;background:linear-gradient(90deg,var(--cian),var(--verde));transition:width .6s}
+.xp+small{font-size:.8rem;color:var(--suave)}
+.acciones{grid-column:1/-1;display:flex;gap:8px;flex-wrap:wrap}
+.btn{min-height:46px;padding:.45em 1.1em;border-radius:14px;border:0;font-weight:900;background:linear-gradient(#818cf8,#4f46e5);color:#fff;
+  box-shadow:0 4px 0 #312e81;text-decoration:none;display:inline-flex;align-items:center;justify-content:center;gap:.4em}
+.btn:active{transform:translateY(3px);box-shadow:0 1px 0 #312e81}
+.btn.oro{background:linear-gradient(#fde047,#f59e0b);color:#3b1d00;box-shadow:0 4px 0 #b45309}
+.btn.gris{background:linear-gradient(#3a4a9c,#27357e);box-shadow:0 4px 0 #141d52}
+
+/* Mapa de mundos */
+h2{font-size:1.05rem;letter-spacing:.16em;text-transform:uppercase;color:var(--cian);margin:22px 0 6px;text-align:center}
+.mapa{position:relative;padding:10px 0 30px}
+.mapa svg.camino{position:absolute;inset:0;width:100%;height:100%;pointer-events:none;overflow:visible}
+.mundo{position:relative;display:flex;align-items:center;gap:14px;width:min(430px,88%);margin:0 0 26px;padding:0;border:0;background:none;text-align:left;text-decoration:none;color:inherit}
+.mundo:nth-child(even){margin-left:auto;flex-direction:row-reverse;text-align:right}
+.isla{flex:none;position:relative;width:104px;height:104px;border-radius:50%;display:grid;place-items:center;font-size:2.3rem;font-weight:900;color:#fff;
+  background:radial-gradient(circle at 32% 28%,rgba(255,255,255,.55),transparent 42%),var(--c);
+  box-shadow:0 8px 0 rgba(0,0,0,.35),0 0 0 5px rgba(255,255,255,.18),0 18px 30px rgba(0,0,0,.35);text-shadow:0 3px 0 rgba(0,0,0,.3)}
+.isla::after{content:"";position:absolute;left:12%;right:12%;bottom:-20px;height:16px;border-radius:50%;background:rgba(0,0,0,.28);filter:blur(4px)}
+a.mundo .isla{animation:flota 3.4s ease-in-out infinite}
+a.mundo:nth-child(even) .isla{animation-delay:-1.7s}
+@keyframes flota{50%{transform:translateY(-7px)}}
+a.mundo:hover .isla,a.mundo:focus-visible .isla{box-shadow:0 8px 0 rgba(0,0,0,.35),0 0 0 5px var(--oro),0 18px 30px rgba(0,0,0,.35)}
+.mundo.cerrado .isla{background:#3d4a8c;color:#aab4e8;box-shadow:0 8px 0 rgba(0,0,0,.3),0 0 0 5px rgba(255,255,255,.08)}
+.mundo.cerrado .isla::before{content:"🔒";position:absolute;right:-4px;top:-4px;font-size:1.3rem;text-shadow:none}
+.rotulo{flex:1;min-width:0;padding:10px 12px;border-radius:16px;background:rgba(15,27,77,.82);border:2px solid var(--linea)}
+.rotulo small{display:block;font-size:.74rem;letter-spacing:.12em;text-transform:uppercase;color:var(--cian);font-weight:900}
+.rotulo b{display:block;font-size:1.2rem;font-weight:900;line-height:1.15}
+.rotulo span{display:block;font-size:.86rem;color:var(--suave)}
+.rotulo .estado{display:inline-block;margin-top:5px;padding:.15em .7em;border-radius:999px;font-size:.8rem;font-weight:900;background:var(--verde);color:#052e16}
+.mundo.cerrado .rotulo{opacity:.8}
+.mundo.cerrado .estado{background:#3d4a8c;color:#dbe2ff}
+.rotulo .prog{height:8px;border-radius:9px;background:#0b1238;margin-top:6px;overflow:hidden}
+.rotulo .prog i{display:block;height:100%;background:linear-gradient(90deg,var(--oro),#fb923c)}
+.nuevo{position:absolute;left:-6px;top:-8px;z-index:2;padding:.1em .6em;border-radius:999px;background:#ef4444;color:#fff;font-size:.72rem;font-weight:900;letter-spacing:.08em;transform:rotate(-10deg)}
+.mundo:nth-child(even) .nuevo{left:auto;right:-6px;transform:rotate(10deg)}
+
+footer{padding:18px 0 34px;font-size:.88rem;color:var(--texto);text-align:center}
+
+/* Ventanas */
+#capa{position:fixed;inset:0;z-index:50;background:rgba(6,10,40,.75);display:none;align-items:center;justify-content:center;padding:14px}
+#capa.ver{display:flex}
+.ventana{width:min(480px,100%);max-height:100%;overflow:auto;border-radius:24px;padding:18px;background:linear-gradient(160deg,#2b3d94,#1b2a6b);border:3px solid var(--linea);
+  box-shadow:0 20px 60px rgba(0,0,0,.6);text-align:center}
+.ventana h3{margin:.1em 0 .4em;font-size:1.5rem;font-weight:900}
+.lista{display:grid;gap:8px;text-align:left;margin:10px 0}
+.item{display:flex;align-items:center;gap:10px;padding:8px 10px;border-radius:14px;background:rgba(0,0,0,.25)}
+.item .ico{flex:none;width:44px;height:44px;border-radius:12px;display:grid;place-items:center;font-size:1.4rem;background:#0f1b4d}
+.item div{flex:1;min-width:0}.item b{display:block}.item span{font-size:.85rem;color:var(--suave)}
+.item.apagado{opacity:.5}
+.avatares{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin:10px 0}
+.avatares button{border-radius:18px;border:3px solid var(--linea);background:#0f1b4d;padding:8px 6px;font-weight:900;min-height:44px}
+.avatares button[aria-pressed="true"]{border-color:var(--oro);box-shadow:0 0 14px var(--oro)}
+.avatares button[disabled]{opacity:.45;cursor:not-allowed}
+.avatares small{display:block;font-size:.75rem;color:var(--suave);font-weight:700}
+.interruptor{min-width:64px;min-height:44px;border-radius:999px;border:2px solid var(--linea);background:#0f1b4d;font-weight:900;flex:none}
+.interruptor[aria-pressed="true"]{background:var(--verde);color:#052e16;border-color:#bbf7d0}
+.sinmov *,.sinmov *::before,.sinmov *::after{animation:none!important;transition:none!important}
+@media (prefers-reduced-motion:reduce){*,*::before,*::after{animation:none!important;transition:none!important}}
+@media (max-width:380px){.isla{width:86px;height:86px;font-size:1.9rem}.rotulo b{font-size:1.05rem}}
+</style>
+</head>
+<body>
+<div class="cielo" aria-hidden="true"></div>
+
+<header class="ancho">
+  <div class="centro">
+    <img src="../compartido/img/centro.jpg" alt="Logotipo del IES Alarifes Ruiz Florindo" width="472" height="317">
+    <p><b>IES Alarifes Ruiz Florindo</b>Departamento de Matemáticas<br>Matemáticas — 1.º ESO</p>
+  </div>
+  <h1>MATHQUEST<span>ACADEMIA DE LOS NÚMEROS</span></h1>
+</header>
+
+<main class="ancho">
+  <section class="jugador" aria-label="Tu progreso">
+    <button class="avatar" id="bAvatar" aria-label="Cambiar de personaje"></button>
+    <div class="linea1"><span id="nivelTxt"></span><span class="chip" id="monedas"></span><span class="chip" id="logrosTxt"></span></div>
+    <div><div class="xp" role="progressbar" aria-label="Experiencia" aria-valuemin="0" aria-valuemax="100" id="xpBarra"><i id="xp"></i></div><small id="xpTxt"></small></div>
+    <div class="acciones">
+      <a class="btn oro" id="bContinuar" href="../applets/power-merge/index.html">▶ Continuar</a>
+      <button class="btn" id="bLogros">🏅 Logros</button>
+      <button class="btn gris" id="bAjustes">⚙ Ajustes</button>
+    </div>
+  </section>
+
+  <h2 id="tMundos">Elige un mundo</h2>
+  <nav class="mapa" id="mapa" aria-labelledby="tMundos"></nav>
+</main>
+
+<footer class="ancho">
+  <p style="margin:0 0 4px">Tu progreso se guarda solo en este dispositivo. Sin registro, sin anuncios y sin datos personales.</p>
+  <a href="../index.html">Portada πCHU · Mis datos</a> · <a href="../privacidad.html">Privacidad</a> · <a href="../accesibilidad.html">Accesibilidad</a>
+</footer>
+
+<div id="capa" role="dialog" aria-modal="true"><div class="ventana" id="ventana"></div></div>
+
+<script src="../compartido/marca.js"></script>
+<script src="../compartido/mathquest.js"></script>
+<script>
+(function () {
+  "use strict";
+  const MQ = window.MathQuest, $ = s => document.querySelector(s);
+  const esc = s => String(s).replace(/[&<>"']/g, c => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" }[c]));
+
+  function pintarJugador() {
+    const d = MQ.leer(), n = MQ.nivel(d.xp);
+    $("#bAvatar").innerHTML = MQ.avatarSVG(d.avatar, "feliz");
+    $("#nivelTxt").textContent = "⭐ Nivel " + n.nivel;
+    $("#monedas").textContent = "🪙 " + d.monedas;
+    $("#logrosTxt").textContent = "🏅 " + Object.keys(d.logros).length + "/" + MQ.LOGROS.length;
+    $("#xp").style.width = n.pct + "%"; $("#xpBarra").setAttribute("aria-valuenow", n.pct);
+    $("#xpTxt").textContent = `${n.tiene} / ${n.hace_falta} XP para el nivel ${n.nivel + 1}`;
+    const ult = MQ.MUNDOS.find(m => m.juego === d.ultimo && m.url) || MQ.MUNDOS.find(m => m.mq);
+    $("#bContinuar").href = "../" + ult.url + "index.html";
+    $("#bContinuar").textContent = (d.ultimo ? "▶ Continuar: " : "▶ Empezar: ") + ult.nombre;
+    document.body.classList.toggle("sinmov", MQ.sinMovimiento());
+  }
+
+  // Un mundo se puede jugar solo si su juego está en MARCA.juegos con estado "jugar".
+  function pintarMapa() {
+    const d = MQ.leer();
+    $("#mapa").innerHTML = '<svg class="camino" aria-hidden="true"><path id="camino" fill="none" stroke="rgba(255,255,255,.5)" stroke-width="6" stroke-dasharray="2 16" stroke-linecap="round"/></svg>' +
+      MQ.MUNDOS.map((m, i) => {
+        const j = (window.MARCA ? MARCA.juegos : []).find(x => x.id === m.juego);
+        const jugable = !!(j && j.estado === "jugar");
+        const r = d.juegos[m.juego];
+        let estado, extra = "";
+        if (jugable && m.mq) {
+          estado = r && r.superados ? `${r.superados} de ${r.total} niveles · ★ ${r.estrellas}/${r.maxEstrellas}` : "¡Nuevo! Jugar";
+          extra = `<div class="prog" aria-hidden="true"><i style="width:${r ? Math.round(100 * r.estrellas / r.maxEstrellas) : 0}%"></i></div>`;
+        } else if (jugable) estado = "Jugar";
+        else if (j) estado = "En revisión";
+        else estado = "Próximamente";
+        const dentro = `<span class="isla" style="--c:${m.color}" aria-hidden="true">${esc(m.icono)}</span>
+          <span class="rotulo"><small>Mundo ${i + 1} · ${esc(m.tema)}</small><b>${esc(m.nombre)}</b>
+          ${jugable && !m.mq ? "<span>Guarda su progreso dentro del juego</span>" : ""}<span class="estado">${estado}</span>${extra}</span>`;
+        return jugable
+          ? `<a class="mundo" href="../${m.url}index.html" aria-label="Mundo ${i + 1}, ${esc(m.tema)}: ${esc(m.nombre)}. ${estado}">${m.mq && !(r && r.superados) ? '<span class="nuevo">NUEVO</span>' : ""}${dentro}</a>`
+          : `<div class="mundo cerrado" aria-label="Mundo ${i + 1}, ${esc(m.tema)}: ${esc(m.nombre)}. ${estado}">${dentro}</div>`;
+      }).join("");
+    requestAnimationFrame(camino);
+  }
+  // Camino de puntos que une las islas.
+  function camino() {
+    const mapa = $("#mapa"), base = mapa.getBoundingClientRect();
+    const pts = [...mapa.querySelectorAll(".isla")].map(i => { const r = i.getBoundingClientRect(); return [r.left + r.width / 2 - base.left, r.top + r.height / 2 - base.top]; });
+    let d = "";
+    pts.forEach((p, i) => { if (!i) d = `M${p[0]} ${p[1]}`; else { const a = pts[i - 1], my = (a[1] + p[1]) / 2; d += ` C${a[0]} ${my} ${p[0]} ${my} ${p[0]} ${p[1]}`; } });
+    $("#camino").setAttribute("d", d);
+  }
+  addEventListener("resize", camino);
+
+  // ---------- Ventanas ----------
+  function ventana(html) { $("#ventana").innerHTML = html; $("#capa").classList.add("ver"); const b = $("#ventana [data-foco]"); if (b) b.focus(); }
+  const cerrar = () => { $("#capa").classList.remove("ver"); pintarJugador(); };
+  $("#capa").addEventListener("click", e => { if (e.target.id === "capa" || e.target.closest("[data-cerrar]")) cerrar(); });
+  document.addEventListener("keydown", e => { if (e.key === "Escape") cerrar(); });
+
+  $("#bLogros").onclick = () => {
+    const d = MQ.leer();
+    ventana(`<h3>Logros y medallas</h3><div class="lista">` + MQ.LOGROS.map(l => { const m = MQ.MUNDOS.find(x => x.juego === l.juego);
+      return `<div class="item ${d.logros[l.id] ? "" : "apagado"}"><span class="ico">${d.logros[l.id] ? l.icono : "?"}</span><div><b>${esc(l.titulo)}</b><span>${esc(m ? m.nombre + " · " : "")}${esc(l.desc)}</span></div>${d.logros[l.id] ? "✅" : ""}</div>`; }).join("") +
+      `</div><button class="btn oro" data-cerrar data-foco>Cerrar</button>`);
+  };
+  function vAvatares() {
+    const d = MQ.leer(), n = MQ.nivel(d.xp).nivel;
+    ventana(`<h3>Tu personaje</h3><p style="margin:0;color:var(--suave)">Sube de nivel jugando para desbloquear más.</p><div class="avatares">` +
+      MQ.AVATARES.map(a => `<button data-av="${a.id}" aria-pressed="${d.avatar === a.id}" ${n >= a.nivel ? "" : "disabled"}>${MQ.avatarSVG(a.id, n >= a.nivel ? "feliz" : "")}${a.nombre}<small>${n >= a.nivel ? "Disponible" : "🔒 Nivel " + a.nivel}</small></button>`).join("") +
+      `</div><button class="btn oro" data-cerrar data-foco>Listo</button>`);
+  }
+  $("#bAvatar").onclick = vAvatares;
+  function vAjustes() {
+    const a = MQ.leer().ajustes;
+    const fila = (k, t, s) => `<div class="item"><div><b>${t}</b><span>${s}</span></div><button class="interruptor" data-aj="${k}" aria-pressed="${!!a[k]}" aria-label="${t}">${a[k] ? "Sí" : "No"}</button></div>`;
+    ventana(`<h3>Ajustes</h3><p style="margin:0;color:var(--suave)">Valen para todos los juegos de MathQuest.</p><div class="lista">
+      ${fila("sonido", "Sonidos", "Efectos de los juegos")}${fila("musica", "Música", "Melodía de fondo")}
+      ${fila("animaciones", "Animaciones", "Desactívalas si te marean o el dispositivo va lento")}
+      ${fila("tranquilo", "Modo tranquilo", "Menos presión: más movimientos o más tiempo en cada juego")}</div>
+      <button class="btn oro" data-cerrar data-foco>Listo</button>`);
+  }
+  $("#bAjustes").onclick = vAjustes;
+  $("#ventana").addEventListener("click", e => {
+    const av = e.target.closest("[data-av]"), aj = e.target.closest("[data-aj]");
+    if (av && !av.disabled) { const d = MQ.leer(); d.avatar = av.dataset.av; MQ.guardar(d); vAvatares(); }
+    if (aj) { MQ.ajuste(aj.dataset.aj, !MQ.ajuste(aj.dataset.aj)); vAjustes(); }
+  });
+
+  pintarJugador(); pintarMapa();
+  addEventListener("pageshow", () => { pintarJugador(); pintarMapa(); });      // al volver de un juego, progreso al día
+  if ("serviceWorker" in navigator && location.protocol !== "file:") navigator.serviceWorker.register("../sw.js", { updateViaCache: "none" }).catch(() => {});
+})();
+</script>
+</body>
+</html>

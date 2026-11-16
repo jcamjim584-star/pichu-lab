@@ -33,7 +33,7 @@ with sync_playwright() as p:
     pag.goto(BASE)
     pag.wait_for_load_state("networkidle")
     ok("Portada carga sin errores de consola", not errores, "; ".join(errores))
-    ok("6 tarjetas en el catálogo", pag.locator("article.juego").count() == 6, pag.locator("article.juego").count())
+    ok("7 tarjetas en el catálogo", pag.locator("article.juego").count() == 7, pag.locator("article.juego").count())
     ok("Integer Ninja está dentro del portal", pag.locator("a.boton[href^='applets/integer-ninja/']").count() == 1)
     ok("Exprés tiene botón Jugar", pag.locator("a.boton[href='applets/expres/index.html']").count() == 1)
     ok("Lato cargada en local", pag.evaluate("document.fonts.check('900 16px Lato')"))

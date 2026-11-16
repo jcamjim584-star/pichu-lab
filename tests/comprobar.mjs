@@ -40,6 +40,25 @@ for (const j of MARCA.juegos) {
   if (existsSync(html)) ok(`${j.id} carga volver.js`, readFileSync(html, "utf8").includes("compartido/volver.js"));
 }
 
+// 3b. MathQuest: cada mundo con juego apunta a un juego que existe en MARCA.juegos
+const ctxMQ = { window: {}, localStorage: { getItem: () => null, setItem() {} } };
+vm.runInNewContext(readFileSync(join(raiz, "compartido/mathquest.js"), "utf8"), ctxMQ);
+const MQ = ctxMQ.window.MathQuest;
+for (const m of MQ.MUNDOS) {
+  if (!m.juego) continue;
+  const j = MARCA.juegos.find(x => x.id === m.juego);
+  ok(`MathQuest: el mundo ${m.id} apunta a un juego de la lista`, !!j && j.url === m.url, m.juego);
+}
+ok("MathQuest: logros con id único", new Set(MQ.LOGROS.map(l => l.id)).size === MQ.LOGROS.length);
+ok("MathQuest: niveles de experiencia", MQ.nivel(0).nivel === 1 && MQ.nivel(99).nivel === 1 && MQ.nivel(100).nivel === 2 && MQ.nivel(300).nivel === 3);
+
+// 3c. Los juegos que se compilan están al día con sus fuentes (no se ha olvidado ejecutar build.py)
+{
+  const d = join(raiz, "src/power-merge/"), gen = readFileSync(join(raiz, "applets/power-merge/index.html"), "utf8");
+  const esperado = readFileSync(d + "juego.html", "utf8").replace("/*MOTOR*/", () => readFileSync(d + "motor.js", "utf8")).replace("/*NIVELES*/", () => readFileSync(d + "niveles.js", "utf8"));
+  ok("Power Merge: applets/ coincide con src/ (python3 src/power-merge/build.py)", gen === esperado);
+}
+
 // 4. Nadie usa localStorage.clear() (borraría los datos de todos los juegos)
 const recorrer = d => readdirSync(d).flatMap(n => {
   const r = join(d, n);

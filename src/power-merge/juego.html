@@ -1,0 +1,920 @@
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Power Merge · Potencias y raíces · MathQuest</title>
+<meta name="description" content="Videojuego de fusionar potencias y raíces para 1.º de ESO. Sin registro ni datos personales.">
+<meta name="theme-color" content="#1b1140">
+<link rel="icon" href="../../compartido/img/icono-192.png">
+<style>
+@font-face{font-family:"Lato";font-weight:400;font-display:swap;src:url("../../compartido/fuentes/lato-latin-400-normal.woff2") format("woff2")}
+@font-face{font-family:"Lato";font-weight:700;font-display:swap;src:url("../../compartido/fuentes/lato-latin-700-normal.woff2") format("woff2")}
+@font-face{font-family:"Lato";font-weight:900;font-display:swap;src:url("../../compartido/fuentes/lato-latin-900-normal.woff2") format("woff2")}
+:root{--fondo1:#1b1140;--fondo2:#3b1d6e;--panel:#2a1a5e;--panel2:#3a2780;--linea:#5b46b0;--texto:#f5f3ff;--suave:#cfc6f5;
+  --oro:#fde047;--verde:#4ade80;--rojo:#fb7185;--cian:#67e8f9}
+*,*::before,*::after{box-sizing:border-box}
+html,body{height:100%;margin:0}
+body{font-family:"Lato",system-ui,-apple-system,"Segoe UI",Roboto,sans-serif;color:var(--texto);
+  background:radial-gradient(120% 80% at 50% 0%,var(--fondo2),var(--fondo1) 70%) fixed;overflow:hidden;overscroll-behavior:none;
+  -webkit-user-select:none;user-select:none;-webkit-tap-highlight-color:transparent}
+button{font:inherit;color:inherit;cursor:pointer}
+:focus-visible{outline:3px solid var(--oro);outline-offset:2px}
+sup{font-size:.6em;vertical-align:super;line-height:0}
+#fx{position:fixed;inset:0;width:100%;height:100%;pointer-events:none;z-index:60}
+.pantalla{position:fixed;inset:0;display:none;padding:max(10px,env(safe-area-inset-top)) max(10px,env(safe-area-inset-right)) max(10px,env(safe-area-inset-bottom)) max(10px,env(safe-area-inset-left))}
+.pantalla.activa{display:flex}
+body.jugando #pichu-volver{display:none}
+
+/* ---------- Botones ---------- */
+.btn{min-height:48px;padding:.55em 1.2em;border-radius:16px;border:0;font-weight:900;letter-spacing:.02em;
+  background:linear-gradient(#a78bfa,#7c3aed);color:#fff;box-shadow:0 5px 0 #4c1d95,0 8px 18px rgba(0,0,0,.35);text-shadow:0 1px 0 rgba(0,0,0,.3)}
+.btn:active{transform:translateY(3px);box-shadow:0 2px 0 #4c1d95}
+.btn.oro{background:linear-gradient(#fde047,#f59e0b);color:#3b1d00;box-shadow:0 5px 0 #b45309,0 8px 18px rgba(0,0,0,.35);text-shadow:none}
+.btn.oro:active{box-shadow:0 2px 0 #b45309}
+.btn.gris{background:linear-gradient(#4b3a94,#35276f);box-shadow:0 5px 0 #1f1547,0 8px 18px rgba(0,0,0,.3)}
+.btn.gris:active{box-shadow:0 2px 0 #1f1547}
+.btn[disabled]{opacity:.5;cursor:not-allowed}
+.btn.grande{font-size:1.5rem;min-height:68px;padding:.5em 2em;border-radius:22px}
+.redondo{width:48px;height:48px;border-radius:50%;border:2px solid var(--linea);background:var(--panel);font-size:1.3rem;font-weight:900;display:grid;place-items:center;flex:none}
+
+/* ---------- Menú ---------- */
+#pMenu{flex-direction:column;align-items:center;justify-content:center;gap:14px;overflow:auto;text-align:center}
+.logo{font-weight:900;font-size:clamp(2.6rem,13vw,5rem);line-height:.9;letter-spacing:.01em;margin:0;
+  background:linear-gradient(180deg,#fff 10%,#fde047 45%,#fb7185 95%);-webkit-background-clip:text;background-clip:text;color:transparent;
+  filter:drop-shadow(0 4px 0 #4c1d95) drop-shadow(0 10px 18px rgba(0,0,0,.5))}
+.logo small{display:block;font-size:.26em;letter-spacing:.2em;color:var(--cian);-webkit-text-fill-color:var(--cian);margin-top:.6em}
+.kubo{width:min(34vw,150px);animation:flota 3s ease-in-out infinite}
+@keyframes flota{50%{transform:translateY(-10px) rotate(-3deg)}}
+.fila{display:flex;gap:10px;flex-wrap:wrap;justify-content:center}
+.cartera{display:flex;gap:10px;justify-content:center;flex-wrap:wrap;font-weight:900}
+.chip{display:inline-flex;align-items:center;gap:.4em;padding:.35em .9em;border-radius:999px;background:rgba(0,0,0,.3);border:2px solid var(--linea)}
+.pie{font-size:.85rem;color:var(--suave);margin:0}
+.pie a{color:var(--cian);font-weight:700}
+
+/* ---------- Mapa de niveles ---------- */
+#pMapa{flex-direction:column;gap:8px}
+.barra{display:flex;align-items:center;gap:10px}
+.barra h2{margin:0;font-size:1.3rem;font-weight:900;flex:1}
+#listaNiveles{flex:1;overflow:auto;-webkit-overflow-scrolling:touch;padding:4px 2px 80px;display:grid;gap:10px;align-content:start;
+  grid-template-columns:repeat(auto-fill,minmax(250px,1fr))}
+.esc{grid-column:1/-1;margin:.6em 0 0;font-size:.95rem;letter-spacing:.14em;text-transform:uppercase;color:var(--cian);font-weight:900}
+.nivel{display:flex;align-items:center;gap:12px;text-align:left;padding:10px 12px;border-radius:18px;border:2px solid var(--linea);
+  background:linear-gradient(160deg,var(--panel2),var(--panel));min-height:76px}
+.nivel .n{flex:none;width:52px;height:52px;border-radius:16px;display:grid;place-items:center;font-size:1.5rem;font-weight:900;
+  background:linear-gradient(#a78bfa,#7c3aed);box-shadow:0 4px 0 #4c1d95}
+.nivel.jefe .n{background:linear-gradient(#fb7185,#be123c);box-shadow:0 4px 0 #881337}
+.nivel.inf .n{background:linear-gradient(#67e8f9,#0891b2);box-shadow:0 4px 0 #155e75;color:#082f49}
+.nivel b{display:block;font-size:1.05rem}
+.nivel span{font-size:.85rem;color:var(--suave)}
+.nivel .est{margin-left:auto;font-size:1.1rem;letter-spacing:.05em;white-space:nowrap;color:var(--oro)}
+.nivel[disabled]{opacity:.5;filter:grayscale(.6)}
+.misiones{grid-column:1/-1;border-radius:18px;background:rgba(0,0,0,.25);border:2px dashed var(--linea);padding:10px 12px}
+.misiones h3{margin:0 0 6px;font-size:1rem}
+.mision{display:grid;grid-template-columns:1fr auto;gap:2px 10px;font-size:.9rem;margin:6px 0}
+.prog{grid-column:1/-1;height:8px;border-radius:9px;background:#1f1547;overflow:hidden}
+.prog i{display:block;height:100%;background:linear-gradient(90deg,var(--cian),var(--verde));border-radius:9px}
+
+/* ---------- Partida ---------- */
+#pJuego{display:none;grid-template-columns:minmax(0,1fr);grid-template-rows:auto auto auto minmax(0,1fr) auto;gap:6px;touch-action:none}
+#pJuego.activa{display:grid}
+#hud{display:flex;align-items:center;gap:8px}
+#hud .tit{flex:1;min-width:0}
+#hud .tit b{display:block;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;font-size:1rem}
+#hud .tit span{font-size:.8rem;color:var(--suave)}
+.dato{flex:none;min-width:58px;text-align:center;padding:3px 8px;border-radius:12px;background:rgba(0,0,0,.3);border:2px solid var(--linea)}
+.dato b{display:block;font-size:1.25rem;line-height:1.1}
+.dato span{font-size:.62rem;letter-spacing:.08em;text-transform:uppercase;color:var(--suave)}
+.dato.poco b{color:var(--rojo)}
+#pedidos{display:grid;grid-template-columns:repeat(3,1fr);gap:6px}
+.pedido{position:relative;min-height:66px;padding:4px 4px 6px;border-radius:14px;border:2px solid #fde68a;background:linear-gradient(#fffbeb,#fde68a);
+  color:#3b1d00;font-weight:900;display:flex;flex-direction:column;align-items:center;justify-content:center;box-shadow:0 4px 0 #b45309}
+.pedido .etq{font-size:.62rem;letter-spacing:.06em;text-transform:uppercase;color:#7c4a03;font-weight:700}
+.pedido .txt{font-size:clamp(1.05rem,5.2vw,1.6rem);line-height:1.15;white-space:nowrap}
+.pedido.largo .txt{font-size:clamp(.9rem,4.2vw,1.3rem)}
+.pedido.vacio{background:rgba(0,0,0,.2);border-color:var(--linea);box-shadow:none;color:var(--suave);font-size:1.4rem}
+.pedido.entra{animation:entra .35s cubic-bezier(.2,1.5,.5,1)}
+.pedido .bombilla{position:absolute;right:4px;top:2px;font-size:.75rem}
+@keyframes entra{from{transform:scale(.3);opacity:0}}
+#medio{display:flex;align-items:center;gap:8px;min-height:44px}
+#progreso{flex:none;display:flex;gap:3px;flex-wrap:wrap;max-width:36%}
+#progreso i{width:11px;height:11px;border-radius:50%;background:#1f1547;border:2px solid var(--linea)}
+#progreso i.ok{background:var(--verde);border-color:#bbf7d0}
+#cinta{flex:1;text-align:center;font-weight:900;font-size:clamp(.9rem,4vw,1.15rem);line-height:1.2;color:var(--oro);min-height:1.2em}
+#cinta.info{color:var(--cian);font-weight:700;font-size:clamp(.8rem,3.5vw,1rem)}
+#jefe{display:none;align-items:center;gap:8px;flex:none}
+#jefe svg{width:46px;height:46px}
+#jefe.golpe svg{animation:golpe .4s}
+@keyframes golpe{25%{transform:translateX(-6px) rotate(-8deg)}75%{transform:translateX(6px) rotate(8deg)}}
+#jefe .vida{width:70px;height:10px;border-radius:9px;background:#1f1547;overflow:hidden;border:1px solid var(--linea)}
+#jefe .vida i{display:block;height:100%;background:linear-gradient(90deg,#fb7185,#be123c);transition:width .3s}
+#jefe small{display:block;font-size:.68rem;color:var(--suave);font-weight:700}
+#zona{position:relative;display:grid;place-items:center;min-height:0;min-width:0}
+#tablero{position:relative;border-radius:5%;background:#160d36;box-shadow:inset 0 0 0 3px var(--linea),0 10px 30px rgba(0,0,0,.45)}
+#tablero.no{animation:no .25s}
+@keyframes no{25%{transform:translateX(-5px)}75%{transform:translateX(5px)}}
+#tablero.temblor{animation:temblor .45s}
+@keyframes temblor{20%{transform:translate(-7px,4px)}40%{transform:translate(6px,-5px)}60%{transform:translate(-4px,-3px)}80%{transform:translate(4px,3px)}}
+.hueco{position:absolute;border-radius:18%;background:#22154f}
+.ficha{position:absolute;left:0;top:0;border:0;padding:0;border-radius:20%;display:flex;flex-direction:column;align-items:center;justify-content:center;
+  font-weight:900;line-height:1;transition:transform .12s ease-out;will-change:transform;color:#fff;text-shadow:0 2px 0 rgba(0,0,0,.35);
+  background:linear-gradient(160deg,var(--c1),var(--c2));box-shadow:inset 0 -.14em 0 rgba(0,0,0,.22),inset 0 3px 0 rgba(255,255,255,.35)}
+.ficha .v{display:block}
+.ficha small{display:block;font-size:.36em;margin-top:.25em;opacity:.95;font-weight:700;text-shadow:none}
+.ficha .in{display:flex;flex-direction:column;align-items:center}
+.b2{--c1:#3b82f6;--c2:#1d4ed8;--cl:#bfdbfe}.b3{--c1:#c026d3;--c2:#86198f;--cl:#f5d0fe}.b5{--c1:#ea580c;--c2:#b93a0a;--cl:#fed7aa}.b10{--c1:#16a34a;--c2:#166534;--cl:#bbf7d0}
+.ficha.e4 .in{outline:2px solid rgba(255,255,255,.55);outline-offset:.28em;border-radius:14%}
+.ficha.e7{box-shadow:0 0 0 3px var(--oro),0 0 16px var(--oro),inset 0 -.14em 0 rgba(0,0,0,.22)}
+.ficha.num{background:linear-gradient(160deg,#f8fafc,#cbd5e1);color:#1e1b4b;text-shadow:none}
+.ficha.num.conayuda{box-shadow:inset 0 -.22em 0 var(--c1),inset 0 3px 0 rgba(255,255,255,.6)}
+.ficha.roca{background:linear-gradient(160deg,#a8a29e,#57534e);border-radius:28% 22% 30% 20%;box-shadow:inset 0 -.18em 0 rgba(0,0,0,.35),inset 4px 5px 0 rgba(255,255,255,.25);font-size:0}
+.ficha.roca.dura{background:linear-gradient(160deg,#78716c,#292524)}
+.ficha.roca::after{content:"";position:absolute;inset:22%;border-radius:40%;border:3px dashed rgba(0,0,0,.25)}
+.ficha.hielo::after{content:"❄";position:absolute;inset:0;border-radius:inherit;background:rgba(186,230,253,.55);border:3px solid #e0f2fe;
+  display:flex;align-items:flex-start;justify-content:flex-end;font-size:.42em;padding:.15em;color:#0c4a6e;text-shadow:none}
+.ficha.nace .in,.ficha.nace.roca{animation:nace .22s ease-out}
+@keyframes nace{from{transform:scale(0)}}
+.ficha.pop .in{animation:pop .3s cubic-bezier(.2,1.6,.4,1)}
+@keyframes pop{0%{transform:scale(.6)}60%{transform:scale(1.28)}}
+.ficha.mal .in{animation:no .3s}
+.ficha.diana{box-shadow:0 0 0 3px var(--oro),0 0 14px var(--oro)}
+.vuela{position:fixed;z-index:55;transition:transform .38s cubic-bezier(.5,-.3,.6,1),opacity .38s;pointer-events:none}
+/* Aspectos (skins) */
+.skin-neon .ficha:not(.num):not(.roca){background:#0b1026;color:#fff;box-shadow:inset 0 0 0 3px var(--c1),0 0 12px var(--c1);text-shadow:0 0 8px var(--c1)}
+.skin-caramelo .ficha:not(.num):not(.roca){background:linear-gradient(160deg,#fff,var(--cl) 35%,var(--c1) 130%);color:#1e1b4b;text-shadow:none;border-radius:38%}
+.skin-runico .ficha:not(.num):not(.roca){background:linear-gradient(160deg,#78716c,#3f3a36);box-shadow:inset 0 -.3em 0 var(--c1),inset 0 3px 0 rgba(255,255,255,.25);border-radius:12%}
+
+#poderes{display:flex;gap:8px;justify-content:center;align-items:stretch;min-height:62px}
+.poder{position:relative;flex:1;max-width:96px;min-height:58px;border-radius:16px;border:2px solid var(--linea);background:linear-gradient(var(--panel2),var(--panel));
+  font-weight:900;font-size:1.5rem;display:flex;flex-direction:column;align-items:center;justify-content:center;line-height:1}
+.poder small{font-size:.6rem;letter-spacing:.05em;text-transform:uppercase;color:var(--suave);margin-top:3px}
+.poder .c{position:absolute;right:-5px;top:-7px;min-width:24px;height:24px;border-radius:12px;background:var(--oro);color:#3b1d00;font-size:.85rem;display:grid;place-items:center;padding:0 5px}
+.poder[aria-pressed="true"]{border-color:var(--oro);box-shadow:0 0 0 3px var(--oro),0 0 18px var(--oro);background:linear-gradient(#7c3aed,#4c1d95)}
+.poder[disabled]{opacity:.45}
+.poder.candado{font-size:1.1rem}
+#ultimo{position:absolute;left:50%;bottom:6px;transform:translateX(-50%);z-index:5;display:none;gap:8px;align-items:center;padding:6px 6px 6px 14px;border-radius:999px;
+  background:#be123c;font-weight:900;font-size:.9rem;white-space:nowrap;box-shadow:0 6px 20px rgba(0,0,0,.5);max-width:98%}
+#ultimo.ver{display:flex}
+#ultimo button{min-height:40px;border-radius:999px;border:0;background:#fff;color:#881337;font-weight:900;padding:0 14px}
+#guia{position:absolute;left:10px;right:10px;bottom:max(10px,env(safe-area-inset-bottom));z-index:6;min-height:62px;padding:8px 14px;border-radius:16px;background:#fff;color:#1e1b4b;
+  font-weight:700;font-size:1rem;line-height:1.25;text-align:center;box-shadow:0 6px 20px rgba(0,0,0,.5);display:none;align-items:center;justify-content:center;pointer-events:none}
+#guia.ver{display:flex}
+
+@media (orientation:landscape) and (max-height:560px), (min-aspect-ratio:13/10){
+  #pJuego.activa{grid-template-columns:minmax(260px,40%) minmax(0,1fr);grid-template-rows:auto auto minmax(0,1fr) auto;column-gap:12px}
+  #hud{grid-column:1;grid-row:1}#pedidos{grid-column:1;grid-row:2}#medio{grid-column:1;grid-row:3;flex-direction:column;justify-content:center}
+  #poderes{grid-column:1;grid-row:4}#zona{grid-column:2;grid-row:1/5}#guia{right:auto;width:calc(40% - 12px);min-width:250px}
+  #progreso{max-width:none;justify-content:center}
+}
+
+/* ---------- Ventanas ---------- */
+#capa{position:fixed;inset:0;z-index:70;background:rgba(10,5,30,.72);display:none;align-items:center;justify-content:center;padding:14px}
+#capa.ver{display:flex}
+.ventana{width:min(480px,100%);max-height:100%;overflow:auto;border-radius:24px;padding:18px;background:linear-gradient(160deg,var(--panel2),var(--panel));
+  border:3px solid var(--linea);box-shadow:0 20px 60px rgba(0,0,0,.6);text-align:center;animation:entra .3s cubic-bezier(.2,1.4,.5,1)}
+.ventana h2{margin:.1em 0 .3em;font-size:1.7rem;font-weight:900}
+.ventana p{margin:.4em 0;line-height:1.4}
+.ventana .izq{text-align:left}
+.ventana .kubo2{width:96px;margin:0 auto}
+.estrellas{font-size:2.6rem;letter-spacing:.1em;color:#4b3a94}
+.estrellas b{color:var(--oro);display:inline-block;animation:pop .5s cubic-bezier(.2,1.6,.4,1) backwards;text-shadow:0 3px 0 #b45309}
+.premios{display:flex;gap:8px;justify-content:center;flex-wrap:wrap;margin:10px 0;font-weight:900}
+.nota{font-size:.9rem;color:var(--suave)}
+.caja{background:rgba(0,0,0,.28);border-radius:14px;padding:10px 12px;margin:10px 0;text-align:left;line-height:1.45}
+.caja.mate{background:#fffbeb;color:#3b1d00;font-weight:700;font-size:1.05rem}
+.lista{display:grid;gap:8px;text-align:left;margin:10px 0}
+.item{display:flex;align-items:center;gap:10px;padding:8px 10px;border-radius:14px;background:rgba(0,0,0,.25);border:2px solid transparent}
+.item .ico{flex:none;width:44px;height:44px;border-radius:12px;display:grid;place-items:center;font-size:1.4rem;background:#1f1547;font-weight:900}
+.item div{flex:1;min-width:0}.item b{display:block}.item span{font-size:.85rem;color:var(--suave)}
+.item.apagado{opacity:.5}
+.item .btn{min-height:44px;padding:.3em .8em;font-size:.9rem;flex:none}
+.interruptor{min-width:64px;min-height:44px;border-radius:999px;border:2px solid var(--linea);background:#1f1547;font-weight:900;flex:none}
+.interruptor[aria-pressed="true"]{background:var(--verde);color:#052e16;border-color:#bbf7d0}
+#aviso{position:fixed;left:50%;top:max(10px,env(safe-area-inset-top));transform:translate(-50%,-140%);z-index:80;padding:10px 16px;border-radius:16px;background:#fff;color:#1e1b4b;
+  font-weight:900;box-shadow:0 10px 30px rgba(0,0,0,.5);transition:transform .35s cubic-bezier(.2,1.4,.5,1);max-width:92%;text-align:center}
+#aviso.ver{transform:translate(-50%,0)}
+.sinmov *,.sinmov *::before,.sinmov *::after{animation:none!important;transition:none!important}
+@media (prefers-reduced-motion:reduce){*,*::before,*::after{animation:none!important;transition:none!important}}
+</style>
+<script src="../../compartido/mathquest.js"></script>
+<script src="../../compartido/volver.js" defer></script>
+</head>
+<body>
+<canvas id="fx" aria-hidden="true"></canvas>
+
+<!-- ============ MENÚ ============ -->
+<main id="pMenu" class="pantalla activa">
+  <h1 class="logo">POWER<br>MERGE<small>POTENCIAS Y RAÍCES</small></h1>
+  <div class="kubo" id="kuboMenu"></div>
+  <div class="cartera" id="cartera"></div>
+  <button class="btn oro grande" id="bJugar">▶ JUGAR</button>
+  <div class="fila">
+    <button class="btn" id="bNiveles">Niveles</button>
+    <button class="btn" id="bTienda">Tienda</button>
+    <button class="btn" id="bLogros">Logros</button>
+  </div>
+  <div class="fila">
+    <button class="btn gris" id="bComo">Cómo se juega</button>
+    <button class="btn gris" id="bAjustes">Ajustes</button>
+  </div>
+  <p class="pie"><a href="../../mathquest/index.html">← MathQuest · Academia de los Números</a><br>IES Alarifes Ruiz Florindo · Departamento de Matemáticas · 1.º ESO</p>
+</main>
+
+<!-- ============ NIVELES ============ -->
+<section id="pMapa" class="pantalla" aria-label="Niveles">
+  <div class="barra">
+    <button class="redondo" id="bMapaAtras" aria-label="Volver al menú">←</button>
+    <h2>Niveles</h2>
+    <span class="chip" id="chipEst"></span>
+  </div>
+  <div id="listaNiveles"></div>
+</section>
+
+<!-- ============ PARTIDA ============ -->
+<section id="pJuego" class="pantalla" aria-label="Partida">
+  <div id="hud">
+    <button class="redondo" id="bPausa" aria-label="Pausa">II</button>
+    <div class="tit"><b id="hNombre"></b><span id="hEsc"></span></div>
+    <div class="dato" id="dRacha" title="Multiplicador por racha de entregas"><b id="hRacha">×1</b><span>racha</span></div>
+    <div class="dato"><b id="hPuntos">0</b><span>puntos</span></div>
+    <div class="dato" id="dMovs"><b id="hMovs">0</b><span id="hMovsEtq">movs</span></div>
+  </div>
+  <div id="pedidos" aria-label="Pedidos"></div>
+  <div id="medio">
+    <div id="progreso" aria-hidden="true"></div>
+    <div id="jefe"><div id="jefeCara"></div><div><div class="vida"><i id="jefeVida"></i></div><small id="jefeTxt"></small></div></div>
+    <div id="cinta" role="status" aria-live="polite"></div>
+  </div>
+  <div id="zona">
+    <div id="tablero" aria-label="Tablero"></div>
+    <div id="ultimo"><span id="ultimoTxt"></span><button id="bTerminar">Terminar</button></div>
+  </div>
+  <div id="poderes" aria-label="Poderes"></div>
+  <div id="guia" role="status"></div>
+</section>
+
+<div id="capa" role="dialog" aria-modal="true"><div class="ventana" id="ventana"></div></div>
+<div id="aviso" role="status" aria-live="polite"></div>
+
+<script>/*MOTOR*/</script>
+<script>/*NIVELES*/</script>
+<script>
+(function () {
+"use strict";
+const M = window.PowerMotor, { NIVELES, INFINITO, ESCALONES } = window.PowerNiveles, MQ = window.MathQuest;
+const $ = s => document.querySelector(s);
+const esc = s => String(s).replace(/[&<>"']/g, c => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" }[c]));
+// "2^5" → 2<sup>5</sup>   y   "2^(2+3)" → 2<sup>2+3</sup>
+const mate = s => esc(s).replace(/\^\(([^)]*)\)/g, "<sup>$1</sup>").replace(/\^(\d+)/g, "<sup>$1</sup>");
+const sinMov = () => MQ.sinMovimiento();
+
+/* =================== GUARDADO (pichu.power-merge.v1) =================== */
+const CLAVE = "pichu.power-merge.v1";
+function cargar() {
+  const b = { v: 1, estrellas: {}, mejor: {}, record: 0, skin: "clasico", skins: ["clasico"], mejoras: {}, derrotas: {}, dominio: 50, tutorial: false,
+    stats: { fusiones: 0, entregas: 0, raices: 0, combos: 0, cuadrados: 0, estrellas: 0, limpios: 0 }, misiones: [] };
+  try { const d = JSON.parse(localStorage.getItem(CLAVE)); if (d && d.v === 1) return Object.assign(b, d, { stats: Object.assign(b.stats, d.stats) }); } catch (e) { /* nada */ }
+  return b;
+}
+let S = cargar();
+function guardar() {
+  try { localStorage.setItem(CLAVE, JSON.stringify(S)); } catch (e) { /* modo privado: se juega igual, sin guardar */ }
+  const ids = NIVELES.map(n => n.id);
+  MQ.resumen("power-merge", { superados: ids.filter(i => S.estrellas[i] > 0).length, total: ids.length,
+    estrellas: ids.reduce((s, i) => s + (S.estrellas[i] || 0), 0), maxEstrellas: ids.length * 3, record: S.record });
+}
+
+/* =================== CATÁLOGOS =================== */
+const PODERES = [
+  { id: "martillo", icono: "🔨", nombre: "Martillo", tras: 2, base: 1, desc: "Rompe una roca, el hielo o una ficha que te estorbe." },
+  { id: "raiz", icono: "√", nombre: "Raíz", tras: 4, base: 2, desc: "Raíz cuadrada de una ficha con exponente par: el exponente se divide entre 2." },
+  { id: "dividir", icono: "÷", nombre: "Divisor", tras: 7, base: 2, desc: "Divide la ficha entre su base: el exponente baja 1." },
+  { id: "mezcla", icono: "🌀", nombre: "Mezcla", tras: 9, base: 1, desc: "Recoloca todas las fichas del tablero." }
+];
+const SKINS = [
+  { id: "clasico", nombre: "Cristal clásico", precio: 0 }, { id: "neon", nombre: "Neón", precio: 80 },
+  { id: "caramelo", nombre: "Caramelo", precio: 120 }, { id: "runico", nombre: "Piedra rúnica", precio: 200 }
+];
+const MISIONES = [
+  { id: "fus", txt: "Haz 30 fusiones", stat: "fusiones", n: 30, premio: 20 },
+  { id: "ent", txt: "Entrega 10 pedidos", stat: "entregas", n: 10, premio: 25 },
+  { id: "rai", txt: "Entrega 4 pedidos de raíces", stat: "raices", n: 4, premio: 25 },
+  { id: "com", txt: "Consigue 3 combos (2 fusiones o más en un movimiento)", stat: "combos", n: 3, premio: 20 },
+  { id: "cua", txt: "Forma 8 cuadrados perfectos (fusiona dos fichas iguales)", stat: "cuadrados", n: 8, premio: 20 },
+  { id: "est", txt: "Gana 5 estrellas", stat: "estrellas", n: 5, premio: 30 },
+  { id: "lim", txt: "Supera 2 niveles sin errores", stat: "limpios", n: 2, premio: 30 }
+];
+const ETQ = { pot: "potencia", num: "número", desc: "factores", pal: "en palabras", raiz: "raíz", prod: "producto", coc: "cociente", potpot: "potencia de potencia" };
+const PISTA = {
+  pot: "Busca la ficha con esa misma potencia.",
+  num: "¿Qué número (2, 3, 5 o 10) multiplicado por sí mismo varias veces da ese resultado? Prueba a dividir.",
+  desc: "Cuenta cuántas veces se repite el factor: ese es el exponente.",
+  pal: "Al cuadrado es exponente 2; al cubo, exponente 3; a la cuarta, 4…",
+  raiz: "Busca el número que multiplicado por sí mismo da el de dentro de la raíz.",
+  prod: "Tienen la misma base. ¿Qué pasa con los exponentes al multiplicar?",
+  coc: "Tienen la misma base. ¿Qué pasa con los exponentes al dividir?",
+  potpot: "Es una potencia de una potencia. ¿Qué pasa con los exponentes?"
+};
+const desbloqueado = id => id === 1 || S.estrellas[id - 1] > 0 || S.estrellas[id - 2] === 3;   // 3 estrellas = salto por dominio
+const poderLibre = p => S.estrellas[p.tras] > 0;
+function repartirMisiones() {
+  S.misiones = S.misiones.filter(m => MISIONES.some(x => x.id === m.id));
+  while (S.misiones.length < 3) {
+    const libres = MISIONES.filter(x => !S.misiones.some(m => m.id === x.id));
+    const x = libres[Math.floor(Math.random() * libres.length)];
+    S.misiones.push({ id: x.id, desde: S.stats[x.stat] });
+  }
+}
+function revisarMisiones() {
+  let ganado = 0;
+  S.misiones = S.misiones.filter(m => {
+    const x = MISIONES.find(y => y.id === m.id);
+    if (S.stats[x.stat] - m.desde >= x.n) { ganado += x.premio; avisar(`🎯 Misión cumplida: ${x.txt} · +${x.premio} 🪙`); return false; }
+    return true;
+  });
+  if (ganado) MQ.sumar(0, ganado);
+  repartirMisiones();
+}
+
+/* =================== SONIDO Y MÚSICA (generados, sin archivos) =================== */
+let AJ = MQ.leer().ajustes;
+const Son = (() => {
+  let ctx = null, reloj = null, paso = 0, sig = 0;
+  const ini = () => { if (ctx) { if (ctx.state === "suspended") ctx.resume(); return; }
+    try { ctx = new (window.AudioContext || window.webkitAudioContext)(); } catch (e) { ctx = null; } };
+  function nota(f, dur, tipo, vol, cuando) {
+    if (!ctx) return;
+    const o = ctx.createOscillator(), g = ctx.createGain(), t = (cuando || ctx.currentTime);
+    o.type = tipo || "sine"; o.frequency.setValueAtTime(f, t);
+    g.gain.setValueAtTime(0.0001, t); g.gain.exponentialRampToValueAtTime(vol || 0.12, t + 0.012); g.gain.exponentialRampToValueAtTime(0.0001, t + dur);
+    o.connect(g); g.connect(ctx.destination); o.start(t); o.stop(t + dur + 0.03);
+  }
+  const fx = (lista) => { if (!ctx || !AJ.sonido) return; const t = ctx.currentTime; lista.forEach(n => nota(n[0], n[1], n[2], n[3], t + (n[4] || 0))); };
+  // Música: bucle de 4 acordes con bajo y arpegio suave.
+  const ACORDES = [[220, 261.6, 329.6], [174.6, 220, 261.6], [261.6, 329.6, 392], [196, 246.9, 293.7]];
+  function programar() {
+    if (!ctx || !AJ.musica || document.hidden) return;
+    if (sig < ctx.currentTime) sig = ctx.currentTime + 0.05;
+    while (sig < ctx.currentTime + 0.6) {
+      const ac = ACORDES[Math.floor(paso / 16) % 4], p = paso % 16;
+      if (p === 0 || p === 10) nota(ac[0] / 2, 0.5, "triangle", 0.07, sig);
+      if (p % 2 === 0) nota(ac[[0, 1, 2, 1, 2, 0, 1, 2][p / 2]] * 2, 0.22, "sine", 0.028, sig);
+      if (p === 4 || p === 12) nota(ac[2] * 4, 0.08, "sine", 0.012, sig);
+      sig += 0.17; paso++;
+    }
+  }
+  return {
+    ini() { ini(); if (!reloj) reloj = setInterval(programar, 200); },
+    pausa(si) { if (ctx) si ? ctx.suspend() : ctx.resume(); },
+    mueve: () => fx([[190, 0.07, "triangle", 0.06]]),
+    tope: () => fx([[110, 0.1, "square", 0.04]]),
+    fusion: e => fx([[262 * Math.pow(2, e / 7), 0.18, "triangle", 0.13], [524 * Math.pow(2, e / 7), 0.22, "sine", 0.08, 0.06]]),
+    entrega: () => fx([[523, 0.12, "triangle", 0.12], [659, 0.12, "triangle", 0.12, 0.08], [784, 0.12, "triangle", 0.12, 0.16], [1047, 0.3, "sine", 0.12, 0.24]]),
+    error: () => fx([[196, 0.16, "sawtooth", 0.07], [147, 0.3, "sawtooth", 0.07, 0.13]]),
+    poder: () => fx([[392, 0.1, "square", 0.05], [587, 0.2, "square", 0.05, 0.08]]),
+    rompe: () => fx([[90, 0.2, "square", 0.08], [60, 0.25, "sawtooth", 0.06, 0.05]]),
+    ataque: () => fx([[110, 0.3, "sawtooth", 0.09], [82, 0.45, "sawtooth", 0.09, 0.2]]),
+    victoria: () => fx([[523, 0.15, "triangle", 0.13], [659, 0.15, "triangle", 0.13, 0.14], [784, 0.15, "triangle", 0.13, 0.28], [1047, 0.5, "triangle", 0.14, 0.42], [1319, 0.6, "sine", 0.1, 0.56]]),
+    derrota: () => fx([[392, 0.25, "triangle", 0.1], [330, 0.25, "triangle", 0.1, 0.22], [262, 0.5, "triangle", 0.1, 0.44]]),
+    clic: () => fx([[660, 0.05, "sine", 0.06]])
+  };
+})();
+document.addEventListener("pointerdown", () => Son.ini(), { passive: true });
+document.addEventListener("keydown", () => Son.ini());
+document.addEventListener("visibilitychange", () => Son.pausa(document.hidden));
+
+/* =================== PARTÍCULAS =================== */
+const Fx = (() => {
+  const cv = $("#fx"), c = cv.getContext("2d"); let ps = [], vivo = false, dpr = 1;
+  function medida() { dpr = Math.min(2, window.devicePixelRatio || 1); cv.width = innerWidth * dpr; cv.height = innerHeight * dpr; }
+  medida(); addEventListener("resize", medida);
+  function paso() {
+    c.clearRect(0, 0, cv.width, cv.height);
+    ps = ps.filter(p => p.v > 0);
+    for (const p of ps) {
+      p.x += p.dx; p.y += p.dy; p.dy += p.g; p.v -= p.dv; p.r += p.giro;
+      c.globalAlpha = Math.max(0, p.v); c.fillStyle = p.color;
+      c.save(); c.translate(p.x * dpr, p.y * dpr); c.rotate(p.r);
+      const t = p.t * dpr; if (p.forma === "o") { c.beginPath(); c.arc(0, 0, t / 2, 0, 7); c.fill(); } else c.fillRect(-t / 2, -t / 2, t, t * 0.6);
+      c.restore();
+    }
+    c.globalAlpha = 1;
+    if (ps.length) requestAnimationFrame(paso); else vivo = false;
+  }
+  function lanzar(lista) { if (sinMov()) return; ps.push(...lista); if (ps.length > 400) ps = ps.slice(-400); if (!vivo) { vivo = true; requestAnimationFrame(paso); } }
+  return {
+    estalla(x, y, color, n) {
+      lanzar(Array.from({ length: n || 14 }, () => { const a = Math.random() * 6.28, v = 2 + Math.random() * 5;
+        return { x, y, dx: Math.cos(a) * v, dy: Math.sin(a) * v, g: 0.12, v: 1, dv: 0.03, t: 5 + Math.random() * 7, color, forma: "o", r: 0, giro: 0 }; }));
+    },
+    confeti() {
+      const col = ["#fde047", "#fb7185", "#67e8f9", "#4ade80", "#c4b5fd", "#fff"];
+      lanzar(Array.from({ length: 140 }, () => ({ x: Math.random() * innerWidth, y: -20 - Math.random() * 200, dx: (Math.random() - 0.5) * 3, dy: 2 + Math.random() * 4,
+        g: 0.03, v: 1.6, dv: 0.008, t: 8 + Math.random() * 8, color: col[Math.floor(Math.random() * col.length)], forma: "r", r: Math.random() * 6, giro: (Math.random() - 0.5) * 0.3 })));
+    }
+  };
+})();
+
+/* =================== UTILIDADES DE PANTALLA =================== */
+function pantalla(id) {
+  document.querySelectorAll(".pantalla").forEach(p => p.classList.toggle("activa", p.id === id));
+  document.body.classList.toggle("jugando", id === "pJuego");
+  document.body.classList.toggle("sinmov", sinMov());
+}
+let tAviso = 0;
+function avisar(txt) { const a = $("#aviso"); a.textContent = txt; a.classList.add("ver"); clearTimeout(tAviso); tAviso = setTimeout(() => a.classList.remove("ver"), 3200); }
+let alCerrar = null;
+function ventana(html, cerrar) {
+  $("#ventana").innerHTML = html; $("#capa").classList.add("ver"); alCerrar = cerrar || null;
+  const b = $("#ventana").querySelector("[data-foco]") || $("#ventana").querySelector("button"); if (b) b.focus();
+}
+function cerrarVentana() { $("#capa").classList.remove("ver"); const f = alCerrar; alCerrar = null; if (f) f(); }
+const abierta = () => $("#capa").classList.contains("ver");
+$("#ventana").addEventListener("click", e => {
+  const b = e.target.closest("[data-a]"); if (!b) return;
+  Son.clic(); ACCIONES[b.dataset.a](b);
+});
+function logro(id) { const l = MQ.logro(id); if (l) setTimeout(() => avisar(`${l.icono} Logro: ${l.titulo}`), 600); }
+function pintarCartera() {
+  const d = MQ.leer(), n = MQ.nivel(d.xp);
+  $("#cartera").innerHTML = `<span class="chip">⭐ Nivel ${n.nivel} · ${n.tiene}/${n.hace_falta} XP</span><span class="chip">🪙 ${d.monedas}</span>`;
+  $("#kuboMenu").innerHTML = MQ.avatarSVG(d.avatar, "feliz");
+}
+
+/* =================== NIVELES (mapa) =================== */
+function pintarMapa() {
+  repartirMisiones();
+  const total = NIVELES.reduce((s, n) => s + (S.estrellas[n.id] || 0), 0);
+  $("#chipEst").textContent = `★ ${total}/${NIVELES.length * 3}`;
+  let h = "", escAnt = 0;
+  for (const n of NIVELES) {
+    if (n.esc !== escAnt) { h += `<h3 class="esc">Nivel ${n.esc} · ${ESCALONES[n.esc]}</h3>`; escAnt = n.esc; }
+    const e = S.estrellas[n.id] || 0, ab = desbloqueado(n.id);
+    h += `<button class="nivel ${n.jefe ? "jefe" : ""}" data-niv="${n.id}" ${ab ? "" : "disabled"} aria-label="Nivel ${n.id}: ${esc(n.nombre)}${ab ? "" : " (bloqueado)"}">
+      <span class="n">${ab ? (n.jefe ? "👑" : n.id) : "🔒"}</span><div><b>${esc(n.nombre)}</b><span>${mate(n.lema)}</span></div>
+      <span class="est" aria-label="${e} estrellas">${"★".repeat(e)}<span style="opacity:.3;color:#fff">${"★".repeat(3 - e)}</span></span></button>`;
+  }
+  const inf = S.estrellas[3] > 0;
+  h += `<h3 class="esc">Desafío especial</h3><button class="nivel inf" data-niv="inf" ${inf ? "" : "disabled"}>
+    <span class="n">${inf ? "∞" : "🔒"}</span><div><b>Forja infinita</b><span>${inf ? "Sin límite de movimientos. Récord: " + S.record + " puntos" : "Supera el nivel 3 para abrirla"}</span></div></button>`;
+  h += `<div class="misiones"><h3>🎯 Misiones</h3>` + S.misiones.map(m => { const x = MISIONES.find(y => y.id === m.id), v = Math.min(x.n, S.stats[x.stat] - m.desde);
+    return `<div class="mision"><span>${esc(x.txt)}</span><b>${v}/${x.n} · ${x.premio} 🪙</b><div class="prog"><i style="width:${100 * v / x.n}%"></i></div></div>`; }).join("") + `</div>`;
+  $("#listaNiveles").innerHTML = h;
+}
+$("#listaNiveles").addEventListener("click", e => { const b = e.target.closest("[data-niv]"); if (b && !b.disabled) { Son.clic(); empezar(b.dataset.niv === "inf" ? "inf" : +b.dataset.niv); } });
+
+/* =================== PARTIDA =================== */
+let J = null;
+const els = new Map();     // id de ficha → elemento
+let geo = { lado: 0, celda: 0, hueco: 0 };
+
+function empezar(id) {
+  const inf = id === "inf";
+  const niv = inf ? Object.assign({ id: "inf", esc: 0, nombre: "Forja infinita", n: 5, total: Infinity, movs: Infinity }, INFINITO[0]) : NIVELES.find(n => n.id === id);
+  AJ = MQ.leer().ajustes;
+  let movs = niv.movs, extra = 0;
+  if (!inf) {
+    extra = Math.round(niv.movs * 0.15 * Math.min(3, S.derrotas[id] || 0));          // ayuda tras derrotas
+    movs = Math.round((niv.movs + extra) * (AJ.tranquilo ? 1.5 : 1));
+  }
+  J = { niv, inf, t: M.crear(niv.n), abiertos: [null, null, null], pendientes: niv.total, hechos: 0, total: niv.total, movs, movsIni: movs, extra,
+    puntos: 0, racha: 0, errores: 0, vidas: 3, nMov: 0, poder: null, bloq: false, fin: false, cuadrados: 0, raices: 0, fusiones: 0,
+    ayuda: !!niv.ayuda || S.dominio < 30, cargas: {}, jefe: niv.jefe ? { cuenta: niv.jefe.cada + (AJ.tranquilo ? 3 : 0) } : null,
+    guia: (!inf && id === 1 && !S.tutorial) ? 0 : -1 };
+  PODERES.forEach(p => { J.cargas[p.id] = poderLibre(p) ? p.base + (S.mejoras[p.id] || 0) : 0; });
+  for (let i = 0; i < (niv.rocas || 0); i++) M.ponerRoca(J.t, M.elige(J.t.rng, M.vacias(J.t)), niv.vidaRoca || 1);
+  for (let i = 0; i < 3; i++) M.generar(J.t, cfgFichas());
+  reponer();
+  els.forEach(el => el.remove()); els.clear();
+  pantalla("pJuego");
+  $("#tablero").className = "skin-" + S.skin;
+  $("#hNombre").textContent = inf ? niv.nombre : `${niv.id}. ${niv.nombre}`;
+  $("#hEsc").textContent = inf ? "Desafío especial" : `Nivel ${niv.esc} · ${ESCALONES[niv.esc]}`;
+  $("#jefe").style.display = J.jefe ? "flex" : "none";
+  if (J.jefe) $("#jefeCara").innerHTML = RADIKAL;
+  $("#progreso").style.display = J.jefe || inf ? "none" : "flex";
+  $("#ultimo").classList.remove("ver");
+  cinta(mate(niv.lema), true);
+  medir(); pintarTodo(); guia();
+  if (J.extra) avisar(`💪 Esta vez tienes ${J.extra} movimientos extra`);
+}
+// Configuración actual (en el modo infinito sube con las entregas y baja con los errores).
+function cfg() {
+  if (!J.inf) return J.niv;
+  const avance = Math.max(0, J.hechos - 3 * J.errores);
+  return INFINITO.find(x => avance < x.hasta);
+}
+function cfgFichas() {
+  const c = cfg(), pesos = {};
+  c.bases.forEach(b => { pesos[b] = J.abiertos.some(p => p && p.b === b) ? 2 : 1; });
+  return { bases: c.bases, e2: c.e2, pNum: c.pNum, hielo: J.nMov < 3 ? 0 : c.hielo, pesos };
+}
+function reponer() {
+  const c = Object.assign({}, cfg());
+  if (S.dominio < 30) c.formas = Object.assign({}, c.formas, { num: (c.formas.num || 0) + 2 });    // dominio bajo: más pedidos sencillos
+  for (let k = 0; k < 3; k++) if (!J.abiertos[k] && J.pendientes > 0) {
+    const p = M.nuevoPedido(c, J.t.rng, J.abiertos.filter(Boolean));
+    if (!p) break;
+    p.pista = 0; p.nuevo = true; J.abiertos[k] = p; J.pendientes--;
+  }
+}
+
+/* ----- Medidas y dibujo ----- */
+function medir() {
+  const z = $("#zona"), lado = Math.max(120, Math.floor(Math.min(z.clientWidth, z.clientHeight)) - 4), n = J ? J.niv.n : 4;
+  const hueco = Math.round(lado * 0.022), celda = (lado - hueco * (n + 1)) / n;
+  geo = { lado, celda, hueco };
+  const tb = $("#tablero"); tb.style.width = tb.style.height = lado + "px"; tb.style.fontSize = (celda * 0.44) + "px";
+  tb.querySelectorAll(".hueco").forEach(h => h.remove());
+  if (!J) return;
+  for (let i = 0; i < n * n; i++) { const h = document.createElement("div"); h.className = "hueco"; const [x, y] = xy(i);
+    h.style.cssText = `left:${x}px;top:${y}px;width:${celda}px;height:${celda}px`; tb.prepend(h); }
+}
+const xy = i => { const n = J.niv.n; return [geo.hueco + (i % n) * (geo.celda + geo.hueco), geo.hueco + Math.floor(i / n) * (geo.celda + geo.hueco)]; };
+const colocar = (el, i) => { const [x, y] = xy(i); el.style.transform = `translate(${x}px,${y}px)`; el.dataset.i = i; };
+const centro = i => { const r = $("#tablero").getBoundingClientRect(), [x, y] = xy(i); return [r.left + x + geo.celda / 2, r.top + y + geo.celda / 2]; };
+const COLOR = { 2: "#60a5fa", 3: "#e879f9", 5: "#fb923c", 10: "#4ade80" };
+
+function contenido(c) {
+  const v = M.valor(c.b, c.e), enNum = c.forma === "num" && c.e > 1;
+  const grande = enNum ? M.num(v) : (c.e === 1 ? String(c.b) : `${c.b}<sup>${c.e}</sup>`);
+  const largo = enNum ? String(v).length : 2;
+  const ayuda = J.ayuda && c.e > 1 ? `<small>= ${enNum ? `${c.b}<sup>${c.e}</sup>` : M.num(v)}</small>` : "";
+  return `<span class="in"><span class="v" style="font-size:${largo > 5 ? 0.5 : largo > 4 ? 0.62 : largo > 3 ? 0.74 : 1}em">${grande}</span>${ayuda}</span>`;
+}
+function pintarTablero(nuevas) {
+  const tb = $("#tablero"), vivos = new Set();
+  J.t.g.forEach((c, i) => {
+    if (!c) return;
+    vivos.add(c.id);
+    let el = els.get(c.id);
+    if (!el) {
+      el = document.createElement("button"); el.type = "button"; els.set(c.id, el); tb.appendChild(el);
+      el.className = "ficha " + (nuevas && nuevas.has(c.id) ? "pop" : "nace");
+      el.style.width = el.style.height = geo.celda + "px";
+    }
+    colocar(el, i);
+    const base = el.className.match(/\b(pop|nace)\b/); const anim = base ? base[1] : "";
+    if (c.tipo === "roca") { el.className = `ficha roca ${c.vida > 1 ? "dura" : ""} ${anim}`; el.setAttribute("aria-label", "Roca"); el.innerHTML = ""; return; }
+    const enNum = c.forma === "num" && c.e > 1;
+    el.className = `ficha b${c.b} ${enNum ? "num" : ""} ${enNum && J.ayuda ? "conayuda" : ""} ${c.e >= 7 ? "e7" : c.e >= 4 ? "e4" : ""} ${c.hielo ? "hielo" : ""} ${anim}`;
+    el.setAttribute("aria-label", (enNum ? String(M.valor(c.b, c.e)) : c.e === 1 ? String(c.b) : `${c.b} elevado a ${c.e}`) + (c.hielo ? ", helada" : ""));
+    const h = contenido(c); if (el.dataset.h !== h) { el.innerHTML = h; el.dataset.h = h; }
+  });
+  els.forEach((el, id) => { if (!vivos.has(id)) { el.remove(); els.delete(id); } });
+}
+function pintarPedidos() {
+  $("#pedidos").innerHTML = J.abiertos.map((p, k) => p
+    ? `<button class="pedido ${p.nuevo ? "entra" : ""} ${p.texto.length > 9 ? "largo" : ""}" data-k="${k}" aria-label="Pedido: ${esc(p.texto.replace(/\^/g, " elevado a "))}. Pulsa para ver una pista.">
+        <span class="etq">${ETQ[p.forma]}</span><span class="txt">${mate(p.texto)}</span>${p.pista ? '<span class="bombilla">💡</span>' : ""}</button>`
+    : `<div class="pedido vacio" aria-hidden="true">✓</div>`).join("");
+  J.abiertos.forEach(p => { if (p) p.nuevo = false; });
+}
+function pintarHud() {
+  $("#hPuntos").textContent = J.puntos;
+  $("#hRacha").textContent = "×" + String(mult()).replace(".", ",");
+  $("#dRacha").style.borderColor = mult() > 1 ? "var(--oro)" : "";
+  if (J.inf) { $("#hMovs").textContent = "❤".repeat(J.vidas) || "0"; $("#hMovsEtq").textContent = "vidas"; $("#hMovs").style.fontSize = ".95rem"; }
+  else { $("#hMovs").textContent = J.movs; $("#hMovsEtq").textContent = "movs"; $("#hMovs").style.fontSize = ""; }
+  $("#dMovs").classList.toggle("poco", !J.inf && J.movs <= 5);
+  if (!J.inf && !J.jefe) $("#progreso").innerHTML = Array.from({ length: J.total }, (_, i) => `<i class="${i < J.hechos ? "ok" : ""}"></i>`).join("");
+  if (J.jefe) { $("#jefeVida").style.width = (100 * (J.total - J.hechos) / J.total) + "%"; $("#jefeTxt").textContent = `Escudos ${J.total - J.hechos} · ataca en ${J.jefe.cuenta}`; }
+  $("#poderes").innerHTML = PODERES.map(p => poderLibre(p)
+    ? `<button class="poder" data-p="${p.id}" aria-pressed="${J.poder === p.id}" ${J.cargas[p.id] > 0 ? "" : "disabled"} aria-label="${p.nombre}: ${esc(p.desc)} Quedan ${J.cargas[p.id]}.">
+        ${p.icono}<small>${p.nombre}</small><span class="c">${J.cargas[p.id]}</span></button>`
+    : `<button class="poder candado" data-p="${p.id}" data-cerrado="1" aria-label="${p.nombre}: se desbloquea al superar el nivel ${p.tras}">🔒<small>Nivel ${p.tras}</small></button>`).join("");
+}
+function pintarTodo(nuevas) { pintarTablero(nuevas); pintarPedidos(); pintarHud(); }
+let tCinta = 0;
+function cinta(html, info) { const c = $("#cinta"); c.innerHTML = html; c.classList.toggle("info", !!info); clearTimeout(tCinta); if (!info) tCinta = setTimeout(() => { c.innerHTML = ""; }, 5000); }
+const mult = () => Math.min(3, 1 + Math.floor(J.racha / 2) * 0.5);
+
+const GUIA = ["👉 Desliza el dedo por el tablero: se mueven todas las fichas.",
+  "Junta dos fichas de la MISMA base: se multiplican y sus exponentes se suman.",
+  "¡Bien! Ahora toca la ficha que valga lo mismo que un pedido amarillo de arriba."];
+function guia() { const g = $("#guia"); if (J.guia >= 0 && J.guia < GUIA.length) { g.textContent = GUIA[J.guia]; g.classList.add("ver"); } else g.classList.remove("ver"); }
+function avanzaGuia(paso) { if (J.guia === paso) { J.guia++; if (J.guia >= GUIA.length) { J.guia = -1; S.tutorial = true; guardar(); } guia(); } }
+
+/* ----- Deslizar ----- */
+function deslizar(dir) {
+  if (!J || J.bloq || J.fin || abierta()) return;
+  if (!J.inf && J.movs <= 0) return;
+  if (J.poder) { J.poder = null; pintarHud(); }
+  const r = M.mover(J.t, dir);
+  if (!r.movido) { const tb = $("#tablero"); tb.classList.remove("no"); void tb.offsetWidth; tb.classList.add("no"); Son.tope(); return; }
+  J.bloq = true; J.nMov++;
+  if (!J.inf) J.movs--;
+  for (const m of r.movs) { const el = els.get(m.id); if (el) { el.classList.remove("nace", "pop"); colocar(el, m.a); } }
+  Son.mueve(); avanzaGuia(0);
+  setTimeout(() => {
+    const nuevas = new Set(r.fusiones.map(f => f.id));
+    fusiones(r);
+    M.generar(J.t, cfgFichas());
+    ataqueJefe();
+    pintarTodo(nuevas);
+    J.bloq = false;
+    comprobarFin();
+  }, sinMov() ? 0 : 125);
+}
+function fusiones(r) {
+  const k = r.fusiones.length;
+  if (k) {
+    let mayor = r.fusiones[0];
+    for (const f of r.fusiones) {
+      J.puntos += 10 * f.e * k; J.fusiones++; S.stats.fusiones++;
+      if (f.e > mayor.e) mayor = f;
+      if (f.iguales) { J.cuadrados++; S.stats.cuadrados++;
+        if (J.cuadrados % 3 === 0 && poderLibre(PODERES[1])) { J.cargas.raiz++; avisar("⚡ 3 cuadrados perfectos: +1 poder √"); } }
+      const [x, y] = centro(f.en); Fx.estalla(x, y, COLOR[f.b], 10 + 2 * f.e);
+      if (f.b === 2 && f.e === 10) logro("pm.1024");
+      if (f.b === 10 && f.e === 6) logro("pm.millon");
+    }
+    Son.fusion(mayor.e); logro("pm.primera"); avanzaGuia(1);
+    if (k >= 2) S.stats.combos++;
+    if (k >= 3) logro("pm.combo3");
+    const f = mayor;
+    cinta(mate(`${f.b}^${f.e1} · ${f.b}^${f.e2} = ${f.b}^${f.e}`) + ` = ${M.num(M.valor(f.b, f.e))}` + (k > 1 ? ` <span style="color:var(--cian)">¡Combo ×${k}!</span>` : f.iguales ? ` <span style="color:var(--cian)">¡cuadrado perfecto!</span>` : ""));
+  }
+  for (const x of r.rotas) { const [px, py] = centro(x.en); Fx.estalla(px, py, x.tipo === "hielo" ? "#bae6fd" : "#a8a29e", 12); }
+  if (r.rotas.length) Son.rompe();
+}
+function ataqueJefe() {
+  if (!J.jefe || J.hechos >= J.total) return;
+  if (--J.jefe.cuenta > 0) return;
+  J.jefe.cuenta = J.niv.jefe.cada + (AJ.tranquilo ? 3 : 0);
+  const libres = M.vacias(J.t), moviles = J.t.g.map((c, i) => c && c.tipo === "pot" && !c.hielo ? i : -1).filter(i => i >= 0);
+  if (libres.length > 4 && (Math.random() < 0.5 || !moviles.length)) { M.ponerRoca(J.t, M.elige(J.t.rng, libres), 1); avisar("👑 ¡Radikal lanza una roca!"); }
+  else if (moviles.length) { J.t.g[M.elige(J.t.rng, moviles)].hielo = true; avisar("👑 ¡Radikal congela una ficha!"); }
+  else return;
+  Son.ataque(); const tb = $("#tablero"); tb.classList.remove("temblor"); void tb.offsetWidth; tb.classList.add("temblor");
+}
+
+/* ----- Tocar una ficha: entregar o usar un poder ----- */
+function tocar(i) {
+  if (!J || J.bloq || J.fin || abierta()) return;
+  const c = J.t.g[i]; if (!c) return;
+  if (J.poder) return usarPoder(i, c);
+  if (c.tipo !== "pot") { cinta("Las rocas se rompen con una fusión justo al lado.", true); return; }
+  const k = J.abiertos.findIndex(p => M.coincide(c, p));
+  if (k >= 0) entregar(i, k, c); else fallo(i, c);
+}
+function entregar(i, k, c) {
+  const p = J.abiertos[k], el = els.get(c.id), destino = $(`.pedido[data-k="${k}"]`);
+  const pts = Math.round(100 * p.e * mult() * (p.pista >= 2 ? 0.5 : 1));
+  J.puntos += pts; J.racha++; J.hechos++; S.stats.entregas++;
+  if (p.forma === "raiz") { J.raices++; S.stats.raices++; if (S.stats.raices >= 10) logro("pm.raices10"); }
+  if (S.stats.entregas >= 100) logro("pm.entregas100");
+  if (p.forma !== "pot" && !p.pista) S.dominio = Math.min(100, S.dominio + 3);
+  if (J.inf && J.hechos >= 20) logro("pm.inf20");
+  if (J.inf && J.hechos % 5 === 0 && poderLibre(PODERES[1])) { J.cargas.raiz++; avisar("🎁 5 entregas: +1 poder √"); }
+  J.t.g[i] = null;
+  // La ficha vuela hasta el pedido
+  if (el && destino && !sinMov()) {
+    const a = el.getBoundingClientRect(), b = destino.getBoundingClientRect(), v = el.cloneNode(true);
+    v.className = el.className.replace(/\b(nace|pop)\b/g, "") + " vuela"; v.style.cssText = `left:${a.left}px;top:${a.top}px;width:${a.width}px;height:${a.height}px;font-size:${geo.celda * 0.44}px;transform:none`;
+    document.body.appendChild(v);
+    requestAnimationFrame(() => { v.style.transform = `translate(${b.left + b.width / 2 - a.left - a.width / 2}px,${b.top + b.height / 2 - a.top - a.height / 2}px) scale(.35)`; v.style.opacity = ".3"; });
+    setTimeout(() => v.remove(), 400);
+  }
+  const [x, y] = centro(i); Fx.estalla(x, y, "#fde047", 24);
+  Son.entrega(); avanzaGuia(2); if (J.guia === 1) avanzaGuia(1);
+  cinta(`+${pts} · ` + mate(p.explica));
+  if (J.jefe) { const j = $("#jefe"); j.classList.remove("golpe"); void j.offsetWidth; j.classList.add("golpe"); }
+  J.abiertos[k] = null; reponer();
+  pintarTodo(); comprobarFin();
+}
+function fallo(i, c) {
+  const el = els.get(c.id); if (el) { el.classList.remove("mal", "nace", "pop"); void el.offsetWidth; el.classList.add("mal"); }
+  const mismos = J.abiertos.filter(p => p && p.b === c.b);
+  if (!mismos.length) { cinta(mate(M.explicaError(c, [])), true); return; }          // ningún pedido de esa base: solo se informa
+  Son.error(); J.errores++; J.racha = 0; S.dominio = Math.max(0, S.dominio - 8);
+  let h = `<h2>Casi…</h2><div class="caja mate">${mate(M.explicaError(c, mismos))}</div>`;
+  if (J.inf) { J.vidas--; h += `<p>Pierdes una vida. Te quedan ${J.vidas}.</p>`; }
+  else if (J.errores === 1) h += `<p>Esta vez no pasa nada: tienes una <b>segunda oportunidad</b>.</p>`;
+  else { J.movs = Math.max(0, J.movs - 1); h += `<p>Pierdes 1 movimiento.</p>`; }
+  if (J.errores === 2 && !J.ayuda) { J.ayuda = true; h += `<p>💡 Activo la <b>ayuda</b>: ahora las fichas enseñan también su valor.</p>`; }
+  h += `<button class="btn oro" data-a="cerrar" data-foco>Entendido</button>`;
+  ventana(h, () => { pintarTodo(); comprobarFin(); });
+}
+function usarPoder(i, c) {
+  const id = J.poder; let ok = false;
+  if (id === "martillo") {
+    if (c.tipo === "pot" && c.hielo) c.hielo = false; else J.t.g[i] = null;
+    const [x, y] = centro(i); Fx.estalla(x, y, "#fff", 18); Son.rompe(); ok = true; cinta("🔨 ¡Fuera!", true);
+  } else if (c.tipo !== "pot") { cinta("Ese poder solo funciona con fichas.", true); return; }
+  else if (id === "raiz") {
+    const antes = c.e, err = M.poderRaiz(c);
+    if (err) { Son.error(); ventana(`<h2>No se puede</h2><div class="caja mate">${mate(err)}</div><p class="nota">No gastas el poder. Elige una ficha con exponente par.</p><button class="btn oro" data-a="cerrar" data-foco>Entendido</button>`); return; }
+    cinta(mate(`√(${c.b}^${antes}) = ${c.b}^${c.e}`) + ` porque ` + mate(`${c.b}^${c.e} · ${c.b}^${c.e} = ${c.b}^${antes}`)); ok = true;
+  } else if (id === "dividir") {
+    const antes = c.e, err = M.poderDividir(c);
+    if (err) { Son.error(); ventana(`<h2>No se puede</h2><div class="caja mate">${mate(err)}</div><p class="nota">No gastas el poder.</p><button class="btn oro" data-a="cerrar" data-foco>Entendido</button>`); return; }
+    cinta(mate(`${c.b}^${antes} : ${c.b} = ${c.b}^${c.e}`) + ` = ${M.num(M.valor(c.b, c.e))}`); ok = true;
+  }
+  if (ok) {
+    if (id !== "martillo") { Son.poder(); const [x, y] = centro(i); Fx.estalla(x, y, COLOR[c.b], 16); const el = els.get(c.id); if (el) { el.classList.remove("pop", "nace"); void el.offsetWidth; el.classList.add("pop"); } }
+    J.cargas[id]--; J.poder = null; pintarTodo(); comprobarFin();
+  }
+}
+function elegirPoder(b) {
+  if (!J || J.fin || J.bloq) return;
+  const p = PODERES.find(x => x.id === b.dataset.p);
+  if (b.dataset.cerrado) { cinta(`🔒 ${p.nombre}: se desbloquea al superar el nivel ${p.tras}.`, true); return; }
+  if (J.cargas[p.id] <= 0) return;
+  Son.clic();
+  if (p.id === "mezcla") { M.barajar(J.t); J.cargas.mezcla--; Son.poder(); cinta("🌀 ¡Fichas recolocadas!", true); pintarTodo(); comprobarFin(); return; }
+  J.poder = J.poder === p.id ? null : p.id;
+  if (J.poder) cinta(`${p.icono} ${esc(p.desc)} <b>Toca una ficha.</b>`, true);
+  pintarHud();
+}
+
+/* ----- Final de la partida ----- */
+function comprobarFin() {
+  if (J.fin) return;
+  if (J.hechos >= J.total) return terminar(true);
+  if (J.inf && J.vidas <= 0) return terminar(false, "vidas");
+  const hayEntrega = M.fichas(J.t).some(f => J.abiertos.some(p => M.coincide(f, p)));
+  const sinMovs = !J.inf && J.movs <= 0, atasco = !M.hayMovimiento(J.t);
+  const u = $("#ultimo");
+  if (sinMovs || atasco) {
+    const util = PODERES.some(p => J.cargas[p.id] > 0 && (atasco && !sinMovs || p.id === "raiz" || p.id === "dividir"));
+    if (!hayEntrega && !util) return terminar(false, sinMovs ? "movs" : "atasco");
+    $("#ultimoTxt").textContent = (sinMovs ? "Sin movimientos" : "Tablero bloqueado") + (hayEntrega ? ": ¡aún puedes entregar!" : ": usa un poder");
+    u.classList.add("ver");
+  } else u.classList.remove("ver");
+}
+function terminar(victoria, motivo) {
+  J.fin = true; $("#ultimo").classList.remove("ver"); $("#guia").classList.remove("ver");
+  const d0 = MQ.leer(), niv = J.niv, id = niv.id;
+  let xp, monedas, h, estrellas = 0;
+  if (J.inf) {
+    const record = J.puntos > S.record; if (record) S.record = J.puntos;
+    xp = Math.min(150, 5 * J.hechos); monedas = Math.min(60, 2 * J.hechos) + (record && J.hechos ? 10 : 0);
+    h = `<div class="kubo2">${MQ.avatarSVG(d0.avatar, record ? "feliz" : "")}</div><h2>${record ? "¡Nuevo récord!" : "Fin de la forja"}</h2>
+      <p>${motivo === "vidas" ? "Te has quedado sin vidas." : "El tablero se ha bloqueado."} Has entregado <b>${J.hechos}</b> pedidos.</p>
+      <div class="premios"><span class="chip">🏆 ${J.puntos} puntos</span><span class="chip">Récord: ${S.record}</span></div>`;
+    if (record) { Fx.confeti(); Son.victoria(); } else Son.derrota();
+  } else if (victoria) {
+    const resto = J.movs / J.movsIni;
+    estrellas = J.errores <= 1 && resto >= 0.3 ? 3 : J.errores <= 3 && resto >= 0.1 ? 2 : 1;
+    J.puntos += J.movs * 20;
+    const primera = !S.estrellas[id], record = J.puntos > (S.mejor[id] || 0) && !primera, gana = Math.max(0, estrellas - (S.estrellas[id] || 0));
+    S.estrellas[id] = Math.max(S.estrellas[id] || 0, estrellas); S.mejor[id] = Math.max(S.mejor[id] || 0, J.puntos);
+    S.stats.estrellas += gana; S.derrotas[id] = 0;
+    if (J.errores === 0) { S.stats.limpios++; logro("pm.limpio"); }
+    xp = 20 + 10 * niv.esc + 10 * estrellas; monedas = 8 + 4 * estrellas + (primera ? 15 : 0) + (record ? 10 : 0);
+    if (NIVELES.filter(n => n.esc === niv.esc).every(n => S.estrellas[n.id] > 0)) logro(niv.esc === 5 ? "pm.jefe" : "pm.esc" + niv.esc);
+    if (NIVELES.every(n => S.estrellas[n.id] === 3)) logro("pm.estrellas");
+    const nuevos = PODERES.filter(p => p.tras === id && primera), sig = NIVELES.find(n => n.id === id + 1);
+    h = `<div class="kubo2">${MQ.avatarSVG(d0.avatar, "feliz")}</div><h2>${niv.jefe ? "¡Radikal derrotado!" : "¡Nivel superado!"}</h2>
+      <div class="estrellas" aria-label="${estrellas} de 3 estrellas">${[0, 1, 2].map(i => i < estrellas ? `<b style="animation-delay:${0.25 + i * 0.25}s">★</b>` : "★").join("")}</div>
+      <div class="premios"><span class="chip">🏆 ${J.puntos} puntos</span>${record ? '<span class="chip">📈 ¡Récord personal! +10 🪙</span>' : ""}</div>
+      <p class="nota">${J.errores === 0 ? "Sin errores." : J.errores + (J.errores === 1 ? " error" : " errores") + "."} Te han sobrado ${J.movs} movimientos (+${J.movs * 20} puntos).
+      ${estrellas < 3 ? "Para las 3 estrellas: como mucho 1 error y que te sobre el 30 % de los movimientos." : ""}</p>
+      ${nuevos.map(p => `<div class="caja">🔓 <b>Nuevo poder: ${p.icono} ${p.nombre}.</b> ${esc(p.desc)}</div>`).join("")}
+      ${id === 3 && primera ? '<div class="caja">🔓 <b>Forja infinita</b> desbloqueada: juega sin límite de movimientos y bate tu récord.</div>' : ""}`;
+    h += `<div class="fila" style="margin-top:12px">${sig ? `<button class="btn oro" data-a="jugar" data-niv="${sig.id}" data-foco>Siguiente ▶</button>` : ""}
+      <button class="btn gris" data-a="jugar" data-niv="${id}">Repetir</button><button class="btn gris" data-a="mapa" ${sig ? "" : "data-foco"}>Niveles</button></div>`;
+    Fx.confeti(); Son.victoria();
+  } else {
+    S.derrotas[id] = (S.derrotas[id] || 0) + 1; xp = 8; monedas = 2;
+    const mas = Math.round(niv.movs * 0.15 * Math.min(3, S.derrotas[id]));
+    h = `<div class="kubo2">${MQ.avatarSVG(d0.avatar, "triste")}</div><h2>${motivo === "atasco" ? "Tablero bloqueado" : "Sin movimientos"}</h2>
+      <p>Has entregado <b>${J.hechos} de ${J.total}</b> pedidos. ¡Estás cerca!</p>
+      <div class="caja">💡 <b>Consejo:</b> ${CONSEJO(niv)}</div>
+      <p class="nota">En el próximo intento tendrás <b>${mas} movimientos extra</b>.</p>
+      <div class="fila" style="margin-top:12px"><button class="btn oro" data-a="jugar" data-niv="${id}" data-foco>Reintentar</button><button class="btn gris" data-a="mapa">Niveles</button></div>`;
+    Son.derrota();
+  }
+  const sube = MQ.sumar(xp, monedas);
+  h = h.replace('<div class="fila" style="margin-top:12px">', `<div class="premios"><span class="chip">+${xp} XP</span><span class="chip">+${monedas} 🪙</span>${sube.subio ? `<span class="chip" style="border-color:var(--oro)">⭐ ¡Nivel ${sube.nivel}!</span>` : ""}</div><div class="fila" style="margin-top:12px">`);
+  if (J.inf) h += `<div class="premios"><span class="chip">+${xp} XP</span><span class="chip">+${monedas} 🪙</span>${sube.subio ? `<span class="chip" style="border-color:var(--oro)">⭐ ¡Nivel ${sube.nivel}!</span>` : ""}</div>
+    <div class="fila" style="margin-top:12px"><button class="btn oro" data-a="jugar" data-niv="inf" data-foco>Otra vez</button><button class="btn gris" data-a="mapa">Niveles</button></div>`;
+  revisarMisiones(); guardar();
+  setTimeout(() => ventana(h, () => { if (J && J.fin) irMapa(); }), sinMov() ? 0 : 500);
+}
+function CONSEJO(niv) {
+  const f = niv.formas;
+  if (f.potpot) return mate("en una potencia de potencia los exponentes se multiplican: (2^2)^3 = 2^6. Calcula primero qué ficha necesitas.");
+  if (f.coc) return mate("al dividir potencias de la misma base, los exponentes se restan: 3^5 : 3^2 = 3^3.");
+  if (f.prod) return mate("al multiplicar potencias de la misma base, los exponentes se suman: 2^2 · 2^3 = 2^5. Eso es justo lo que hace una fusión.");
+  if (f.raiz) return mate("√64 es el número que multiplicado por sí mismo da 64. Si una ficha se te pasa, usa los poderes √ o ÷.");
+  return mate("antes de deslizar, mira qué exponente te falta. Si a 2^3 le juntas 2^2, sale 2^5: los exponentes se suman.");
+}
+const RADIKAL = `<svg viewBox="0 0 100 100" role="img" aria-label="Radikal"><path d="M18 34 8 8l24 16zM82 34 92 8 68 24z" fill="#fde047" stroke="#1e1b4b" stroke-width="4" stroke-linejoin="round"/>
+  <path d="M50 16c24 0 38 16 38 40S74 94 50 94 12 80 12 56s14-40 38-40z" fill="#be123c" stroke="#1e1b4b" stroke-width="4"/>
+  <circle cx="50" cy="50" r="15" fill="#fff" stroke="#1e1b4b" stroke-width="3"/><circle cx="50" cy="52" r="7" fill="#1e1b4b"/>
+  <path d="M30 34l14 6M70 34l-14 6" stroke="#1e1b4b" stroke-width="5" stroke-linecap="round"/>
+  <path d="M30 74l6 8 6-8 6 8 6-8 6 8 6-8" fill="none" stroke="#fff" stroke-width="4" stroke-linejoin="round" stroke-linecap="round"/></svg>`;
+
+/* =================== VENTANAS: pausa, tienda, logros, ajustes, ayuda =================== */
+function irMapa() { J = null; pintarMapa(); pantalla("pMapa"); }
+function irMenu() { J = null; pintarCartera(); pantalla("pMenu"); }
+const interruptor = (clave, titulo, sub) => `<div class="item"><div><b>${titulo}</b><span>${sub}</span></div>
+  <button class="interruptor" data-a="ajuste" data-clave="${clave}" aria-pressed="${!!AJ[clave]}" aria-label="${titulo}">${AJ[clave] ? "Sí" : "No"}</button></div>`;
+const ajustesHTML = () => `<div class="lista">${interruptor("sonido", "Sonidos", "Efectos al fusionar y entregar")}${interruptor("musica", "Música", "Melodía de fondo")}
+  ${interruptor("animaciones", "Animaciones", "Desactívalas si te marean o el dispositivo va lento")}
+  ${interruptor("tranquilo", "Modo tranquilo", "50 % más de movimientos y el jefe ataca más despacio")}</div>`;
+function vPausa() {
+  ventana(`<h2>Pausa</h2><p class="nota">${J.inf ? "Forja infinita" : `Nivel ${J.niv.id} · ${esc(J.niv.nombre)}`} · no hay límite de tiempo</p>${ajustesHTML()}
+    <div class="fila"><button class="btn oro" data-a="cerrar" data-foco>Seguir</button><button class="btn gris" data-a="jugar" data-niv="${J.niv.id}">Reiniciar</button>
+    <button class="btn gris" data-a="como">Ayuda</button><button class="btn gris" data-a="mapa">Salir</button></div>`);
+}
+function vAjustes() { ventana(`<h2>Ajustes</h2>${ajustesHTML()}<button class="btn oro" data-a="cerrar" data-foco>Listo</button>`); }
+function vComo() {
+  ventana(`<h2>Cómo se juega</h2><div class="izq">
+    <div class="caja"><b>1 · Desliza.</b> Todas las fichas se mueven a la vez. Con teclado: flechas.</div>
+    <div class="caja mate">${mate("2 · Fusiona. Dos fichas de la misma base se multiplican: 2^2 · 2^3 = 2^5. Los exponentes se suman.")}</div>
+    <div class="caja"><b>3 · Entrega.</b> Toca la ficha que valga lo mismo que un pedido amarillo. ${mate("Si piden √64, entrega 2^3 (= 8).")} Toca un pedido para ver una pista.</div>
+    <div class="caja"><b>Fichas blancas</b> (4, 9, 25, 100…): son potencias escritas como número. Tú decides con quién se fusionan.</div>
+    <div class="caja"><b>Rocas y hielo:</b> se rompen haciendo una fusión justo al lado.</div>
+    <div class="caja"><b>Poderes:</b> ${PODERES.map(p => `${p.icono} ${esc(p.desc)}`).join(" ")}</div>
+    <div class="caja"><b>Estrellas:</b> pocos errores y que te sobren movimientos. Las rachas de entregas multiplican los puntos.</div></div>
+    <button class="btn oro" data-a="cerrar" data-foco>¡Vamos!</button>`, J && !J.fin ? null : undefined);
+}
+function vTienda() {
+  const d = MQ.leer();
+  const skins = SKINS.map(s => { const tengo = S.skins.includes(s.id), puesto = S.skin === s.id;
+    return `<div class="item"><span class="ico"><span class="skin-${s.id}" style="display:block;width:34px;height:34px;position:relative"><span class="ficha b3" style="position:static;width:34px;height:34px;font-size:15px"><span class="in">3<sup>2</sup></span></span></span></span>
+      <div><b>${s.nombre}</b><span>Aspecto de las fichas</span></div>
+      ${puesto ? '<b style="color:var(--verde)">En uso</b>' : tengo ? `<button class="btn" data-a="poner" data-id="${s.id}">Usar</button>`
+        : `<button class="btn oro" data-a="comprar" data-id="${s.id}" ${d.monedas >= s.precio ? "" : "disabled"}>${s.precio} 🪙</button>`}</div>`; }).join("");
+  const mej = PODERES.map(p => { const n = S.mejoras[p.id] || 0, precio = 100 * (n + 1), libre = poderLibre(p);
+    return `<div class="item ${libre ? "" : "apagado"}"><span class="ico">${p.icono}</span><div><b>${p.nombre} +1</b><span>${libre ? `Empiezas cada nivel con ${p.base + n}${n < 2 ? " → " + (p.base + n + 1) : ""} usos` : "Se desbloquea en el nivel " + p.tras}</span></div>
+      ${!libre ? "🔒" : n >= 2 ? '<b style="color:var(--verde)">Máx.</b>' : `<button class="btn oro" data-a="mejora" data-id="${p.id}" ${d.monedas >= precio ? "" : "disabled"}>${precio} 🪙</button>`}</div>`; }).join("");
+  ventana(`<h2>Tienda</h2><p><span class="chip">🪙 ${d.monedas} monedas</span></p><p class="nota">Las monedas se ganan jugando. No se compran con dinero.</p>
+    <div class="lista">${skins}${mej}</div><button class="btn oro" data-a="cerrar" data-foco>Cerrar</button>`);
+}
+function vLogros() {
+  const d = MQ.leer(), mios = MQ.LOGROS.filter(l => l.juego === "power-merge");
+  ventana(`<h2>Logros y medallas</h2><p class="nota">${mios.filter(l => d.logros[l.id]).length} de ${mios.length} conseguidos</p><div class="lista">` +
+    mios.map(l => `<div class="item ${d.logros[l.id] ? "" : "apagado"}"><span class="ico">${d.logros[l.id] ? l.icono : "?"}</span><div><b>${esc(l.titulo)}</b><span>${esc(l.desc)}</span></div>${d.logros[l.id] ? "✅" : ""}</div>`).join("") +
+    `</div><button class="btn oro" data-a="cerrar" data-foco>Cerrar</button>`);
+}
+const ACCIONES = {
+  cerrar: cerrarVentana,
+  jugar: b => { alCerrar = null; cerrarVentana(); empezar(b.dataset.niv === "inf" ? "inf" : +b.dataset.niv); },
+  mapa: () => { alCerrar = null; cerrarVentana(); irMapa(); },
+  como: vComo,
+  ajuste: b => { const k = b.dataset.clave; AJ[k] = !AJ[k]; MQ.ajuste(k, AJ[k]); b.setAttribute("aria-pressed", AJ[k]); b.textContent = AJ[k] ? "Sí" : "No";
+    document.body.classList.toggle("sinmov", sinMov()); },
+  poner: b => { S.skin = b.dataset.id; guardar(); if (J) $("#tablero").className = "skin-" + S.skin; vTienda(); },
+  comprar: b => { const s = SKINS.find(x => x.id === b.dataset.id); if (MQ.gastar(s.precio)) { S.skins.push(s.id); S.skin = s.id; guardar(); avisar(`🎨 Nuevo aspecto: ${s.nombre}`); } vTienda(); pintarCartera(); },
+  mejora: b => { const n = S.mejoras[b.dataset.id] || 0; if (n < 2 && MQ.gastar(100 * (n + 1))) { S.mejoras[b.dataset.id] = n + 1; guardar(); } vTienda(); pintarCartera(); }
+};
+
+/* =================== ENTRADAS: táctil, ratón y teclado =================== */
+const zona = $("#zona"); let gesto = null, huboGesto = false;
+zona.addEventListener("pointerdown", e => { gesto = { x: e.clientX, y: e.clientY, id: e.pointerId }; huboGesto = false; });
+zona.addEventListener("pointermove", e => {
+  if (!gesto || e.pointerId !== gesto.id) return;
+  const dx = e.clientX - gesto.x, dy = e.clientY - gesto.y, u = Math.max(22, geo.celda * 0.3);
+  if (Math.max(Math.abs(dx), Math.abs(dy)) < u) return;
+  gesto = null; huboGesto = true;
+  deslizar(Math.abs(dx) > Math.abs(dy) ? (dx > 0 ? "der" : "izq") : (dy > 0 ? "aba" : "arr"));
+});
+// Sin esto, tras un deslizamiento rápido el navegador se "traga" el siguiente toque (cree que es para frenar un desplazamiento).
+$("#pJuego").addEventListener("touchmove", e => e.preventDefault(), { passive: false });
+const finGesto = () => { gesto = null; };
+zona.addEventListener("pointerup", finGesto); zona.addEventListener("pointercancel", finGesto);
+$("#tablero").addEventListener("click", e => {
+  if (huboGesto) { huboGesto = false; return; }
+  const f = e.target.closest(".ficha"); if (f) tocar(+f.dataset.i);
+});
+document.addEventListener("keydown", e => {
+  if (abierta()) { if (e.key === "Escape") cerrarVentana(); return; }
+  if (!J || J.fin) return;
+  const d = { ArrowLeft: "izq", ArrowRight: "der", ArrowUp: "arr", ArrowDown: "aba", a: "izq", d: "der", w: "arr", s: "aba" }[e.key];
+  if (d) { e.preventDefault(); deslizar(d); } else if (e.key === "Escape") vPausa();
+});
+$("#pedidos").addEventListener("click", e => {
+  const b = e.target.closest("[data-k]"); if (!b || !J || J.fin) return;
+  const p = J.abiertos[+b.dataset.k]; if (!p) return;
+  Son.clic(); p.pista = Math.min(2, p.pista + 1);
+  if (p.pista === 1) cinta("💡 " + esc(PISTA[p.forma]) + " (Toca otra vez para ver la solución)", true);
+  else ventana(`<h2>💡 Pista</h2><div class="caja mate">${mate(p.explica)}</div><p class="nota">Con la solución a la vista, este pedido da la mitad de puntos.</p><button class="btn oro" data-a="cerrar" data-foco>Entendido</button>`);
+  pintarPedidos();
+});
+$("#poderes").addEventListener("click", e => { const b = e.target.closest("[data-p]"); if (b) elegirPoder(b); });
+$("#bPausa").onclick = () => { Son.clic(); vPausa(); };
+$("#bTerminar").onclick = () => { if (J && !J.fin) terminar(false, J.inf || J.movs > 0 ? "atasco" : "movs"); };
+$("#bJugar").onclick = () => { Son.clic(); const sig = NIVELES.find(n => !S.estrellas[n.id] && desbloqueado(n.id)); if (sig) empezar(sig.id); else irMapa(); };
+$("#bNiveles").onclick = () => { Son.clic(); irMapa(); };
+$("#bMapaAtras").onclick = () => { Son.clic(); irMenu(); };
+$("#bTienda").onclick = () => { Son.clic(); vTienda(); };
+$("#bLogros").onclick = () => { Son.clic(); vLogros(); };
+$("#bAjustes").onclick = () => { Son.clic(); vAjustes(); };
+$("#bComo").onclick = () => { Son.clic(); vComo(); };
+let tMedir = 0;
+function remedir() { if (!J) return; medir(); els.forEach(el => { el.style.width = el.style.height = geo.celda + "px"; }); const sm = document.body.classList.contains("sinmov");
+  document.body.classList.add("sinmov"); pintarTablero(); void $("#tablero").offsetWidth; document.body.classList.toggle("sinmov", sm); }
+addEventListener("resize", () => { clearTimeout(tMedir); tMedir = setTimeout(remedir, 60); });
+if (window.ResizeObserver) new ResizeObserver(() => { clearTimeout(tMedir); tMedir = setTimeout(remedir, 60); }).observe(zona);
+document.addEventListener("contextmenu", e => { if (J) e.preventDefault(); });
+
+repartirMisiones(); guardar(); pintarCartera(); pantalla("pMenu");
+window.__PM = { get J() { return J; }, get S() { return S; }, empezar, deslizar, tocar, terminar };   // para las pruebas automáticas
+})();
+</script>
+</body>
+</html>

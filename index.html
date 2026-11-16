@@ -35,6 +35,12 @@
     .filtros button[aria-pressed="true"] { background: var(--espresso); color: var(--crema); }
 
     /* ---------- Juegos ---------- */
+    .mathquest { display: flex; align-items: center; gap: 1rem; flex-wrap: wrap; padding: 1rem 1.25rem; margin: .5rem 0 0;
+      background: var(--espresso); color: var(--crema); border-radius: var(--radio); }
+    .mathquest p { margin: 0; flex: 1 1 16rem; }
+    .mathquest strong { display: block; font-size: 1.3rem; font-weight: 900; }
+    .mathquest .boton { background: var(--coral); color: var(--espresso); }
+    .mathquest .boton:hover { background: var(--crema); color: var(--espresso); }
     .curso { margin: 1.4rem 0 2rem; }
     .curso h2 { font-size: 1.5rem; font-weight: 900; display: flex; align-items: center; gap: .5em; }
     .curso h2::before { content: ""; width: 14px; height: 14px; border-radius: 50%; background: var(--coral); }
@@ -105,6 +111,10 @@
 
     <section class="contenedor" id="juegos" aria-labelledby="titJuegos">
       <h2 id="titJuegos" class="solo-lector">Juegos y laboratorios</h2>
+      <div class="mathquest">
+        <p><strong>MathQuest · Academia de los Números</strong>Los juegos de 1.º ESO en un mapa de mundos, con niveles, monedas y logros.</p>
+        <a class="boton" href="mathquest/index.html">Entrar en MathQuest</a>
+      </div>
       <div id="listaCursos"></div>
     </section>
 

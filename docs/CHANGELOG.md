@@ -1,5 +1,21 @@
 # Registro de cambios
 
+## 0.7.0 · 16/11/2026
+- Nuevo portal **MathQuest · Academia de los Números** (`mathquest/`): mapa de 11 mundos de 1.º ESO con cabecera del
+  IES Alarifes Ruiz Florindo, nivel, experiencia, monedas, logros, personajes desbloqueables y ajustes comunes.
+  Enlaza Factor Clash e Integer Ninja; Pizza Rush sale «En revisión»; 7 mundos reservados como «Próximamente».
+- Nuevo juego **Power Merge** (`applets/power-merge/`, fuentes en `src/power-merge/`): fusionar potencias deslizando.
+  13 niveles en 5 escalones, jefe final, forja infinita, 4 poderes, tienda, misiones y 14 logros. Ver `docs/fichas/power-merge.md`.
+- `compartido/mathquest.js`: progreso común en `pichu.mathquest.v1`. Power Merge guarda en `pichu.power-merge.v1`.
+- La portada πCHU gana un recuadro «Entrar en MathQuest» y la tarjeta de Power Merge.
+- Pruebas: motor 124 561 comprobaciones (todos los pedidos recalculados con otro método; los 13 niveles jugados 200 veces
+  por un jugador automático); navegador 35/35 (partida completa con gestos táctiles, victoria, derrota, reinicio, guardado,
+  móvil, tableta, apaisado y portal). Corregido durante las pruebas: tras un deslizamiento rápido se perdía el toque siguiente.
+
+### Pendiente
+- Probar Power Merge en clase con móviles y tabletas reales (solo se ha probado en Chromium emulando pantalla táctil).
+- MathQuest fase 2: Ratio Run (proporcionalidad). Fase 3: Algebra Royale.
+
 ## 0.6.4 · 11/11/2026
 - Logo del IES Alarifes Ruiz Florindo en el recuadro del centro (`compartido/img/centro.jpg`, sacado del Drive del centro y sin metadatos).
 

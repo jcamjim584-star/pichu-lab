@@ -29,6 +29,8 @@ jobs:
         run: node tests/comprobar.mjs
       - name: Motor de la Pizzería
         run: node tests/pizzeria_motor.test.mjs
+      - name: Motor de Power Merge
+        run: node tests/power_merge_motor.test.mjs
       - name: Motor de Integer Ninja
         run: node src/integer-ninja/tests/engine.test.js
       - name: Apps Script de Integer Ninja (simulado)

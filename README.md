@@ -5,12 +5,13 @@
 Portada que reúne los juegos y laboratorios de matemáticas interactivos de Juan Antonio Campos Jiménez
 (ESO y Bachillerato). Web estática: HTML, CSS y JavaScript, sin frameworks, sin registro y sin recoger datos personales.
 
-## Qué incluye (versión 0.5.0)
+## Qué incluye (versión 0.7.0)
 | Juego | Curso (de momento no se muestra) | Estado |
 |---|---|---|
 | Factor Clash · duelos de divisibilidad | 1.º ESO | Disponible |
 | Pizza Rush · Pizzería πCHU v0.2 (fracciones: equivalencias, suma, multiplicación y división) | 1.º ESO | Próximamente (en revisión) |
 | Integer Ninja v0.5 · enteros: signos, comparar, sumas, −( ), productos y cocientes | 1.º ESO | Disponible |
+| **Power Merge** · potencias y raíces (MathQuest) | 1.º ESO | Disponible |
 | Laboratorio de Proporcionalidad · cartas de ecuaciones · cartas de funciones | 1.º ESO · 4.º ESO · 1.º Bach | En diseño |
 
 Funciones comunes:
@@ -37,6 +38,23 @@ Prueba completa en navegador (opcional, Python + Playwright):
 pip install playwright && python3 tests/prueba_navegador.py . capturas
 python3 tests/prueba_pizzeria.py . capturas
 ```
+
+## MathQuest · Academia de los Números
+`mathquest/index.html` es un mapa de mundos para 1.º ESO (IES Alarifes Ruiz Florindo). Enlaza los juegos que ya existían
+(Factor Clash, Integer Ninja; Pizza Rush aparece «En revisión» mientras siga en Próximamente) y los juegos nuevos de MathQuest.
+De los ocho juegos nuevos previstos, **solo está hecho Power Merge**; los otros siete aparecen como «Próximamente».
+El progreso común (experiencia, nivel, monedas, logros, personaje y ajustes) está en `compartido/mathquest.js`
+y se guarda en `pichu.mathquest.v1`. Para añadir un mundo: edita `MUNDOS` en ese archivo.
+
+## Power Merge: cómo modificarlo
+Se edita en `src/power-merge/`: `motor.js` (matemáticas y reglas), `niveles.js` (los 13 niveles: movimientos, pedidos, bases…)
+y `juego.html` (pantalla, sonido, tienda). Después:
+```
+python3 src/power-merge/build.py
+node tests/power_merge_motor.test.mjs          # matemáticas y niveles
+node tests/power_merge_navegador.test.js       # partida completa con gestos táctiles (necesita Playwright)
+```
+Ficha del juego: `docs/fichas/power-merge.md`.
 
 ## Pizza Rush (Pizzería πCHU): cómo modificarla
 El juego se edita en `src/pizzeria/` (`motor.js` = matemáticas, `juego.html` = pantalla, `personajes/` = imágenes).

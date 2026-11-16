@@ -20,11 +20,18 @@ compartido/marca.css    identidad visual (solo portada y páginas propias)
 compartido/marca.js     nombre, versión y LISTA DE JUEGOS (MARCA.juegos)
 compartido/componentes.js  alias, exportar/importar/borrar, confirmación doble
 compartido/volver.js    botón "← πCHU" que se añade a cada juego
+compartido/mathquest.js progreso común de MathQuest (XP, monedas, logros, personaje, ajustes) en pichu.mathquest.v1;
+                        también la lista de MUNDOS del portal y de LOGROS
+mathquest/index.html    portal MathQuest · Academia de los Números (mapa de mundos de 1.º ESO)
 applets/<id>/index.html cada juego, autocontenido
 src/<juego>/            fuentes de los juegos que se compilan (p. ej. src/pizzeria: motor.js + juego.html + personajes)
                         → python3 src/pizzeria/build.py genera applets/pizzeria/index.html (no editar el generado)
 tests/comprobar.mjs     comprobaciones (node tests/comprobar.mjs)
 tests/pizzeria_motor.test.mjs  pruebas del motor de la Pizzería
+src/power-merge/        Power Merge: motor.js (matemáticas) + niveles.js (dificultad) + juego.html (pantalla)
+                        → python3 src/power-merge/build.py genera applets/power-merge/index.html (no editar el generado)
+tests/power_merge_motor.test.mjs      pruebas del motor de Power Merge
+tests/power_merge_navegador.test.js   partida completa en Chromium con gestos táctiles (necesita Playwright)
 docs/fichas/            una ficha por juego
 ```
 
