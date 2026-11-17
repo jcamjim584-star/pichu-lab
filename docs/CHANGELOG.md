@@ -1,5 +1,20 @@
 # Registro de cambios
 
+## 0.9.0 · 17/11/2026
+- **Equation Merge sustituye a Power Merge.** Juego de ecuaciones de primer grado de 1.º ESO (`applets/equation-merge/`, fuentes en `src/equation-merge/`).
+  - Las fichas son números del 1 al 20; al chocar se **suman**. Las ecuaciones de arriba se resuelven entregando la ficha que es la solución.
+  - 13 niveles en 5 escalones: `x + a = b`, `x − a = b`, problemas «Pienso un número…», `ax = b`, `x/a = b`, `ax + b = c`, `ax − b = c`,
+    x en los dos miembros, paréntesis y el jefe **Incógnito, el Enmascarado**. Modo **balanza infinita**.
+  - Pistas en dos pasos (idea de la balanza y luego la solución con comprobación). Los errores típicos (sumar en vez de restar, olvidar dividir…)
+    se explican sustituyendo la x; un toque que no es un error típico solo informa, sin castigo.
+  - Poderes ÷2 y −1 (en lugar de √ y ÷). Logros `eq.*` en lugar de `pm.*`.
+  - Guardado nuevo `pichu.equation-merge.v1`. El de Power Merge (`pichu.power-merge.v1`) no se borra.
+- Mapa de mundos: el mundo 4 · Ecuaciones pasa a jugable y el 5 · Potencias a «Próximamente» (Power Quest).
+- Portada: el contador de logros solo cuenta logros de juegos actuales; el texto de Ajustes nombra Fraction Merge y Equation Merge.
+- **El repositorio se pone al día con el artefacto de Claude** (versiones 0.7 y 0.8, que solo estaban allí): mapa de mundos MathQuest,
+  `compartido/mathquest.js` y Fraction Merge (copiado ya compilado). Factor Clash se mantiene en la versión del repositorio (sin «πCHU Exprés», 0.6.1).
+- Pruebas: motor de Equation Merge 113 129 comprobaciones; los 13 niveles superados por un jugador automático; portada 4/4 mundos jugables a 390 px sin errores de consola.
+
 ## 0.6.4 · 11/11/2026
 - Logo del IES Alarifes Ruiz Florindo en el recuadro del centro (`compartido/img/centro.jpg`, sacado del Drive del centro y sin metadatos).
 

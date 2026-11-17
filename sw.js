@@ -8,7 +8,7 @@
 
    Si añades un juego, añade su ruta a ARCHIVOS.
    ========================================================= */
-const VERSION = "pichu-v0.6.4";
+const VERSION = "pichu-v0.9.0";
 
 const ARCHIVOS = [
   "./",
@@ -20,6 +20,7 @@ const ARCHIVOS = [
   "compartido/marca.js",
   "compartido/componentes.js",
   "compartido/volver.js",
+  "compartido/mathquest.js",
   "compartido/fuentes/lato-latin-400-normal.woff2",
   "compartido/fuentes/lato-latin-700-normal.woff2",
   "compartido/fuentes/lato-latin-900-normal.woff2",
@@ -31,7 +32,9 @@ const ARCHIVOS = [
   // Juegos
   "applets/expres/",
   "applets/pizzeria/",
-  "applets/integer-ninja/"
+  "applets/integer-ninja/",
+  "applets/equation-merge/",
+  "applets/fraction-merge/"
 ];
 
 // Estrategia (desde 0.6.2): PRIMERO LA RED, y la copia guardada solo si no hay conexión.

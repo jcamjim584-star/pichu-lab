@@ -14,7 +14,7 @@ window.MARCA = {
     lugar: "Fuentes de Andalucía (Sevilla)",
     logo: "compartido/img/centro.jpg"
   },
-  version: "0.6.4",
+  version: "0.9.0",
   autor: "Juan Antonio Campos Jiménez",
 
   // Cursos: de momento la portada NO los muestra (se organiza por juegos).
@@ -48,6 +48,33 @@ window.MARCA = {
       url: "applets/integer-ninja/",
       estado: "jugar",
       claves: ["pichu.integerNinja.v1"]
+    },
+    {
+      id: "fraction-merge",
+      titulo: "Fraction Merge",
+      subtitulo: "Suma y fusiona fracciones",
+      curso: "1.º ESO",
+      saber: "Fracciones: equivalentes, suma y resta, completar la unidad",
+      descripcion: "Desliza y junta fichas: las fracciones se suman, y si llegan a 1 desaparecen. 13 niveles, poderes, un jefe final y partida infinita.",
+      simbolo: "½",
+      // Fuentes en src/fraction-merge/ → python3 src/fraction-merge/build.py genera applets/fraction-merge/index.html
+      url: "applets/fraction-merge/",
+      estado: "jugar",
+      claves: ["pichu.fraction-merge.v1", "pichu.mathquest.v1"]
+    },
+    {
+      id: "equation-merge",
+      titulo: "Equation Merge",
+      subtitulo: "Fusiona números y resuelve ecuaciones",
+      curso: "1.º ESO",
+      saber: "Ecuaciones de primer grado: un paso, dos pasos, x en los dos miembros y paréntesis",
+      descripcion: "Desliza y suma fichas hasta fabricar la solución de cada ecuación. 13 niveles, poderes, un jefe final y balanza infinita.",
+      simbolo: "x=",
+      // Fuentes en src/equation-merge/ → python3 src/equation-merge/build.py genera applets/equation-merge/index.html
+      // (Sustituye a Power Merge desde la 0.9.0; su guardado pichu.power-merge.v1 se conserva, sin uso)
+      url: "applets/equation-merge/",
+      estado: "jugar",
+      claves: ["pichu.equation-merge.v1", "pichu.mathquest.v1"]
     },
     {
       id: "pizzeria",
