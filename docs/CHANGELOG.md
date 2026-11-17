@@ -1,5 +1,12 @@
 # Registro de cambios
 
+## 0.6.5 · 17/11/2026
+- **Sin cursos ni grupos a la vista**, para que cualquier clase o centro pueda usar la web:
+  - Factor Clash: la portada del juego dice «MATEMÁTICAS · PARTIDAS CORTAS» (antes incluía «1.º ESO»).
+  - Integer Ninja: el ejemplo de la casilla «Grupo» del panel del profesor pasa de «1.º ESO C» a «Grupo A», y la descripción ya no menciona el curso.
+  - Portada: la descripción ya no dice «para ESO y Bachillerato».
+  - Los cursos siguen guardados en `MARCA.juegos` (`curso`) para uso interno, pero no se muestran (`mostrarCursos: false`).
+
 ## 0.6.4 · 11/11/2026
 - Logo del IES Alarifes Ruiz Florindo en el recuadro del centro (`compartido/img/centro.jpg`, sacado del Drive del centro y sin metadatos).
 

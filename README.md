@@ -5,8 +5,8 @@
 Portada que reúne los juegos y laboratorios de matemáticas interactivos de Juan Antonio Campos Jiménez
 (ESO y Bachillerato). Web estática: HTML, CSS y JavaScript, sin frameworks, sin registro y sin recoger datos personales.
 
-## Qué incluye (versión 0.5.0)
-| Juego | Curso (de momento no se muestra) | Estado |
+## Qué incluye (versión 0.6.5)
+| Juego | Nivel orientativo (no se muestra en la web ni en los juegos) | Estado |
 |---|---|---|
 | Factor Clash · duelos de divisibilidad | 1.º ESO | Disponible |
 | Pizza Rush · Pizzería πCHU v0.2 (fracciones: equivalencias, suma, multiplicación y división) | 1.º ESO | Próximamente (en revisión) |
