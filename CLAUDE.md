@@ -24,7 +24,8 @@ applets/<id>/index.html cada juego, autocontenido
 src/<juego>/            fuentes de los juegos que se compilan (p. ej. src/pizzeria: motor.js + juego.html + personajes)
                         → python3 src/pizzeria/build.py genera applets/pizzeria/index.html (no editar el generado)
 tests/comprobar.mjs     comprobaciones (node tests/comprobar.mjs)
-tests/pizzeria_motor.test.mjs  pruebas del motor de la Pizzería
+tests/pizzeria_motor.test.mjs  pruebas del motor de Pizza Duel (fracciones)
+tests/prueba_pizza_duel.mjs     pruebas de Pizza Duel en el navegador (Playwright)
 docs/fichas/            una ficha por juego
 ```
 

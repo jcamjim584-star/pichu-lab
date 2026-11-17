@@ -160,7 +160,7 @@
         const cand = pedibles.filter(f => ok(aU(f.n, f.d)));
         if (!cand.length) continue;
         const f = azar(cand), t = aU(f.n, f.d);
-        const modo = azar(["exactas", "sin", "minimo"]);
+        const modo = cfg.modoCond || azar(["exactas", "sin", "minimo"]);
         if (modo === "exactas") {
           const ks = [...dp[t]].filter(k => k >= 2 && k !== Math.min(...dp[t]));
           if (!ks.length) continue;
@@ -206,6 +206,8 @@
     if (pedido.cond) {
       if (pedido.cond.modo === "exactas" && servidas.length !== pedido.cond.k) res.ok = false, res.pista = `El Crítico quería exactamente ${pedido.cond.k} porciones y has servido ${servidas.length}.`;
       if (pedido.cond.modo === "sin" && servidas.some(s => U / s.d === pedido.cond.tam)) res.ok = false, res.pista = `¡Has usado porciones de 1/${U / pedido.cond.tam}, y estaban prohibidas!`;
+      if (pedido.cond.modo === "iguales" && new Set(servidas.map(s => s.d)).size > 1) res.ok = false,
+        res.pista = `Esta comanda solo admite porciones IGUALES (todas del mismo tamaño). Busca una fracción equivalente: ${pedido.cond.formas.join(" = ")}.`;
       if (pedido.cond.modo === "minimo" && res.ok && servidas.length > pedido.cond.k) res.ok = false, res.pista = `La cantidad es correcta, pero se podía con solo ${pedido.cond.k} porciones.`;
     }
     res.perfecto = res.ok && pedido.minimo != null && servidas.length === pedido.minimo;
@@ -269,6 +271,7 @@
     const prohib = ticket.cond && ticket.cond.modo === "sin" ? ticket.cond.tam : null;
     const permitido = d => U / d !== prohib;
     const exactos = dens.filter(d => permitido(d) && ticket.objetivo % (U / d) === 0);
+    if (ticket.cond && ticket.cond.modo === "iguales") return exactos;
     const minima = descomposicionMinima(ticket.objetivo, dens, prohib) || [];
     // Los cortes de la solución más corta (p. ej. 1 y 7/8 = 1/2 + 1/2 + 1/2 + 1/4 + 1/8) y los que sirven solos
     const u = [...new Set([...minima, ...exactos])];
@@ -330,7 +333,91 @@
     return 1;
   }
 
-  const motor = { U, CORTES, NOMBRE_CORTE, mcd, mcm, simplificar, aU, deU, texto, cantidadesPosibles, sePuede, minPorciones,
+  // ---------- Pizza Duel: rivales, reglas, daño y estrellas ----------
+  // Cada rival es un chef con un contenido (cfg, como los turnos de Pizza Rush) y una regla.
+  // Reglas que comprueba el motor: "iguales" (comanda), "escudo" (daño), fases del Crítico.
+  // Reglas de pantalla (las aplica el juego): "malabares" (recorta pizzas), "roba" (se lleva una pizza).
+  const CORAZONES = 3;
+  const RIVALES = [
+    { id: 1, nombre: "Salsita", img: "salsita", tema: "Mitades y cuartos", vida: 80, tiempo: 45, reglas: [],
+      regla: "Ninguna: ¡es tu primer duelo!",
+      cfg: { dens: [2, 4], tipos: ["suma"], maxU: 24 },
+      frases: { entrada: "¡Blub! ¿Tú sabes cortar una pizza? ¡Demuéstralo!", golpe: ["¡Ay, mi salsa!", "¡Eso ha picado!", "¡Blub, blub!"], fallo: ["¡Ja! Eso no cuadra.", "¡Casi, pero no!"], ataque: "¡Salpicón de tomate!", derrota: "¡Me has dejado sin salsa!", victoria: "¡Vuelve cuando sepas tus cuartos!" } },
+    { id: 2, nombre: "El Compás", img: "compas", tema: "Tercios y sextos", vida: 100, tiempo: 42, reglas: ["iguales"],
+      regla: "Solo acepto porciones iguales: todas del mismo tamaño.",
+      cfg: { dens: [2, 3, 4, 6], tipos: ["suma"], maxU: 24 },
+      frases: { entrada: "Todo en mi cocina es exacto y simétrico. ¡Porciones iguales o nada!", golpe: ["¡Mi simetría!", "¡Qué precisión!", "¡Ángulo perfecto!"], fallo: ["¡Asimétrico! Inaceptable.", "Eso no mide lo que debe."], ataque: "¡Pinchazo de compás!", derrota: "Exacto… y derrotado.", victoria: "Mide mejor la próxima vez." } },
+    { id: 3, nombre: "La Malabarista", img: "malabares", tema: "Octavos, doceavos y equivalencias", vida: 100, tiempo: 42, reglas: ["malabares"],
+      regla: "Lanza por los aires tus pizzas y las corta de otra forma.",
+      cfg: { dens: [2, 3, 4, 6, 8, 12], tipos: ["suma"], maxU: 24, sinSimplificar: true },
+      frases: { entrada: "¿Mitades? ¿Cuartos? ¡Hop! Ahora son octavos.", golpe: ["¡Se me cae todo!", "¡Uy, el equilibrio!", "¡Hop… no!"], fallo: ["¡Te he liado!", "¡Mira bien los cortes!"], ataque: "¡Lluvia de porciones!", derrota: "¡Me has hecho perder el ritmo!", victoria: "¡Hop, hop! ¡Gané!" } },
+    { id: 4, nombre: "El Escudo", img: "escudo", tema: "Más de una pizza", vida: 100, tiempo: 48, reglas: ["escudo"],
+      regla: "Su escudo para medio golpe si no usas el menor número de porciones.",
+      cfg: { dens: [2, 3, 4, 6, 8], tipos: ["suma"], maxU: 48, minU: 18, mixtos: true },
+      frases: { entrada: "Mi escudo-pizza lo para casi todo. ¡Busca el camino más corto!", golpe: ["¡Ha atravesado mi escudo!", "¡Uf, directo!", "¡Mi defensa!"], fallo: ["¡Rebotado!", "Ni un rasguño."], ataque: "¡Golpe de escudo!", derrota: "Mi escudo… ¡partido en octavos!", victoria: "Nadie atraviesa mi escudo." } },
+    { id: 5, nombre: "La Pizarra", img: "pizarra", tema: "Multiplicar fracciones", vida: 100, tiempo: 50, reglas: [],
+      regla: "Pedidos en grupo: multiplica antes de servir.",
+      cfg: { dens: [2, 3, 4, 6, 8, 12], tipos: ["mult_entero", "fraccion_de"], maxU: 48, mixtos: true },
+      frases: { entrada: "Somos muchos y todos queremos nuestra parte. ¡Haz la cuenta!", golpe: ["¡Bien multiplicado!", "¡Me has borrado la pizarra!", "¡Correcto, maldición!"], fallo: ["Revisa la operación.", "¡Error de cálculo!"], ataque: "¡Tizazo!", derrota: "Lección aprendida.", victoria: "¡Repasa las tablas!" } },
+    { id: 6, nombre: "El Pirata", img: "pirata", tema: "Dividir fracciones", vida: 100, tiempo: 50, reglas: ["roba"],
+      regla: "Si tardas, te roba una pizza del mostrador.",
+      cfg: { dens: [2, 3, 4, 6, 8, 12], tipos: ["div_entero", "div_cuantas", "div_cuantas"], maxU: 36 },
+      frases: { entrada: "¡Arr! Repartiremos el botín… a mi manera.", golpe: ["¡Mi botín!", "¡Por mil porciones!", "¡Arr, eso duele!"], fallo: ["¡Mal repartido, grumete!", "¡Al agua con esa cuenta!"], ataque: "¡Al abordaje!", derrota: "¡Me rindo! El botín es tuyo.", victoria: "¡El botín es mío, arr!" } },
+    { id: 7, nombre: "La Reina", img: "reina", tema: "Todo mezclado", vida: 110, tiempo: 45, reglas: ["iguales", "escudo"],
+      regla: "Dos reglas a la vez: porciones iguales y escudo real.",
+      cfg: { dens: [2, 3, 4, 6, 8, 12], tipos: ["suma", "suma", "mult_entero", "fraccion_de", "div_entero", "div_cuantas"], maxU: 48, mixtos: true, sinSimplificar: true },
+      frases: { entrada: "En mi reino, las pizzas se sirven con elegancia… y con reglas.", golpe: ["¡Mi corona!", "¡Qué osadía!", "¡Guardias!"], fallo: ["Eso no es digno de la corte.", "¡Fuera de mi vista!"], ataque: "¡Cetro real!", derrota: "Te nombro Chef de la Corte.", victoria: "Arrodíllate ante la Reina." } },
+    { id: 8, nombre: "El Crítico", img: "critico", tema: "Jefe: pedidos con condiciones", vida: 150, tiempo: 50, jefe: true, reglas: ["fases"],
+      regla: "Tres fases: exactamente k porciones, una porción prohibida y el mínimo de porciones.",
+      fases: ["exactas", "sin", "minimo"],
+      cfg: { dens: [2, 3, 4, 6, 8, 12], tipos: ["condicion", "condicion", "condicion", "fraccion_de", "div_entero"], maxU: 36 },
+      frases: { entrada: "He probado todas las pizzas del mundo. Ninguna me ha impresionado.", golpe: ["Hmm… aceptable.", "¡Exquisito, maldita sea!", "Eso… me ha gustado."], fallo: ["Decepcionante.", "Un cero en mi libreta."], ataque: "¡Crítica demoledora!", derrota: "Cinco estrellas. Lo admito.", victoria: "Una estrella. Y soy generoso." } }
+  ];
+
+  // Fase del Crítico (1, 2 o 3) según la vida que le queda
+  const faseDe = (rival, vida) => !rival.fases ? 0 : vida > rival.vida * 2 / 3 ? 1 : vida > rival.vida / 3 ? 2 : 3;
+
+  // Formas de escribir un objetivo con porciones iguales de los cortes dados: ["2/3", "4/6", "8/12"]
+  const formasIguales = (objetivo, dens) => dens.filter(d => objetivo % (U / d) === 0).map(d => `${objetivo / (U / d)}/${d}`);
+
+  // Añade a un pedido la regla del rival que se comprueba al servir
+  function aplicarRegla(p, rival) {
+    if (!p || p.tipo === "div_cuantas" || p.cond) return p;
+    if (rival.reglas.includes("iguales")) {
+      const formas = formasIguales(p.objetivo, rival.cfg.dens);
+      if (!formas.length) return null;
+      p.cond = { modo: "iguales", formas };
+      p.minimo = Math.min(...formas.map(f => +f.split("/")[0]));
+    }
+    return p;
+  }
+
+  // Nueva comanda del rival. vida: la que le queda (para las fases del Crítico).
+  function generarComanda(rival, vida = rival.vida) {
+    const fase = faseDe(rival, vida);
+    const cfg = fase ? Object.assign({}, rival.cfg, { modoCond: rival.fases[fase - 1] }) : rival.cfg;
+    for (let i = 0; i < 30; i++) { const p = aplicarRegla(generarTicket(cfg), rival); if (p) { p.fase = fase; return p; } }
+    return null;
+  }
+
+  // Daño de un golpe bien servido. Perfecto = menor número de porciones (golpe crítico).
+  const DANIO = { normal: 20, critico: 30, rapido: 5 };
+  function danio({ perfecto, rapido, superpoder, rival }) {
+    let v = perfecto ? DANIO.critico : DANIO.normal;
+    const bloqueado = !perfecto && !!rival && rival.reglas.includes("escudo");
+    if (bloqueado) v = v / 2;
+    if (rapido) v += DANIO.rapido;
+    if (superpoder) v *= 2;
+    return { valor: v, critico: !!perfecto, bloqueado };
+  }
+
+  // Estrellas de un duelo: hay que ganar; ★★ con 2 corazones o más; ★★★ sin perder ninguno
+  const estrellasDuelo = (gana, corazones) => !gana ? 0 : corazones >= CORAZONES ? 3 : corazones >= 2 ? 2 : 1;
+  const rivalDesbloqueado = (id, estrellasPorRival) => id === 1 || (estrellasPorRival[id - 1] || 0) > 0;
+  // Pizza Rush guardaba estrellas por turno; cada turno se corresponde con un rival del mismo número
+  const estrellasDesdeV2 = (v2) => { const e = {}; for (const r of RIVALES) if (v2 && v2.estrellas && v2.estrellas[r.id]) e[r.id] = Math.min(3, v2.estrellas[r.id]); return e; };
+
+  const motor = { U, CORAZONES, RIVALES, faseDe, formasIguales, aplicarRegla, generarComanda, DANIO, danio, estrellasDuelo, rivalDesbloqueado, estrellasDesdeV2, CORTES, NOMBRE_CORTE, mcd, mcm, simplificar, aU, deU, texto, cantidadesPosibles, sePuede, minPorciones,
     generarPedido, evaluar, detectarError, pasos, comparar, JORNADAS, TURNOS, estrellas, fraccionesPedibles, opcionesNumero,
     generarTicket, stockVirtual, cortesUtiles, descomposicionMinima, elegirHorneado, servibleCon, monedas, multiplicador, MEJORAS, intervaloHorno, huecosMostrador, factorPaciencia, rango, RANGOS };
   if (typeof module !== "undefined" && module.exports) module.exports = motor; else raiz.Motor = motor;

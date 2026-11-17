@@ -116,6 +116,49 @@ ok("Crítico: no es el mínimo", M.evaluar({ tipo: "condicion", objetivo: 12, es
 ok("Texto mixto", M.texto({ n: 3, d: 2 }, true) === "1 y 1/2" && M.texto({ n: 6, d: 8 }) === "3/4" && M.texto({ n: 4, d: 2 }) === "2");
 ok("Estrellas", M.estrellas(6, 3, 6) === 3 && M.estrellas(5, 0, 6) === 2 && M.estrellas(4, 0, 6) === 1 && M.estrellas(3, 3, 6) === 0);
 
+// ---------- Pizza Duel ----------
+ok("Duel: 8 rivales con imagen, tiempo y vida", M.RIVALES.length === 8 && M.RIVALES.every((r, i) => r.id === i + 1 && r.img && r.vida > 0 && r.tiempo > 0 && r.frases.golpe.length && r.frases.fallo.length));
+for (const r of M.RIVALES) {
+  for (let i = 0; i < 1500; i++) {
+    const vida = 1 + Math.floor(Math.random() * r.vida);
+    const p = M.generarComanda(r, vida);
+    ok(`Duel ${r.nombre}: siempre hay comanda`, !!p);
+    if (!p) continue;
+    ok(`Duel ${r.nombre}: tipo permitido`, r.cfg.tipos.includes(p.tipo), p.tipo);
+    if (p.tipo === "div_cuantas") continue;
+    const utiles = M.cortesUtiles(p, r.cfg.dens);
+    const stock = []; for (const d of utiles) for (let k = 0; k < d * 2; k++) stock.push(24 / d);
+    ok(`Duel ${r.nombre}: servible con cortes útiles`, utiles.length > 0 && M.sePuede(stock, p.objetivo), JSON.stringify(p));
+    if (r.reglas.includes("iguales")) {
+      ok(`Duel ${r.nombre}: comanda con regla de iguales`, p.cond && p.cond.modo === "iguales" && p.cond.formas.length > 0, JSON.stringify(p));
+      // Cada forma vale el objetivo, y el mínimo es la forma con menos porciones
+      ok(`Duel ${r.nombre}: formas equivalentes correctas`, p.cond.formas.every(f => { const [n, d] = f.split("/").map(Number); return r.cfg.dens.includes(d) && n * 24 / d === p.objetivo; }), p.cond.formas);
+      const [n, d] = p.cond.formas[p.cond.formas.length - 1].split("/").map(Number);
+      ok(`Duel ${r.nombre}: servir con iguales es correcto`, M.evaluar(p, Array(n).fill({ d })).ok);
+      ok(`Duel ${r.nombre}: cortes útiles solo los exactos`, utiles.every(c => p.objetivo % (24 / c) === 0));
+      ok(`Duel ${r.nombre}: mínimo con iguales`, p.minimo === Math.min(...p.cond.formas.map(f => +f.split("/")[0])));
+    }
+    if (r.fases) {
+      const fase = M.faseDe(r, vida);
+      ok(`Duel ${r.nombre}: fase correcta`, p.fase === fase && fase >= 1 && fase <= 3);
+      if (p.tipo === "condicion") ok(`Duel ${r.nombre}: condición de la fase`, p.cond.modo === r.fases[fase - 1], `${p.cond.modo} fase ${fase}`);
+    }
+  }
+}
+const iguales = { tipo: "suma", objetivo: 16, escrito: "2/3", minimo: 2, cond: { modo: "iguales", formas: ["2/3", "4/6"] } };
+ok("Iguales: 1/2 + 1/6 suma 2/3 pero no vale", (r => !r.ok && /IGUALES/.test(r.pista) && /2\/3 = 4\/6/.test(r.pista))(M.evaluar(iguales, s(2, 6))));
+ok("Iguales: 4 sextos sí vale", M.evaluar(iguales, s(6, 6, 6, 6)).ok);
+ok("Iguales: 2 tercios es perfecto", M.evaluar(iguales, s(3, 3)).perfecto);
+ok("Formas iguales de 1/2", JSON.stringify(M.formasIguales(12, [2, 3, 4, 6])) === '["1/2","2/4","3/6"]');
+const esc = M.RIVALES.find(r => r.reglas.includes("escudo")), sal = M.RIVALES[0];
+ok("Daño normal y crítico", M.danio({ perfecto: false, rival: sal }).valor === 20 && M.danio({ perfecto: true, rival: sal }).valor === 30);
+ok("Daño rápido y superpoder", M.danio({ perfecto: true, rapido: true, superpoder: true, rival: sal }).valor === 70);
+ok("Escudo para medio golpe si no es perfecto", (d => d.valor === 10 && d.bloqueado)(M.danio({ perfecto: false, rival: esc })) && !M.danio({ perfecto: true, rival: esc }).bloqueado);
+ok("Estrellas de duelo", M.estrellasDuelo(false, 3) === 0 && M.estrellasDuelo(true, 1) === 1 && M.estrellasDuelo(true, 2) === 2 && M.estrellasDuelo(true, 3) === 3);
+ok("Desbloqueo de rivales", M.rivalDesbloqueado(1, {}) && !M.rivalDesbloqueado(2, {}) && M.rivalDesbloqueado(2, { 1: 1 }));
+ok("Estrellas de Pizza Rush pasan a los rivales", JSON.stringify(M.estrellasDesdeV2({ estrellas: { 1: 3, 2: 1 } })) === '{"1":3,"2":1}' && JSON.stringify(M.estrellasDesdeV2(null)) === "{}");
+ok("Fases del Crítico", (r => M.faseDe(r, 150) === 1 && M.faseDe(r, 90) === 2 && M.faseDe(r, 40) === 3)(M.RIVALES[7]));
+
 console.log(`Tipos generados: ${JSON.stringify(conteo)}`);
 console.log(fallos ? `\n${fallos} de ${n} comprobaciones fallidas` : `\n${n.toLocaleString("es-ES")} comprobaciones correctas`);
 process.exit(fallos ? 1 : 0);

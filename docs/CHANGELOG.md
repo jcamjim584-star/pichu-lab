@@ -1,5 +1,16 @@
 # Registro de cambios
 
+## 0.7.0 · 17/11/2026
+- **Pizza Rush se convierte en Pizza Duel** (v0.3), sigue en «Próximamente» hasta probarlo en clase:
+  - Duelos contra **chefs rivales** con los personajes de `src/pizzeria/personajes/`: cada comanda exacta es un golpe (−20), con el
+    mínimo de porciones es **golpe crítico** (−30) y servir rápido suma +5. Si fallas dos veces o se acaba el tiempo, el rival te quita un corazón (hay 3).
+  - **Superpoder** de πCHU: se carga con 3 golpes y congela el reloj y duplica el siguiente golpe.
+  - Mapa de 8 rivales. Ya se pueden jugar **Salsita** (mitades y cuartos, con tutorial) y **El Compás** (tercios y sextos; regla: solo porciones iguales, que obliga a usar fracciones equivalentes).
+    Los otros seis salen como «Próximamente».
+  - Se quitan por ahora la tienda y la decoración.
+  - Guardado nuevo `pichu.pizzeria.v3`. La primera vez copia estrellas y ajustes de `pichu.pizzeria.v2` sin borrarla.
+  - Motor: rivales, regla «iguales», daño, fases del Crítico y estrellas de duelo (203.595 comprobaciones). Nueva prueba de navegador `tests/prueba_pizza_duel.mjs` (45 pruebas); se retira `tests/prueba_pizzeria.py`, que era de Pizza Rush.
+
 ## 0.6.5 · 17/11/2026
 - **Sin cursos ni grupos a la vista**, para que cualquier clase o centro pueda usar la web:
   - Factor Clash: la portada del juego dice «MATEMÁTICAS · PARTIDAS CORTAS» (antes incluía «1.º ESO»).

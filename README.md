@@ -5,11 +5,11 @@
 Portada que reúne los juegos y laboratorios de matemáticas interactivos de Juan Antonio Campos Jiménez
 (ESO y Bachillerato). Web estática: HTML, CSS y JavaScript, sin frameworks, sin registro y sin recoger datos personales.
 
-## Qué incluye (versión 0.6.5)
+## Qué incluye (versión 0.7.0)
 | Juego | Nivel orientativo (no se muestra en la web ni en los juegos) | Estado |
 |---|---|---|
 | Factor Clash · duelos de divisibilidad | 1.º ESO | Disponible |
-| Pizza Rush · Pizzería πCHU v0.2 (fracciones: equivalencias, suma, multiplicación y división) | 1.º ESO | Próximamente (en revisión) |
+| Pizza Duel v0.3 · duelos de cocina con fracciones (equivalencias, suma, multiplicación y división) | 1.º ESO | Próximamente (2 de 8 rivales, en pruebas) |
 | Integer Ninja v0.5 · enteros: signos, comparar, sumas, −( ), productos y cocientes | 1.º ESO | Disponible |
 | Laboratorio de Proporcionalidad · cartas de ecuaciones · cartas de funciones | 1.º ESO · 4.º ESO · 1.º Bach | En diseño |
 
@@ -32,19 +32,20 @@ Comprobaciones automáticas (necesita Node 18 o superior):
 node tests/comprobar.mjs
 node tests/pizzeria_motor.test.mjs
 ```
-Prueba completa en navegador (opcional, Python + Playwright):
+Prueba completa en navegador (opcional, necesita Playwright):
 ```
 pip install playwright && python3 tests/prueba_navegador.py . capturas
-python3 tests/prueba_pizzeria.py . capturas
+node tests/prueba_pizza_duel.mjs capturas
 ```
 
-## Pizza Rush (Pizzería πCHU): cómo modificarla
+## Pizza Duel: cómo modificarlo
 El juego se edita en `src/pizzeria/` (`motor.js` = matemáticas, `juego.html` = pantalla, `personajes/` = imágenes).
 Después se genera el archivo final con:
 ```
 python3 src/pizzeria/build.py
 ```
-Los turnos, las mejoras de la tienda y sus precios están en `motor.js` (`TURNOS` y `MEJORAS`).
+Los rivales (contenido, regla, vida, tiempo y frases) están en `motor.js` (`RIVALES`); el daño de cada golpe en `DANIO`.
+Qué rivales se pueden jugar ya lo decide `LISTOS` en `juego.html`. Ficha completa: `docs/fichas/pizzeria.md`.
 
 ## Integer Ninja: cómo modificarlo
 El juego se edita en `src/integer-ninja/src/` (`engine.js` = matemáticas, `game.js` = juego, `index.html` y `style.css` = pantalla).
