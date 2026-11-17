@@ -1,5 +1,40 @@
 # Registro de cambios
 
+## 0.9.2 · 17/11/2026
+- **Equation Merge con la identidad πCHU**, igual que Fraction Merge: fondo crema, botones y colores de la marca, **πCHU** en el menú
+  y en las ventanas de final de partida (en lugar del robot Kubo). Usa la misma hoja de estilos que Fraction Merge más lo propio de las ecuaciones.
+  - Jefe final con la cara de **Incógnito X**, el personaje de Factor Clash.
+  - Aspectos de la tienda iguales que en Fraction Merge: Clásico πCHU, Pizarra, Pastel y Papel.
+  - Arreglo: las ecuaciones conservan los espacios («2x + 4» y no «2x+ 4»).
+- **Fraction Merge:** Quebrón, el jefe final, tiene ahora la cara de **Pirata** (personaje de la marca). Es el único cambio en ese juego.
+- Pruebas: motor 113 129 comprobaciones; los 13 niveles de Equation Merge superados por el jugador automático; sin errores de consola ni archivos que falten.
+
+## 0.9.1 · 17/11/2026
+- **Portada solo con el mapa de mundos.** Se quitan la mascota grande, el titular y la tarjeta «▶ Jugar / Continuar».
+  Arriba queda una barra compacta: nivel con barra de experiencia, monedas, logros y ajustes.
+- **Mapa más atractivo:** fondo de mar con olas y nubes, camino de baldosas, islas numeradas con el **personaje de cada mundo**
+  (Divisón, Menos, Pirata, Incógnito X, Mago, Salsita, Arlequina, Pizarra, Punteo, Duende y Reglino) y **πCHU** señalando «¡Ahora en clase!».
+  Los mundos cerrados enseñan su personaje en gris, como adelanto.
+- Imágenes en `compartido/img/personajes/` (240 px, sacadas de Integer Ninja, Pizza Rush y Factor Clash). Cada mundo tiene su `personaje` en `MUNDOS` (`compartido/mathquest.js`).
+- `MathQuest.avatarSVG` devuelve ahora la mascota πCHU en lugar de los robots.
+- Se quita de la portada la lista de «Próximamente» (Pizza Rush, Laboratorio de Proporcionalidad, juegos de cartas): solo se ve lo que está en el mapa.
+  Siguen en `MARCA.juegos` para volver a mostrarlos cuando estén listos.
+
+## 0.9.0 · 17/11/2026
+- **Equation Merge sustituye a Power Merge.** Juego de ecuaciones de primer grado de 1.º ESO (`applets/equation-merge/`, fuentes en `src/equation-merge/`).
+  - Las fichas son números del 1 al 20; al chocar se **suman**. Las ecuaciones de arriba se resuelven entregando la ficha que es la solución.
+  - 13 niveles en 5 escalones: `x + a = b`, `x − a = b`, problemas «Pienso un número…», `ax = b`, `x/a = b`, `ax + b = c`, `ax − b = c`,
+    x en los dos miembros, paréntesis y el jefe **Incógnito, el Enmascarado**. Modo **balanza infinita**.
+  - Pistas en dos pasos (idea de la balanza y luego la solución con comprobación). Los errores típicos (sumar en vez de restar, olvidar dividir…)
+    se explican sustituyendo la x; un toque que no es un error típico solo informa, sin castigo.
+  - Poderes ÷2 y −1 (en lugar de √ y ÷). Logros `eq.*` en lugar de `pm.*`.
+  - Guardado nuevo `pichu.equation-merge.v1`. El de Power Merge (`pichu.power-merge.v1`) no se borra.
+- Mapa de mundos: el mundo 4 · Ecuaciones pasa a jugable y el 5 · Potencias a «Próximamente» (Power Quest).
+- Portada: el contador de logros solo cuenta logros de juegos actuales; el texto de Ajustes nombra Fraction Merge y Equation Merge.
+- **El repositorio se pone al día con el artefacto de Claude** (versiones 0.7 y 0.8, que solo estaban allí): mapa de mundos MathQuest,
+  `compartido/mathquest.js` y Fraction Merge (copiado ya compilado). Factor Clash se mantiene en la versión del repositorio (sin «πCHU Exprés», 0.6.1).
+- Pruebas: motor de Equation Merge 113 129 comprobaciones; los 13 niveles superados por un jugador automático; portada 4/4 mundos jugables a 390 px sin errores de consola.
+
 ## 0.6.4 · 11/11/2026
 - Logo del IES Alarifes Ruiz Florindo en el recuadro del centro (`compartido/img/centro.jpg`, sacado del Drive del centro y sin metadatos).
 

@@ -5,13 +5,20 @@
 Portada que reúne los juegos y laboratorios de matemáticas interactivos de Juan Antonio Campos Jiménez
 (ESO y Bachillerato). Web estática: HTML, CSS y JavaScript, sin frameworks, sin registro y sin recoger datos personales.
 
-## Qué incluye (versión 0.5.0)
-| Juego | Curso (de momento no se muestra) | Estado |
+## Qué incluye (versión 0.9.2)
+La portada es solo un **mapa de mundos** de 1.º ESO (uno por tema), con el personaje de cada mundo en su isla (`compartido/img/personajes/`). Los juegos con experiencia, monedas, logros y
+personajes comunes forman **MathQuest** (`compartido/mathquest.js`, guardado en `pichu.mathquest.v1`).
+
+| Mundo | Juego | Estado |
 |---|---|---|
-| Factor Clash · duelos de divisibilidad | 1.º ESO | Disponible |
-| Pizza Rush · Pizzería πCHU v0.2 (fracciones: equivalencias, suma, multiplicación y división) | 1.º ESO | Próximamente (en revisión) |
-| Integer Ninja v0.5 · enteros: signos, comparar, sumas, −( ), productos y cocientes | 1.º ESO | Disponible |
-| Laboratorio de Proporcionalidad · cartas de ecuaciones · cartas de funciones | 1.º ESO · 4.º ESO · 1.º Bach | En diseño |
+| 1 · Divisibilidad | Factor Clash · duelos de divisibilidad | Disponible |
+| 2 · Números enteros | Integer Ninja v0.5 · signos, comparar, sumas, −( ), productos y cocientes | Disponible |
+| 3 · Fracciones | Fraction Merge · suma y fusiona fracciones (MathQuest) | Disponible |
+| 4 · Ecuaciones | **Equation Merge** · ecuaciones de primer grado (MathQuest) | Disponible (nuevo en 0.9.0) |
+| 5 · Potencias y raíces | Power Quest | Próximamente (Power Merge se retiró en la 0.9.0) |
+| 6 a 11 | Proporcionalidad, álgebra, funciones, estadística, probabilidad, geometría | Próximamente |
+
+Fuera del mapa: Pizza Rush (fracciones, en revisión) y los juegos de cartas de ecuaciones (4.º ESO) y funciones (1.º Bach), en diseño.
 
 Funciones comunes:
 - **Alias común** para todos los juegos (nunca el nombre real).
@@ -31,6 +38,7 @@ Comprobaciones automáticas (necesita Node 18 o superior):
 ```
 node tests/comprobar.mjs
 node tests/pizzeria_motor.test.mjs
+node tests/equation_merge_motor.test.mjs
 ```
 Prueba completa en navegador (opcional, Python + Playwright):
 ```
@@ -45,6 +53,22 @@ Después se genera el archivo final con:
 python3 src/pizzeria/build.py
 ```
 Los turnos, las mejoras de la tienda y sus precios están en `motor.js` (`TURNOS` y `MEJORAS`).
+
+## Equation Merge: cómo modificarlo
+El juego se edita en `src/equation-merge/`:
+- `motor.js` = matemáticas (fichas, fusiones y cómo se fabrican las ecuaciones con su explicación y sus errores típicos),
+- `niveles.js` = los 13 niveles y el modo infinito (movimientos, tipos de ecuación, soluciones posibles…),
+- `juego.html` = pantalla, sonidos, tienda y logros.
+
+Después se genera el archivo final (no edites `applets/equation-merge/index.html` a mano):
+```
+python3 src/equation-merge/build.py
+```
+Prueba del motor: `node tests/equation_merge_motor.test.mjs` (comprueba que todas las ecuaciones tienen una única solución entera entre 1 y 20).
+Ficha didáctica: `docs/fichas/equation-merge.md`.
+
+## Fraction Merge
+`applets/fraction-merge/index.html` se copió ya compilado desde el artefacto de Claude; sus fuentes (`src/fraction-merge/`) todavía no están en el repositorio.
 
 ## Integer Ninja: cómo modificarlo
 El juego se edita en `src/integer-ninja/src/` (`engine.js` = matemáticas, `game.js` = juego, `index.html` y `style.css` = pantalla).

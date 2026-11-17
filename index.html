@@ -11,45 +11,114 @@
   <link rel="apple-touch-icon" href="compartido/img/icono-192.png">
   <link rel="stylesheet" href="compartido/marca.css">
   <style>
-    /* ---------- Cabecera ---------- */
-    .cabecera { padding: 1.2rem 0 .5rem; }
-    .cabecera .fila { display: flex; align-items: center; justify-content: space-between; gap: 1rem; flex-wrap: wrap; }
-    .logo { display: block; width: min(340px, 70vw); }
-    .alias-chip { display: inline-flex; align-items: center; gap: .5em; background: var(--papel);
-      border: 1px solid var(--linea); border-radius: 999px; padding: .3em .4em .3em 1em; }
-    .alias-chip strong { font-weight: 900; }
+    /* ---------- Cabecera con la barra del jugador ---------- */
+    .cabecera { position: sticky; top: 0; z-index: 30; background: color-mix(in srgb, var(--crema) 92%, transparent);
+      backdrop-filter: blur(6px); border-bottom: 1px solid var(--linea); }
+    .cabecera .fila { display: flex; align-items: center; justify-content: space-between; gap: .6rem 1rem; flex-wrap: wrap; padding: .5rem 0; }
+    .logo { display: block; width: min(190px, 44vw); }
+    .jugador { display: flex; align-items: center; gap: .4rem; flex-wrap: wrap; justify-content: flex-end; }
+    .ficha-dato { display: inline-flex; align-items: center; gap: .3em; min-height: 44px; padding: .2em .8em; border-radius: 999px;
+      background: var(--papel); border: 2px solid var(--espresso); font-weight: 900; font: inherit; font-weight: 900; color: var(--espresso); }
+    button.ficha-dato { cursor: pointer; box-shadow: 0 3px 0 var(--espresso); }
+    button.ficha-dato:hover { background: var(--espresso); color: var(--crema); }
+    button.ficha-dato:active { transform: translateY(2px); box-shadow: 0 1px 0 var(--espresso); }
+    .nivel-xp { display: grid; gap: 2px; min-width: 7.5rem; }
+    .xp { height: 8px; border-radius: 9px; background: var(--crema); border: 1px solid var(--espresso); overflow: hidden; }
+    .xp i { display: block; height: 100%; background: var(--coral); transition: width .6s; }
+    .alias-chip { display: inline-flex; align-items: center; gap: .5em; font-size: .95rem; }
     .alias-chip[hidden] { display: none; }
 
-    /* ---------- Portada ---------- */
-    .portada { display: grid; grid-template-columns: 1.3fr 1fr; gap: 1.5rem; align-items: center; padding: 1rem 0 1.5rem; }
-    .portada h1 { font-size: clamp(1.9rem, 4.5vw, 3rem); font-weight: 900; }
-    .portada h1 .pi { color: var(--coral); }
-    .portada p { font-size: 1.15rem; max-width: 34ch; }
-    .portada img { width: min(260px, 60vw); justify-self: center; }
-    @media (max-width: 700px) { .portada { grid-template-columns: 1fr; } .portada img { order: -1; width: 160px; } }
+    /* ---------- Título del mapa ---------- */
+    .titulo-mapa { text-align: center; margin: 1.4rem auto .4rem; }
+    .titulo-mapa small { display: inline-block; padding: .15em .9em; border-radius: 999px; background: var(--espresso); color: var(--crema);
+      font-weight: 900; letter-spacing: .12em; text-transform: uppercase; font-size: .8rem; }
+    .titulo-mapa h1 { font-size: clamp(2rem, 7vw, 3.2rem); font-weight: 900; margin: .25em 0 .1em; letter-spacing: -.01em; }
+    .titulo-mapa h1 span { color: var(--coral-oscuro); }
+    .titulo-mapa p { margin: 0 auto; max-width: 40ch; }
 
-    /* ---------- Filtros ---------- */
-    .filtros { display: flex; flex-wrap: wrap; gap: .5rem; margin: .5rem 0 1rem; padding: 0; list-style: none; }
-    .filtros button { min-height: 40px; padding: .35em 1em; border-radius: 999px; border: 2px solid var(--espresso);
-      background: transparent; color: var(--espresso); font: inherit; font-weight: 700; cursor: pointer; }
-    .filtros button[aria-pressed="true"] { background: var(--espresso); color: var(--crema); }
+    /* ---------- Mapa de mundos ---------- */
+    .tablero-mapa { position: relative; max-width: 760px; margin: 1rem auto 0; padding: 2.2rem 1rem 1.5rem; border-radius: 32px;
+      border: 3px solid var(--espresso); box-shadow: 0 8px 0 var(--espresso);
+      background:
+        radial-gradient(circle at 12% 8%, rgba(255,255,255,.7) 0 26px, transparent 27px),
+        radial-gradient(circle at 18% 6%, rgba(255,255,255,.7) 0 18px, transparent 19px),
+        radial-gradient(circle at 88% 46%, rgba(255,255,255,.6) 0 22px, transparent 23px),
+        radial-gradient(circle at 82% 45%, rgba(255,255,255,.6) 0 15px, transparent 16px),
+        url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='120' height='60'%3E%3Cpath d='M10 40q10-8 20 0t20 0M70 18q10-8 20 0t20 0' fill='none' stroke='%235A8A78' stroke-opacity='.28' stroke-width='3' stroke-linecap='round'/%3E%3C/svg%3E"),
+        linear-gradient(#DCE8E1, #CFE0D6); }
+    .mapa { position: relative; margin-inline: auto; }
+    .mapa svg.camino { position: absolute; inset: 0; width: 100%; height: 100%; pointer-events: none; overflow: visible; }
+    .mundo { position: relative; z-index: 1; display: flex; align-items: center; gap: 12px; width: min(470px, 96%); margin: 0 0 30px;
+      text-decoration: none; color: var(--espresso); font-weight: 400; }
+    .mundo:nth-child(even) { margin-left: auto; flex-direction: row-reverse; text-align: right; }
+    .mundo:last-child { margin-bottom: 4px; }
+    /* La isla: un disco de color con el personaje del juego encima y una sombra de tierra debajo */
+    .isla { flex: none; position: relative; width: 112px; height: 112px; border-radius: 50%; background: var(--c);
+      border: 3px solid var(--espresso); box-shadow: 0 7px 0 var(--espresso), inset 0 -10px 0 rgba(51,43,42,.08); }
+    .isla::before { content: ""; position: absolute; left: 8%; right: 8%; bottom: -20px; height: 16px; border-radius: 50%; background: rgba(51,43,42,.18); z-index: -1; }
+    .isla img { position: absolute; left: 50%; bottom: 6px; width: 118%; max-width: none; height: auto; transform: translateX(-50%);
+      border-radius: 0 0 999px 999px; transition: transform .25s; }
+    .isla img.cuadro { width: 100%; height: 100%; bottom: 0; border-radius: 50%; object-fit: cover; }
+    .isla .num { position: absolute; top: -8px; left: -8px; width: 36px; height: 36px; border-radius: 50%; display: grid; place-items: center;
+      background: var(--coral); color: var(--espresso); border: 3px solid var(--espresso); font-weight: 900; z-index: 2; }
+    a.mundo:hover .isla img, a.mundo:focus-visible .isla img { transform: translateX(-50%) translateY(-6px) rotate(-4deg); }
+    a.mundo:hover .isla img.cuadro, a.mundo:focus-visible .isla img.cuadro { transform: translateX(-50%) scale(1.06); }
+    a.mundo:focus-visible { outline: none; }
+    a.mundo:focus-visible .isla { outline: 4px solid var(--coral-oscuro); outline-offset: 5px; }
+    a.mundo .isla { animation: flota 3.6s ease-in-out infinite; }
+    a.mundo:nth-child(even) .isla { animation-delay: -1.8s; }
+    @keyframes flota { 50% { transform: translateY(-5px); } }
+    .mundo.cerrado .isla { background: #E6DFCB; border-style: dashed; box-shadow: 0 7px 0 rgba(51,43,42,.35); }
+    .mundo.cerrado .isla img { filter: grayscale(1) contrast(.8) opacity(.4); }   /* adelanto: el personaje en gris */
+    .mundo.cerrado .isla .num { background: var(--linea); }
+    .mundo.cerrado .isla::after { content: "🔒"; position: absolute; right: -6px; bottom: -4px; font-size: 1.4rem; z-index: 2; }
+    .rotulo { flex: 1; min-width: 0; padding: .55rem .8rem .65rem; background: var(--papel); border: 2px solid var(--espresso);
+      border-radius: 18px; box-shadow: 0 4px 0 var(--espresso); }
+    .rotulo small { display: block; font-size: .74rem; letter-spacing: .08em; text-transform: uppercase; color: var(--coral-oscuro); font-weight: 900; }
+    .rotulo b { display: block; font-size: 1.18rem; font-weight: 900; line-height: 1.15; }
+    .rotulo .estado { display: inline-flex; align-items: center; gap: .3em; margin-top: .35rem; font-size: .85rem; font-weight: 900;
+      padding: .15em .7em; border-radius: 999px; background: var(--salvia-oscuro); color: #fff; }
+    .mundo.cerrado .rotulo { background: #F8F3E3; border-style: dashed; box-shadow: none; }
+    .mundo.cerrado .rotulo .estado { background: #F1E1D9; color: var(--coral-oscuro); }
+    .rotulo .barra { height: 8px; border-radius: 9px; background: var(--crema); border: 1px solid var(--espresso); margin-top: .4rem; overflow: hidden; }
+    .rotulo .barra i { display: block; height: 100%; background: var(--coral); }
+    .mundo.ahora .isla { box-shadow: 0 7px 0 var(--espresso), 0 0 0 7px var(--papel), 0 0 0 10px var(--coral-oscuro); }
+    /* πCHU señala el mundo que se está dando en clase */
+    .mundo.ahora { margin-top: 92px; }
+    .guia-pichu { position: absolute; z-index: 3; top: -100px; width: 84px; pointer-events: none; }
+    .mundo:nth-child(odd) .guia-pichu { left: 14px; }
+    .mundo:nth-child(even) .guia-pichu { right: 14px; }
+    .guia-pichu img { width: 100%; height: auto; animation: saluda 2.4s ease-in-out infinite; transform-origin: 50% 100%; }
+    @keyframes saluda { 50% { transform: rotate(-6deg) translateY(-3px); } }
+    .bocadillo { position: absolute; top: 14px; white-space: nowrap; padding: .3em .8em; border-radius: 14px; background: var(--espresso); color: var(--crema);
+      font-size: .85rem; font-weight: 900; }
+    .bocadillo::after { content: ""; position: absolute; top: 50%; margin-top: -7px; border: 7px solid transparent; }
+    .mundo:nth-child(odd) .bocadillo { left: 92px; }
+    .mundo:nth-child(odd) .bocadillo::after { left: -13px; border-right-color: var(--espresso); }
+    .mundo:nth-child(even) .bocadillo { right: 92px; }
+    .mundo:nth-child(even) .bocadillo::after { right: -13px; border-left-color: var(--espresso); }
+    .meta { text-align: center; margin: 4px 0 0; font-weight: 900; }
+    .meta span { display: inline-block; padding: .3em 1em; border-radius: 999px; background: var(--papel); border: 2px dashed var(--espresso); }
+    @media (max-width: 420px) {
+      .isla { width: 92px; height: 92px; } .rotulo b { font-size: 1.05rem; }
+      .tablero-mapa { padding-inline: .6rem; border-radius: 26px; }
+      .guia-pichu { width: 74px; top: -92px; }
+      .mundo:nth-child(odd) .guia-pichu { left: 9px; } .mundo:nth-child(even) .guia-pichu { right: 9px; }
+      .mundo:nth-child(odd) .bocadillo { left: 80px; } .mundo:nth-child(even) .bocadillo { right: 80px; }
+    }
 
-    /* ---------- Juegos ---------- */
-    .curso { margin: 1.4rem 0 2rem; }
-    .curso h2 { font-size: 1.5rem; font-weight: 900; display: flex; align-items: center; gap: .5em; }
-    .curso h2::before { content: ""; width: 14px; height: 14px; border-radius: 50%; background: var(--coral); }
-    .rejilla { display: grid; grid-template-columns: repeat(auto-fill, minmax(260px, 1fr)); gap: 1rem; }
-    .juego { display: flex; flex-direction: column; padding: 1.1rem; gap: .5rem; }
-    .juego .cab { display: flex; gap: .8rem; align-items: center; }
-    .simbolo { flex: none; width: 56px; height: 56px; border-radius: 16px; display: grid; place-items: center;
-      font-size: 1.9rem; font-weight: 900; background: var(--espresso); color: var(--crema); }
-    .juego.pronto .simbolo { background: var(--linea); color: var(--espresso); }
-    .juego h3 { font-size: 1.2rem; font-weight: 900; margin: 0; }
-    .juego .sub { margin: 0; font-size: .95rem; }
-    .juego .saber { font-size: .9rem; color: var(--salvia-oscuro); font-weight: 700; margin: 0; }
-    .juego .desc { margin: 0; flex: 1; }
-    .juego .acciones { display: flex; justify-content: space-between; align-items: center; gap: .5rem; margin-top: .3rem; }
-    .juego .boton { align-self: flex-start; }
+    /* ---------- Ventanas (logros y ajustes) ---------- */
+    .capa { position: fixed; inset: 0; z-index: 60; background: rgba(51,43,42,.6); display: none; align-items: center; justify-content: center; padding: 14px; }
+    .capa.ver { display: flex; }
+    .ventana { width: min(480px, 100%); max-height: 100%; overflow: auto; padding: 1.1rem; text-align: center; }
+    .ventana h2 { font-size: 1.4rem; font-weight: 900; }
+    .lista { display: grid; gap: .5rem; text-align: left; margin: .7rem 0; }
+    .item { display: flex; align-items: center; gap: .7rem; padding: .5rem .7rem; border-radius: 14px; background: var(--crema); }
+    .item .ico { flex: none; width: 44px; height: 44px; border-radius: 12px; display: grid; place-items: center; font-size: 1.4rem; background: var(--papel); border: 1px solid var(--linea); }
+    .item div { flex: 1; min-width: 0; } .item b { display: block; } .item span { font-size: .9rem; }
+    .item.apagado { opacity: .55; }
+    .interruptor { min-width: 64px; min-height: 44px; border-radius: 999px; border: 2px solid var(--espresso); background: var(--papel); color: var(--espresso); font: inherit; font-weight: 900; cursor: pointer; flex: none; }
+    .interruptor[aria-pressed="true"] { background: var(--salvia-oscuro); color: #fff; }
 
     /* ---------- Mis datos ---------- */
     .datos { padding: 1.2rem; margin: 2rem 0; }
@@ -82,30 +151,32 @@
   </style>
 </head>
 <body>
-  <a class="salto" href="#juegos">Saltar a los juegos</a>
+  <a class="salto" href="#mapa">Saltar al mapa</a>
 
   <header class="cabecera">
     <div class="contenedor fila">
       <a href="./" aria-label="πCHU, inicio"><img class="logo" src="compartido/img/logo.png" alt="πCHU · Matemáticas que no te esperabas" width="1200" height="450"></a>
-      <div class="alias-chip" id="chipAlias" hidden>
-        <span>Juegas como <strong id="aliasActual"></strong></span>
-        <a class="boton secundario" href="#mis-datos" style="min-height:36px;padding:.2em .9em">Cambiar</a>
+      <div class="jugador" aria-label="Mi progreso">
+        <span class="ficha-dato nivel-xp"><span id="nivelTxt"></span><span class="xp" role="progressbar" aria-label="Experiencia" aria-valuemin="0" aria-valuemax="100" id="xpBarra"><i id="xp"></i></span></span>
+        <span class="ficha-dato" id="monedasTxt"></span>
+        <button class="ficha-dato" id="bLogros" type="button"></button>
+        <button class="ficha-dato" id="bAjustes" type="button" aria-label="Ajustes de los juegos">⚙</button>
       </div>
     </div>
   </header>
 
   <main id="contenido">
-    <section class="contenedor portada" aria-labelledby="titulo">
-      <div>
-        <h1 id="titulo">Juega, prueba y <span class="pi">descubre</span> matemáticas</h1>
-        <p>Juegos para aprender matemáticas jugando. No necesitas cuenta: tu progreso se guarda solo en este dispositivo.</p>
-      </div>
-      <img src="compartido/img/mascota.png" alt="" width="600" height="620">
-    </section>
-
     <section class="contenedor" id="juegos" aria-labelledby="titJuegos">
-      <h2 id="titJuegos" class="solo-lector">Juegos y laboratorios</h2>
-      <div id="listaCursos"></div>
+      <div class="titulo-mapa">
+        <small>1.º ESO</small>
+        <h1 id="titJuegos">Mapa de <span>mundos</span></h1>
+        <p>Cada mundo es un tema. Elige uno y juega: tu progreso se guarda solo en este dispositivo.
+          <span class="alias-chip" id="chipAlias" hidden>Juegas como <strong id="aliasActual"></strong> · <a href="#mis-datos">cambiar</a></span></p>
+      </div>
+      <div class="tablero-mapa">
+        <nav class="mapa" id="mapa" aria-labelledby="titJuegos"></nav>
+        <p class="meta"><span>🏁 ¡Más mundos muy pronto!</span></p>
+      </div>
     </section>
 
     <section class="contenedor" id="mis-datos" aria-labelledby="titDatos">
@@ -159,7 +230,10 @@
     <button class="boton" id="btnActualizar" type="button">Actualizar</button>
   </div>
 
+  <div class="capa" id="capa" role="dialog" aria-modal="true"><div class="tarjeta ventana" id="ventana"></div></div>
+
   <script src="compartido/marca.js"></script>
+  <script src="compartido/mathquest.js"></script>
   <script src="compartido/componentes.js"></script>
   <script>
   (function () {
@@ -185,36 +259,79 @@
       }
     }
 
-    // ---------- Catálogo: por juegos (los cursos se activarán con MARCA.mostrarCursos) ----------
-    function tarjeta(j) {
-      const disponible = j.estado === "jugar";
-      const href = j.externo ? j.url : (j.url.endsWith("/") ? j.url + "index.html" : j.url);
-      return `<article class="tarjeta juego ${disponible ? "" : "pronto"}">
-        <div class="cab">
-          <div class="simbolo" aria-hidden="true">${esc(j.simbolo)}</div>
-          <div><h3>${esc(j.titulo)}</h3><p class="sub">${esc(j.subtitulo)}</p></div>
-        </div>
-        <p class="saber">${esc(j.saber)}</p>
-        <p class="desc">${esc(j.descripcion)}</p>
-        <div class="acciones">
-          ${disponible
-            ? `<a class="boton" href="${esc(href)}">Jugar<span class="solo-lector"> a ${esc(j.titulo)}</span></a><span class="etiqueta">${j.externo ? "En línea" : "Disponible"}</span>`
-            : `<span class="etiqueta pronto">Próximamente</span>`}
-        </div>
-      </article>`;
+    // ---------- Mapa de mundos (la lista está en compartido/mathquest.js → MUNDOS) ----------
+    const MQ = window.MathQuest;
+    const COLORES = ["#F6DDD3", "#DCE8E1", "#F3E5B8"];     // disco de cada isla (coral, salvia y crema suaves)
+    function pintarMapa() {
+      const d = MQ.leer();
+      $("#mapa").innerHTML = '<svg class="camino" aria-hidden="true"><path id="caminoBase" fill="none" stroke="#332B2A" stroke-width="18" stroke-linecap="round"/><path id="camino" fill="none" stroke="#F4EDD7" stroke-width="11" stroke-dasharray="1 16" stroke-linecap="round"/></svg>' +
+        MQ.MUNDOS.map((m, i) => {
+          const j = MARCA.juegos.find(x => x.id === m.juego);
+          const jugable = !!(j && j.estado === "jugar"), r = d.juegos[m.juego];
+          let estado, barra = "";
+          if (jugable && m.mq) {
+            estado = r && r.superados ? `★ ${r.estrellas}/${r.maxEstrellas} · ${r.superados} de ${r.total} niveles` : "▶ Jugar";
+            barra = `<div class="barra" aria-hidden="true"><i style="width:${r ? Math.round(100 * r.estrellas / r.maxEstrellas) : 0}%"></i></div>`;
+          } else estado = jugable ? "▶ Jugar" : "Próximamente";
+          // Las cartas de Factor Clash tienen fondo: se ven enteras dentro del círculo
+          const cuadro = ["divison", "reglino", "punteo", "incognito"].includes(m.personaje) ? "cuadro" : "";
+          const guia = m.ahora && jugable ? `<span class="guia-pichu" aria-hidden="true"><img src="compartido/img/mascota.png" alt="" width="600" height="620"><span class="bocadillo">¡Ahora en clase!</span></span>` : "";
+          const dentro = `<span class="isla" style="--c:${COLORES[i % 3]}" aria-hidden="true"><span class="num">${i + 1}</span>` +
+            (m.personaje ? `<img class="${cuadro}" src="${esc(MQ.personaje(m.personaje))}" alt="" loading="lazy" width="240" height="240">` : "") + `</span>${guia}
+            <span class="rotulo"><small>Mundo ${i + 1} · ${esc(m.tema)}</small><b>${esc(m.nombre)}</b>
+            <span class="estado">${estado}</span>${barra}</span>`;
+          const etiqueta = `Mundo ${i + 1}, ${esc(m.tema)}: ${esc(m.nombre)}. ${m.ahora ? "Ahora en clase. " : ""}${estado.replace("▶ ", "")}`;
+          return jugable
+            ? `<a class="mundo ${m.ahora ? "ahora" : ""}" href="${esc(m.url)}index.html" aria-label="${etiqueta}">${dentro}</a>`
+            : `<div class="mundo cerrado" role="img" aria-label="${etiqueta}">${dentro}</div>`;
+        }).join("");
+      requestAnimationFrame(camino);
+    }
+    // Camino que une las islas (se recalcula al cambiar el tamaño de la ventana)
+    function camino() {
+      const mapa = $("#mapa"), base = mapa.getBoundingClientRect();
+      const pts = [...mapa.querySelectorAll(".isla")].map(i => { const r = i.getBoundingClientRect(); return [r.left + r.width / 2 - base.left, r.top + r.height / 2 - base.top]; });
+      let d = "";
+      pts.forEach((p, i) => { if (!i) d = `M${p[0]} ${p[1]}`; else { const a = pts[i - 1], my = (a[1] + p[1]) / 2; d += ` C${a[0]} ${my} ${p[0]} ${my} ${p[0]} ${p[1]}`; } });
+      $("#camino").setAttribute("d", d); $("#caminoBase").setAttribute("d", d);
+    }
+    addEventListener("resize", camino);
+
+    function pintarProgreso() {
+      const d = MQ.leer(), n = MQ.nivel(d.xp);
+      $("#nivelTxt").textContent = "⭐ Nivel " + n.nivel;
+      $("#monedasTxt").textContent = "🪙 " + d.monedas;
+      $("#monedasTxt").setAttribute("aria-label", d.monedas + " monedas");
+      const logros = MQ.LOGROS.filter(l => d.logros[l.id]).length;      // solo logros de juegos actuales
+      $("#bLogros").textContent = "🏅 " + logros + "/" + MQ.LOGROS.length;
+      $("#bLogros").setAttribute("aria-label", `Logros: ${logros} de ${MQ.LOGROS.length}`);
+      $("#xp").style.width = n.pct + "%"; $("#xpBarra").setAttribute("aria-valuenow", n.pct);
+      $("#xpBarra").setAttribute("aria-valuetext", `${n.tiene} de ${n.hace_falta} puntos para el nivel ${n.nivel + 1}`);
+      document.body.classList.toggle("sin-movimiento", MQ.sinMovimiento());
     }
 
-    function seccion(id, titulo, juegos) {
-      if (!juegos.length) return "";
-      return `<section class="curso" aria-labelledby="${id}"><h2 id="${id}">${esc(titulo)}</h2>
-        <div class="rejilla">${juegos.map(tarjeta).join("")}</div></section>`;
+    // ---------- Ventanas: logros y ajustes ----------
+    function ventana(html) { $("#ventana").innerHTML = html; $("#capa").classList.add("ver"); const b = $("#ventana [data-foco]"); if (b) b.focus(); }
+    const cerrarVentana = () => { $("#capa").classList.remove("ver"); pintarProgreso(); };
+    $("#capa").addEventListener("click", e => { if (e.target.id === "capa" || e.target.closest("[data-cerrar]")) cerrarVentana(); });
+    document.addEventListener("keydown", e => { if (e.key === "Escape") cerrarVentana(); });
+    $("#bLogros").addEventListener("click", () => {
+      const d = MQ.leer();
+      ventana(`<h2>Logros y medallas</h2><div class="lista">` + MQ.LOGROS.map(l => { const m = MQ.MUNDOS.find(x => x.juego === l.juego);
+        return `<div class="item ${d.logros[l.id] ? "" : "apagado"}"><span class="ico" aria-hidden="true">${d.logros[l.id] ? l.icono : "?"}</span><div><b>${esc(l.titulo)}</b><span>${esc(m ? m.nombre + " · " : "")}${esc(l.desc)}</span></div>${d.logros[l.id] ? '<span aria-label="Conseguido">✅</span>' : ""}</div>`; }).join("") +
+        `</div><button class="boton" type="button" data-cerrar data-foco>Cerrar</button>`);
+    });
+    function vAjustes() {
+      const a = MQ.leer().ajustes;
+      const fila = (k, t, s2) => `<div class="item"><div><b>${t}</b><span>${s2}</span></div><button class="interruptor" type="button" data-aj="${k}" aria-pressed="${!!a[k]}" aria-label="${t}">${a[k] ? "Sí" : "No"}</button></div>`;
+      ventana(`<h2>Ajustes de los juegos</h2><p style="margin:0">Valen para Fraction Merge y Equation Merge.</p><div class="lista">
+        ${fila("sonido", "Sonidos", "Efectos de los juegos")}${fila("musica", "Música", "Melodía de fondo")}
+        ${fila("animaciones", "Animaciones", "Desactívalas si te marean o el dispositivo va lento")}
+        ${fila("tranquilo", "Modo tranquilo", "Menos presión: más movimientos en cada nivel")}</div>
+        <button class="boton" type="button" data-cerrar data-foco>Listo</button>`);
     }
-
-    function pintarCatalogo() {
-      const listos = MARCA.juegos.filter(j => j.estado === "jugar");
-      const pronto = MARCA.juegos.filter(j => j.estado !== "jugar");
-      $("#listaCursos").innerHTML = seccion("sec-juegos", "Juegos", listos) + seccion("sec-pronto", "Próximamente", pronto);
-    }
+    $("#bAjustes").addEventListener("click", vAjustes);
+    $("#ventana").addEventListener("click", e => { const aj = e.target.closest("[data-aj]"); if (aj) { MQ.ajuste(aj.dataset.aj, !MQ.ajuste(aj.dataset.aj)); vAjustes(); } });
 
     // ---------- Alias ----------
     function pintarAlias() {
@@ -260,7 +377,8 @@
       $("#btnActualizar").onclick = aplicar;
     });
 
-    pintarCatalogo(); pintarAlias();
+    pintarProgreso(); pintarMapa(); pintarAlias();
+    addEventListener("pageshow", () => { pintarProgreso(); pintarMapa(); });      // al volver de un juego, progreso al día
   })();
   </script>
 </body>
