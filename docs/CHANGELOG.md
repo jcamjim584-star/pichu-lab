@@ -1,5 +1,14 @@
 # Registro de cambios
 
+## 0.9.2 · 17/11/2026
+- **Equation Merge con la identidad πCHU**, igual que Fraction Merge: fondo crema, botones y colores de la marca, **πCHU** en el menú
+  y en las ventanas de final de partida (en lugar del robot Kubo). Usa la misma hoja de estilos que Fraction Merge más lo propio de las ecuaciones.
+  - Jefe final con la cara de **Incógnito X**, el personaje de Factor Clash.
+  - Aspectos de la tienda iguales que en Fraction Merge: Clásico πCHU, Pizarra, Pastel y Papel.
+  - Arreglo: las ecuaciones conservan los espacios («2x + 4» y no «2x+ 4»).
+- **Fraction Merge:** Quebrón, el jefe final, tiene ahora la cara de **Pirata** (personaje de la marca). Es el único cambio en ese juego.
+- Pruebas: motor 113 129 comprobaciones; los 13 niveles de Equation Merge superados por el jugador automático; sin errores de consola ni archivos que falten.
+
 ## 0.9.1 · 17/11/2026
 - **Portada solo con el mapa de mundos.** Se quitan la mascota grande, el titular y la tarjeta «▶ Jugar / Continuar».
   Arriba queda una barra compacta: nivel con barra de experiencia, monedas, logros y ajustes.
@@ -10,7 +19,6 @@
 - `MathQuest.avatarSVG` devuelve ahora la mascota πCHU en lugar de los robots.
 - Se quita de la portada la lista de «Próximamente» (Pizza Rush, Laboratorio de Proporcionalidad, juegos de cartas): solo se ve lo que está en el mapa.
   Siguen en `MARCA.juegos` para volver a mostrarlos cuando estén listos.
-- Pendiente: pasar Equation Merge a la paleta πCHU y poner a Pirata como cara del jefe de Fraction Merge.
 
 ## 0.9.0 · 17/11/2026
 - **Equation Merge sustituye a Power Merge.** Juego de ecuaciones de primer grado de 1.º ESO (`applets/equation-merge/`, fuentes en `src/equation-merge/`).

@@ -1,5 +1,5 @@
 # Ficha · Equation Merge
-Versión 1.0 · 17/11/2026 · Estado: **Disponible** (portada πCHU 0.9.0) · Mundo 4 · Ecuaciones · 1.º ESO
+Versión 1.1 · 17/11/2026 · Estado: **Disponible** (portada πCHU 0.9.2) · Mundo 4 · Ecuaciones · 1.º ESO
 
 ---
 
@@ -38,15 +38,19 @@ jefe, tienda, misiones, estrellas y modo infinito), pero las matemáticas son de
 | 10 x a los dos lados | Experto | `ax + b = cx + d` | 58 | 8 |
 | 11 Paréntesis | Experto | `a(x ± b) = c` | 62 | 8 |
 | 12 Todo mezclado | Experto | Todo, soluciones hasta 20, hielo y roca | 70 | 9 |
-| 13 Incógnito, el Enmascarado | Jefe final | Mezcla difícil; el jefe lanza rocas y congela fichas | 80 | 10 |
+| 13 Incógnito, el Enmascarado | Jefe final | Mezcla difícil; el jefe (Incógnito X, de Factor Clash) lanza rocas y congela fichas | 80 | 10 |
 
 Balanza infinita (se abre al superar el nivel 3): sin límite de movimientos, 3 vidas, la dificultad sube con las entregas.
 
-## 5. Datos y privacidad
+## 5. Aspecto
+Misma identidad que la portada y Fraction Merge: paleta πCHU (crema, espresso, coral y salvia), πCHU en el menú y en los finales,
+y personajes de la marca (`compartido/img/personajes/`). Las fichas tienen un color por grupo de valores (1-5, 6-10, 11-15, 16-20), pero el número siempre se ve.
+
+## 6. Datos y privacidad
 - Guardado del juego: `pichu.equation-merge.v1`. Progreso común: `pichu.mathquest.v1`. Sin nombres ni datos personales.
 - El guardado de Power Merge (`pichu.power-merge.v1`) se conserva sin uso; sus logros `pm.*` ya no se cuentan.
 
-## 6. Pruebas (17/11/2026)
+## 7. Pruebas (17/11/2026)
 - `node tests/equation_merge_motor.test.mjs`: 113 129 comprobaciones (solución única entera entre 1 y 20 en todas las formas y niveles, explicación coherente,
   errores típicos distintos de la solución, tablero, poderes).
 - Jugador automático en navegador: los 13 niveles superados (8 partidas por nivel; 102 de 104 ganadas), sin errores de consola, a 390 px.

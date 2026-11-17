@@ -8,7 +8,7 @@
 
    Si añades un juego, añade su ruta a ARCHIVOS.
    ========================================================= */
-const VERSION = "pichu-v0.9.1";
+const VERSION = "pichu-v0.9.2";
 
 const ARCHIVOS = [
   "./",

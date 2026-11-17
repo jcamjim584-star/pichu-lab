@@ -5,8 +5,8 @@
 Portada que reúne los juegos y laboratorios de matemáticas interactivos de Juan Antonio Campos Jiménez
 (ESO y Bachillerato). Web estática: HTML, CSS y JavaScript, sin frameworks, sin registro y sin recoger datos personales.
 
-## Qué incluye (versión 0.9.0)
-La portada es un **mapa de mundos** de 1.º ESO (uno por tema). Los juegos con experiencia, monedas, logros y
+## Qué incluye (versión 0.9.2)
+La portada es solo un **mapa de mundos** de 1.º ESO (uno por tema), con el personaje de cada mundo en su isla (`compartido/img/personajes/`). Los juegos con experiencia, monedas, logros y
 personajes comunes forman **MathQuest** (`compartido/mathquest.js`, guardado en `pichu.mathquest.v1`).
 
 | Mundo | Juego | Estado |
