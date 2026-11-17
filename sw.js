@@ -8,7 +8,7 @@
 
    Si añades un juego, añade su ruta a ARCHIVOS.
    ========================================================= */
-const VERSION = "pichu-v0.9.0";
+const VERSION = "pichu-v0.9.1";
 
 const ARCHIVOS = [
   "./",
@@ -29,6 +29,17 @@ const ARCHIVOS = [
   "compartido/img/icono-192.png",
   "compartido/img/icono-512.png",
   "compartido/img/centro.jpg",
+  "compartido/img/personajes/arlequina.webp",
+  "compartido/img/personajes/divison.webp",
+  "compartido/img/personajes/duende.webp",
+  "compartido/img/personajes/incognito.webp",
+  "compartido/img/personajes/mago.webp",
+  "compartido/img/personajes/menos.webp",
+  "compartido/img/personajes/pirata.webp",
+  "compartido/img/personajes/pizarra.webp",
+  "compartido/img/personajes/punteo.webp",
+  "compartido/img/personajes/reglino.webp",
+  "compartido/img/personajes/salsita.webp",
   // Juegos
   "applets/expres/",
   "applets/pizzeria/",

@@ -1,5 +1,17 @@
 # Registro de cambios
 
+## 0.9.1 · 17/11/2026
+- **Portada solo con el mapa de mundos.** Se quitan la mascota grande, el titular y la tarjeta «▶ Jugar / Continuar».
+  Arriba queda una barra compacta: nivel con barra de experiencia, monedas, logros y ajustes.
+- **Mapa más atractivo:** fondo de mar con olas y nubes, camino de baldosas, islas numeradas con el **personaje de cada mundo**
+  (Divisón, Menos, Pirata, Incógnito X, Mago, Salsita, Arlequina, Pizarra, Punteo, Duende y Reglino) y **πCHU** señalando «¡Ahora en clase!».
+  Los mundos cerrados enseñan su personaje en gris, como adelanto.
+- Imágenes en `compartido/img/personajes/` (240 px, sacadas de Integer Ninja, Pizza Rush y Factor Clash). Cada mundo tiene su `personaje` en `MUNDOS` (`compartido/mathquest.js`).
+- `MathQuest.avatarSVG` devuelve ahora la mascota πCHU en lugar de los robots.
+- Se quita de la portada la lista de «Próximamente» (Pizza Rush, Laboratorio de Proporcionalidad, juegos de cartas): solo se ve lo que está en el mapa.
+  Siguen en `MARCA.juegos` para volver a mostrarlos cuando estén listos.
+- Pendiente: pasar Equation Merge a la paleta πCHU y poner a Pirata como cara del jefe de Fraction Merge.
+
 ## 0.9.0 · 17/11/2026
 - **Equation Merge sustituye a Power Merge.** Juego de ecuaciones de primer grado de 1.º ESO (`applets/equation-merge/`, fuentes en `src/equation-merge/`).
   - Las fichas son números del 1 al 20; al chocar se **suman**. Las ecuaciones de arriba se resuelven entregando la ficha que es la solución.
