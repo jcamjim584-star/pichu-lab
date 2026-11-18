@@ -9,7 +9,7 @@ Portada que reúne los juegos y laboratorios de matemáticas interactivos de Jua
 | Juego | Curso (de momento no se muestra) | Estado |
 |---|---|---|
 | Factor Clash · duelos de divisibilidad | 1.º ESO | Disponible |
-| Pizza Rush · Pizzería πCHU v0.2 (fracciones: equivalencias, suma, multiplicación y división) | 1.º ESO | Próximamente (en revisión) |
+| Pizzería πCHU v0.3 (fracciones: equivalencias, suma, multiplicación y división) | 1.º ESO | Próximamente (en pruebas) |
 | Integer Ninja v0.5 · enteros: signos, comparar, sumas, −( ), productos y cocientes | 1.º ESO | Disponible |
 | Laboratorio de Proporcionalidad · cartas de ecuaciones · cartas de funciones | 1.º ESO · 4.º ESO · 1.º Bach | En diseño |
 
@@ -35,16 +35,17 @@ node tests/pizzeria_motor.test.mjs
 Prueba completa en navegador (opcional, Python + Playwright):
 ```
 pip install playwright && python3 tests/prueba_navegador.py . capturas
-python3 tests/prueba_pizzeria.py . capturas
+node tests/prueba_pizzeria.mjs capturas   # necesita: npm install playwright
 ```
 
-## Pizza Rush (Pizzería πCHU): cómo modificarla
+## Pizzería πCHU: cómo modificarla
 El juego se edita en `src/pizzeria/` (`motor.js` = matemáticas, `juego.html` = pantalla, `personajes/` = imágenes).
 Después se genera el archivo final con:
 ```
 python3 src/pizzeria/build.py
 ```
-Los turnos, las mejoras de la tienda y sus precios están en `motor.js` (`TURNOS` y `MEJORAS`).
+Los menús (porciones, número de pizzas, clientes y cuántos llevan guía) y los pedidos de cada menú están en `motor.js` (`MENUS` y `GEN`).
+Los personajes del álbum y qué estrellas los regalan, en `CLIENTES`.
 
 ## Integer Ninja: cómo modificarlo
 El juego se edita en `src/integer-ninja/src/` (`engine.js` = matemáticas, `game.js` = juego, `index.html` y `style.css` = pantalla).

@@ -14,7 +14,7 @@ window.MARCA = {
     lugar: "Fuentes de Andalucía (Sevilla)",
     logo: "compartido/img/centro.jpg"
   },
-  version: "0.6.4",
+  version: "0.6.5",
   autor: "Juan Antonio Campos Jiménez",
 
   // Cursos: de momento la portada NO los muestra (se organiza por juegos).
@@ -51,15 +51,16 @@ window.MARCA = {
     },
     {
       id: "pizzeria",
-      titulo: "Pizza Rush",
-      subtitulo: "La cocina de fracciones de πCHU",
+      titulo: "Pizzería πCHU",
+      subtitulo: "Sirve la fracción justa",
       curso: "1.º ESO",
       saber: "Fracciones: equivalencias, suma, multiplicación y división",
-      descripcion: "Cocina a toda prisa: tickets con cuenta atrás, horno, rachas y una pizzería que mejoras con tus monedas. Suma, multiplica y divide fracciones.",
+      descripcion: "Cada cliente pide un trozo de pizza: pon las porciones justas y sírvelo. Suma, multiplica y divide fracciones viéndolas.",
       simbolo: "🍕",
       url: "applets/pizzeria/",
       estado: "pronto",
-      claves: ["pichu.pizzeria.v1"]
+      // Fuentes en src/pizzeria/ → python3 src/pizzeria/build.py genera applets/pizzeria/index.html
+      claves: ["pichu.pizzeria.v3"]
     },
     {
       id: "proporcionalidad",

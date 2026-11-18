@@ -1,7 +1,7 @@
 /* =====================================================================
-   Pizzería πCHU · motor matemático
+   Pizzería πCHU v0.3 · motor matemático
    Todo se calcula con ENTEROS: una pizza = 24 "veinticuatroavos"
-   (24 se puede dividir entre 2, 3, 4, 6, 8 y 12). Así no hay decimales
+   (24 se puede dividir entre 2, 3, 4, 6 y 8). Así no hay decimales
    ni errores de redondeo.
    Este archivo no toca la pantalla: se puede probar en Node.
    ===================================================================== */
@@ -9,329 +9,233 @@
   "use strict";
 
   const U = 24;                                   // una pizza entera
-  const CORTES = [2, 3, 4, 6, 8, 12];             // formas de cortar una pizza
-  const NOMBRE_CORTE = { 2: "mitades", 3: "tercios", 4: "cuartos", 6: "sextos", 8: "octavos", 12: "doceavos" };
+  const TODAS = [2, 3, 4, 6, 8];                  // porciones que hay: ½ ⅓ ¼ ⅙ ⅛
+  const NOMBRE = { 2: "un medio", 3: "un tercio", 4: "un cuarto", 6: "un sexto", 8: "un octavo" };
 
   // ---------- Fracciones ----------
   const mcd = (a, b) => { a = Math.abs(a); b = Math.abs(b); while (b) [a, b] = [b, a % b]; return a || 1; };
   const mcm = (a, b) => a / mcd(a, b) * b;
   const simplificar = (n, d) => { const g = mcd(n, d); return { n: n / g, d: d / g }; };
-  const aU = (n, d) => n * U / d;                 // fracción → veinticuatroavos (debe ser entero)
+  const aU = (n, d) => n * U / d;                 // fracción → veinticuatroavos
   const deU = t => simplificar(t, U);             // veinticuatroavos → fracción simplificada
-  const esEntero24 = (n, d) => (n * U) % d === 0;
 
-  // Texto de una fracción (para mensajes): "3/4", "2", "1 y 1/2"
-  function texto(f, mixto = false) {
-    const s = simplificar(f.n, f.d);
-    if (s.d === 1) return String(s.n);
-    if (mixto && s.n > s.d) { const e = Math.floor(s.n / s.d), r = s.n % s.d; return `${e} y ${r}/${s.d}`; }
-    return `${s.n}/${s.d}`;
-  }
+  // Fracción como marca de texto: {3/4}. La pantalla la dibuja apilada.
+  const F = (n, d) => d === 1 ? String(n) : `{${n}/${d}}`;
+  const FU = t => { const s = deU(t); return F(s.n, s.d); };
+  // Para lectores de pantalla y pruebas: quita las llaves.
+  const plano = s => s.replace(/\{(\d+)\/(\d+)\}/g, "$1/$2");
 
-  // ---------- Qué se puede servir con las porciones del mostrador ----------
-  // porciones: lista de tamaños en veinticuatroavos (una entrada por porción).
-  // Devuelve, para cada total t, el conjunto de números de porciones posibles.
-  function cantidadesPosibles(porciones, max) {
-    const dp = Array.from({ length: max + 1 }, () => new Set());
-    dp[0].add(0);
-    for (const p of porciones) {
-      for (let t = max; t >= p; t--) {
-        for (const k of dp[t - p]) dp[t].add(k + 1);
+  // ---------- ¿Se puede formar t con las porciones de los botones? ----------
+  // Devuelve la lista MÍNIMA de porciones (denominadores), preferiendo las grandes, o null.
+  function descomponer(t, botones) {
+    const tam = [...botones].sort((a, b) => a - b).map(d => ({ d, u: U / d }));   // de grande a pequeña en u
+    const mejor = Array(t + 1).fill(null); mejor[0] = [];
+    for (let s = 1; s <= t; s++) {
+      for (const { d, u } of tam) {
+        if (u <= s && mejor[s - u] && (!mejor[s] || mejor[s - u].length + 1 < mejor[s].length)) mejor[s] = [...mejor[s - u], d];
       }
     }
-    return dp;
+    return mejor[t] ? mejor[t].sort((a, b) => a - b) : null;
   }
-  const sePuede = (porciones, t) => t > 0 && cantidadesPosibles(porciones, t)[t].size > 0;
-  function minPorciones(porciones, t) {
-    const s = cantidadesPosibles(porciones, t)[t];
-    return s.size ? Math.min(...s) : Infinity;
+  const sePuede = (t, botones) => t > 0 && descomponer(t, botones) !== null;
+
+  // ---------- Comprobar lo servido ----------
+  // porciones: lista de denominadores, en el orden en que se pusieron.
+  function comprobar(objetivo, porciones) {
+    const servido = porciones.reduce((s, d) => s + U / d, 0);
+    const ps = deU(objetivo), ss = servido ? deU(servido) : { n: 0, d: 1 };
+    const comun = mcm(ps.d, ss.d);
+    const dif = servido - objetivo;
+    return {
+      exacto: dif === 0, servido, objetivo, dif,
+      pedido: ps, hecho: ss, comun,
+      pedidoComun: ps.n * comun / ps.d, hechoComun: ss.n * comun / ss.d,
+      falta: dif < 0 ? deU(-dif) : null, sobra: dif > 0 ? deU(dif) : null
+    };
+  }
+
+  // Agrupa porciones iguales seguidas por tamaño: [2,8,8,8] → [{n:1,d:2},{n:3,d:8}]
+  function agrupar(porciones) {
+    const cuenta = new Map();
+    for (const d of porciones) cuenta.set(d, (cuenta.get(d) || 0) + 1);
+    return [...cuenta.entries()].sort((a, b) => a[0] - b[0]).map(([d, n]) => ({ n, d }));
+  }
+
+  // Si pasa de 1 y no es entero, se añade la forma mixta: " = 1 y {5/8}"
+  const mixtoFinal = f => f.d > 1 && f.n > f.d ? ` = ${Math.floor(f.n / f.d)} y ${F(f.n % f.d, f.d)}` : "";
+
+  // Cuenta que se enseña al acertar: "{1/2} + {1/4} = {2/4} + {1/4} = {3/4}"
+  function cuentaSuma(porciones) {
+    const g = agrupar(porciones);
+    if (!g.length) return "";
+    const total = deU(porciones.reduce((s, d) => s + U / d, 0));
+    const fin = total.d === 1 ? String(total.n) : F(total.n, total.d);
+    if (g.length === 1) {
+      const { n, d } = g[0];
+      return (n === 1 ? fin : `${F(n, d)}${F(n, d) === fin ? "" : " = " + fin}`) + mixtoFinal(total);
+    }
+    const comun = g.reduce((m, x) => mcm(m, x.d), 1);
+    const paso1 = g.map(x => F(x.n, x.d)).join(" + ");
+    const paso2 = g.map(x => F(x.n * comun / x.d, comun)).join(" + ");
+    const sumaN = g.reduce((s, x) => s + x.n * comun / x.d, 0);
+    const pasos = [paso1];
+    if (paso2 !== paso1) pasos.push(paso2);
+    const crudo = F(sumaN, comun);
+    if (crudo !== fin) pasos.push(crudo);
+    pasos.push(fin);
+    return pasos.join(" = ") + mixtoFinal(total);
   }
 
   // ---------- Generador de pedidos ----------
-  const azar = (a) => a[Math.floor(Math.random() * a.length)];
+  const azar = a => a[Math.floor(Math.random() * a.length)];
   const entre = (a, b) => a + Math.floor(Math.random() * (b - a + 1));
 
-  // Fracciones "de pizza" que se pueden pedir: denominador entre los cortes permitidos
-  function fraccionesPedibles(dens, maxU) {
-    const lista = [], vistos = new Set();
-    for (const d of dens) for (let n = 1; aU(n, d) <= maxU; n++) {
-      const s = simplificar(n, d), k = s.n + "/" + s.d;
-      if (!vistos.has(k)) { vistos.add(k); lista.push(s); }
+  // Frases. {P} = la fracción del pedido.
+  const FRASES = ["Quiero {P} de pizza, por favor.", "¡Ponme {P} de pizza!", "Para mí, {P} de pizza.",
+    "¿Me pones {P} de pizza?", "Hoy me apetece {P} de pizza."];
+  const pedir = txt => azar(FRASES).replace("{P}", txt);
+
+  // Escribe t a veces sin simplificar (6/8 en vez de 3/4) usando denominadores de los botones
+  function escribirFraccion(t, botones, probSinSimplificar) {
+    const s = deU(t);
+    if (s.d > 1 && Math.random() < probSinSimplificar) {
+      const ks = [2, 3, 4].filter(k => botones.includes(s.d * k));
+      if (ks.length) { const k = azar(ks); return F(s.n * k, s.d * k); }
     }
-    return lista;
+    return F(s.n, s.d);
+  }
+  // Fracción mayor que 1 en forma mixta: "1 y {1/2}"
+  function mixto(t) { const e = Math.floor(t / U), r = t % U; return r ? `${e} y ${FU(r)}` : String(e); }
+
+  // Fracciones propias con denominadores dados (simplificadas, sin repetir)
+  function propias(dens) {
+    const out = new Map();
+    for (const d of dens) for (let n = 1; n < d; n++) out.set(aU(n, d), true);
+    return [...out.keys()];
   }
 
-  // Escritura del pedido: a veces sin simplificar (6/8) o en forma mixta (1 y 1/2)
-  function escribir(f, cfg) {
-    let { n, d } = f;
-    if (cfg.sinSimplificar && Math.random() < 0.35) {
-      const ks = [2, 3, 4].filter(k => cfg.dens.includes(d * k));
-      if (ks.length && n < d * 2) { const k = azar(ks); n *= k; d *= k; }
-    }
-    const mixto = cfg.mixtos && n > d && n % d !== 0 && Math.random() < 0.5;
-    return mixto ? texto({ n, d }, true) : (d === 1 ? String(n) : `${n}/${d}`);
+  // Dos cantidades "amigas" para sumar: denominadores distintos, uno múltiplo del otro (½ y ⅛, ⅓ y ⅙…)
+  function amigas(a, b) {
+    const da = deU(a).d, db = deU(b).d;
+    return da !== db && (da % db === 0 || db % da === 0);
   }
+  const coprimos = (n, d) => mcd(n, d) === 1;
 
-  const PARTES = { 2: "la mitad", 3: "la tercera parte", 4: "la cuarta parte" };
-  // "3/4 de pizza", "una pizza entera", "2 pizzas"
-  const cant = f => { const s = simplificar(f.n, f.d); return s.d === 1 ? (s.n === 1 ? "una pizza entera" : `${s.n} pizzas`) : `${texto(s)} de pizza`; };
-
-  /* Crea un pedido que SE PUEDE servir con las porciones del mostrador.
-     cfg: { tipos, dens, maxU, sinSimplificar, mixtos, minU }
-     Devuelve null si no hay ninguno posible (entonces hay que hornear más pizza). */
-  function generarPedido(porciones, cfg) {
-    const disponible = porciones.reduce((a, b) => a + b, 0);
-    const maxU = Math.min(cfg.maxU, disponible);
-    const dp = cantidadesPosibles(porciones, maxU);
-    // El resultado tiene que poder escribirse con los cortes del turno (nada de 5/24 en 1.º ESO)
-    const denOk = t => { const d = deU(t).d; return d === 1 || cfg.dens.includes(d); };
-    const ok = t => t >= (cfg.minU || 1) && t <= maxU && dp[t].size > 0 && denOk(t);
-    const pedibles = fraccionesPedibles(cfg.dens, maxU);
-
-    for (let intento = 0; intento < 60; intento++) {
-      const tipo = azar(cfg.tipos);
-      let p = null;
-
-      if (tipo === "suma") {
-        // Preferimos pedidos que obligan a juntar varias porciones
-        const cand = pedibles.filter(f => ok(aU(f.n, f.d)) && (cfg.mixtos ? true : f.n < f.d * 1.01));
-        if (!cand.length) continue;
-        const buenos = cand.filter(f => Math.min(...dp[aU(f.n, f.d)]) >= 2);
-        const f = azar(buenos.length && Math.random() < 0.8 ? buenos : cand);
-        p = { tipo, objetivo: aU(f.n, f.d), escrito: escribir(f, cfg), op: null };
-        p.texto = /^\d+$/.test(p.escrito)
-          ? `Quiero ${p.escrito === "1" ? "una pizza entera" : p.escrito + " pizzas enteras"}, por favor.`
-          : `Quiero ${p.escrito} de pizza, por favor.`;
-      }
-
-      else if (tipo === "mult_entero") {
-        const k = entre(2, 4), base = azar(pedibles.filter(f => f.n < f.d));
-        if (!base) continue;
-        const t = k * aU(base.n, base.d);
-        if (!ok(t)) continue;
-        p = { tipo, objetivo: t, k, base, escrito: texto(base),
-              texto: `Somos ${k} y queremos ${texto(base)} de pizza cada uno.`,
-              op: `${k} × ${texto(base)} = ${texto({ n: k * base.n, d: base.d })}` };
-      }
-
-      else if (tipo === "fraccion_de") {
-        // "la mitad de 3/4" o "2/3 de 3/4"
-        const base = azar(pedibles.filter(f => f.n <= f.d * 2));
-        if (!base) continue;
-        const usarPartes = Math.random() < 0.6;
-        const fr = usarPartes ? { n: 1, d: azar([2, 3, 4]) } : azar([{ n: 2, d: 3 }, { n: 3, d: 4 }, { n: 1, d: 2 }, { n: 1, d: 3 }]);
-        const prodN = base.n * fr.n, prodD = base.d * fr.d;
-        if (!esEntero24(prodN, prodD)) continue;
-        const t = aU(prodN, prodD);
-        if (!ok(t)) continue;
-        const nombre = fr.n === 1 && PARTES[fr.d] ? PARTES[fr.d] : texto(fr);
-        p = { tipo, objetivo: t, base, fr, escrito: texto(base),
-              texto: `Quiero ${nombre} de ${cant(base)}.`,
-              op: `${texto(fr)} × ${texto(base)} = ${prodN}/${prodD}` + (simplificar(prodN, prodD).d !== prodD ? ` = ${texto({ n: prodN, d: prodD })}` : "") };
-      }
-
-      else if (tipo === "div_entero") {
-        const k = entre(2, 4), base = azar(pedibles.filter(f => f.n <= f.d * 2));
-        if (!base || !esEntero24(base.n, base.d * k)) continue;
-        const t = aU(base.n, base.d * k);
-        if (!ok(t)) continue;
-        p = { tipo, objetivo: t, k, base, escrito: texto(base),
-              texto: `Hemos pedido ${cant(base)} para ${k} personas. Sírveme mi parte.`,
-              op: `${texto(base)} ÷ ${k} = ${base.n}/${base.d * k}` + (simplificar(base.n, base.d * k).d !== base.d * k ? ` = ${texto({ n: base.n, d: base.d * k })}` : "") };
-      }
-
-      else if (tipo === "div_cuantas") {
-        // ¿Cuántas porciones de 1/d (o k/d) caben en a/b? (respuesta: un número entero)
-        const base = azar(pedibles.filter(f => f.n <= f.d * 2));
-        const trozo = azar(fraccionesPedibles(cfg.dens, U).filter(f => f.n < f.d && f.n <= 3));
-        if (!base || !trozo) continue;
-        const tb = aU(base.n, base.d), tt = aU(trozo.n, trozo.d);
-        if (tb % tt || tb / tt < 2 || tb / tt > 12) continue;
-        if (simplificar(base.n, base.d).d === trozo.d) continue;   // sería solo contar porciones iguales
-        const r = tb / tt;
-        p = { tipo, objetivo: tb, respuesta: r, base, trozo, escrito: texto(base),
-              texto: `Tengo ${cant(base)}. ¿Cuántas porciones de ${texto(trozo)} salen?`,
-              op: `${texto(base)} ÷ ${texto(trozo)} = ${texto(base)} × ${trozo.d}/${trozo.n} = ${r}`,
-              opciones: opcionesNumero(r, base, trozo) };
-      }
-
-      else if (tipo === "condicion") {
-        // El Crítico: pedido con condición
-        const cand = pedibles.filter(f => ok(aU(f.n, f.d)));
-        if (!cand.length) continue;
-        const f = azar(cand), t = aU(f.n, f.d);
-        const modo = azar(["exactas", "sin", "minimo"]);
-        if (modo === "exactas") {
-          const ks = [...dp[t]].filter(k => k >= 2 && k !== Math.min(...dp[t]));
-          if (!ks.length) continue;
-          const k = azar(ks);
-          p = { tipo, objetivo: t, escrito: texto(f), cond: { modo, k },
-                texto: `Quiero ${texto(f)} de pizza… ¡con exactamente ${k} porciones!` };
-        } else if (modo === "sin") {
-          const usados = [...new Set(porciones)].filter(x => x > 0);
-          const q = azar(usados), sinQ = porciones.filter(x => x !== q);
-          if (!sePuede(sinQ, t) || sinQ.length === porciones.length) continue;
-          const dq = U / q;
-          p = { tipo, objetivo: t, escrito: texto(f), cond: { modo, tam: q },
-                texto: `Quiero ${texto(f)} de pizza, pero ¡sin ninguna porción de 1/${dq}!` };
-        } else {
-          const m = Math.min(...dp[t]);
-          if (m < 2) continue;                 // que no se pueda con una sola porción
-          p = { tipo, objetivo: t, escrito: texto(f), cond: { modo, k: m },
-                texto: `Quiero ${texto(f)} de pizza con el MENOR número de porciones posible.` };
+  const GEN = {
+    // Menú 1: medios y cuartos
+    1(cfg) {
+      const t = azar([6, 12, 18, 12, 18, 6, 24]);
+      if (t === U && Math.random() < 0.4) return { texto: pedir(F(4, 4)), objetivo: t, tipo: "fraccion" };
+      if (t === U) return { texto: azar(["¡Una pizza entera, que tengo mucha hambre!", "Quiero una pizza entera."]), objetivo: t, tipo: "entera" };
+      if (t === 12 && Math.random() < 0.4) return { texto: azar(["Media pizza, por favor.", "Ponme media pizza."]), objetivo: t, tipo: "palabras" };
+      return { texto: pedir(escribirFraccion(t, cfg.botones, 0.3)), objetivo: t, tipo: "fraccion" };
+    },
+    // Menú 2: tercios, sextos y octavos (y sumas en la misma pizza)
+    2(cfg) {
+      if (Math.random() < 0.3) {
+        // dos personas comparten pizza: a + b < 1 con denominadores distintos
+        for (let i = 0; i < 50; i++) {
+          const a = azar(propias([2, 3, 4, 6, 8])), b = azar(propias([3, 4, 6, 8]));
+          if (!amigas(a, b) || a + b >= U || !sePuede(a + b, cfg.botones)) continue;
+          return { texto: `${FU(a)} para mí y ${FU(b)} para mi amigo. ¡En la misma pizza!`, objetivo: a + b, tipo: "suma",
+            operacion: `${FU(a)} + ${FU(b)}` };
         }
       }
-
-      if (p) { p.minimo = p.tipo === "div_cuantas" ? null : minPorciones(porciones, p.objetivo); return p; }
-    }
-    return null;
-  }
-
-  function opcionesNumero(r, base, trozo) {
-    const s = new Set([r]);
-    // Distractores: errores típicos (multiplicar en vez de dividir, o solo dividir numeradores) y vecinos
-    const prod = base.n * trozo.n / (base.d * trozo.d);
-    if (Number.isInteger(prod) && prod > 0) s.add(prod);
-    if (Number.isInteger(base.n / trozo.n) && base.n / trozo.n > 0) s.add(base.n / trozo.n);
-    for (const v of [r - 1, r + 1, r + 2, r - 2, r * 2]) { if (s.size >= 4) break; if (v > 0) s.add(v); }
-    return [...s].slice(0, 4).sort((a, b) => a - b);
-  }
-
-  // ---------- Evaluar lo servido ----------
-  /* servidas: lista de porciones servidas [{d}] (cada una vale 1/d). */
-  function evaluar(pedido, servidas) {
-    const total = servidas.reduce((a, s) => a + U / s.d, 0);
-    const res = { total, objetivo: pedido.objetivo, ok: total === pedido.objetivo, perfecto: false, pista: "" };
-    res.diferencia = total - pedido.objetivo;
-    if (pedido.cond) {
-      if (pedido.cond.modo === "exactas" && servidas.length !== pedido.cond.k) res.ok = false, res.pista = `El Crítico quería exactamente ${pedido.cond.k} porciones y has servido ${servidas.length}.`;
-      if (pedido.cond.modo === "sin" && servidas.some(s => U / s.d === pedido.cond.tam)) res.ok = false, res.pista = `¡Has usado porciones de 1/${U / pedido.cond.tam}, y estaban prohibidas!`;
-      if (pedido.cond.modo === "minimo" && res.ok && servidas.length > pedido.cond.k) res.ok = false, res.pista = `La cantidad es correcta, pero se podía con solo ${pedido.cond.k} porciones.`;
-    }
-    res.perfecto = res.ok && pedido.minimo != null && servidas.length === pedido.minimo;
-    if (!res.ok && !res.pista) res.pista = detectarError(pedido, servidas, total);
-    res.pasos = pasos(servidas, pedido);
-    return res;
-  }
-
-  // Errores típicos que se pueden reconocer en lo servido
-  function detectarError(p, servidas, total) {
-    const dens = [...new Set(servidas.map(s => s.d))];
-    // "Denominador mayor = trozo mayor": pidió 3/4 y sirvió 3 porciones de 1/8
-    if (p.tipo === "suma" || p.tipo === "condicion") {
-      const m = String(p.escrito).match(/^(\d+)\/(\d+)$/);
-      if (m && dens.length === 1 && servidas.length === +m[1] && dens[0] !== +m[2]) {
-        const d = dens[0], b = +m[2];
-        return `Has servido ${m[1]} porciones de 1/${d}, pero el pedido era de ${m[1]} porciones de 1/${b}. ` +
-          (d > b ? `Las porciones de 1/${d} son más PEQUEÑAS: cuanto mayor es el denominador, más trozos y más pequeños.`
-                 : `Las porciones de 1/${d} son más GRANDES: cuanto menor es el denominador, menos trozos y más grandes.`);
+      const t = azar(propias([3, 6, 8]).filter(x => deU(x).d !== 2 && deU(x).d !== 4 || Math.random() < 0.3));
+      return { texto: pedir(escribirFraccion(t, cfg.botones, 0.3)), objetivo: t, tipo: "fraccion" };
+    },
+    // Menú 3: más de una pizza
+    3(cfg) {
+      const r = Math.random();
+      if (r < 0.25) {
+        for (let i = 0; i < 50; i++) {
+          const a = azar(propias([2, 3, 4, 6, 8])), b = azar(propias([2, 3, 4, 6, 8]));
+          if (a + b <= U || !amigas(a, b) || !sePuede(a + b, cfg.botones)) continue;
+          return { texto: `Yo quiero ${FU(a)} y mi hermana ${FU(b)}.`, objetivo: a + b, tipo: "suma", operacion: `${FU(a)} + ${FU(b)}` };
+        }
       }
+      const t = U + azar(propias([2, 3, 4, 6, 8]));
+      if (r < 0.55) return { texto: `¡Tengo hambre! Quiero ${mixto(t)} pizzas.`, objetivo: t, tipo: "mixto" };
+      if (r < 0.65) return { texto: "Dos pizzas enteras, por favor.", objetivo: 2 * U, tipo: "entera" };
+      const s = deU(t);
+      return { texto: pedir(F(s.n, s.d)), objetivo: t, tipo: "impropia" };
+    },
+    // Menú 4: para compartir (multiplicar y dividir)
+    4(cfg) {
+      for (let i = 0; i < 200; i++) {
+        const tipo = azar(["veces", "veces", "parte", "fraccionDe", "repartir", "repartir"]);
+        let p;
+        if (tipo === "veces") {                          // k · n/d
+          const k = entre(2, 4), d = azar([3, 4, 6, 8]), n = entre(1, 2), t = k * aU(n, d);
+          if (!coprimos(n, d) || t > 2 * U) continue;
+          p = { texto: `Somos ${k} y cada uno quiere ${F(n, d)} de pizza.`, objetivo: t, operacion: `${k} · ${F(n, d)}` };
+        } else if (tipo === "parte") {                   // la mitad / la tercera parte de n/d
+          const [k, nombre] = azar([[2, "La mitad"], [3, "La tercera parte"], [4, "La cuarta parte"]]);
+          const d = azar([2, 3, 4]), n = entre(1, d - 1 || 1) + (Math.random() < 0.3 ? d : 0);
+          const t = aU(n, d) / k;
+          if (!coprimos(n, d) || !Number.isInteger(t)) continue;
+          p = { texto: `${nombre} de ${F(n, d)} de pizza, por favor.`, objetivo: t, operacion: `${F(1, k)} · ${F(n, d)}` };
+        } else if (tipo === "fraccionDe") {              // a/b de n/d
+          const b = azar([3, 4]), a = entre(2, b - 1), d = azar([2, 4]), n = entre(1, d);
+          const t = aU(n, d) * a / b;
+          if (!coprimos(n, d) || !coprimos(a, b) || !Number.isInteger(t)) continue;
+          const de = n === d ? "una pizza entera" : `${F(n, d)} de pizza`;
+          if (n === d) continue;                         // "a/b de una pizza" no es multiplicar de verdad
+          p = { texto: `Quiero ${F(a, b)} de ${de}.`, objetivo: t, operacion: `${F(a, b)} · ${F(n, d)}` };
+        } else {                                         // n/d repartido entre k: mi parte
+          const k = entre(2, 4), d = azar([2, 4]), n = entre(1, d - 1) + (Math.random() < 0.35 ? d : 0);
+          const t = aU(n, d) / k;
+          if (!coprimos(n, d) || !Number.isInteger(t)) continue;
+          const cuanto = n >= d ? mixto(aU(n, d)) + " pizzas" : `${F(n, d)} de pizza`;
+          p = { texto: `Hay ${cuanto} para ${k} amigos, a partes iguales. Ponme mi parte.`, objetivo: t, operacion: `${FU(aU(n, d))} : ${k}` };
+        }
+        if (p.objetivo <= 0 || p.objetivo > 2 * U || !sePuede(p.objetivo, cfg.botones)) continue;
+        return { ...p, tipo };
+      }
+      return { texto: pedir(F(3, 4)), objetivo: 18, tipo: "fraccion" };
     }
-    const tb = p.base ? aU(p.base.n, p.base.d) : null;
-    if (p.tipo === "mult_entero" && total === tb) return `Has servido la parte de una sola persona. Son ${p.k}: hay que multiplicar ${p.k} × ${texto(p.base)}.`;
-    if ((p.tipo === "fraccion_de" || p.tipo === "div_entero") && total === tb) return `Has servido los ${texto(p.base)} enteros. Hay que quedarse solo con ${p.tipo === "div_entero" ? "una de las " + p.k + " partes" : "la parte que pide"}.`;
-    if (p.tipo === "div_entero" && total === tb * p.k) return `Has multiplicado por ${p.k} en vez de dividir: al repartir entre ${p.k}, a cada uno le toca MENOS.`;
-    return "";
-  }
+  };
 
-  // Pasos de la suma de lo servido con denominador común, sin decimales
-  function pasos(servidas, pedido) {
-    if (!servidas.length) return "No has servido nada.";
-    const L = servidas.reduce((a, s) => mcm(a, s.d), 1);
-    const tot = servidas.reduce((a, s) => a + L / s.d, 0);
-    const partes = servidas.map(s => `1/${s.d}`).join(" + ");
-    const comun = servidas.every(s => s.d === L) ? "" : " = " + servidas.map(s => `${L / s.d}/${L}`).join(" + ");
-    const simp = simplificar(tot, L);
-    const fin = (simp.n !== tot || simp.d !== L) ? ` = ${texto(simp)}` : "";
-    return `${partes}${comun} = ${tot}/${L}${fin}`;
-  }
-
-  function comparar(total, objetivo) { return total < objetivo ? "corto" : total > objetivo ? "pasado" : "exacto"; }
-
-  // ---------- Pizza Rush: tickets, horno, turnos y mejoras ----------
-  // Los tickets se generan como si hubiera pizzas de todos los cortes del turno:
-  // así siempre se pueden servir con lo que va sacando el horno.
-  function stockVirtual(dens) { const p = []; for (const d of dens) for (let k = 0; k < d * 2; k++) p.push(U / d); return p; }
-  function generarTicket(cfg) {
-    for (let i = 0; i < 20; i++) { const t = generarPedido(stockVirtual(cfg.dens), cfg); if (t) return t; }
-    return null;
-  }
-  // ¿Qué pizza hornear? Preferimos cortes que sirvan para los tickets abiertos.
-  // Forma de servir con el menor número de porciones (cortes de "dens", sin el prohibido)
-  function descomposicionMinima(objetivo, dens, prohibido) {
-    const tam = dens.map(d => U / d).filter(x => x !== prohibido);
-    const mejor = Array(objetivo + 1).fill(null); mejor[0] = [];
-    for (let t = 1; t <= objetivo; t++) for (const x of tam) if (x <= t && mejor[t - x] && (!mejor[t] || mejor[t - x].length + 1 < mejor[t].length)) mejor[t] = [...mejor[t - x], x];
-    return mejor[objetivo] ? mejor[objetivo].map(x => U / x) : null;
-  }
-  function cortesUtiles(ticket, dens) {
-    if (!ticket || ticket.tipo === "div_cuantas") return [];
-    const prohib = ticket.cond && ticket.cond.modo === "sin" ? ticket.cond.tam : null;
-    const permitido = d => U / d !== prohib;
-    const exactos = dens.filter(d => permitido(d) && ticket.objetivo % (U / d) === 0);
-    const minima = descomposicionMinima(ticket.objetivo, dens, prohib) || [];
-    // Los cortes de la solución más corta (p. ej. 1 y 7/8 = 1/2 + 1/2 + 1/2 + 1/4 + 1/8) y los que sirven solos
-    const u = [...new Set([...minima, ...exactos])];
-    return u.length ? dens.filter(d => u.includes(d)) : dens.filter(d => permitido(d) && U / d <= ticket.objetivo);
-  }
-  function elegirHorneado(tickets, dens) {
-    const peso = d => 1 + 3 * tickets.filter(t => cortesUtiles(t, dens).includes(d)).length;
-    const total = dens.reduce((a, d) => a + peso(d), 0);
-    let r = Math.random() * total;
-    for (const d of dens) { r -= peso(d); if (r <= 0) return d; }
-    return dens[dens.length - 1];
-  }
-  // ¿Se puede servir este ticket con las porciones del mostrador (más las que ya estén en su caja)?
-  const servibleCon = (ticket, porciones) => ticket.tipo === "div_cuantas" || sePuede(porciones, ticket.objetivo);
-
-  // Monedas de un ticket bien servido
-  const BASE_TIPO = { suma: 10, mult_entero: 15, fraccion_de: 15, div_entero: 15, div_cuantas: 12, condicion: 20 };
-  function monedas({ tipo, combo, perfecto, rapido, propinaOro }) {
-    const mult = combo >= 10 ? 4 : combo >= 6 ? 3 : combo >= 3 ? 2 : 1;
-    return BASE_TIPO[tipo] * mult + (perfecto ? (propinaOro ? 10 : 5) : 0) + (rapido ? 5 : 0);
-  }
-  const multiplicador = combo => combo >= 10 ? 4 : combo >= 6 ? 3 : combo >= 3 ? 2 : 1;
-
-  const TURNOS = [
-    { id: 1, nombre: "Gran apertura", tema: "Mitades y cuartos", dens: [2, 4], tickets: 6, simult: 2, tipos: ["suma"], maxU: 24, vista: "plato", paciencia: 70 },
-    { id: 2, nombre: "Hora punta", tema: "Tercios y sextos", dens: [2, 3, 4, 6], tickets: 8, simult: 3, tipos: ["suma"], maxU: 24, vista: "plato", paciencia: 65 },
-    { id: 3, nombre: "Cortes finos", tema: "Octavos, doceavos y equivalencias", dens: [2, 3, 4, 6, 8, 12], tickets: 8, simult: 3, tipos: ["suma"], maxU: 24, vista: "caja", sinSimplificar: true, paciencia: 65 },
-    { id: 4, nombre: "Mesas grandes", tema: "Más de una pizza", dens: [2, 3, 4, 6, 8], tickets: 8, simult: 3, tipos: ["suma"], maxU: 48, minU: 18, vista: "caja", mixtos: true, paciencia: 75 },
-    { id: 5, nombre: "Pedidos en grupo", tema: "Multiplicar fracciones", dens: [2, 3, 4, 6, 8, 12], tickets: 8, simult: 3, tipos: ["mult_entero", "fraccion_de"], maxU: 48, vista: "caja", mixtos: true, paciencia: 80 },
-    { id: 6, nombre: "A repartir", tema: "Dividir fracciones", dens: [2, 3, 4, 6, 8, 12], tickets: 8, simult: 3, tipos: ["div_entero", "div_cuantas", "div_cuantas"], maxU: 36, vista: "caja", paciencia: 80 },
-    { id: 7, nombre: "Noche de fiesta", tema: "Todo mezclado", dens: [2, 3, 4, 6, 8, 12], tickets: 10, simult: 3, tipos: ["suma", "suma", "mult_entero", "fraccion_de", "div_entero", "div_cuantas"], maxU: 48, vista: "caja", mixtos: true, sinSimplificar: true, paciencia: 70 },
-    { id: 8, nombre: "Inspección del Crítico", tema: "Jefe: pedidos con condiciones", dens: [2, 3, 4, 6, 8, 12], tickets: 8, simult: 3, tipos: ["condicion", "condicion", "fraccion_de", "div_entero"], maxU: 36, vista: "caja", jefe: true, paciencia: 75 }
+  const MENUS = [
+    { id: 1, titulo: "Medios y cuartos", sub: "Reconoce fracciones y descubre que 2/4 = 1/2", botones: [2, 4], pizzas: 1, clientes: 8, guia: 4 },
+    { id: 2, titulo: "Tercios, sextos y octavos", sub: "Suma porciones de distinto tamaño", botones: [2, 3, 4, 6, 8], pizzas: 1, clientes: 8, guia: 3 },
+    { id: 3, titulo: "Más de una pizza", sub: "Fracciones mayores que 1: 5/4, 1 y 1/2…", botones: [2, 3, 4, 6, 8], pizzas: 2, clientes: 8, guia: 2 },
+    { id: 4, titulo: "Para compartir", sub: "Multiplica y divide: «somos 3, 1/4 cada uno»", botones: [2, 3, 4, 6, 8], pizzas: 2, clientes: 8, guia: 0 }
   ];
-  const JORNADAS = TURNOS;   // compatibilidad con la v0.1
 
-  // Mejoras de la tienda. nivel: lo que tiene el jugador; precio por nivel.
-  const MEJORAS = [
-    { id: "horno", nombre: "Horno turbo", icono: "🔥", desc: "El horno saca pizzas más rápido.", precios: [120, 260, 450], tipo: "juego" },
-    { id: "mostrador", nombre: "Mostrador XL", icono: "🍽️", desc: "Caben más pizzas en el mostrador.", precios: [150, 350], tipo: "juego" },
-    { id: "campana", nombre: "Campanita de paciencia", icono: "🔔", desc: "Los clientes esperan un 25 % más por nivel.", precios: [100, 240], tipo: "juego" },
-    { id: "cortador", nombre: "Cortador mágico", icono: "🔪", desc: "Vuelve a cortar una pizza entera en el corte que elijas (¡equivalencias!).", precios: [300], tipo: "juego" },
-    { id: "oro", nombre: "Propina de oro", icono: "🪙", desc: "El servicio perfecto da el doble de propina.", precios: [220], tipo: "juego" },
-    { id: "luces", nombre: "Luces de verbena", icono: "💡", desc: "Decoración: guirnalda de luces en la cocina.", precios: [80], tipo: "deco" },
-    { id: "mantel", nombre: "Mantel de cuadros", icono: "🟥", desc: "Decoración: mostrador con mantel de cuadros.", precios: [80], tipo: "deco" },
-    { id: "neon", nombre: "Letrero de neón", icono: "✨", desc: "Decoración: letrero πCHU de neón.", precios: [150], tipo: "deco" },
-    { id: "plantas", nombre: "Plantas de albahaca", icono: "🌿", desc: "Decoración: macetas de albahaca.", precios: [60], tipo: "deco" }
-  ];
-  const intervaloHorno = nivel => [7, 5.5, 4.5, 3.5][nivel || 0];
-  const huecosMostrador = nivel => 4 + (nivel || 0);
-  const factorPaciencia = nivel => 1 + 0.25 * (nivel || 0);
-  const RANGOS = [[0, "Puesto callejero"], [6, "Pizzería de barrio"], [12, "Trattoria famosa"], [18, "Restaurante con estrella"], [24, "Imperio πCHU"]];
-  const rango = estrellasTotales => RANGOS.filter(r => estrellasTotales >= r[0]).pop()[1];
+  // Crea un pedido del menú, distinto del anterior (si se pasa)
+  function generarPedido(menu, anterior) {
+    const cfg = typeof menu === "number" ? MENUS[menu - 1] : menu;
+    let p;
+    for (let i = 0; i < 30; i++) {
+      p = GEN[cfg.id](cfg);
+      if (!anterior || p.objetivo !== anterior.objetivo) break;
+    }
+    p.solucion = descomponer(p.objetivo, cfg.botones);
+    p.leer = plano(p.texto);
+    return p;
+  }
 
-  // Estrellas de una jornada: servir al menos el 60 % para superarla
-  function estrellas(servidos, perfectos, total) {
-    if (servidos < Math.ceil(total * 0.6)) return 0;
-    if (servidos === total && perfectos >= Math.ceil(total / 2)) return 3;
-    if (servidos >= Math.ceil(total * 0.8)) return 2;
+  // Estrellas de un menú según los clientes servidos a la primera
+  function estrellas(primera, total) {
+    if (primera >= total) return 3;
+    if (primera >= total - 2) return 2;
     return 1;
   }
 
-  const motor = { U, CORTES, NOMBRE_CORTE, mcd, mcm, simplificar, aU, deU, texto, cantidadesPosibles, sePuede, minPorciones,
-    generarPedido, evaluar, detectarError, pasos, comparar, JORNADAS, TURNOS, estrellas, fraccionesPedibles, opcionesNumero,
-    generarTicket, stockVirtual, cortesUtiles, descomposicionMinima, elegirHorneado, servibleCon, monedas, multiplicador, MEJORAS, intervaloHorno, huecosMostrador, factorPaciencia, rango, RANGOS };
+  // Clientes del álbum: cada menú regala uno con 2 estrellas y otro con 3
+  const CLIENTES = [
+    { id: "compas", nombre: "Don Compás", menu: 1, est: 2 }, { id: "malabares", nombre: "La Malabarista", menu: 1, est: 3 },
+    { id: "pizarra", nombre: "El Profe Pizarra", menu: 2, est: 2 }, { id: "escudo", nombre: "Lady Escudo", menu: 2, est: 3 },
+    { id: "pirata", nombre: "El Pirata", menu: 3, est: 2 }, { id: "salsita", nombre: "Salsita", menu: 3, est: 3 },
+    { id: "reina", nombre: "La Reina", menu: 4, est: 2 }, { id: "critico", nombre: "El Crítico", menu: 4, est: 3 }
+  ];
+  // Clientes que se ganan con e estrellas en el menú m
+  const premios = (m, e) => CLIENTES.filter(c => c.menu === m && c.est <= e).map(c => c.id);
+
+  const CONTRARRELOJ = 90;   // segundos
+
+  const motor = { U, TODAS, NOMBRE, MENUS, CLIENTES, CONTRARRELOJ, mcd, mcm, simplificar, aU, deU, F, FU, plano,
+    descomponer, sePuede, comprobar, agrupar, cuentaSuma, generarPedido, estrellas, premios };
   if (typeof module !== "undefined" && module.exports) module.exports = motor; else raiz.Motor = motor;
 })(typeof window !== "undefined" ? window : globalThis);

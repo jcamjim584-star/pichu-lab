@@ -1,5 +1,17 @@
 # Registro de cambios
 
+## 0.6.5 · 18/11/2026
+- **Pizzería πCHU v0.3** (antes Pizza Rush): el juego de fracciones se rehace desde cero porque la v0.2 era complicada y poco atractiva.
+  - Una sola idea: un cliente pide un trozo de pizza y se sirve tocando porciones (½, ⅓, ¼, ⅙, ⅛) que llenan una pizza grande. Tiene que ser exacto.
+  - Al principio hay una guía (zona rayada y raya roja) hasta donde llenar; después, sin guía, hay que calcular. Si se falla, se explica cuánto falta o sobra con denominador común y vuelve la guía.
+  - Al acertar se enseña la cuenta (½ + ¼ = 2/4 + 1/4 = 3/4) y, en el menú 4, la operación (3 · ¼, ¾ : 2…).
+  - 4 menús de 8 clientes: medios y cuartos · tercios, sextos y octavos · más de una pizza · para compartir (multiplicar y dividir).
+  - Estrellas por clientes servidos a la primera, álbum con los 8 personajes (uno con ★★ y otro con ★★★ en cada menú) y contrarreloj opcional de 90 s.
+  - Se quitan horno, tickets, mostrador, paciencia, tienda, decoración, cortador, Crítico y multiplicadores. Sin cuenta atrás por defecto.
+  - Guardado nuevo `pichu.pizzeria.v3` (la `v2` no se borra). Corregida la clave que declaraba `marca.js` (decía `v1`).
+  - Pruebas: motor 605.183 comprobaciones (`tests/pizzeria_motor.test.mjs`) y navegador 53/53 (`tests/prueba_pizzeria.mjs`, sustituye a `prueba_pizzeria.py`).
+  - Sigue en «Próximamente» hasta probarlo en clase.
+
 ## 0.6.4 · 11/11/2026
 - Logo del IES Alarifes Ruiz Florindo en el recuadro del centro (`compartido/img/centro.jpg`, sacado del Drive del centro y sin metadatos).
 

@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>Pizza Rush πCHU · Fracciones</title>
+<title>Pizzería πCHU · Fracciones</title>
 <meta name="theme-color" content="#332B2A">
 <!-- πCHU: botón para volver a la portada -->
 <script src="../../compartido/volver.js" defer></script>
@@ -13,267 +13,243 @@
 @font-face{font-family:"Lato";font-weight:900;font-display:swap;src:url("../../compartido/fuentes/lato-latin-900-normal.woff2") format("woff2")}
 :root{
   --espresso:#332B2A; --salvia:#5A8A78; --coral:#E46D4D; --crema:#F4EDD7;
-  --coral-oscuro:#A8402A; --salvia-oscuro:#3F6E5C; --papel:#FFFCF3; --linea:#D9CFB4; --oro:#E8B04B;
-  --masa:#D9A55B; --queso:#F6D58E; --peperoni:#A8402A; --madera:#6B4A3A;
+  --coral-oscuro:#A8402A; --salvia-oscuro:#3F6E5C; --papel:#FFFCF3; --linea:#D9CFB4; --oro:#E8B04B; --oro-oscuro:#8A6214;
+  --madera:#B07A4F; --madera-oscura:#7A4E2E;
   --fuente:"Lato",system-ui,-apple-system,"Segoe UI",Roboto,sans-serif;
 }
 *,*::before,*::after{box-sizing:border-box}
 html,body{margin:0}
-body{font-family:var(--fuente);color:var(--espresso);line-height:1.4;min-height:100vh;background:var(--espresso);
-  -webkit-tap-highlight-color:transparent}
+body{font-family:var(--fuente);color:var(--espresso);line-height:1.4;min-height:100vh;background:var(--crema);-webkit-tap-highlight-color:transparent}
 button{font:inherit;color:inherit}
-:focus-visible{outline:3px solid var(--oro);outline-offset:3px}
+:focus-visible{outline:3px solid var(--espresso);outline-offset:3px;box-shadow:0 0 0 6px var(--oro)}
 .oculto{display:none!important}
 .solo-lector{position:absolute!important;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0);white-space:nowrap}
-.fr{display:inline-flex;flex-direction:column;align-items:center;vertical-align:middle;line-height:1;margin:0 .1em;font-weight:900}
-.fr>span:first-child{border-bottom:.12em solid currentColor;padding:0 .1em .06em}
-.fr>span:last-child{padding:.06em .1em 0}
-.btn{display:inline-flex;align-items:center;justify-content:center;gap:.4em;min-height:46px;padding:.45em 1.2em;border-radius:14px;border:3px solid var(--espresso);
-  background:var(--coral);color:#fff;font-weight:900;cursor:pointer;box-shadow:0 4px 0 var(--espresso);transition:transform .08s,box-shadow .08s;text-shadow:0 1px 0 rgba(0,0,0,.25)}
-.btn:active{transform:translateY(3px);box-shadow:0 1px 0 var(--espresso)}
+.fr{display:inline-flex;flex-direction:column;align-items:center;vertical-align:middle;line-height:1;margin:0 .08em;font-weight:900}
+.fr>span:first-child{border-bottom:.1em solid currentColor;padding:0 .12em .05em}
+.fr>span:last-child{padding:.05em .12em 0}
+
+/* Botones */
+.btn{display:inline-flex;align-items:center;justify-content:center;gap:.4em;min-height:48px;padding:.45em 1.2em;border-radius:14px;border:3px solid var(--espresso);
+  background:var(--coral-oscuro);color:#fff;font-weight:900;font-size:1.05rem;cursor:pointer;box-shadow:0 4px 0 var(--espresso);transition:transform .08s,box-shadow .08s}
+.btn:active:not([disabled]){transform:translateY(3px);box-shadow:0 1px 0 var(--espresso)}
 .btn.verde{background:var(--salvia-oscuro)}
-.btn.claro{background:var(--papel);color:var(--espresso);text-shadow:none}
-.btn.oro{background:var(--oro);color:var(--espresso);text-shadow:none}
-.btn[disabled]{opacity:.45;cursor:not-allowed;transform:none;box-shadow:0 4px 0 var(--espresso)}
-.btn.peq{min-height:38px;padding:.25em .8em;font-size:.95rem;border-radius:11px}
+.btn.claro{background:var(--papel);color:var(--espresso)}
+.btn.oro{background:var(--oro);color:var(--espresso)}
+.btn[disabled]{opacity:.4;cursor:not-allowed}
+.btn.grande{font-size:1.25rem;padding:.5em 1.6em;min-height:56px}
 
-/* ================= INICIO / MI PIZZERÍA ================= */
-#inicio{min-height:100vh;background:
-  radial-gradient(circle at 20% 10%,rgba(232,176,75,.25),transparent 40%),
-  radial-gradient(circle at 80% 90%,rgba(228,109,77,.25),transparent 45%), var(--espresso);color:var(--crema);padding:1.2rem 1rem 4rem}
-.ini{max-width:1050px;margin:0 auto}
-.logo-rush{text-align:center;margin:.6rem 0 1.2rem}
-.logo-rush h1{margin:0;font-size:clamp(2.6rem,9vw,5rem);font-weight:900;line-height:.95;letter-spacing:-.02em;
-  color:var(--oro);text-shadow:0 4px 0 var(--coral-oscuro),0 8px 0 #1d1716}
-.logo-rush h1 span{color:var(--crema)}
-.logo-rush p{margin:.6rem 0 0;font-size:1.1rem;opacity:.9}
-.mi-pizzeria{display:grid;grid-template-columns:1.1fr 1fr;gap:1rem;align-items:stretch}
-@media (max-width:820px){.mi-pizzeria{grid-template-columns:1fr}}
-.panel{background:rgba(255,252,243,.06);border:2px solid rgba(244,237,215,.18);border-radius:20px;padding:1rem}
-.panel h2{margin:0 0 .5rem;font-size:1.15rem;font-weight:900;letter-spacing:.02em}
-.escaparate{position:relative;height:220px;border-radius:16px;overflow:hidden;background:var(--crema);border:3px solid var(--espresso)}
-.rango{display:flex;justify-content:space-between;align-items:center;gap:.6rem;flex-wrap:wrap;margin-top:.7rem}
-.rango b{font-size:1.25rem;color:var(--oro)}
-.monedas-total{font-size:1.4rem;font-weight:900}
-.turnos{list-style:none;padding:0;margin:0;display:grid;grid-template-columns:repeat(auto-fill,minmax(150px,1fr));gap:.6rem}
-.turno-btn{width:100%;text-align:left;padding:.7rem .8rem;border-radius:14px;border:3px solid var(--espresso);background:var(--papel);color:var(--espresso);cursor:pointer;box-shadow:0 4px 0 #1d1716;display:flex;flex-direction:column;gap:.15rem;min-height:110px}
-.turno-btn:hover:not([disabled]){background:#fff}
-.turno-btn[disabled]{opacity:.5;cursor:not-allowed}
-.turno-btn .n{font-size:.75rem;font-weight:900;color:var(--coral-oscuro);text-transform:uppercase;letter-spacing:.05em}
-.turno-btn b{font-size:1.02rem;line-height:1.15}
-.turno-btn small{font-size:.82rem}
-.turno-btn .est{margin-top:auto;font-size:1.05rem;letter-spacing:.08em;color:#B9811F}
-.turno-btn.jefe{background:linear-gradient(135deg,#FFF3D6,#F4D58E)}
-.acciones-ini{display:flex;flex-wrap:wrap;gap:.7rem;justify-content:center;margin-top:1.2rem}
+/* Toldo de pizzería */
+.toldo{height:34px;background:repeating-linear-gradient(90deg,var(--coral) 0 44px,var(--papel) 44px 88px);position:relative}
+.toldo::after{content:"";position:absolute;left:0;right:0;bottom:-14px;height:14px;
+  background:radial-gradient(circle at 22px 0,var(--coral) 21px,transparent 22px) 0 0/88px 14px repeat-x,
+             radial-gradient(circle at 66px 0,var(--papel) 21px,transparent 22px) 0 0/88px 14px repeat-x}
+.pared{background:var(--crema) radial-gradient(rgba(90,138,120,.13) 2px,transparent 2.5px) 0 0/26px 26px}
 
-/* ================= COCINA ================= */
-#cocina{min-height:100vh;display:flex;flex-direction:column;background:
-  repeating-linear-gradient(45deg,rgba(51,43,42,.035) 0 12px,transparent 12px 24px),
-  linear-gradient(var(--crema),#EFE4C8)}
-.hud{display:flex;align-items:center;gap:.5rem .9rem;flex-wrap:wrap;padding:.5rem .8rem;background:var(--espresso);color:var(--crema);position:sticky;top:0;z-index:20}
-.hud .marca{font-weight:900;font-size:1.05rem;margin-right:auto;white-space:nowrap}
-.hud .marca span{color:var(--oro)}
-.dato{display:flex;flex-direction:column;align-items:center;line-height:1.05;min-width:58px}
-.dato small{font-size:.66rem;letter-spacing:.07em;text-transform:uppercase;opacity:.8}
-.dato b{font-size:1.15rem}
-.combo{display:flex;align-items:center;gap:.3rem;font-weight:900;font-size:1.25rem;min-width:84px;justify-content:center;padding:.15rem .6rem;border-radius:12px;background:#1d1716}
-.combo.x2{color:var(--oro)} .combo.x3{color:#FFB25E} .combo.x4{color:#FF7A4D;text-shadow:0 0 12px rgba(255,122,77,.8)}
-.combo.pulso{animation:pulso .4s}
-@keyframes pulso{50%{transform:scale(1.25)}}
-.hud .btn{box-shadow:none;border-color:var(--crema);background:transparent;color:var(--crema);text-shadow:none}
+/* ================= INICIO ================= */
+#inicio{min-height:100vh;padding-bottom:5rem}
+.ini{max-width:1000px;margin:0 auto;padding:1.6rem 1rem 0}
+.cabecera{display:flex;align-items:center;gap:1.2rem;flex-wrap:wrap;justify-content:center;margin-bottom:1.4rem}
+.cabecera img{width:118px;height:auto;filter:drop-shadow(0 6px 0 rgba(51,43,42,.15))}
+.logo h1{margin:0;font-size:clamp(2.2rem,8vw,3.6rem);line-height:1;font-weight:900;letter-spacing:-.02em;color:var(--coral-oscuro)}
+.logo h1 span{color:var(--espresso)}
+.logo p{margin:.3rem 0 0;font-size:1.15rem;font-weight:700}
+.bocadillo-ini{background:var(--papel);border:3px solid var(--espresso);border-radius:18px;padding:.7rem 1rem;max-width:360px;font-weight:700;position:relative;box-shadow:0 4px 0 rgba(51,43,42,.2)}
+.menus{display:grid;grid-template-columns:repeat(auto-fit,minmax(min(100%,420px),1fr));gap:1rem}
+.menu-card{background:var(--papel);border:3px solid var(--espresso);border-radius:20px;padding:1rem;display:grid;grid-template-columns:72px 1fr;gap:.2rem 1rem;align-items:center;box-shadow:0 5px 0 rgba(51,43,42,.25)}
+.menu-card .num{grid-row:span 2;width:72px;height:72px;border-radius:50%;display:grid;place-items:center;font-size:2rem;font-weight:900;color:#fff;background:var(--salvia-oscuro);border:3px solid var(--espresso)}
+.menu-card h2{margin:0;font-size:1.25rem;line-height:1.15}
+.menu-card p{margin:0;font-size:.95rem}
+.menu-card .est{font-size:1.4rem;letter-spacing:.1em;color:var(--oro-oscuro);grid-column:1/-1;margin-top:.3rem}
+.menu-card .est small{font-size:.85rem;letter-spacing:0;color:var(--espresso);margin-left:.4rem}
+.menu-card .acc{grid-column:1/-1;display:flex;gap:.6rem;flex-wrap:wrap;margin-top:.4rem}
+.menu-card.bloq{opacity:.7}
+.menu-card.bloq .num{background:#8C817E}
+.menu-card .candado{grid-column:1/-1;font-weight:700;font-size:.95rem;margin-top:.4rem}
+.album{margin-top:1.6rem;background:var(--papel);border:3px solid var(--espresso);border-radius:20px;padding:1rem}
+.album h2{margin:0 0 .2rem;font-size:1.2rem}
+.album p{margin:0 0 .8rem;font-size:.95rem}
+.album ul{list-style:none;margin:0;padding:0;display:grid;grid-template-columns:repeat(auto-fill,minmax(96px,1fr));gap:.6rem}
+.album li{text-align:center;font-size:.82rem;font-weight:700;line-height:1.15}
+.album img{width:100%;max-width:96px;aspect-ratio:1;object-fit:contain;display:block;margin:0 auto .2rem}
+.album li.no img{filter:grayscale(1) brightness(.2);opacity:.2}
+.album li.no span{opacity:.75}
+.ajustes-ini{display:flex;gap:.6rem;justify-content:center;flex-wrap:wrap;margin-top:1.4rem}
 
-.carril{display:flex;gap:.8rem;padding:.9rem .8rem .4rem;overflow-x:auto;min-height:250px;align-items:flex-start}
-.ticket{position:relative;flex:0 0 250px;background:#fff;border:3px solid var(--espresso);border-radius:6px 6px 0 0;padding:.6rem .7rem 1.2rem;cursor:pointer;
-  box-shadow:0 6px 0 rgba(51,43,42,.25);transform:rotate(var(--rot,0deg));transition:transform .2s,box-shadow .2s;animation:entra .45s cubic-bezier(.2,1.4,.4,1)}
-.ticket::after{content:"";position:absolute;left:-3px;right:-3px;bottom:-12px;height:12px;
-  background:linear-gradient(-45deg,transparent 8px,#fff 0) 0 0/16px 12px repeat-x,linear-gradient(45deg,transparent 8px,#fff 0) 0 0/16px 12px repeat-x}
-.ticket.activo{transform:rotate(0) translateY(-6px);box-shadow:0 0 0 4px var(--oro),0 10px 0 rgba(51,43,42,.25)}
-.ticket.jefe{background:linear-gradient(160deg,#FFF7E0,#FBE3A6)}
-.ticket.jefe::after{background:linear-gradient(-45deg,transparent 8px,#FBE3A6 0) 0 0/16px 12px repeat-x,linear-gradient(45deg,transparent 8px,#FBE3A6 0) 0 0/16px 12px repeat-x}
-@keyframes entra{from{transform:translateY(-120%) rotate(-8deg);opacity:0}}
-.ticket.sale{animation:sale .5s ease forwards}
-@keyframes sale{to{transform:translateY(-140%) rotate(10deg);opacity:0}}
-.ticket.perdido{animation:perdido .6s ease forwards}
-@keyframes perdido{to{transform:translateY(60px) rotate(-14deg);opacity:0}}
-.ticket.tiembla{animation:temblor .35s}
-@keyframes temblor{25%{transform:translateX(-7px) rotate(-2deg)}75%{transform:translateX(7px) rotate(2deg)}}
-.t-cab{display:flex;justify-content:space-between;align-items:center;font-size:.78rem;font-weight:900;text-transform:uppercase;letter-spacing:.05em}
-.t-cab .tecla{background:var(--espresso);color:#fff;border-radius:6px;padding:0 .4em}
-.etq{padding:.1em .5em;border-radius:999px;background:var(--crema)}
-.etq.mult{background:#DCE8E1;color:var(--salvia-oscuro)} .etq.div{background:#E5E0F2;color:#4B3F7A} .etq.jefe{background:var(--oro)}
-.t-pedido{font-size:1.15rem;font-weight:700;margin:.4rem 0;min-height:3.2em}
-.t-pedido .fr{font-size:1.35em}
-.pac{height:9px;border-radius:999px;background:#EEE4CC;overflow:hidden;margin:.2rem 0 .5rem}
-.pac span{display:block;height:100%;border-radius:999px;background:var(--salvia)}
-.pac.media span{background:var(--oro)} .pac.baja span{background:var(--coral)}
-.t-caja{min-height:62px;border:2px dashed var(--linea);border-radius:10px;padding:.35rem;display:flex;flex-wrap:wrap;gap:.3rem;align-items:center;justify-content:center;background:var(--papel)}
-.t-caja .vacio{font-size:.82rem;opacity:.7}
-.t-caja svg{width:84px;height:84px}
-.chip{display:inline-flex;align-items:center;min-height:38px;padding:.1em .5em;border-radius:9px;border:2px solid var(--espresso);background:var(--queso);cursor:pointer;font-size:.95rem}
-.t-botones{display:flex;gap:.4rem;margin-top:.5rem}
-.t-botones .btn{flex:1}
-.t-resp{display:grid;grid-template-columns:repeat(4,1fr);gap:.35rem;margin-top:.4rem}
-.t-resp .btn{padding:.2em;font-size:1.2rem}
-.t-dibujo{display:flex;justify-content:center;gap:.3rem}
-.t-dibujo svg{width:70px;height:70px}
-.t-intento{font-size:.8rem;color:var(--coral-oscuro);font-weight:700;min-height:1.1em;margin-top:.25rem}
-.hueco-ticket{flex:0 0 250px;border:3px dashed rgba(51,43,42,.2);border-radius:8px;min-height:200px;display:grid;place-items:center;color:rgba(51,43,42,.45);font-weight:700;text-align:center;padding:1rem}
+/* ================= JUEGO ================= */
+#juego{min-height:100vh;display:flex;flex-direction:column}
+.barra{background:var(--espresso);color:var(--crema);display:flex;align-items:center;gap:.6rem;padding:.4rem .8rem;flex-wrap:wrap}
+.barra .btn{min-height:44px;padding:.2em .8em;font-size:.95rem;box-shadow:none;border-color:var(--crema)}
+.barra .titulo{font-weight:900;font-size:1.02rem;flex:1;min-width:150px;line-height:1.15}
+.barra .titulo small{display:block;font-weight:700;font-size:.78rem;opacity:.85;text-transform:uppercase;letter-spacing:.06em}
+.puntos{display:flex;gap:.3rem;align-items:center}
+.puntos span{width:20px;height:20px;border-radius:50%;border:2px solid var(--crema);display:grid;place-items:center;font-size:.75rem;font-weight:900}
+.puntos span.bien{background:var(--salvia);color:#fff}
+.puntos span.casi{background:var(--oro);color:var(--espresso)}
+.puntos span.ahora{box-shadow:0 0 0 3px var(--oro)}
+.contador{display:none;font-weight:900;font-size:1.05rem;background:rgba(244,237,215,.15);border-radius:999px;padding:.15em .7em}
+@media (max-width:620px){.puntos{display:none}.contador{display:block}.barra .titulo{min-width:0}}
+.reloj{display:flex;align-items:center;gap:.5rem;font-weight:900;font-size:1.1rem}
+.reloj .tubo{width:120px;height:12px;border-radius:999px;background:rgba(244,237,215,.25);overflow:hidden}
+.reloj .tubo span{display:block;height:100%;background:var(--oro);width:100%}
+.lado-izq,.lado-der{display:contents}
+.zona{flex:1;max-width:1180px;width:100%;margin:0 auto;padding:.7rem 1rem 5.5rem;display:grid;gap:.55rem;justify-items:center;align-content:start;
+  grid-template-columns:minmax(0,1fr);grid-template-areas:"cliente" "pista" "mesa" "enpizza" "resp" "controles"}
+.cliente{grid-area:cliente} .pista{grid-area:pista} .mesa{grid-area:mesa} .en-pizza{grid-area:enpizza} .respuesta{grid-area:resp} #controles{grid-area:controles}
+@media (min-width:900px){
+  .zona{grid-template-columns:minmax(300px,1fr) minmax(0,1.25fr);column-gap:2rem;padding-top:1.4rem;grid-template-areas:none;align-items:start}
+  .lado-izq,.lado-der{display:flex;flex-direction:column;align-items:center;gap:.8rem;width:100%}
+  .cliente{flex-direction:column;align-items:center}
+  .cliente .bocadillo{margin-bottom:0;width:100%}
+  .cliente .bocadillo::before{left:50%;bottom:-24px;transform:translateX(-50%);border:12px solid transparent;border-top:14px solid var(--espresso)}
+  .cliente .bocadillo::after{left:50%;bottom:-17px;transform:translateX(-50%);border:9px solid transparent;border-top:11px solid var(--papel)}
+  .cliente img{order:2;width:150px}
+  .pizzas.una{--tam:min(340px,46vh)} .pizzas.dos{--tam:min(260px,22vw,40vh)}
+}
+#juego .toldo{height:18px}
+#juego .toldo::after{height:9px;bottom:-9px;background-size:88px 9px}
 
-.cocina-baja{display:grid;grid-template-columns:150px 1fr;gap:.8rem;padding:.6rem .8rem 1.2rem;align-items:end}
+.cliente{display:flex;align-items:flex-end;gap:.6rem;width:100%;max-width:720px}
+.cliente img{width:clamp(88px,22vw,150px);height:auto;flex:0 0 auto;transform-origin:50% 100%}
+.bocadillo{flex:1;background:var(--papel);border:3px solid var(--espresso);border-radius:20px;padding:.8rem 1rem;position:relative;box-shadow:0 4px 0 rgba(51,43,42,.2);margin-bottom:1.2rem}
+.bocadillo::before{content:"";position:absolute;left:-16px;bottom:18px;border:10px solid transparent;border-right:14px solid var(--espresso)}
+.bocadillo::after{content:"";position:absolute;left:-10px;bottom:21px;border:7px solid transparent;border-right:10px solid var(--papel)}
+.bocadillo .quien{font-size:.8rem;font-weight:900;text-transform:uppercase;letter-spacing:.06em;color:var(--coral-oscuro)}
+.bocadillo .pedido{font-size:clamp(1.15rem,3.6vw,1.5rem);font-weight:700;line-height:1.35}
+.bocadillo .pedido .fr{font-size:1.25em}
 
-.horno{position:relative;height:170px;border-radius:80px 80px 14px 14px;background:linear-gradient(#B4574A,#8C3F35);border:4px solid var(--espresso);
-  display:flex;flex-direction:column;align-items:center;justify-content:flex-end;padding-bottom:12px;box-shadow:inset 0 -10px 0 rgba(0,0,0,.18)}
-.horno::before{content:"";position:absolute;inset:8px 8px auto;height:60%;border-radius:70px 70px 0 0;
-  background:repeating-linear-gradient(0deg,transparent 0 16px,rgba(0,0,0,.15) 16px 18px),repeating-linear-gradient(90deg,transparent 0 30px,rgba(0,0,0,.12) 30px 32px)}
-.boca{position:relative;width:96px;height:58px;border-radius:50px 50px 6px 6px;background:#1d1716;border:3px solid var(--espresso);overflow:hidden}
-.fuego{position:absolute;inset:auto 0 0;height:70%;background:radial-gradient(ellipse at 50% 100%,#FFD36B,#FF7A3D 45%,transparent 70%);animation:fuego 1s infinite alternate}
-@keyframes fuego{to{transform:scaleY(1.2) translateY(-3px);opacity:.85}}
-.horno .barra{position:absolute;left:12px;right:12px;top:12px;height:10px;border-radius:999px;background:rgba(0,0,0,.35);overflow:hidden}
-.horno .barra span{display:block;height:100%;background:var(--oro)}
-.horno .rotulo{position:absolute;top:28px;color:#FFE9BF;font-weight:900;font-size:.8rem;letter-spacing:.08em}
-.horno.lleno .rotulo{color:#fff;animation:pulso 1s infinite}
-.mostrador{position:relative;border-radius:16px;border:4px solid var(--espresso);background:var(--madera);padding:1rem .6rem 1.2rem;min-height:200px;
-  box-shadow:inset 0 -12px 0 rgba(0,0,0,.2)}
-.cinta{position:absolute;left:0;right:0;bottom:10px;height:14px;background:repeating-linear-gradient(90deg,#2a2221 0 20px,#3d3230 20px 40px);animation:cinta 1.2s linear infinite;opacity:.8}
-@keyframes cinta{to{background-position:40px 0}}
-.huecos{position:relative;display:flex;flex-wrap:wrap;gap:.6rem;justify-content:center;z-index:1}
-.pizza{position:relative;width:140px;display:flex;flex-direction:column;align-items:center;animation:llega .55s cubic-bezier(.2,1.3,.4,1)}
-@keyframes llega{from{transform:translateX(-160px) rotate(-90deg);opacity:0}}
-.pizza svg{width:140px;height:140px;filter:drop-shadow(0 4px 0 rgba(0,0,0,.3))}
-.pizza .corte{font-size:.82rem;font-weight:900;color:var(--crema);background:rgba(0,0,0,.35);padding:.05em .55em;border-radius:999px;margin-top:.15rem}
-.pizza .herr{position:absolute;top:-6px;right:-4px;display:flex;gap:3px}
-.pizza .herr button{width:34px;height:34px;border-radius:50%;border:2px solid var(--espresso);background:var(--papel);cursor:pointer;font-size:.95rem;line-height:1;padding:0}
-.hueco-pizza{width:140px;height:140px;border-radius:50%;border:3px dashed rgba(244,237,215,.25);align-self:center}
-.porcion{cursor:pointer}
-.porcion:hover{filter:brightness(1.1)}
-.porcion:focus{outline:none}
-.porcion:focus-visible path.borde{stroke:var(--oro);stroke-width:6}
-.agujero path{fill:rgba(0,0,0,.18);stroke:rgba(244,237,215,.35);stroke-dasharray:4 4}
+.mesa{display:flex;flex-direction:column;align-items:center;gap:.3rem}
+.guia-etq{font-size:.88rem;font-weight:900;padding:.15em .7em;border-radius:999px;background:var(--papel);border:2px solid var(--espresso)}
+.pizzas{display:flex;gap:1rem;justify-content:center;align-items:flex-start}
+.pizza{display:flex;flex-direction:column;align-items:center}
+.pizza svg{width:var(--tam);height:var(--tam);display:block;overflow:visible}
+.pizzas.una{--tam:min(290px,72vw,28vh)}
+.pizzas.dos{--tam:min(250px,43vw,27vh)}
+.pizza small{font-weight:900;font-size:.85rem}
+.nueva{transform-origin:100px 100px;animation:pon .22s ease-out}
+@keyframes pon{from{transform:scale(.7);opacity:0}}
 
-/* Decoración */
-.deco-luces{position:absolute;left:0;right:0;top:0;height:26px;pointer-events:none;
-  background:radial-gradient(circle at 10px 14px,#FFD36B 5px,transparent 6px) 0 0/40px 26px,radial-gradient(circle at 30px 14px,#E46D4D 5px,transparent 6px) 0 0/40px 26px,
-  radial-gradient(circle at 20px 18px,#5A8A78 5px,transparent 6px) 20px 0/40px 26px;animation:parpadeo 1.6s steps(2) infinite}
-@keyframes parpadeo{50%{filter:brightness(1.5)}}
-.mostrador.mantel{background:repeating-conic-gradient(#C9483A 0 25%,#F4EDD7 0 50%) 0 0/44px 44px}
-.neon{font-weight:900;color:#FF8FB1;text-shadow:0 0 6px #FF4F8B,0 0 16px #FF4F8B;letter-spacing:.06em}
-.maceta{position:absolute;bottom:-4px;font-size:2rem;z-index:2;pointer-events:none}
+.en-pizza{min-height:2.6em;display:flex;align-items:center;gap:.4rem;flex-wrap:wrap;justify-content:center;font-weight:700}
+.en-pizza .mas{font-weight:900}
+.en-pizza .chip{display:inline-flex;align-items:center;background:var(--papel);border:2px solid var(--espresso);border-radius:10px;padding:.1em .35em;font-size:1.05rem}
 
-/* Avisos y efectos */
-#aviso{position:fixed;left:50%;top:76px;transform:translateX(-50%);z-index:40;width:min(560px,94vw);border:3px solid var(--espresso);border-radius:16px;padding:.7rem 1rem;
-  background:var(--papel);box-shadow:0 8px 0 rgba(51,43,42,.25);font-size:1rem;cursor:pointer;animation:aviso .3s}
-#aviso.bien{background:#EEF5F1;border-color:var(--salvia-oscuro)} #aviso.mal{background:#FBEDE7;border-color:var(--coral-oscuro)}
-#aviso h3{margin:0 0 .25rem;font-size:1.1rem}
-#aviso p{margin:.2rem 0}
-#aviso .op{font-weight:700}
-@keyframes aviso{from{transform:translate(-50%,-20px);opacity:0}}
-.flota{position:fixed;z-index:45;font-weight:900;font-size:1.6rem;color:var(--oro);text-shadow:0 2px 0 var(--espresso),0 0 8px rgba(0,0,0,.4);pointer-events:none;animation:flota 1.1s ease-out forwards}
-@keyframes flota{to{transform:translateY(-90px) scale(1.2);opacity:0}}
-.grito{position:fixed;left:50%;top:40%;transform:translate(-50%,-50%);z-index:46;font-weight:900;font-size:clamp(2rem,7vw,4rem);color:var(--oro);
-  text-shadow:0 4px 0 var(--coral-oscuro),0 8px 0 var(--espresso);pointer-events:none;animation:grito 1s ease-out forwards;white-space:nowrap}
-@keyframes grito{0%{transform:translate(-50%,-50%) scale(.4);opacity:0}20%{transform:translate(-50%,-50%) scale(1.15);opacity:1}100%{transform:translate(-50%,-80%) scale(1);opacity:0}}
-.confeti{position:fixed;width:10px;height:14px;z-index:44;pointer-events:none;animation:confeti 1.2s ease-in forwards}
-@keyframes confeti{to{transform:translate(var(--dx),220px) rotate(540deg);opacity:0}}
-.sacude{animation:sacude .3s}
-@keyframes sacude{25%{transform:translate(-5px,2px)}75%{transform:translate(5px,-2px)}}
+.porciones{display:flex;gap:.5rem;justify-content:center;flex-wrap:wrap}
+.porcion{width:74px;min-height:92px;border-radius:16px;border:3px solid var(--espresso);background:var(--papel);cursor:pointer;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:.15rem;box-shadow:0 4px 0 var(--espresso);padding:.3rem;position:relative}
+.porcion:active:not([disabled]){transform:translateY(3px);box-shadow:0 1px 0 var(--espresso)}
+.porcion svg{width:42px;height:42px}
+.porcion .fr{font-size:1.15rem}
+.porcion kbd{position:absolute;top:3px;right:6px;font:700 .7rem var(--fuente);opacity:.6}
+.porcion[disabled]{opacity:.4;cursor:not-allowed}
+@media (max-width:420px){.porcion{width:62px;min-height:84px}.porcion svg{width:36px;height:36px}.porcion kbd{display:none}}
+#controles{display:flex;flex-direction:column;align-items:center}
+.acciones{display:flex;gap:.6rem;justify-content:center;flex-wrap:wrap}
+.pista{font-size:.95rem;font-weight:700;background:#FFF3D0;border:2px dashed var(--oro-oscuro);border-radius:12px;padding:.4rem .8rem;max-width:620px;text-align:center}
 
-/* Capas */
-.capa{position:fixed;inset:0;background:rgba(29,23,22,.75);display:grid;place-items:center;padding:1rem;z-index:60}
-.caja-capa{background:var(--papel);border:4px solid var(--espresso);border-radius:22px;padding:1.3rem;max-width:620px;width:100%;max-height:92vh;overflow:auto;text-align:center;box-shadow:0 10px 0 #1d1716}
-.caja-capa h2{margin:.1rem 0 .6rem;font-size:1.6rem;font-weight:900}
-.caja-capa .estrellas{font-size:3rem;letter-spacing:.15em;color:#C98A1E}
-.caja-capa ul{text-align:left}
-.caja-capa label{display:flex;gap:.6rem;align-items:flex-start;text-align:left;margin:.7rem 0}
-.caja-capa input[type=checkbox]{width:22px;height:22px;flex:none;margin-top:2px}
-.botones{display:flex;flex-wrap:wrap;gap:.6rem;justify-content:center;margin-top:1rem}
-.tienda{list-style:none;padding:0;margin:.6rem 0;display:grid;gap:.5rem;text-align:left}
-.mejora{display:grid;grid-template-columns:44px 1fr auto;gap:.6rem;align-items:center;padding:.6rem;border:2px solid var(--linea);border-radius:14px;background:#fff}
-.mejora .ico{font-size:1.8rem;text-align:center}
-.mejora b{display:block}
-.mejora small{display:block;font-size:.85rem}
-.mejora .niv{font-size:.8rem;color:var(--salvia-oscuro);font-weight:900}
-.tienda h3{margin:.8rem 0 .2rem;font-size:1rem;text-transform:uppercase;letter-spacing:.06em}
-.cortes{display:flex;flex-wrap:wrap;gap:.5rem;justify-content:center}
+.respuesta{width:100%;max-width:720px;border-radius:18px;border:3px solid var(--espresso);padding:.8rem 1rem;background:var(--papel);box-shadow:0 4px 0 rgba(51,43,42,.2)}
+.respuesta.bien{background:#E3EFE8;border-color:var(--salvia-oscuro)}
+.respuesta.mal{background:#FBE6DE;border-color:var(--coral-oscuro)}
+.respuesta h3{margin:0 0 .25rem;font-size:1.15rem}
+.respuesta.bien h3{color:var(--salvia-oscuro)}
+.respuesta.mal h3{color:var(--coral-oscuro)}
+.respuesta p{margin:.2rem 0;font-size:1.05rem}
+.respuesta .cuenta{font-size:1.2rem;font-weight:700}
+.respuesta .botones{display:flex;gap:.6rem;flex-wrap:wrap;margin-top:.5rem}
 
- /* Móvil (al final para que mande sobre lo anterior) */
-@media (max-width:700px){.cocina-baja{grid-template-columns:1fr}
-  .horno{height:64px;border-radius:32px;flex-direction:row;justify-content:center;gap:1rem;padding:0 1rem}
-  .horno::before{display:none}
-  .horno .boca{width:60px;height:34px}
-  .horno .rotulo{position:static}
-  .horno .barra{top:auto;bottom:6px}
-  .carril{min-height:0}
-  .ticket,.hueco-ticket{flex-basis:230px}
-  .pizza,.pizza svg{width:120px}.pizza svg{height:120px}.hueco-pizza{width:120px;height:120px}}
+/* Animaciones del cliente */
+.feliz{animation:salta .6s ease}
+@keyframes salta{30%{transform:translateY(-18px) rotate(-4deg)}60%{transform:translateY(0) rotate(3deg)}}
+.duda{animation:duda .5s ease}
+@keyframes duda{25%{transform:rotate(-6deg)}75%{transform:rotate(6deg)}}
+.entra{animation:entraC .45s ease-out}
+@keyframes entraC{from{transform:translateX(-60px);opacity:0}}
+.tiembla{animation:tiembla .3s}
+@keyframes tiembla{25%{transform:translateX(-6px)}75%{transform:translateX(6px)}}
 .sin-mov *,.sin-mov *::before,.sin-mov *::after{animation:none!important;transition:none!important}
 @media (prefers-reduced-motion:reduce){*,*::before,*::after{animation:none!important;transition:none!important}}
+
+/* Capa (diálogos) */
+.capa{position:fixed;inset:0;background:rgba(51,43,42,.6);display:grid;place-items:center;padding:1rem;z-index:50}
+.caja-capa{background:var(--papel);border:3px solid var(--espresso);border-radius:22px;padding:1.3rem;max-width:520px;width:100%;max-height:92vh;overflow:auto;text-align:center;box-shadow:0 8px 0 rgba(0,0,0,.25)}
+.caja-capa h2{margin:.2rem 0 .5rem;font-size:1.6rem}
+.caja-capa p{margin:.4rem 0}
+.caja-capa ol{text-align:left;margin:.6rem 0;padding-left:1.4rem}
+.caja-capa li{margin:.35rem 0}
+.caja-capa .estrellas{font-size:3rem;letter-spacing:.15em;color:var(--oro-oscuro);line-height:1.1}
+.caja-capa .nuevos{display:flex;gap:.5rem;justify-content:center;flex-wrap:wrap}
+.caja-capa .nuevos img{width:84px;height:84px;object-fit:contain}
+.caja-capa .botones{display:flex;gap:.6rem;justify-content:center;flex-wrap:wrap;margin-top:1rem}
 </style>
 </head>
 <body>
+<!-- Dibujo compartido: rayas de la guía -->
+<svg width="0" height="0" style="position:absolute" aria-hidden="true" focusable="false"><defs>
+  <pattern id="rayas" width="10" height="10" patternUnits="userSpaceOnUse" patternTransform="rotate(45)">
+    <rect width="10" height="10" fill="rgba(90,138,120,.18)"/><rect width="4" height="10" fill="rgba(63,110,92,.45)"/>
+  </pattern>
+</defs></svg>
 
-<!-- ================= INICIO: MI PIZZERÍA ================= -->
-<main id="inicio">
+<main id="inicio" class="pared">
+  <div class="toldo" aria-hidden="true"></div>
   <div class="ini">
-    <header class="logo-rush">
-      <h1>PIZZA <span>RUSH</span></h1>
-      <p>La cocina de fracciones de <b>πCHU</b> · ¡Sirve los pedidos exactos antes de que se impacienten!</p>
-    </header>
-    <div class="mi-pizzeria">
-      <section class="panel" aria-labelledby="tMiPiz">
-        <h2 id="tMiPiz">Mi pizzería</h2>
-        <div class="escaparate" id="escaparate" aria-hidden="true"></div>
-        <div class="rango">
-          <span>Categoría: <b id="rango"></b></span>
-          <span class="monedas-total" aria-label="Monedas"><span aria-hidden="true">💰</span> <span id="monedasTotal">0</span></span>
-        </div>
-        <div class="botones" style="justify-content:flex-start">
-          <button class="btn oro" type="button" data-abre="tienda">🛒 Tienda</button>
-          <button class="btn claro" type="button" data-abre="ayuda">Cómo se juega</button>
-          <button class="btn claro" type="button" data-abre="ajustes">Ajustes</button>
-        </div>
-      </section>
-      <section class="panel" aria-labelledby="tTurnos">
-        <h2 id="tTurnos">Turnos</h2>
-        <ul class="turnos" id="listaTurnos"></ul>
-      </section>
+    <div class="cabecera">
+      <img id="imgPichu" alt="" width="118" height="140">
+      <div class="logo"><h1>Pizzería <span>πCHU</span></h1><p>Sirve la fracción justa</p></div>
+      <p class="bocadillo-ini" id="saludo"></p>
     </div>
-    <div class="acciones-ini"><button class="btn" type="button" id="btnJugar" style="font-size:1.3rem;padding:.5em 2em">▶ ¡A la cocina!</button></div>
+    <div class="menus" id="menus"></div>
+    <section class="album" aria-labelledby="tAlbum">
+      <h2 id="tAlbum">⭐ Clientes contentos</h2>
+      <p>Cada menú te regala un cliente con ★★ y otro con ★★★. ¿Los consigues todos?</p>
+      <ul id="album"></ul>
+    </section>
+    <div class="ajustes-ini">
+      <button class="btn claro" type="button" id="btnAyuda">❓ Cómo se juega</button>
+      <button class="btn claro" type="button" id="btnSonido" aria-pressed="true">🔊 Sonido</button>
+      <button class="btn claro" type="button" id="btnMov" aria-pressed="true">✨ Animaciones</button>
+    </div>
   </div>
 </main>
 
-<!-- ================= COCINA ================= -->
-<main id="cocina" class="oculto">
-  <div class="hud">
-    <span class="marca">🍕 PIZZA <span>RUSH</span> <span id="neonHud" class="neon oculto">· πCHU ·</span></span>
-    <span class="dato"><small>Turno</small><b id="hTurno"></b></span>
-    <span class="dato"><small>Pedidos</small><b id="hPedidos"></b></span>
-    <span class="dato"><small>Monedas</small><b id="hMonedas">0</b></span>
-    <span class="combo" id="hCombo" aria-label="Multiplicador">x1</span>
-    <button class="btn peq" type="button" id="btnMusica" aria-pressed="true" title="Música">🎵</button>
-    <button class="btn peq" type="button" id="btnPausa">⏸ Pausa</button>
+<main id="juego" class="oculto pared">
+  <div class="barra">
+    <button class="btn claro" type="button" id="btnSalir">← Menús</button>
+    <div class="titulo" id="titulo"></div>
+    <div class="puntos" id="puntos" aria-label="Clientes"></div>
+    <div class="contador" id="contador" aria-hidden="true"></div>
+    <div class="reloj oculto" id="reloj"><span aria-hidden="true">⏱</span><span class="tubo" aria-hidden="true"><span id="tubo"></span></span><span id="segundos"></span></div>
   </div>
-  <div style="position:relative">
-    <div class="deco-luces oculto" id="decoLuces"></div>
-    <section class="carril" id="carril" aria-label="Pedidos"></section>
+  <div class="toldo" aria-hidden="true"></div>
+  <div class="zona">
+   <div class="lado-izq">
+    <div class="cliente">
+      <img id="imgCliente" alt="" width="150" height="150">
+      <div class="bocadillo">
+        <div class="quien" id="quien"></div>
+        <div class="pedido" id="pedido"></div>
+      </div>
+    </div>
+    <p class="pista oculto" id="pista"></p>
+    <div class="respuesta oculto" id="respuesta" tabindex="-1"></div>
+   </div>
+   <div class="lado-der">
+    <div class="mesa">
+      <span class="guia-etq" id="guiaEtq"></span>
+      <div class="pizzas una" id="pizzas"></div>
+    </div>
+    <div class="en-pizza" id="enPizza"></div>
+    <div id="controles">
+      <div class="porciones" id="porciones" role="group" aria-label="Porciones"></div>
+      <div class="acciones" style="margin-top:.7rem">
+        <button class="btn claro" type="button" id="btnDeshacer" aria-label="Quitar la última porción">↶ Quitar</button>
+        <button class="btn claro" type="button" id="btnVaciar">Vaciar</button>
+        <button class="btn verde grande" type="button" id="btnServir">🍕 ¡Servir!</button>
+      </div>
+    </div>
+   </div>
   </div>
-  <section class="cocina-baja" aria-label="Cocina">
-    <div class="horno" id="horno" aria-label="Horno">
-      <div class="barra"><span id="barraHorno"></span></div>
-      <div class="rotulo" id="rotuloHorno">HORNO</div>
-      <div class="boca"><div class="fuego"></div></div>
-    </div>
-    <div class="mostrador" id="mostrador">
-      <div class="cinta"></div>
-      <div class="huecos" id="huecos"></div>
-      <span class="maceta oculto" id="maceta1" style="left:-10px">🪴</span>
-      <span class="maceta oculto" id="maceta2" style="right:-10px">🪴</span>
-    </div>
-  </section>
-  <p class="solo-lector" id="anuncio" aria-live="assertive"></p>
 </main>
 
-<div id="aviso" class="oculto" role="status" aria-live="polite"></div>
-<div class="capa oculto" id="capa" role="dialog" aria-modal="true"><div class="caja-capa" id="capaCaja"></div></div>
+<p class="solo-lector" id="anuncio" aria-live="polite"></p>
+<div class="capa oculto" id="capa" role="dialog" aria-modal="true" aria-labelledby="capaTitulo"><div class="caja-capa" id="capaCaja"></div></div>
 
 <script>
 /*MOTOR*/
@@ -283,554 +259,369 @@ button{font:inherit;color:inherit}
 "use strict";
 const M = window.Motor, U = M.U;
 const $ = s => document.querySelector(s);
+const IMG = { pichu: "{{IMG:pichu}}", reina: "{{IMG:reina}}", pirata: "{{IMG:pirata}}", compas: "{{IMG:compas}}", malabares: "{{IMG:malabares}}",
+  pizarra: "{{IMG:pizarra}}", escudo: "{{IMG:escudo}}", salsita: "{{IMG:salsita}}", critico: "{{IMG:critico}}" };
+
+// ---------------- Guardado (pichu.pizzeria.v3) ----------------
+const CLAVE = "pichu.pizzeria.v3";
+const leerJSON = k => { try { return JSON.parse(localStorage.getItem(k)); } catch (e) { return null; } };
+const D = Object.assign({ estrellas: {}, album: [], records: {}, ajustes: { sonido: true, movimiento: true }, ayudaVista: false }, leerJSON(CLAVE) || {});
+D.ajustes = Object.assign({ sonido: true, movimiento: true }, D.ajustes);
+const guardar = () => { try { localStorage.setItem(CLAVE, JSON.stringify(D)); } catch (e) { /* modo privado: se juega sin guardar */ } };
+const perfil = leerJSON("pichu.perfil.v1");
+const alias = perfil && typeof perfil.alias === "string" ? perfil.alias : "";
 const esc = s => String(s).replace(/[&<>"']/g, c => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" }[c]));
-const fx = s => esc(s).replace(/(\d+)\/(\d+)/g, '<span class="fr" aria-label="$1 entre $2"><span>$1</span><span>$2</span></span>');
-const azar = a => a[Math.floor(Math.random() * a.length)];
+const movimiento = () => D.ajustes.movimiento && !matchMedia("(prefers-reduced-motion: reduce)").matches;
 
-/* ================= Guardado ================= */
-const CLAVE = "pichu.pizzeria.v2";
-const leer = () => { try { return JSON.parse(localStorage.getItem(CLAVE)) || {}; } catch (e) { return {}; } };
-const D = Object.assign({ estrellas: {}, monedas: 0, mejoras: {}, deco: {}, tutorial: false, record: {}, ajustes: {} }, leer());
-D.ajustes = Object.assign({ tranquilo: false, sonido: true, musica: true, movimiento: true }, D.ajustes);
-const AJ = D.ajustes;
-const guardar = () => { try { localStorage.setItem(CLAVE, JSON.stringify(D)); } catch (e) {} };
-const nivel = id => D.mejoras[id] || 0;
-const estrellasTotales = () => Object.values(D.estrellas).reduce((a, b) => a + b, 0);
-const alias = (() => { try { const p = JSON.parse(localStorage.getItem("pichu.perfil.v1")); return p && p.alias; } catch (e) { return null; } })();
-const aplicarMov = () => document.body.classList.toggle("sin-mov", !AJ.movimiento);
+// Fracciones {3/4} → apiladas
+const frac = s => s.replace(/\{(\d+)\/(\d+)\}/g, '<span class="fr" aria-hidden="true"><span>$1</span><span>$2</span></span><span class="solo-lector">$1/$2</span>');
+const fr = (n, d) => frac(M.F(n, d));
 
-/* ================= Sonido y música (todo generado aquí) ================= */
+// ---------------- Sonido (Web Audio, sin archivos) ----------------
 let ac = null;
-const audio = () => { try { ac = ac || new (window.AudioContext || window.webkitAudioContext)(); if (ac.state === "suspended") ac.resume(); } catch (e) {} return ac; };
-function tono(f, dur = .12, tipo = "sine", vol = .1, t0 = 0, destino) {
-  const a = audio(); if (!a) return;
-  const o = a.createOscillator(), g = a.createGain(), t = a.currentTime + t0;
-  o.type = tipo; o.frequency.value = f; g.gain.setValueAtTime(vol, t); g.gain.exponentialRampToValueAtTime(.0008, t + dur);
-  o.connect(g); g.connect(destino || a.destination); o.start(t); o.stop(t + dur + .02);
+function tono(f, dur = .12, tipo = "sine", vol = .12, t0 = 0) {
+  if (!D.ajustes.sonido) return;
+  try {
+    ac = ac || new (window.AudioContext || window.webkitAudioContext)();
+    const o = ac.createOscillator(), g = ac.createGain(), t = ac.currentTime + t0;
+    o.type = tipo; o.frequency.value = f; g.gain.setValueAtTime(vol, t); g.gain.exponentialRampToValueAtTime(.001, t + dur);
+    o.connect(g).connect(ac.destination); o.start(t); o.stop(t + dur + .02);
+  } catch (e) { /* sin sonido */ }
 }
-const sfx = {
-  coger: () => AJ.sonido && tono(700, .05, "triangle", .08),
-  soltar: () => AJ.sonido && tono(420, .05, "triangle", .08),
-  bien: () => AJ.sonido && [523, 659, 784, 1046].forEach((f, i) => tono(f, .14, "square", .05, i * .07)),
-  mal: () => AJ.sonido && (tono(196, .22, "sawtooth", .06), tono(147, .3, "sawtooth", .06, .12)),
-  ding: () => AJ.sonido && (tono(1568, .3, "sine", .07), tono(2093, .4, "sine", .05, .08)),
-  llega: () => AJ.sonido && tono(880, .08, "square", .04),
-  perdido: () => AJ.sonido && [392, 330, 262].forEach((f, i) => tono(f, .18, "triangle", .07, i * .12)),
-  racha: () => AJ.sonido && [784, 988, 1175, 1568].forEach((f, i) => tono(f, .1, "square", .05, i * .05))
-};
-// Música: bucle original de 8 compases (bajo + arpegio), 120 BPM
-const Musica = (() => {
-  let timer = null, paso = 0, gan = null;
-  const BAJO = [131, 131, 175, 175, 147, 147, 196, 196], ARP = [[262, 330, 392], [262, 330, 392], [349, 440, 523], [349, 440, 523], [294, 349, 440], [294, 349, 440], [392, 494, 587], [392, 494, 587]];
-  function tic() {
-    const a = audio(); if (!a) return;
-    const compas = Math.floor(paso / 8) % 8, t = paso % 8;
-    if (t % 2 === 0) tono(BAJO[compas], .22, "triangle", .09, 0, gan);
-    tono(ARP[compas][t % 3] * (t >= 4 ? 2 : 1), .1, "square", .022, 0, gan);
-    if (t === 0 || t === 4) tono(70, .08, "sine", .12, 0, gan);
-    paso++;
-  }
-  return {
-    on() { if (timer || !AJ.musica) return; const a = audio(); if (!a) return; gan = a.createGain(); gan.gain.value = .8; gan.connect(a.destination); timer = setInterval(tic, 125); },
-    off() { clearInterval(timer); timer = null; if (gan) { try { gan.disconnect(); } catch (e) {} gan = null; } }
-  };
-})();
+const sonidoPoner = d => tono(300 + d * 70, .09, "triangle");
+const sonidoBien = () => [523, 659, 784, 1047].forEach((f, i) => tono(f, .16, "triangle", .12, i * .09));
+const sonidoMal = () => { tono(220, .18, "sawtooth", .07); tono(180, .25, "sawtooth", .07, .12); };
 
-/* ================= Dibujo de pizzas ================= */
-const R = 66, C = 75;
-const punto = (ang, r) => { const a = (ang - 90) * Math.PI / 180; return [C + r * Math.cos(a), C + r * Math.sin(a)]; };
-function sector(a0, a1, r = R) {
-  if (a1 - a0 >= 359.99) return `M ${C} ${C - r} A ${r} ${r} 0 1 1 ${C - .01} ${C - r} Z`;
-  const [x0, y0] = punto(a0, r), [x1, y1] = punto(a1, r);
-  return `M ${C} ${C} L ${x0.toFixed(2)} ${y0.toFixed(2)} A ${r} ${r} 0 ${a1 - a0 > 180 ? 1 : 0} 1 ${x1.toFixed(2)} ${y1.toFixed(2)} Z`;
+// ---------------- Dibujo de pizzas (SVG) ----------------
+const C = 100, R = 86;
+const punto = (f, r, c = C) => { const a = f * 2 * Math.PI - Math.PI / 2; return [c + r * Math.cos(a), c + r * Math.sin(a)]; };
+function sector(f0, f1, r = R, c = C) {
+  if (f1 - f0 >= 0.9999) return `M${c - r},${c}a${r},${r} 0 1,0 ${2 * r},0a${r},${r} 0 1,0 ${-2 * r},0Z`;
+  const [x0, y0] = punto(f0, r, c), [x1, y1] = punto(f1, r, c);
+  return `M${c},${c}L${x0.toFixed(2)},${y0.toFixed(2)}A${r},${r} 0 ${f1 - f0 > .5 ? 1 : 0},1 ${x1.toFixed(2)},${y1.toFixed(2)}Z`;
 }
-function rodaja(a0, a1, d, semilla, etiqueta) {
-  let s = `<path class="borde" d="${sector(a0, a1)}" fill="var(--masa)" stroke="var(--espresso)" stroke-width="2.5"/>`;
-  s += `<path d="${sector(a0 + .8, a1 - .8, R - 7)}" fill="var(--queso)"/>`;
-  const n = d <= 4 ? 2 : 1;
-  for (let k = 0; k < n; k++) {
-    const t = (k + 1) / (n + 1), r = R * (d <= 4 ? (k % 2 ? .62 : .4) : .64);
-    const [x, y] = punto(a0 + (a1 - a0) * t + ((semilla * 7 + k * 13) % 7 - 3), r);
-    s += `<circle cx="${x.toFixed(1)}" cy="${y.toFixed(1)}" r="${d <= 6 ? 6.5 : 4.5}" fill="var(--peperoni)"/>`;
-    if (d <= 6) s += `<circle cx="${(x - 1.5).toFixed(1)}" cy="${(y - 1.5).toFixed(1)}" r="1.6" fill="#D96B55"/>`;
+// Ingredientes según el tamaño de la porción (solo decoración: el número va siempre escrito)
+function ingredientes(f0, f1, d) {
+  const span = f1 - f0, cuantos = Math.max(1, Math.round(span * 14)); let s = "";
+  for (let i = 0; i < cuantos; i++) {
+    const f = f0 + span * (i + .5) / cuantos, r = R * (i % 2 ? .78 : .5);
+    const [x, y] = punto(f, r);
+    if (d === 2) s += `<circle cx="${x.toFixed(1)}" cy="${y.toFixed(1)}" r="7" fill="#B5442E"/><circle cx="${(x - 2).toFixed(1)}" cy="${(y - 2).toFixed(1)}" r="2" fill="#D7664F"/>`;
+    else if (d === 3) s += `<circle cx="${x.toFixed(1)}" cy="${y.toFixed(1)}" r="6" fill="#EFE3CC" stroke="#9C7B55" stroke-width="2"/>`;
+    else if (d === 4) s += `<circle cx="${x.toFixed(1)}" cy="${y.toFixed(1)}" r="4.5" fill="none" stroke="#3A302B" stroke-width="3"/>`;
+    else if (d === 6) s += `<ellipse cx="${x.toFixed(1)}" cy="${y.toFixed(1)}" rx="6" ry="3.5" fill="#4E7F5E" transform="rotate(${Math.round(f * 360)} ${x.toFixed(1)} ${y.toFixed(1)})"/>`;
+    else s += `<rect x="${(x - 5).toFixed(1)}" y="${(y - 2).toFixed(1)}" width="10" height="4" rx="2" fill="#C8492F" transform="rotate(${Math.round(f * 360)} ${x.toFixed(1)} ${y.toFixed(1)})"/>`;
   }
-  const [lx, ly] = punto((a0 + a1) / 2, R * (d >= 8 ? .8 : .52));
-  const fs = d >= 12 ? 10 : d >= 8 ? 11.5 : 15;
-  s += `<text x="${lx.toFixed(1)}" y="${(ly + fs / 3).toFixed(1)}" font-size="${fs}" font-weight="900" text-anchor="middle" fill="var(--espresso)" paint-order="stroke" stroke="#FFF7E3" stroke-width="3.5">${etiqueta || "1/" + d}</text>`;
   return s;
 }
-function pizzaSVG(p) {
-  const paso = 360 / p.d;
-  let s = `<svg viewBox="0 0 150 150" role="group" aria-label="Pizza cortada en ${M.NOMBRE_CORTE[p.d]}"><circle cx="${C}" cy="${C}" r="${R + 5}" fill="#3a2b26" opacity=".35"/>`;
-  p.por.forEach((st, i) => {
-    const a0 = i * paso, a1 = (i + 1) * paso;
-    s += st === "m"
-      ? `<g class="porcion" role="button" tabindex="0" data-p="${p.id}" data-i="${i}" aria-label="Porción de 1/${p.d}. Meterla en la caja del pedido activo">${rodaja(a0, a1, p.d, p.id + i)}</g>`
-      : `<g class="agujero"><path d="${sector(a0, a1)}"/></g>`;
+// Una pizza: trozos [{f0,f1,d,etiqueta,nueva}], guía (fracción 0..1 de esta pizza o null)
+function pizzaSVG(trozos, guia, marca, etiquetaAria) {
+  let s = `<svg viewBox="-6 -6 212 212" role="img" aria-label="${esc(etiquetaAria)}">`;
+  s += `<circle cx="100" cy="100" r="99" fill="var(--madera)" stroke="var(--madera-oscura)" stroke-width="4"/>`;
+  s += `<circle cx="100" cy="100" r="${R}" fill="#F7EBD3" stroke="#C9A877" stroke-width="2.5" stroke-dasharray="6 5"/>`;
+  if (guia) s += `<path d="${sector(0, guia)}" fill="url(#rayas)" stroke="var(--salvia-oscuro)" stroke-width="2" stroke-dasharray="5 4"/>`;
+  let etiquetas = "";
+  for (const t of trozos) {
+    s += `<g class="${t.nueva ? "nueva" : ""}"><path d="${sector(t.f0, t.f1)}" fill="#F6D58E" stroke="#C98D45" stroke-width="3" stroke-linejoin="round"/>`;
+    s += ingredientes(t.f0, t.f1, t.d);
+    s += `<path d="${sector(t.f0, t.f1)}" fill="none" stroke="#8B5A2B" stroke-width="2" stroke-linejoin="round"/>`;
+    if (t.etiqueta) {
+      const [x, y] = punto((t.f0 + t.f1) / 2, R * (t.f1 - t.f0 > .3 ? .45 : .62));
+      etiquetas += `<text class="${t.nueva ? "nueva" : ""}" x="${x.toFixed(1)}" y="${(y + 6).toFixed(1)}" text-anchor="middle" font-family="Lato,sans-serif" font-weight="900" font-size="${t.d >= 8 ? 15 : 18}" fill="#332B2A" stroke="#FFF6DF" stroke-width="5" paint-order="stroke">1/${t.d}</text>`;
+    }
+    s += `</g>`;
+  }
+  if (guia && trozos.length) s += `<path d="${sector(0, guia)}" fill="none" stroke="var(--salvia-oscuro)" stroke-width="3" stroke-dasharray="6 5"/>`;
+  if (marca !== null && marca !== undefined) {
+    const [x0, y0] = punto(marca, 10), [x1, y1] = punto(marca, R + 12);
+    s += `<line x1="${x0.toFixed(1)}" y1="${y0.toFixed(1)}" x2="${x1.toFixed(1)}" y2="${y1.toFixed(1)}" stroke="#332B2A" stroke-width="7" stroke-linecap="round"/>`;
+    s += `<line x1="${x0.toFixed(1)}" y1="${y0.toFixed(1)}" x2="${x1.toFixed(1)}" y2="${y1.toFixed(1)}" stroke="#A8402A" stroke-width="3.5" stroke-linecap="round"/>`;
+    s += `<circle cx="${x1.toFixed(1)}" cy="${y1.toFixed(1)}" r="7" fill="#A8402A" stroke="#332B2A" stroke-width="2.5"/>`;
+  }
+  return s + etiquetas + `</svg>`;
+}
+// Icono del botón de porción
+function iconoPorcion(d) {
+  return `<svg viewBox="0 0 100 100" aria-hidden="true"><circle cx="50" cy="50" r="44" fill="#F7EBD3" stroke="#332B2A" stroke-width="4" stroke-dasharray="7 5"/>` +
+    `<path d="${sector(0, 1 / d, 44, 50)}" fill="#F6D58E" stroke="#332B2A" stroke-width="4" stroke-linejoin="round"/></svg>`;
+}
+
+// ---------------- Estado de la partida ----------------
+let J = null;          // juego en curso
+let ultimoCliente = null, salirArmado = 0, temporizador = null;
+
+function empezar(menuId, contrarreloj = false) {
+  const menu = M.MENUS[menuId - 1];
+  J = { menu, contrarreloj, n: 0, resultados: [], nuevos: [], pedido: null, porciones: [], fallos: 0, resuelto: false, servidos: 0,
+    fin: contrarreloj ? performance.now() + M.CONTRARRELOJ * 1000 : 0, nuevaPorcion: false };
+  $("#inicio").classList.add("oculto"); $("#juego").classList.remove("oculto");
+  $("#titulo").innerHTML = `<small>${contrarreloj ? "Contrarreloj · " : ""}Menú ${menu.id}</small>${esc(menu.titulo)}`;
+  $("#puntos").classList.toggle("oculto", contrarreloj); $("#contador").classList.toggle("oculto", contrarreloj); $("#reloj").classList.toggle("oculto", !contrarreloj);
+  $("#pizzas").className = "pizzas " + (menu.pizzas > 1 ? "dos" : "una");
+  $("#porciones").innerHTML = menu.botones.map((d, i) =>
+    `<button class="porcion" type="button" data-d="${d}" aria-label="Poner ${M.NOMBRE[d]} de pizza"><kbd>${i + 1}</kbd>${iconoPorcion(d)}${fr(1, d)}</button>`).join("");
+  window.scrollTo(0, 0);
+  nuevoCliente();
+  if (contrarreloj) { clearInterval(temporizador); temporizador = setInterval(tic, 200); tic(); }
+}
+
+function nuevoCliente() {
+  J.pedido = M.generarPedido(J.menu, J.pedido);
+  J.porciones = []; J.fallos = 0; J.resuelto = false; J.verGuia = false;
+  const libres = M.CLIENTES.filter(c => c.id !== ultimoCliente);
+  J.cliente = libres[Math.floor(Math.random() * libres.length)]; ultimoCliente = J.cliente.id;
+  const img = $("#imgCliente"); img.src = IMG[J.cliente.id];
+  animar(img, "entra");
+  $("#quien").textContent = J.cliente.nombre;
+  $("#pedido").innerHTML = frac(J.pedido.texto);
+  $("#respuesta").classList.add("oculto");
+  $("#controles").classList.remove("oculto");
+  const pista = $("#pista");
+  if (!J.contrarreloj && J.menu.id === 1 && J.n === 0) { pista.innerHTML = "👇 Pon porciones hasta la <b>raya roja</b> y pulsa <b>¡Servir!</b>"; pista.classList.remove("oculto"); }
+  else if (!J.contrarreloj && J.n === J.menu.guia && J.menu.guia > 0) { pista.innerHTML = "🧠 A partir de ahora, <b>sin guía</b>: tendrás que calcular cuánto es."; pista.classList.remove("oculto"); }
+  else pista.classList.add("oculto");
+  anunciar(`${J.cliente.nombre}: ${J.pedido.leer}`);
+  pintar();
+}
+
+const conGuia = () => J.verGuia || (!J.contrarreloj && J.n < J.menu.guia);
+const total = () => J.porciones.reduce((s, d) => s + U / d, 0);
+
+function pintar() {
+  const m = J.menu, cap = m.pizzas * U, obj = J.pedido.objetivo, guia = conGuia();
+  // Trozos repartidos por las pizzas (una porción puede pasar de una pizza a la siguiente)
+  const porPizza = Array.from({ length: m.pizzas }, () => []);
+  let a = 0;
+  J.porciones.forEach((d, i) => {
+    const u = U / d, b = a + u, nueva = J.nuevaPorcion && i === J.porciones.length - 1;
+    for (let p = 0; p < m.pizzas; p++) {
+      const x0 = Math.max(a, p * U), x1 = Math.min(b, (p + 1) * U);
+      if (x1 > x0) porPizza[p].push({ f0: (x0 - p * U) / U, f1: (x1 - p * U) / U, d, nueva, etiqueta: (x1 - x0) * 2 >= u });
+    }
+    a = b;
   });
-  return s + "</svg>";
-}
-function platoSVG(caja) {
-  const total = caja.reduce((a, x) => a + U / x.d, 0), n = Math.max(1, Math.ceil(total / U));
-  let out = "", acum = 0;
-  for (let k = 0; k < n; k++) {
-    let s = `<svg viewBox="0 0 150 150" aria-hidden="true"><circle cx="${C}" cy="${C}" r="${R + 7}" fill="#fff" stroke="var(--espresso)" stroke-width="3"/>`;
-    acum = 0;
-    caja.forEach((x, j) => {
-      const v = U / x.d, ini = acum, fin = acum + v, desde = Math.max(ini, k * U), hasta = Math.min(fin, (k + 1) * U);
-      if (hasta > desde) s += rodaja((desde - k * U) * 15, (hasta - k * U) * 15, x.d, j);
-      acum = fin;
-    });
-    out += s + "</svg>";
-  }
-  return out;
-}
-function cantidadSVG(base, trozo) {
-  // dibuja a/b de pizza; si se pasa "trozo", cortada en porciones de ese tamaño
-  const total = M.aU(base.n, base.d), tam = trozo ? M.aU(trozo.n, trozo.d) : U / base.d, n = Math.ceil(total / U);
-  let out = "";
-  for (let k = 0; k < n; k++) {
-    let s = `<svg viewBox="0 0 150 150" aria-hidden="true"><circle cx="${C}" cy="${C}" r="${R + 5}" fill="#EFE4C8"/>`;
-    for (let t = k * U; t < (k + 1) * U; t += tam) {
-      const a0 = (t - k * U) * 15, a1 = Math.min(t + tam - k * U, U) * 15;
-      s += t < total ? rodaja(a0, a1, trozo ? trozo.d : base.d, t, trozo ? M.texto(trozo) : (base.d === 1 ? "1" : null)) : `<g class="agujero"><path d="${sector(a0, a1)}" style="fill:rgba(0,0,0,.06);stroke:#B9A98A"/></g>`;
-    }
-    out += s + "</svg>";
-  }
-  return out;
-}
-
-/* ================= Estado del turno ================= */
-let G = null, raf = null, ultimo = 0, sig = 1;
-const tiposEtq = { suma: ["Pedido", ""], mult_entero: ["Grupo ×", "mult"], fraccion_de: ["Parte de ×", "mult"], div_entero: ["Reparto ÷", "div"], div_cuantas: ["¿Cuántas? ÷", "div"], condicion: ["👑 Crítico", "jefe"] };
-
-function empezarTurno(id) {
-  const cfg = M.TURNOS.find(t => t.id === id);
-  $("#capa").classList.add("oculto");
-  G = { cfg, emitidos: 0, resueltos: 0, servidos: 0, perfectos: 0, monedas: 0, combo: 0, mejorCombo: 0, tickets: [], pizzas: [], horno: 0,
-        espera: .6, pausa: false, fin: false, activo: null, tutorial: id === 1 && !D.tutorial };
-  $("#inicio").classList.add("oculto"); $("#cocina").classList.remove("oculto");
-  aplicarDeco();
-  // primeros pedidos y pizzas
-  llegaTicket(); if (G.cfg.simult > 1 && !G.tutorial) G.espera = 2.5;
-  const huecos = M.huecosMostrador(nivel("mostrador"));
-  for (let i = 0; i < huecos - 1; i++) hornear(true);
-  renderTodo();
-  ultimo = performance.now(); cancelAnimationFrame(raf); raf = requestAnimationFrame(bucle);
-  if (AJ.musica) Musica.on();
-  if (G.tutorial) avisar("info", "¡Bienvenido a Pizza Rush!", `<p>1. Arriba tienes los <b>tickets</b> con los pedidos.</p><p>2. Toca porciones de las pizzas del mostrador para meterlas en la <b>caja</b> del ticket.</p><p>3. Cuando creas que es justo, pulsa <b>Enviar</b>. ¡Exacto: ni de más ni de menos!</p>`, 14000);
-}
-
-function llegaTicket() {
-  let ped;
-  if (G.tutorial && G.emitidos === 0) ped = { tipo: "suma", objetivo: 18, escrito: "3/4", texto: "Quiero 3/4 de pizza, por favor.", minimo: 2 };
-  else ped = M.generarTicket(G.cfg);
-  if (!ped) return;
-  const factorTipo = { div_cuantas: .8, condicion: 1.15, mult_entero: 1.1, fraccion_de: 1.1, div_entero: 1.1, suma: 1 }[ped.tipo] * (ped.objetivo > U ? 1.15 : 1);
-  const max = G.cfg.paciencia * M.factorPaciencia(nivel("campana")) * factorTipo;
-  const t = { id: sig++, ped, caja: [], max, resto: max, intentos: 0, rot: (Math.random() * 4 - 2).toFixed(1), sinPrisa: G.tutorial && G.emitidos === 0 };
-  G.tickets.push(t); G.emitidos++;
-  if (!G.activo || !G.tickets.find(x => x.id === G.activo && !x.saliendo)) G.activo = t.id;
-  sfx.llega(); anunciar(`Nuevo pedido: ${ped.texto}`);
-}
-
-function hornear(inicial) {
-  const huecos = M.huecosMostrador(nivel("mostrador"));
-  if (G.pizzas.length >= huecos) return false;
-  const d = M.elegirHorneado(G.tickets.map(t => t.ped), G.cfg.dens);
-  G.pizzas.push({ id: sig++, d, por: Array(d).fill("m"), nueva: !inicial });
-  if (!inicial) { sfx.ding(); }
-  return true;
-}
-
-/* ================= Bucle ================= */
-function bucle(ahora) {
-  const dt = Math.min(.1, (ahora - ultimo) / 1000); ultimo = ahora;
-  if (G && !G.pausa && !G.fin) paso(dt);
-  raf = requestAnimationFrame(bucle);
-}
-function paso(dt) {
-  // Horno
-  const huecos = M.huecosMostrador(nivel("mostrador")), lleno = G.pizzas.length >= huecos;
-  if (!lleno) {
-    G.horno += dt / M.intervaloHorno(nivel("horno"));
-    if (G.horno >= 1) { G.horno = 0; hornear(false); renderMostrador(); }
-  } else G.horno = Math.min(G.horno + dt / M.intervaloHorno(nivel("horno")), 1);
-  $("#barraHorno").style.width = (G.horno * 100) + "%";
-  $("#horno").classList.toggle("lleno", lleno);
-  $("#rotuloHorno").textContent = lleno ? "¡LLENO!" : "HORNO";
-  // Llegada de pedidos
-  if (G.tickets.length < G.cfg.simult && G.emitidos < G.cfg.tickets) {
-    G.espera -= dt;
-    if (G.espera <= 0) { llegaTicket(); G.espera = 2.2; renderTickets(); }
-  }
-  // Paciencia
-  if (!AJ.tranquilo) {
-    for (const t of [...G.tickets]) {
-      if (t.sinPrisa || t.saliendo) continue;
-      t.resto -= dt;
-      if (t.resto <= 0) { perderTicket(t, "Se ha cansado de esperar."); continue; }
-    }
-  }
-  actualizarBarras();
-}
-
-/* ================= Pintar ================= */
-function renderTodo() { renderHUD(); renderTickets(); renderMostrador(); }
-function renderHUD() {
-  $("#hTurno").textContent = `${G.cfg.id}/8`;
-  $("#hPedidos").textContent = `${G.servidos}/${G.cfg.tickets}`;
-  $("#hMonedas").textContent = G.monedas;
-  const m = M.multiplicador(G.combo), c = $("#hCombo");
-  c.className = "combo" + (m > 1 ? " x" + m : ""); c.innerHTML = `x${m}${m > 1 ? " 🔥" : ""}`;
-  c.setAttribute("aria-label", `Multiplicador por ${m}. Racha de ${G.combo}`);
-  $("#btnMusica").setAttribute("aria-pressed", String(AJ.musica)); $("#btnMusica").style.opacity = AJ.musica ? 1 : .5;
-}
-function renderTickets() {
-  const vista = G.cfg.vista;
-  let h = G.tickets.map((t, k) => {
-    const p = t.ped, [etq, cls] = tiposEtq[p.tipo], activo = t.id === G.activo;
-    let cuerpo;
-    if (p.tipo === "div_cuantas") {
-      cuerpo = `<div class="t-dibujo">${cantidadSVG(p.base)}</div>
-        <div class="t-resp" role="group" aria-label="Respuestas">${p.opciones.map(o => `<button class="btn verde" type="button" data-resp="${t.id}:${o}">${o}</button>`).join("")}</div>`;
-    } else {
-      const chips = t.caja.map((x, j) => `<button class="chip" type="button" data-quitar="${t.id}:${j}" aria-label="Sacar la porción de 1/${x.d} de la caja">${fx("1/" + x.d)}</button>`).join("");
-      const dentro = t.caja.length ? (vista === "plato" ? platoSVG(t.caja) + chips : `<span aria-hidden="true" style="font-size:1.4rem">📦</span>${chips}`) : `<span class="vacio">${activo ? "Toca porciones del mostrador" : "Toca el ticket para elegirlo"}</span>`;
-      cuerpo = `<div class="t-caja" aria-label="Caja del pedido">${dentro}</div>
-        <div class="t-botones"><button class="btn claro peq" type="button" data-vaciar="${t.id}" ${t.caja.length ? "" : "disabled"}>Vaciar</button>
-        <button class="btn verde peq" type="button" data-enviar="${t.id}" ${t.caja.length ? "" : "disabled"}>Enviar ➜</button></div>`;
-    }
-    return `<article class="ticket ${activo ? "activo" : ""} ${p.tipo === "condicion" ? "jefe" : ""}" style="--rot:${t.rot}deg" data-ticket="${t.id}" tabindex="0"
-        aria-label="Pedido ${k + 1}${activo ? ", activo" : ""}: ${esc(p.texto)}">
-      <div class="t-cab"><span class="etq ${cls}">${etq}</span><span class="tecla" aria-hidden="true">${k + 1}</span></div>
-      <div class="t-pedido">${fx(p.texto)}</div>
-      <div class="pac ${AJ.tranquilo || t.sinPrisa ? "oculto" : ""}" data-pac="${t.id}" role="progressbar" aria-label="Paciencia"><span></span></div>
-      ${cuerpo}
-      <div class="t-intento">${t.intentos ? "⚠️ Último intento" : ""}</div>
-    </article>`;
+  J.nuevaPorcion = false;
+  $("#pizzas").innerHTML = porPizza.map((tr, p) => {
+    const dentro = Math.min(Math.max(obj - p * U, 0), U) / U;            // parte del pedido en esta pizza
+    const guiaP = guia && dentro > 0 ? dentro : null;
+    const marca = guia && obj > p * U && obj <= (p + 1) * U ? (obj - p * U) / U % 1 : null;
+    const aria = tr.length ? `Pizza ${p + 1}: ${tr.map(t => "1/" + t.d).join(" + ")}` : `Pizza ${p + 1} vacía`;
+    return `<div class="pizza">${pizzaSVG(tr, guiaP, marca, aria)}${m.pizzas > 1 ? `<small>Pizza ${p + 1}</small>` : ""}</div>`;
   }).join("");
-  const libres = G.cfg.simult - G.tickets.length;
-  for (let i = 0; i < libres; i++) h += `<div class="hueco-ticket" aria-hidden="true">${G.emitidos < G.cfg.tickets ? "Esperando cliente…" : "—"}</div>`;
-  $("#carril").innerHTML = h;
-  actualizarBarras();
-}
-function actualizarBarras() {
-  for (const t of G.tickets) {
-    const el = document.querySelector(`[data-pac="${t.id}"]`); if (!el) continue;
-    const f = Math.max(0, t.resto / t.max);
-    el.firstElementChild.style.width = (f * 100) + "%";
-    el.classList.toggle("media", f < .5 && f >= .25); el.classList.toggle("baja", f < .25);
-    el.setAttribute("aria-valuenow", Math.round(f * 100));
+  $("#guiaEtq").innerHTML = guia ? "👀 Con guía: llena hasta la raya roja" : "🧠 Sin guía: ¡calcula!";
+  $("#guiaEtq").classList.toggle("oculto", !$("#pista").classList.contains("oculto") && J.n === 0 && J.menu.id === 1 && !J.contrarreloj);
+  // Porciones puestas
+  const g = J.porciones.map(d => `<span class="chip">${fr(1, d)}</span>`);
+  $("#enPizza").innerHTML = g.length ? `<span>En la pizza:</span> ${g.join('<span class="mas" aria-hidden="true">+</span>')}` : `<span>La pizza está vacía.</span>`;
+  // Botones
+  const t = total();
+  document.querySelectorAll(".porcion").forEach(b => { b.disabled = J.resuelto || t + U / +b.dataset.d > cap; });
+  $("#btnDeshacer").disabled = $("#btnVaciar").disabled = !J.porciones.length || J.resuelto;
+  $("#btnServir").disabled = !J.porciones.length || J.resuelto;
+  // Puntos de progreso
+  if (!J.contrarreloj) {
+    $("#puntos").innerHTML = Array.from({ length: m.clientes }, (_, i) => {
+      const r = J.resultados[i];
+      const cls = r === undefined ? (i === J.n ? "ahora" : "") : r ? "bien" : "casi";
+      return `<span class="${cls}" aria-hidden="true">${r === undefined ? "" : r ? "✓" : "•"}</span>`;
+    }).join("");
+    $("#puntos").setAttribute("aria-label", `Cliente ${Math.min(J.n + 1, m.clientes)} de ${m.clientes}`);
+    $("#contador").textContent = `🍕 ${Math.min(J.n + 1, m.clientes)}/${m.clientes}`;
   }
 }
-function renderMostrador() {
-  const huecos = M.huecosMostrador(nivel("mostrador")), cortador = nivel("cortador") > 0;
-  let h = G.pizzas.map(p => {
-    const entera = p.por.every(s => s === "m"), tieneM = p.por.some(s => s === "m");
-    const herr = `${cortador && entera ? `<button type="button" data-cortar="${p.id}" title="Cortador mágico" aria-label="Volver a cortar esta pizza">🔪</button>` : ""}${tieneM ? `<button type="button" data-tirar="${p.id}" title="Tirar" aria-label="Tirar las porciones que quedan de esta pizza">🗑</button>` : ""}`;
-    const div = `<div class="pizza" ${p.nueva ? "" : 'style="animation:none"'}>${pizzaSVG(p)}<span class="corte">${M.NOMBRE_CORTE[p.d]}</span><span class="herr">${herr}</span></div>`;
-    p.nueva = false; return div;
-  }).join("");
-  for (let i = G.pizzas.length; i < huecos; i++) h += `<div class="pizza" style="animation:none"><div class="hueco-pizza"></div></div>`;
-  $("#huecos").innerHTML = h;
+
+function poner(d) {
+  if (!J || J.resuelto) return;
+  const cap = J.menu.pizzas * U;
+  if (total() + U / d > cap) { animar($("#pizzas"), "tiembla"); anunciar("No cabe en la pizza."); return; }
+  J.porciones.push(d); J.nuevaPorcion = movimiento(); sonidoPoner(d);
+  $("#pista").classList.toggle("oculto", !(J.menu.id === 1 && J.n === 0 && !J.contrarreloj));
+  anunciar(`Pones ${M.NOMBRE[d]}.`);
+  pintar();
 }
-function aplicarDeco() {
-  $("#decoLuces").classList.toggle("oculto", !D.deco.luces);
-  $("#mostrador").classList.toggle("mantel", !!D.deco.mantel);
-  $("#neonHud").classList.toggle("oculto", !D.deco.neon);
-  $("#maceta1").classList.toggle("oculto", !D.deco.plantas); $("#maceta2").classList.toggle("oculto", !D.deco.plantas);
+function deshacer() { if (!J || J.resuelto || !J.porciones.length) return; J.porciones.pop(); tono(260, .08); pintar(); }
+function vaciar() { if (!J || J.resuelto || !J.porciones.length) return; J.porciones = []; tono(200, .1); pintar(); }
+
+function servir() {
+  if (!J || J.resuelto || !J.porciones.length) return;
+  const r = M.comprobar(J.pedido.objetivo, J.porciones), img = $("#imgCliente"), caja = $("#respuesta");
+  $("#pista").classList.add("oculto");
+  caja.classList.remove("oculto", "bien", "mal");
+  if (r.exacto) {
+    J.resuelto = true; J.servidos++;
+    const primera = J.fallos === 0;
+    if (!J.contrarreloj) J.resultados[J.n] = primera;
+    sonidoBien(); animar(img, "feliz");
+    const frases = ["¡Mmm, perfecto!", "¡Justo lo que pedí!", "¡Qué buena pinta!", "¡Exacto! Gracias."];
+    $("#pedido").innerHTML = frases[Math.floor(Math.random() * frases.length)] + " 😋";
+    const op = J.pedido.operacion ? `<p class="cuenta">Pedido: ${frac(J.pedido.operacion)} = ${frac(M.FU(J.pedido.objetivo))}</p>` : "";
+    caja.classList.add("bien");
+    caja.innerHTML = `<h3>✔ ${primera ? "¡A la primera!" : "¡Servido!"}</h3>
+      <p class="cuenta">Has servido: ${frac(M.cuentaSuma(J.porciones))}</p>${op}
+      ${J.contrarreloj ? "" : `<div class="botones"><button class="btn verde" type="button" id="btnSig">${J.n + 1 >= J.menu.clientes ? "Ver resultado ▶" : "Siguiente cliente ▶"}</button></div>`}`;
+    $("#controles").classList.add("oculto"); $("#pista").classList.add("oculto");
+    anunciar(`¡Bien! Has servido ${M.plano(M.cuentaSuma(J.porciones))}.`);
+    pintar();
+    if (J.contrarreloj) setTimeout(() => { if (J && J.contrarreloj && J.resuelto) nuevoCliente(); }, 1100);
+    else { $("#btnSig").onclick = siguiente; $("#btnSig").focus({ preventScroll: true }); caja.scrollIntoView({ block: "nearest", behavior: movimiento() ? "smooth" : "auto" }); }
+  } else {
+    J.fallos++; J.verGuia = true;
+    sonidoMal(); animar(img, "duda");
+    $("#pedido").innerHTML = `<b>${r.falta ? "Mmm… me parece poco." : "¡Uy, eso es demasiado!"}</b> ${frac(J.pedido.texto)}`;
+    const dif = r.falta || r.sobra;
+    const comun = r.comun > 1 ? `<p>Pedido: ${fr(r.pedido.n, r.pedido.d)}${r.pedido.d !== r.comun ? " = " + fr(r.pedidoComun, r.comun) : ""} · Has puesto: ${r.hecho.d === 1 ? r.hecho.n : fr(r.hecho.n, r.hecho.d)}${r.hecho.d !== r.comun && r.hecho.d !== 1 ? " = " + fr(r.hechoComun, r.comun) : ""}</p>` : "";
+    caja.classList.add("mal");
+    caja.innerHTML = `<h3>✘ ${r.falta ? "Te falta" : "Te sobra"} ${fr(dif.n, dif.d)}</h3>${comun}
+      <p>Ahora ves la guía en la pizza: ${r.falta ? "añade lo que falta" : "quita lo que sobra"} y vuelve a servir.</p>
+      ${J.fallos >= 2 ? `<div class="botones"><button class="btn oro" type="button" id="btnPista">💡 Ver una forma de servirlo</button></div>` : ""}`;
+    if (J.fallos >= 2) $("#btnPista").onclick = () => {
+      $("#btnPista").parentElement.outerHTML = `<p><b>Una forma:</b> ${J.pedido.solucion.map(d => fr(1, d)).join(" + ")}</p>`;
+    };
+    anunciar(`${r.falta ? "Te falta" : "Te sobra"} ${dif.n}/${dif.d}.`);
+    pintar();
+  }
 }
 
-/* ================= Acciones ================= */
-const ticketActivo = () => G.tickets.find(t => t.id === G.activo);
-function elegirTicket(id) { if (G.activo === id) return; G.activo = id; renderTickets(); }
-function meterPorcion(pid, i) {
-  const t = ticketActivo(), p = G.pizzas.find(z => z.id === pid);
-  if (!p || p.por[i] !== "m") return;
-  if (!t || t.ped.tipo === "div_cuantas") { avisar("mal", "Elige primero un ticket", "<p>Toca el ticket del pedido que quieres preparar.</p>", 2500); return; }
-  p.por[i] = "c"; t.caja.push({ pid, i, d: p.d }); sfx.coger();
-  renderTickets(); renderMostrador();
-  const otra = document.querySelector(`.porcion[data-p="${pid}"]`) || document.querySelector(".porcion"); if (otra) otra.focus({ preventScroll: true });
-}
-function devolver(t, j) {
-  const x = t.caja.splice(j, 1)[0]; if (!x) return;
-  const p = G.pizzas.find(z => z.id === x.pid); if (p) p.por[x.i] = "m";
-}
-function vaciarCaja(t) { while (t.caja.length) devolver(t, t.caja.length - 1); }
-function quitarPizzasVacias() { G.pizzas = G.pizzas.filter(p => p.por.some(s => s !== "s")); }
-
-function enviar(id) {
-  const t = G.tickets.find(x => x.id === id); if (!t || !t.caja.length || t.saliendo) return;
-  const res = M.evaluar(t.ped, t.caja.map(x => ({ d: x.d })));
-  if (res.ok) return acierto(t, res.perfecto, res.pasos);
-  fallo(t, res);
-}
-function responder(id, v) {
-  const t = G.tickets.find(x => x.id === id); if (!t || t.saliendo) return;
-  if (v === t.ped.respuesta) return acierto(t, t.intentos === 0, t.ped.op);
-  fallo(t, { total: null, objetivo: null, pista: `Dividir entre ${M.texto(t.ped.trozo)} es contar cuántas veces cabe ${M.texto(t.ped.trozo)} en ${M.texto(t.ped.base)}. ${v > t.ped.respuesta ? "Te salen demasiadas." : "Te salen pocas: caben más."}`, pasos: "" });
-}
-function acierto(t, perfecto, pasos) {
-  t.saliendo = true;
-  t.caja.forEach(x => { const p = G.pizzas.find(z => z.id === x.pid); if (p) p.por[x.i] = "s"; });
-  G.combo++; G.mejorCombo = Math.max(G.mejorCombo, G.combo);
-  const rapido = !AJ.tranquilo && t.resto / t.max > .5;
-  const m = M.monedas({ tipo: t.ped.tipo, combo: G.combo, perfecto, rapido, propinaOro: nivel("oro") > 0 });
-  G.monedas += m; G.servidos++; if (perfecto) G.perfectos++;
-  if (G.tutorial && t.sinPrisa) { D.tutorial = true; guardar(); }
-  const el = document.querySelector(`[data-ticket="${t.id}"]`);
-  sfx.bien(); flotar(el, `+${m} 💰`);
-  if (perfecto) { confeti(el); setTimeout(() => grito("¡PERFECTO!"), 80); }
-  if ([3, 6, 10].includes(G.combo)) { sfx.racha(); setTimeout(() => grito(`¡RACHA x${M.multiplicador(G.combo)}!`), 350); $("#hCombo").classList.add("pulso"); setTimeout(() => $("#hCombo").classList.remove("pulso"), 450); }
-  const txt = t.ped.op && t.ped.tipo !== "div_cuantas" ? `<p class="op">${fx(t.ped.op)}</p>` : "";
-  avisar("bien", `¡Exacto! +${m} monedas${perfecto ? " · servicio perfecto" : ""}`, `<p class="op">${fx(pasos)}</p>${txt}${!perfecto && t.ped.minimo && t.ped.tipo !== "div_cuantas" ? `<p>Se podía con ${t.ped.minimo} ${t.ped.minimo === 1 ? "porción" : "porciones"}.</p>` : ""}`, 3200);
-  anunciar(`¡Exacto! Más ${m} monedas.`);
-  retirar(t, "sale");
-}
-function fallo(t, res) {
-  t.intentos++; G.combo = 0; sfx.mal();
-  const el = document.querySelector(`[data-ticket="${t.id}"]`); if (el) { el.classList.remove("tiembla"); void el.offsetWidth; el.classList.add("tiembla"); }
-  if (AJ.movimiento) { $("#cocina").classList.remove("sacude"); void $("#cocina").offsetWidth; $("#cocina").classList.add("sacude"); }
-  const cmp = res.total == null ? "" : res.total < res.objetivo ? "Te has quedado corto." : res.total > res.objetivo ? "Te has pasado." : "La cantidad está bien, pero…";
-  const cuerpo = `${res.pasos ? `<p class="op">Has enviado: ${fx(res.pasos)}</p>` : ""}${res.pista ? `<p><b>Ojo:</b> ${fx(res.pista)}</p>` : ""}`;
-  vaciarCaja(t);
-  if (t.intentos >= 2) return perderTicket(t, cmp, cuerpo);
-  if (!AJ.tranquilo) t.resto = Math.max(t.resto - t.max * .15, t.max * .08);
-  avisar("mal", `${cmp || "No es correcto."} ¡Inténtalo otra vez!`, cuerpo, 6500);
-  anunciar(`${cmp} Inténtalo otra vez.`);
-  renderTickets(); renderMostrador(); renderHUD();
-}
-function perderTicket(t, motivo, cuerpo = "") {
-  if (t.saliendo) return;
-  t.saliendo = true; vaciarCaja(t); G.combo = 0; sfx.perdido();
-  const p = t.ped, ejemplo = solucionEjemplo(p);
-  avisar("mal", `Pedido perdido. ${motivo}`, `${cuerpo}${p.op ? `<p class="op">La operación era: ${fx(p.op)}</p>` : ""}${ejemplo ? `<p>Una forma de servirlo: ${fx(ejemplo)}</p>` : ""}`, 8000);
-  anunciar("Pedido perdido.");
-  retirar(t, "perdido");
-}
-function retirar(t, clase) {
-  // El siguiente ticket pasa a estar activo en cuanto este empieza a irse
-  if (G.activo === t.id) { const otro = G.tickets.find(x => !x.saliendo && x.id !== t.id); G.activo = otro ? otro.id : null; }
-  const el = document.querySelector(`[data-ticket="${t.id}"]`);
-  if (el && AJ.movimiento) el.classList.add(clase);
-  setTimeout(() => {
-    G.tickets = G.tickets.filter(x => x.id !== t.id); G.resueltos++;
-    quitarPizzasVacias();
-    if (!G.activo || !G.tickets.find(x => x.id === G.activo)) { const otro = G.tickets.find(x => !x.saliendo); G.activo = otro ? otro.id : null; }
-    if (G.resueltos >= G.cfg.tickets) return finTurno();
-    if (G.tickets.length < G.cfg.simult && G.emitidos < G.cfg.tickets) G.espera = Math.min(G.espera, 1.2);
-    renderTodo();
-  }, AJ.movimiento ? 480 : 0);
-  renderHUD();
-}
-function tirar(pid) {
-  const p = G.pizzas.find(z => z.id === pid); if (!p) return;
-  p.por = p.por.map(s => s === "m" ? "s" : s); quitarPizzasVacias(); sfx.soltar(); renderMostrador();
-}
-function cortar(pid) {
-  const p = G.pizzas.find(z => z.id === pid); if (!p || !p.por.every(s => s === "m")) return;
-  const pausaba = G.pausa; G.pausa = true;
-  capa(`<h2>🔪 Cortador mágico</h2><p>Esta pizza está cortada en <b>${M.NOMBRE_CORTE[p.d]}</b>. ¿En cuántas partes la quieres?</p>
-    <div class="cortes">${G.cfg.dens.filter(d => d !== p.d).map(d => `<button class="btn verde" type="button" data-nuevo="${d}">${M.NOMBRE_CORTE[d]} (1/${d})</button>`).join("")}</div>
-    <p style="font-size:.9rem">Es la misma pizza: 1 = ${G.cfg.dens.map(d => `${d}/${d}`).join(" = ")}</p>
-    <div class="botones"><button class="btn claro" type="button" id="cNo">Cancelar</button></div>`);
-  document.querySelectorAll("[data-nuevo]").forEach(b => b.onclick = () => { const d = +b.dataset.nuevo; p.d = d; p.por = Array(d).fill("m"); sfx.coger(); cerrarCapa(); G.pausa = pausaba; renderMostrador(); });
-  $("#cNo").onclick = () => { cerrarCapa(); G.pausa = pausaba; };
-  document.querySelector("[data-nuevo]").focus();
-}
-function solucionEjemplo(p) {
-  if (p.tipo === "div_cuantas") return "";
-  const prohib = p.cond && p.cond.modo === "sin" ? p.cond.tam : null, exactas = p.cond && p.cond.modo === "exactas" ? p.cond.k : null;
-  const usar = M.stockVirtual(G.cfg.dens).filter(x => x !== prohib).sort((a, b) => b - a);
-  let mejor = null;
-  const rec = (k, suma, sel) => {
-    if (suma === p.objetivo && (!exactas || sel.length === exactas)) { if (!mejor || sel.length < mejor.length) mejor = [...sel]; return; }
-    if (suma > p.objetivo || k >= usar.length || sel.length >= 10 || (mejor && !exactas && sel.length >= mejor.length)) return;
-    sel.push(usar[k]); rec(k + 1, suma + usar[k], sel); sel.pop();
-    let j = k + 1; while (j < usar.length && usar[j] === usar[k]) j++; rec(j, suma, sel);
-  };
-  rec(0, 0, []);
-  return mejor ? mejor.map(x => "1/" + (U / x)).join(" + ") : "";
+function siguiente() {
+  if (!J || !J.resuelto) return;
+  J.n++;
+  if (J.n >= J.menu.clientes) return finMenu();
+  nuevoCliente();
+  window.scrollTo({ top: 0, behavior: movimiento() ? "smooth" : "auto" });
 }
 
-/* ================= Efectos ================= */
-function centro(el) { if (!el) return [innerWidth / 2, innerHeight / 3]; const r = el.getBoundingClientRect(); return [r.left + r.width / 2, r.top + r.height / 3]; }
-function flotar(el, txt) { const [x, y] = centro(el), s = document.createElement("div"); s.className = "flota"; s.textContent = txt; s.style.left = (x - 40) + "px"; s.style.top = y + "px"; document.body.appendChild(s); setTimeout(() => s.remove(), 1200); }
-function grito(txt) { if (!AJ.movimiento) return; const s = document.createElement("div"); s.className = "grito"; s.textContent = txt; s.setAttribute("aria-hidden", "true"); document.body.appendChild(s); setTimeout(() => s.remove(), 1050); }
-function confeti(el) {
-  if (!AJ.movimiento) return; const [x, y] = centro(el), col = ["#E46D4D", "#E8B04B", "#5A8A78", "#F4EDD7"];
-  for (let i = 0; i < 22; i++) { const c = document.createElement("div"); c.className = "confeti"; c.style.left = x + "px"; c.style.top = y + "px"; c.style.background = col[i % 4]; c.style.setProperty("--dx", (Math.random() * 260 - 130) + "px"); c.style.animationDelay = (Math.random() * .15) + "s"; document.body.appendChild(c); setTimeout(() => c.remove(), 1500); }
-}
-let avisoT = null;
-function avisar(tipo, titulo, cuerpo, ms) {
-  const a = $("#aviso"); a.className = tipo; a.innerHTML = `<h3>${tipo === "bien" ? "✔" : tipo === "mal" ? "✘" : "👨‍🍳"} ${titulo}</h3>${cuerpo}`;
-  clearTimeout(avisoT); avisoT = setTimeout(() => a.classList.add("oculto"), ms);
-}
-const anunciar = t => { $("#anuncio").textContent = ""; setTimeout(() => { $("#anuncio").textContent = t; }, 30); };
-
-/* ================= Fin de turno, pausa, tienda ================= */
-function finTurno() {
-  G.fin = true; Musica.off();
-  const est = M.estrellas(G.servidos, G.perfectos, G.cfg.tickets), id = G.cfg.id;
-  const antes = D.estrellas[id] || 0;
-  D.estrellas[id] = Math.max(antes, est); D.monedas += G.monedas; D.record[id] = Math.max(D.record[id] || 0, G.monedas);
+function finMenu() {
+  const m = J.menu, primera = J.resultados.filter(Boolean).length, est = M.estrellas(primera, m.clientes);
+  const antes = D.estrellas[m.id] || 0;
+  D.estrellas[m.id] = Math.max(antes, est);
+  for (const id of M.premios(m.id, est)) if (!D.album.includes(id)) { D.album.push(id); J.nuevos.push(id); }
   guardar();
-  const sigT = M.TURNOS.find(t => t.id === id + 1);
-  if (est) setTimeout(() => sfx.racha(), 200);
-  capa(`<h2>${est ? "¡Turno superado!" : "Turno terminado"}</h2>
+  const sig = M.MENUS[m.id];
+  sonidoBien();
+  capa(`<h2 id="capaTitulo">¡Menú ${m.id} terminado!</h2>
     <div class="estrellas" aria-label="${est} de 3 estrellas">${"★".repeat(est)}${"☆".repeat(3 - est)}</div>
-    <p style="font-size:1.15rem">Pedidos servidos: <b>${G.servidos}/${G.cfg.tickets}</b> · Perfectos: <b>${G.perfectos}</b> · Mejor racha: <b>${G.mejorCombo}</b></p>
-    <p style="font-size:1.4rem;font-weight:900">+${G.monedas} 💰 <small style="font-size:.9rem;font-weight:700">(tienes ${D.monedas})</small></p>
-    ${est ? (sigT && !antes ? `<p>🔓 ¡Has desbloqueado <b>${esc(sigT.nombre)}</b>!</p>` : "") : "<p>Para superar el turno hay que servir al menos el 60 % de los pedidos.</p>"}
-    <p style="font-size:.85rem">★ 60 % servidos · ★★ 80 % · ★★★ todos y la mitad perfectos</p>
+    <p>Clientes servidos a la primera: <b>${primera} de ${m.clientes}</b></p>
+    <p>${est === 3 ? "¡Perfecto! Eres un maestro pizzero." : est === 2 ? "¡Muy bien! Para 3 estrellas, sirve a todos a la primera." : "Para más estrellas, intenta acertar a la primera."}</p>
+    ${J.nuevos.length ? `<p><b>${J.nuevos.length > 1 ? "Nuevos clientes" : "Nuevo cliente"} en tu álbum:</b></p><div class="nuevos">${J.nuevos.map(id => `<img src="${IMG[id]}" alt="${esc(M.CLIENTES.find(c => c.id === id).nombre)}">`).join("")}</div>` : ""}
     <div class="botones">
-      <button class="btn oro" type="button" id="fTienda">🛒 Tienda</button>
-      <button class="btn claro" type="button" id="fRepetir">↻ Repetir</button>
-      ${sigT && est ? `<button class="btn" type="button" id="fSig">Turno ${sigT.id} ▶</button>` : ""}
-      <button class="btn claro" type="button" id="fMenu">Mi pizzería</button>
+      ${sig ? `<button class="btn verde" type="button" id="cSig">Menú ${sig.id} ▶</button>` : ""}
+      <button class="btn claro" type="button" id="cRep">↻ Repetir</button>
+      <button class="btn claro" type="button" id="cMenu">Menús</button>
     </div>`);
-  $("#fTienda").onclick = () => tienda(() => finTurnoVolver());
-  $("#fRepetir").onclick = () => { cerrarCapa(); empezarTurno(id); };
-  if ($("#fSig")) $("#fSig").onclick = () => { cerrarCapa(); empezarTurno(sigT.id); };
-  $("#fMenu").onclick = () => { cerrarCapa(); inicio(); };
-  ($("#fSig") || $("#fRepetir")).focus();
-}
-function finTurnoVolver() { cerrarCapa(); inicio(); }
-function pausar() {
-  if (!G || G.fin) return;
-  G.pausa = true; Musica.off();
-  capa(`<h2>⏸ Pausa</h2><p>La cocina espera. Los pedidos no pierden paciencia.</p>
-    <div class="botones"><button class="btn verde" type="button" id="pSeguir">▶ Seguir</button><button class="btn claro" type="button" id="pAyuda">Cómo se juega</button><button class="btn claro" type="button" id="pSalir">Salir del turno</button></div>`);
-  $("#pSeguir").onclick = reanudar; $("#pAyuda").onclick = () => ayuda(pausar); $("#pSalir").onclick = () => { cerrarCapa(); G.fin = true; inicio(); };
-  $("#pSeguir").focus();
-}
-function reanudar() { cerrarCapa(); if (G) { G.pausa = false; ultimo = performance.now(); if (AJ.musica) Musica.on(); } }
-
-function tienda(alCerrar) {
-  const fila = m => {
-    const nv = nivel(m.id), max = m.precios.length, precio = m.precios[nv], tiene = m.tipo === "deco" && nv > 0;
-    const accion = nv >= max
-      ? (m.tipo === "deco" ? `<button class="btn claro peq" type="button" data-deco="${m.id}" aria-pressed="${!!D.deco[m.id]}">${D.deco[m.id] ? "Puesta ✓" : "Poner"}</button>` : `<span class="niv">MÁXIMO</span>`)
-      : `<button class="btn oro peq" type="button" data-comprar="${m.id}" ${D.monedas < precio ? "disabled" : ""}>${precio} 💰</button>`;
-    return `<li class="mejora"><span class="ico" aria-hidden="true">${m.icono}</span><span><b>${esc(m.nombre)}</b><small>${esc(m.desc)}</small>
-      ${max > 1 ? `<span class="niv">Nivel ${nv}/${max}</span>` : tiene || nv ? `<span class="niv">Comprado</span>` : ""}</span>${accion}</li>`;
-  };
-  capa(`<h2>🛒 Tienda</h2><p style="font-size:1.3rem;font-weight:900">Tienes ${D.monedas} 💰</p>
-    <h3>Mejoras de cocina</h3><ul class="tienda">${M.MEJORAS.filter(m => m.tipo === "juego").map(fila).join("")}</ul>
-    <h3>Decoración</h3><ul class="tienda">${M.MEJORAS.filter(m => m.tipo === "deco").map(fila).join("")}</ul>
-    <div class="botones"><button class="btn verde" type="button" id="tCerrar">Listo</button></div>`);
-  document.querySelectorAll("[data-comprar]").forEach(b => b.onclick = () => {
-    const m = M.MEJORAS.find(x => x.id === b.dataset.comprar), nv = nivel(m.id), precio = m.precios[nv];
-    if (D.monedas < precio) return;
-    D.monedas -= precio; D.mejoras[m.id] = nv + 1; if (m.tipo === "deco") D.deco[m.id] = true;
-    guardar(); sfx.bien(); tienda(alCerrar); pintarInicio();
-  });
-  document.querySelectorAll("[data-deco]").forEach(b => b.onclick = () => { D.deco[b.dataset.deco] = !D.deco[b.dataset.deco]; guardar(); tienda(alCerrar); pintarInicio(); });
-  $("#tCerrar").onclick = () => { cerrarCapa(); if (alCerrar) alCerrar(); };
-  $("#tCerrar").focus({ preventScroll: true });
+  if (sig) $("#cSig").onclick = () => { cerrarCapa(); empezar(sig.id); };
+  $("#cRep").onclick = () => { cerrarCapa(); empezar(m.id); };
+  $("#cMenu").onclick = () => { cerrarCapa(); inicio(); };
 }
 
-/* ================= Inicio ================= */
-function escaparate() {
-  // Pequeña escena de la pizzería que cambia con la decoración y la categoría
-  const e = estrellasTotales();
-  return `<div style="position:absolute;inset:0;background:repeating-linear-gradient(90deg,#F4EDD7 0 30px,#EFE4C8 30px 60px)"></div>
-    ${D.deco.luces ? '<div class="deco-luces"></div>' : ""}
-    <div style="position:absolute;left:50%;top:30px;transform:translateX(-50%);font-weight:900;font-size:1.6rem;${D.deco.neon ? "" : "color:var(--espresso)"}" class="${D.deco.neon ? "neon" : ""}">PIZZERÍA πCHU</div>
-    <div style="position:absolute;left:18px;bottom:46px;width:90px;height:100px;border-radius:45px 45px 8px 8px;background:linear-gradient(#B4574A,#8C3F35);border:3px solid var(--espresso)">
-      <div style="position:absolute;left:18px;bottom:10px;width:50px;height:30px;border-radius:25px 25px 4px 4px;background:radial-gradient(ellipse at 50% 100%,#FFD36B,#FF7A3D 50%,#1d1716 75%)"></div></div>
-    <div class="${D.deco.mantel ? "mantel" : ""}" style="position:absolute;left:0;right:0;bottom:0;height:52px;border-top:4px solid var(--espresso);${D.deco.mantel ? "background:repeating-conic-gradient(#C9483A 0 25%,#F4EDD7 0 50%) 0 0/30px 30px" : "background:var(--madera)"}"></div>
-    <div style="position:absolute;right:${D.deco.plantas ? 70 : 24}px;bottom:40px;font-size:3rem">🍕</div>
-    ${D.deco.plantas ? '<div style="position:absolute;right:14px;bottom:36px;font-size:2.4rem">🪴</div><div style="position:absolute;left:118px;bottom:36px;font-size:2.4rem">🪴</div>' : ""}
-    <div style="position:absolute;right:12px;top:10px;font-size:1.2rem;color:#B9811F;font-weight:900">${"★".repeat(Math.min(e, 24) > 0 ? 1 : 0)} ${e}</div>`;
+function tic() {
+  if (!J || !J.contrarreloj) return clearInterval(temporizador);
+  const quedan = Math.max(0, J.fin - performance.now()), s = Math.ceil(quedan / 1000);
+  $("#tubo").style.width = (quedan / (M.CONTRARRELOJ * 10)) + "%";
+  $("#segundos").textContent = s + " s";
+  if (quedan <= 0) {
+    clearInterval(temporizador);
+    const m = J.menu, antes = D.records[m.id] || 0, n = J.servidos;
+    if (n > antes) { D.records[m.id] = n; guardar(); }
+    J.resuelto = true;
+    sonidoBien();
+    capa(`<h2 id="capaTitulo">⏱ ¡Tiempo!</h2>
+      <p style="font-size:1.3rem">Has servido <b>${n}</b> ${n === 1 ? "cliente" : "clientes"} en ${M.CONTRARRELOJ} segundos.</p>
+      <p>${n > antes ? "🏆 ¡Nuevo récord!" : `Tu récord: ${antes}`}</p>
+      <div class="botones"><button class="btn verde" type="button" id="cRep">↻ Otra vez</button><button class="btn claro" type="button" id="cMenu">Menús</button></div>`);
+    $("#cRep").onclick = () => { cerrarCapa(); empezar(m.id, true); };
+    $("#cMenu").onclick = () => { cerrarCapa(); inicio(); };
+  }
 }
-function pintarInicio() {
-  $("#escaparate").innerHTML = escaparate();
-  $("#rango").textContent = M.rango(estrellasTotales());
-  $("#monedasTotal").textContent = D.monedas;
-  $("#listaTurnos").innerHTML = M.TURNOS.map(t => {
-    const abierto = t.id === 1 || (D.estrellas[t.id - 1] || 0) > 0, e = D.estrellas[t.id] || 0;
-    return `<li><button class="turno-btn ${t.jefe ? "jefe" : ""}" type="button" data-turno="${t.id}" ${abierto ? "" : "disabled"}
-      aria-label="Turno ${t.id}: ${esc(t.nombre)}. ${esc(t.tema)}. ${abierto ? e + " de 3 estrellas" : "Bloqueado"}">
-      <span class="n">Turno ${t.id}${t.jefe ? " · Jefe" : ""}</span><b>${esc(t.nombre)}</b><small>${esc(t.tema)}</small>
-      <span class="est" aria-hidden="true">${abierto ? "★".repeat(e) + "☆".repeat(3 - e) : "🔒"}</span></button></li>`;
-  }).join("");
-}
-function siguienteTurno() { const t = M.TURNOS.find(x => (D.estrellas[x.id] || 0) === 0 && (x.id === 1 || (D.estrellas[x.id - 1] || 0) > 0)); return t ? t.id : 8; }
+
+// ---------------- Pantalla de inicio ----------------
 function inicio() {
-  cancelAnimationFrame(raf); Musica.off(); if (G) G.fin = true;
-  $("#cocina").classList.add("oculto"); $("#inicio").classList.remove("oculto"); $("#aviso").classList.add("oculto");
-  pintarInicio();
-  $("#btnJugar").textContent = `▶ ¡A la cocina! · Turno ${siguienteTurno()}`;
+  clearInterval(temporizador); J = null; salirArmado = 0;
+  $("#juego").classList.add("oculto"); $("#inicio").classList.remove("oculto");
+  $("#imgPichu").src = IMG.pichu;
+  $("#saludo").textContent = `¡Hola${alias ? ", " + alias : ""}! Soy Pichu, el cocinero. Cada cliente pide un trozo de pizza: ¿me ayudas a servir la cantidad justa?`;
+  $("#menus").innerHTML = M.MENUS.map(m => {
+    const est = D.estrellas[m.id] || 0, abierto = m.id === 1 || (D.estrellas[m.id - 1] || 0) > 0, rec = D.records[m.id];
+    return `<section class="menu-card ${abierto ? "" : "bloq"}" aria-labelledby="m${m.id}">
+      <span class="num" aria-hidden="true">${abierto ? m.id : "🔒"}</span>
+      <h2 id="m${m.id}">Menú ${m.id} · ${esc(m.titulo)}</h2>
+      <p>${frac(m.sub.replace(/(\d+)\/(\d+)/g, "{$1/$2}"))}</p>
+      <div class="est" aria-label="${est} de 3 estrellas">${"★".repeat(est)}${"☆".repeat(3 - est)}${rec ? `<small>⏱ récord: ${rec}</small>` : ""}</div>
+      ${abierto ? `<div class="acc"><button class="btn verde" type="button" data-jugar="${m.id}">▶ Jugar</button>
+        ${est ? `<button class="btn claro" type="button" data-reloj="${m.id}">⏱ Contrarreloj</button>` : ""}</div>`
+        : `<p class="candado">Consigue una estrella en el menú ${m.id - 1} para abrirlo.</p>`}
+    </section>`;
+  }).join("");
+  $("#album").innerHTML = M.CLIENTES.map(c => {
+    const si = D.album.includes(c.id);
+    return `<li class="${si ? "" : "no"}"><img src="${IMG[c.id]}" alt=""><span>${si ? esc(c.nombre) : `Menú ${c.menu} · ${"★".repeat(c.est)}`}</span><span class="solo-lector">${si ? "" : " (todavía no)"}</span></li>`;
+  }).join("");
+  pintarAjustes();
+  if (!D.ayudaVista) { D.ayudaVista = true; guardar(); ayuda(); }
+}
+function pintarAjustes() {
+  $("#btnSonido").setAttribute("aria-pressed", D.ajustes.sonido); $("#btnSonido").textContent = D.ajustes.sonido ? "🔊 Sonido: sí" : "🔇 Sonido: no";
+  $("#btnMov").setAttribute("aria-pressed", D.ajustes.movimiento); $("#btnMov").textContent = D.ajustes.movimiento ? "✨ Animaciones: sí" : "Animaciones: no";
+  document.body.classList.toggle("sin-mov", !D.ajustes.movimiento);
+}
+function ayuda() {
+  capa(`<h2 id="capaTitulo">🍕 Cómo se juega</h2>
+    <ol>
+      <li>Un cliente te pide un trozo de pizza: <b>${fr(3, 4)}</b>, «la mitad de…», «somos 3…».</li>
+      <li>Toca las <b>porciones</b> de abajo (${fr(1, 2)}, ${fr(1, 4)}…) para ponerlas en la pizza.</li>
+      <li>Pulsa <b>¡Servir!</b> Tiene que ser <b>exacto</b>: ni más ni menos.</li>
+    </ol>
+    <p>Al principio verás una <b>raya roja</b> que marca hasta dónde llenar. Después, ¡a calcular!</p>
+    <p>Sirve a todos a la primera para ganar <b>3 estrellas</b>.</p>
+    <p style="font-size:.9rem">Teclado: <kbd>1</kbd>–<kbd>5</kbd> porciones · <kbd>Retroceso</kbd> quitar · <kbd>Intro</kbd> servir</p>
+    <div class="botones"><button class="btn verde" type="button" id="cOk">¡A cocinar!</button></div>`);
+  $("#cOk").onclick = cerrarCapa;
 }
 
-/* ================= Capas ================= */
+// ---------------- Utilidades ----------------
 let focoPrevio = null;
-function capa(html) { if ($("#capa").classList.contains("oculto")) focoPrevio = document.activeElement; $("#capaCaja").innerHTML = html; $("#capa").classList.remove("oculto"); }
-function cerrarCapa() { $("#capa").classList.add("oculto"); if (focoPrevio && document.contains(focoPrevio)) focoPrevio.focus({ preventScroll: true }); }
-function ayuda(volver) {
-  capa(`<h2>Cómo se juega</h2><ul>
-    <li>Arriba llegan <b>tickets</b> con pedidos. Toca un ticket para elegirlo (o pulsa <b>1</b>, <b>2</b>, <b>3</b>).</li>
-    <li>Toca porciones de las pizzas del mostrador para meterlas en la <b>caja</b> del ticket elegido. Toca una porción de la caja para sacarla.</li>
-    <li>Pulsa <b>Enviar</b>. Tiene que ser <b>exacto</b>. Si fallas dos veces o se acaba la paciencia, pierdes el pedido.</li>
-    <li><b>Racha</b>: aciertos seguidos multiplican las monedas (x2, x3, x4). <b>Perfecto</b>: usar el menor número de porciones posible.</li>
-    <li>El <b>horno</b> saca pizzas solo. Si el mostrador se llena, tira con 🗑 la que no te sirva.</li>
-    <li>Ojo: <b>1/8 es más pequeño que 1/4</b>. Desde el turno 3, la caja está cerrada: ¡calcula tú cuánto llevas!</li>
-    <li>Con las monedas, mejora tu pizzería en la <b>tienda</b>.</li>
-    <li>Teclado: <b>1-3</b> elegir ticket · <b>Tab</b> y <b>Enter</b> coger porciones · <b>E</b> enviar · <b>V</b> vaciar · <b>P</b> pausa.</li></ul>
-    <div class="botones"><button class="btn verde" type="button" id="aOk">¡Entendido!</button></div>`);
-  $("#aOk").onclick = () => volver ? volver() : cerrarCapa(); $("#aOk").focus();
+function capa(html) {
+  if ($("#capa").classList.contains("oculto")) focoPrevio = document.activeElement;
+  $("#capaCaja").innerHTML = html; $("#capa").classList.remove("oculto");
+  const b = $("#capaCaja button"); if (b) b.focus();
 }
-function ajustes() {
-  capa(`<h2>Ajustes</h2>
-    <label><input type="checkbox" id="oTranq" ${AJ.tranquilo ? "checked" : ""}> <span><b>Modo tranquilo</b>: los pedidos no tienen cuenta atrás. Ideal para aprender o si prefieres ir a tu ritmo.</span></label>
-    <label><input type="checkbox" id="oMusica" ${AJ.musica ? "checked" : ""}> <span><b>Música</b></span></label>
-    <label><input type="checkbox" id="oSonido" ${AJ.sonido ? "checked" : ""}> <span><b>Efectos de sonido</b></span></label>
-    <label><input type="checkbox" id="oMov" ${AJ.movimiento ? "checked" : ""}> <span><b>Animaciones y efectos</b> (desactívalos si prefieres menos movimiento)</span></label>
-    <div class="botones"><button class="btn verde" type="button" id="oOk">Guardar</button></div>`);
-  $("#oOk").onclick = () => { AJ.tranquilo = $("#oTranq").checked; AJ.musica = $("#oMusica").checked; AJ.sonido = $("#oSonido").checked; AJ.movimiento = $("#oMov").checked; guardar(); aplicarMov(); cerrarCapa(); };
-  $("#oOk").focus();
-}
+function cerrarCapa() { $("#capa").classList.add("oculto"); if (focoPrevio && document.contains(focoPrevio) && focoPrevio.offsetParent) focoPrevio.focus({ preventScroll: true }); }
+function animar(el, clase) { if (!movimiento()) return; el.classList.remove(clase); void el.offsetWidth; el.classList.add(clase); setTimeout(() => el.classList.remove(clase), 700); }
+function anunciar(t) { const a = $("#anuncio"); a.textContent = ""; setTimeout(() => { a.textContent = t; }, 30); }
 
-/* ================= Eventos ================= */
-document.addEventListener("click", e => {
-  const t = e.target;
-  const por = t.closest(".porcion"); if (por) return meterPorcion(+por.dataset.p, +por.dataset.i);
-  const q = t.closest("[data-quitar]"); if (q) { const [id, j] = q.dataset.quitar.split(":").map(Number); const tk = G.tickets.find(x => x.id === id); if (tk) { devolver(tk, j); sfx.soltar(); renderTickets(); renderMostrador(); } return; }
-  const v = t.closest("[data-vaciar]"); if (v) { const tk = G.tickets.find(x => x.id === +v.dataset.vaciar); if (tk) { vaciarCaja(tk); renderTickets(); renderMostrador(); } return; }
-  const en = t.closest("[data-enviar]"); if (en) return enviar(+en.dataset.enviar);
-  const r = t.closest("[data-resp]"); if (r) { const [id, val] = r.dataset.resp.split(":").map(Number); elegirTicket(id); return responder(id, val); }
-  const ti = t.closest("[data-tirar]"); if (ti) return tirar(+ti.dataset.tirar);
-  const co = t.closest("[data-cortar]"); if (co) return cortar(+co.dataset.cortar);
-  const tk = t.closest("[data-ticket]"); if (tk) return elegirTicket(+tk.dataset.ticket);
-  const tu = t.closest("[data-turno]"); if (tu && !tu.disabled) return empezarTurno(+tu.dataset.turno);
-  const ab = t.closest("[data-abre]"); if (ab) return ab.dataset.abre === "tienda" ? tienda() : ab.dataset.abre === "ayuda" ? ayuda() : ajustes();
-  if (t.closest("#aviso")) $("#aviso").classList.add("oculto");
+// ---------------- Eventos ----------------
+$("#menus").addEventListener("click", e => {
+  const b = e.target.closest("button"); if (!b) return;
+  if (b.dataset.jugar) empezar(+b.dataset.jugar);
+  if (b.dataset.reloj) empezar(+b.dataset.reloj, true);
 });
+$("#porciones").addEventListener("click", e => { const b = e.target.closest(".porcion"); if (b && !b.disabled) poner(+b.dataset.d); });
+$("#btnDeshacer").onclick = deshacer;
+$("#btnVaciar").onclick = vaciar;
+$("#btnServir").onclick = servir;
+$("#btnAyuda").onclick = ayuda;
+$("#btnSonido").onclick = () => { D.ajustes.sonido = !D.ajustes.sonido; guardar(); pintarAjustes(); tono(660, .1); };
+$("#btnMov").onclick = () => { D.ajustes.movimiento = !D.ajustes.movimiento; guardar(); pintarAjustes(); };
+// Salir con doble pulsación (si la partida está empezada)
+$("#btnSalir").onclick = () => {
+  const empezada = J && (J.contrarreloj || J.n > 0 || J.porciones.length);
+  if (!empezada || Date.now() - salirArmado < 3000) return inicio();
+  salirArmado = Date.now();
+  const b = $("#btnSalir"); b.textContent = "¿Salir? Pulsa otra vez";
+  setTimeout(() => { if (Date.now() - salirArmado >= 3000) b.textContent = "← Menús"; }, 3100);
+};
 document.addEventListener("keydown", e => {
-  const por = e.target.closest && e.target.closest(".porcion");
-  if (por && (e.key === "Enter" || e.key === " ")) { e.preventDefault(); return meterPorcion(+por.dataset.p, +por.dataset.i); }
-  const tk = e.target.closest && e.target.closest(".ticket");
-  if (tk && e.target === tk && (e.key === "Enter" || e.key === " ")) { e.preventDefault(); return elegirTicket(+tk.dataset.ticket); }
-  if (!$("#capa").classList.contains("oculto")) { if (e.key === "Escape" && G && G.pausa && !G.fin) reanudar(); return; }
-  if ($("#cocina").classList.contains("oculto") || !G || G.fin) return;
-  if (/^[1-4]$/.test(e.key) && G.tickets[+e.key - 1]) { elegirTicket(G.tickets[+e.key - 1].id); const el = document.querySelector(`[data-ticket="${G.activo}"]`); if (el) el.focus({ preventScroll: true }); }
-  else if (e.key === "e" || e.key === "E") { if (G.activo) enviar(G.activo); }
-  else if (e.key === "v" || e.key === "V") { const t = ticketActivo(); if (t) { vaciarCaja(t); renderTickets(); renderMostrador(); } }
-  else if (e.key === "p" || e.key === "P" || e.key === "Escape") pausar();
+  if (!$("#capa").classList.contains("oculto")) { if (e.key === "Escape" && $("#cOk")) cerrarCapa(); return; }
+  if (!J || $("#juego").classList.contains("oculto") || e.ctrlKey || e.metaKey || e.altKey) return;
+  const enBoton = e.target.closest && e.target.closest("button");
+  if (/^[1-9]$/.test(e.key)) { const d = J.menu.botones[+e.key - 1]; if (d) { e.preventDefault(); poner(d); } }
+  else if (e.key === "Backspace") { e.preventDefault(); deshacer(); }
+  else if (e.key === "Enter" && !enBoton) { e.preventDefault(); J.resuelto ? (!J.contrarreloj && siguiente()) : servir(); }
+  else if (e.key === "Escape") $("#btnSalir").click();
 });
-$("#btnPausa").onclick = pausar;
-$("#btnMusica").onclick = () => { AJ.musica = !AJ.musica; guardar(); if (AJ.musica && G && !G.pausa) Musica.on(); else Musica.off(); renderHUD(); };
-$("#btnJugar").onclick = () => empezarTurno(siguienteTurno());
-document.addEventListener("visibilitychange", () => { if (document.hidden && G && !G.fin && !G.pausa && !$("#cocina").classList.contains("oculto")) pausar(); });
 
-aplicarMov();
+// Para las pruebas automáticas
+window.__pizzeria = { M, D, get J() { return J; }, empezar, poner, servir, siguiente, inicio };
 inicio();
-if (alias) document.querySelector(".logo-rush p").insertAdjacentHTML("beforeend", `<br>¡Hola, <b>${esc(alias)}</b>!`);
-
-// Ganchos para las pruebas automáticas
-window.__pizzeria = { M, get G() { return G; }, D, AJ, empezarTurno, enviar, responder, meterPorcion, elegirTicket, hornear, tirar, cortar, tienda, finTurno, solucionEjemplo, inicio, pausar, reanudar, renderTodo };
 })();
 </script>
 </body>
