@@ -20,6 +20,8 @@ compartido/marca.css    identidad visual (solo portada y páginas propias)
 compartido/marca.js     nombre, versión y LISTA DE JUEGOS (MARCA.juegos)
 compartido/componentes.js  alias, exportar/importar/borrar, confirmación doble
 compartido/volver.js    botón "← πCHU" que se añade a cada juego
+compartido/mathquest.js progreso común (pichu.mathquest.v1), MUNDOS del mapa de la portada y LOGROS
+compartido/img/personajes/  personaje de cada mundo (.webp)
 applets/<id>/index.html cada juego, autocontenido
 src/<juego>/            fuentes de los juegos que se compilan (p. ej. src/pizzeria: motor.js + juego.html + personajes)
                         → python3 src/pizzeria/build.py genera applets/pizzeria/index.html (no editar el generado)

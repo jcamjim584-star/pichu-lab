@@ -8,7 +8,7 @@
 
    Si añades un juego, añade su ruta a ARCHIVOS.
    ========================================================= */
-const VERSION = "pichu-v0.6.4";
+const VERSION = "pichu-v0.9.2";
 
 const ARCHIVOS = [
   "./",
@@ -20,6 +20,7 @@ const ARCHIVOS = [
   "compartido/marca.js",
   "compartido/componentes.js",
   "compartido/volver.js",
+  "compartido/mathquest.js",
   "compartido/fuentes/lato-latin-400-normal.woff2",
   "compartido/fuentes/lato-latin-700-normal.woff2",
   "compartido/fuentes/lato-latin-900-normal.woff2",
@@ -28,10 +29,23 @@ const ARCHIVOS = [
   "compartido/img/icono-192.png",
   "compartido/img/icono-512.png",
   "compartido/img/centro.jpg",
+  "compartido/img/personajes/arlequina.webp",
+  "compartido/img/personajes/divison.webp",
+  "compartido/img/personajes/duende.webp",
+  "compartido/img/personajes/incognito.webp",
+  "compartido/img/personajes/mago.webp",
+  "compartido/img/personajes/menos.webp",
+  "compartido/img/personajes/pirata.webp",
+  "compartido/img/personajes/pizarra.webp",
+  "compartido/img/personajes/punteo.webp",
+  "compartido/img/personajes/reglino.webp",
+  "compartido/img/personajes/salsita.webp",
   // Juegos
   "applets/expres/",
   "applets/pizzeria/",
-  "applets/integer-ninja/"
+  "applets/integer-ninja/",
+  "applets/equation-merge/",
+  "applets/fraction-merge/"
 ];
 
 // Estrategia (desde 0.6.2): PRIMERO LA RED, y la copia guardada solo si no hay conexión.

@@ -1,0 +1,1268 @@
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Fraction Merge · Fracciones · πCHU</title>
+<meta name="description" content="Videojuego de fusionar fracciones para 1.º de ESO. Sin registro ni datos personales.">
+<meta name="theme-color" content="#332B2A">
+<link rel="icon" href="../../compartido/img/icono-192.png">
+<style>
+@font-face{font-family:"Lato";font-weight:400;font-display:swap;src:url("../../compartido/fuentes/lato-latin-400-normal.woff2") format("woff2")}
+@font-face{font-family:"Lato";font-weight:700;font-display:swap;src:url("../../compartido/fuentes/lato-latin-700-normal.woff2") format("woff2")}
+@font-face{font-family:"Lato";font-weight:900;font-display:swap;src:url("../../compartido/fuentes/lato-latin-900-normal.woff2") format("woff2")}
+/* Paleta πCHU: espresso, salvia, coral y crema (más variantes oscuras para que el texto se lea bien) */
+:root{--espresso:#332B2A;--salvia:#5A8A78;--coral:#E46D4D;--crema:#F4EDD7;--coral-oscuro:#A8402A;--salvia-oscuro:#3F6E5C;--papel:#FFFCF3;--linea:#D9CFB4;--salvia-claro:#DCE8E1;
+  --hueco:#463B39}
+*,*::before,*::after{box-sizing:border-box}
+html,body{height:100%;margin:0}
+body{font-family:"Lato",system-ui,-apple-system,"Segoe UI",Roboto,sans-serif;color:var(--espresso);background:var(--crema);overflow:hidden;overscroll-behavior:none;
+  -webkit-user-select:none;user-select:none;-webkit-tap-highlight-color:transparent}
+button{font:inherit;color:inherit;cursor:pointer}
+:focus-visible{outline:3px solid var(--coral-oscuro);outline-offset:2px}
+#fx{position:fixed;inset:0;width:100%;height:100%;pointer-events:none;z-index:60}
+.pantalla{position:fixed;inset:0;display:none;padding:max(10px,env(safe-area-inset-top)) max(10px,env(safe-area-inset-right)) max(10px,env(safe-area-inset-bottom)) max(10px,env(safe-area-inset-left))}
+.pantalla.activa{display:flex}
+body.jugando #pichu-volver{display:none}
+/* Fracción apilada */
+.fr{display:inline-flex;flex-direction:column;align-items:center;vertical-align:middle;line-height:1;margin:0 .08em}
+.fr>span:first-child{border-bottom:.09em solid currentColor;padding:0 .14em .05em}
+.fr>span:last-child{padding:.07em .14em 0}
+
+/* ---------- Botones ---------- */
+.btn{min-height:48px;padding:.55em 1.2em;border-radius:999px;border:0;font-weight:900;background:var(--salvia-oscuro);color:#fff;box-shadow:0 4px 0 #27463b}
+.btn:active{transform:translateY(3px);box-shadow:0 1px 0 #27463b}
+.btn.oro{background:var(--coral);color:var(--espresso);box-shadow:0 4px 0 var(--coral-oscuro)}
+.btn.oro:active{box-shadow:0 1px 0 var(--coral-oscuro)}
+.btn.gris{background:var(--papel);color:var(--espresso);box-shadow:0 4px 0 var(--linea);border:2px solid var(--espresso)}
+.btn.gris:active{box-shadow:0 1px 0 var(--linea)}
+.btn[disabled]{opacity:.5;cursor:not-allowed}
+.btn.grande{font-size:1.5rem;min-height:68px;padding:.5em 2em}
+.redondo{width:48px;height:48px;border-radius:50%;border:2px solid var(--espresso);background:var(--papel);font-size:1.2rem;font-weight:900;display:grid;place-items:center;flex:none}
+
+/* ---------- Menú ---------- */
+#pMenu{flex-direction:column;align-items:center;justify-content:center;gap:12px;overflow:auto;text-align:center}
+.logo{font-weight:900;font-size:clamp(2.4rem,12vw,4.6rem);line-height:.92;margin:0;color:var(--espresso)}
+.logo b{color:var(--coral)}
+.logo small{display:block;font-size:.26em;letter-spacing:.2em;color:var(--salvia-oscuro);margin-top:.6em}
+.mascota{width:min(38vw,170px);height:auto;animation:flota 3s ease-in-out infinite}
+@keyframes flota{50%{transform:translateY(-8px) rotate(-2deg)}}
+.fila{display:flex;gap:10px;flex-wrap:wrap;justify-content:center}
+.cartera{display:flex;gap:10px;justify-content:center;flex-wrap:wrap;font-weight:900}
+.chip{display:inline-flex;align-items:center;gap:.4em;padding:.35em .9em;border-radius:999px;background:var(--papel);border:2px solid var(--linea)}
+.pie{font-size:.88rem;margin:0}
+.pie a{color:var(--salvia-oscuro);font-weight:700}
+
+/* ---------- Niveles ---------- */
+#pMapa{flex-direction:column;gap:8px}
+.barra{display:flex;align-items:center;gap:10px}
+.barra h2{margin:0;font-size:1.3rem;font-weight:900;flex:1}
+#listaNiveles{flex:1;overflow:auto;-webkit-overflow-scrolling:touch;padding:4px 2px 80px;display:grid;gap:10px;align-content:start;grid-template-columns:repeat(auto-fill,minmax(250px,1fr))}
+.esc{grid-column:1/-1;margin:.6em 0 0;font-size:.95rem;letter-spacing:.12em;text-transform:uppercase;color:var(--coral-oscuro);font-weight:900}
+.nivel{display:flex;align-items:center;gap:12px;text-align:left;padding:10px 12px;border-radius:18px;border:2px solid var(--linea);background:var(--papel);min-height:76px;
+  box-shadow:0 3px 0 var(--linea)}
+.nivel .n{flex:none;width:52px;height:52px;border-radius:16px;display:grid;place-items:center;font-size:1.5rem;font-weight:900;background:var(--salvia-oscuro);color:#fff}
+.nivel.jefe .n{background:var(--coral-oscuro)}
+.nivel.inf .n{background:var(--espresso);color:var(--crema)}
+.nivel b{display:block;font-size:1.05rem}
+.nivel span{font-size:.85rem}
+.nivel .est{margin-left:auto;font-size:1.1rem;white-space:nowrap;color:var(--coral-oscuro)}
+.nivel[disabled]{opacity:.5}
+.misiones{grid-column:1/-1;border-radius:18px;background:var(--salvia-claro);padding:10px 12px}
+.misiones h3{margin:0 0 6px;font-size:1rem}
+.mision{display:grid;grid-template-columns:1fr auto;gap:2px 10px;font-size:.9rem;margin:6px 0}
+.prog{grid-column:1/-1;height:8px;border-radius:9px;background:#fff;overflow:hidden}
+.prog i{display:block;height:100%;background:var(--salvia-oscuro);border-radius:9px}
+
+/* ---------- Partida ---------- */
+#pJuego{display:none;grid-template-columns:minmax(0,1fr);grid-template-rows:auto auto auto minmax(0,1fr) auto;gap:6px;touch-action:none}
+#pJuego.activa{display:grid}
+#hud{display:flex;align-items:center;gap:8px}
+#hud .tit{flex:1;min-width:0}
+#hud .tit b{display:block;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;font-size:1rem}
+#hud .tit span{font-size:.8rem}
+.dato{flex:none;min-width:58px;text-align:center;padding:3px 8px;border-radius:12px;background:var(--papel);border:2px solid var(--linea)}
+.dato b{display:block;font-size:1.25rem;line-height:1.1}
+.dato span{font-size:.62rem;letter-spacing:.08em;text-transform:uppercase}
+.dato.poco b{color:var(--coral-oscuro)}
+#pedidos{display:grid;grid-template-columns:repeat(3,1fr);gap:6px}
+.pedido{position:relative;min-height:74px;padding:4px 4px 6px;border-radius:14px;border:2px solid var(--coral);background:var(--papel);color:var(--espresso);font-weight:900;
+  display:flex;flex-direction:column;align-items:center;justify-content:center;box-shadow:0 4px 0 var(--coral-oscuro)}
+.pedido .etq{font-size:.62rem;letter-spacing:.06em;text-transform:uppercase;color:var(--coral-oscuro);font-weight:700}
+.pedido .txt{font-size:clamp(1rem,4.8vw,1.45rem);line-height:1.1;white-space:nowrap;display:flex;align-items:center}
+.pedido.largo .txt{font-size:clamp(.82rem,3.7vw,1.15rem)}
+.pedido svg{width:44px;height:44px;display:block}
+.pedido.vacio{background:transparent;border:2px dashed var(--linea);box-shadow:none;color:var(--salvia-oscuro);font-size:1.4rem}
+.pedido.entra{animation:entra .35s cubic-bezier(.2,1.5,.5,1)}
+.pedido .bombilla{position:absolute;right:4px;top:2px;font-size:.75rem}
+@keyframes entra{from{transform:scale(.3);opacity:0}}
+#medio{display:flex;align-items:center;gap:8px;min-height:48px}
+#progreso{flex:none;display:flex;gap:3px;flex-wrap:wrap;max-width:36%}
+#progreso i{width:11px;height:11px;border-radius:50%;background:var(--papel);border:2px solid var(--linea)}
+#progreso i.ok{background:var(--salvia-oscuro);border-color:var(--salvia-oscuro)}
+#cinta{flex:1;text-align:center;font-weight:900;font-size:clamp(.88rem,3.9vw,1.1rem);line-height:1.25;color:var(--coral-oscuro);min-height:1.2em}
+#cinta.info{color:var(--espresso);font-weight:700;font-size:clamp(.8rem,3.5vw,1rem)}
+#cinta em{font-style:normal;color:var(--salvia-oscuro)}
+#jefe{display:none;align-items:center;gap:8px;flex:none}
+#jefe svg{width:46px;height:46px}
+#jefe.golpe svg{animation:golpe .4s}
+#jefe img{width:50px;height:50px;border-radius:50%;border:2px solid var(--espresso);background:var(--papel);object-fit:contain;display:block}
+#jefe.golpe img{animation:golpe .4s}
+@keyframes golpe{25%{transform:translateX(-6px) rotate(-8deg)}75%{transform:translateX(6px) rotate(8deg)}}
+#jefe .vida{width:70px;height:10px;border-radius:9px;background:var(--papel);overflow:hidden;border:1px solid var(--espresso)}
+#jefe .vida i{display:block;height:100%;background:var(--coral-oscuro);transition:width .3s}
+#jefe small{display:block;font-size:.68rem;font-weight:700}
+#zona{position:relative;display:grid;place-items:center;min-height:0;min-width:0}
+#tablero{position:relative;border-radius:5%;background:var(--espresso);box-shadow:0 8px 0 rgba(51,43,42,.25)}
+#tablero.no{animation:no .25s}
+@keyframes no{25%{transform:translateX(-5px)}75%{transform:translateX(5px)}}
+#tablero.temblor{animation:temblor .45s}
+@keyframes temblor{20%{transform:translate(-7px,4px)}40%{transform:translate(6px,-5px)}60%{transform:translate(-4px,-3px)}80%{transform:translate(4px,3px)}}
+.hueco{position:absolute;border-radius:18%;background:var(--hueco)}
+.ficha{position:absolute;left:0;top:0;border:0;padding:0;border-radius:20%;display:flex;align-items:center;justify-content:center;font-weight:900;line-height:1;
+  transition:transform .12s ease-out;will-change:transform;color:#fff;background:var(--c);box-shadow:inset 0 -.2em 0 rgba(0,0,0,.25),inset 0 .08em 0 rgba(255,255,255,.3)}
+.ficha .in{display:flex;flex-direction:column;align-items:center;gap:.12em}
+.ficha small{font-size:.42em;font-weight:700;display:flex;align-items:center}
+.ficha .tarta{position:absolute;right:7%;top:7%;width:26%;height:26%;border-radius:50%;border:.05em solid currentColor}
+/* Un color por denominador (el número también se ve: nunca solo color) */
+.d2{--c:#3F6E5C}.d3{--c:#A8402A}.d4{--c:#2F6F8F}.d5{--c:#8A5A12}.d6{--c:#6B4E9B}.d8{--c:#B03A6B}.d10{--c:#5A6B1E}.d12{--c:#4A4A8A}.d1{--c:#332B2A}
+.ficha.sinsimp{background:var(--crema);color:var(--espresso);box-shadow:inset 0 -.2em 0 var(--linea),inset 0 0 0 .07em var(--coral)}
+.ficha.roca{background:linear-gradient(160deg,#a8a29e,#6b6360);border-radius:28% 22% 30% 20%;box-shadow:inset 0 -.25em 0 rgba(0,0,0,.35),inset .1em .12em 0 rgba(255,255,255,.25)}
+.ficha.roca.dura{background:linear-gradient(160deg,#8a8380,#45403e)}
+.ficha.roca::after{content:"";position:absolute;inset:22%;border-radius:40%;border:3px dashed rgba(0,0,0,.25)}
+.ficha.hielo::after{content:"❄";position:absolute;inset:0;border-radius:inherit;background:rgba(186,230,253,.6);border:3px solid #e0f2fe;display:flex;align-items:flex-end;justify-content:flex-start;
+  font-size:.5em;padding:.15em;color:#0c4a6e}
+.ficha.nace .in,.ficha.nace.roca{animation:nace .22s ease-out}
+@keyframes nace{from{transform:scale(0)}}
+.ficha.pop .in{animation:pop .3s cubic-bezier(.2,1.6,.4,1)}
+@keyframes pop{0%{transform:scale(.6)}60%{transform:scale(1.25)}}
+.ficha.mal .in{animation:no .3s}
+.vuela{position:fixed;z-index:55;transition:transform .38s cubic-bezier(.5,-.3,.6,1),opacity .38s;pointer-events:none}
+.unidad{position:fixed;z-index:56;pointer-events:none;font-weight:900;color:var(--crema);background:var(--coral-oscuro);border-radius:50%;display:grid;place-items:center;animation:unidad .7s ease-out forwards}
+@keyframes unidad{0%{transform:scale(.5);opacity:1}50%{transform:scale(1.25);opacity:1}100%{transform:scale(1.6);opacity:0}}
+.skin-pizarra .ficha:not(.roca):not(.sinsimp){background:#2b3a36;box-shadow:inset 0 0 0 .1em var(--c),inset 0 -.2em 0 var(--c)}
+.skin-pastel .ficha:not(.roca):not(.sinsimp){background:linear-gradient(160deg,#fff,color-mix(in srgb,var(--c) 30%,#fff));color:var(--espresso);box-shadow:inset 0 -.25em 0 var(--c);border-radius:36%}
+.skin-papel .ficha:not(.roca):not(.sinsimp){background:var(--papel);color:var(--c);box-shadow:inset 0 0 0 .12em var(--c);border-radius:10%}
+
+#poderes{display:flex;gap:8px;justify-content:center;align-items:stretch;min-height:62px}
+.poder{position:relative;flex:1;max-width:110px;min-height:58px;border-radius:16px;border:2px solid var(--espresso);background:var(--papel);font-weight:900;font-size:1.5rem;
+  display:flex;flex-direction:column;align-items:center;justify-content:center;line-height:1}
+.poder small{font-size:.6rem;letter-spacing:.05em;text-transform:uppercase;margin-top:3px}
+.poder .c{position:absolute;right:-5px;top:-7px;min-width:24px;height:24px;border-radius:12px;background:var(--coral);color:var(--espresso);font-size:.85rem;display:grid;place-items:center;padding:0 5px}
+.poder[aria-pressed="true"]{background:var(--salvia-claro);box-shadow:0 0 0 3px var(--coral-oscuro)}
+.poder[disabled]{opacity:.45}
+.poder.candado{font-size:1.1rem;border-style:dashed}
+#ultimo{position:absolute;left:50%;bottom:6px;transform:translateX(-50%);z-index:5;display:none;gap:8px;align-items:center;padding:6px 6px 6px 14px;border-radius:999px;
+  background:var(--coral-oscuro);color:#fff;font-weight:900;font-size:.9rem;white-space:nowrap;box-shadow:0 6px 20px rgba(0,0,0,.35);max-width:98%}
+#ultimo.ver{display:flex}
+#ultimo button{min-height:40px;border-radius:999px;border:0;background:#fff;color:var(--coral-oscuro);font-weight:900;padding:0 14px}
+#guia{position:absolute;left:10px;right:10px;bottom:max(10px,env(safe-area-inset-bottom));z-index:6;min-height:62px;padding:8px 14px;border-radius:16px;background:var(--espresso);color:var(--crema);
+  font-weight:700;font-size:1rem;line-height:1.25;text-align:center;box-shadow:0 6px 20px rgba(0,0,0,.35);display:none;align-items:center;justify-content:center;pointer-events:none}
+#guia.ver{display:flex}
+@media (orientation:landscape) and (max-height:560px), (min-aspect-ratio:13/10){
+  #pJuego.activa{grid-template-columns:minmax(260px,40%) minmax(0,1fr);grid-template-rows:auto auto minmax(0,1fr) auto;column-gap:12px}
+  #hud{grid-column:1;grid-row:1}#pedidos{grid-column:1;grid-row:2}#medio{grid-column:1;grid-row:3;flex-direction:column;justify-content:center}
+  #poderes{grid-column:1;grid-row:4}#zona{grid-column:2;grid-row:1/5}#guia{right:auto;width:calc(40% - 12px);min-width:250px}
+  #progreso{max-width:none;justify-content:center}
+}
+
+/* ---------- Ventanas ---------- */
+#capa{position:fixed;inset:0;z-index:70;background:rgba(51,43,42,.6);display:none;align-items:center;justify-content:center;padding:14px}
+#capa.ver{display:flex}
+.ventana{width:min(480px,100%);max-height:100%;overflow:auto;border-radius:24px;padding:18px;background:var(--papel);border:3px solid var(--espresso);box-shadow:0 20px 60px rgba(0,0,0,.4);
+  text-align:center;animation:entra .3s cubic-bezier(.2,1.4,.5,1)}
+.ventana h2{margin:.1em 0 .3em;font-size:1.7rem;font-weight:900}
+.ventana p{margin:.4em 0;line-height:1.4}
+.ventana .izq{text-align:left}
+.ventana .mascota2{width:110px;height:auto;margin:0 auto;display:block}
+.ventana .mascota2.triste{filter:grayscale(.7);transform:rotate(-6deg)}
+.estrellas{font-size:2.6rem;letter-spacing:.1em;color:var(--linea)}
+.estrellas b{color:var(--coral);display:inline-block;animation:pop .5s cubic-bezier(.2,1.6,.4,1) backwards;text-shadow:0 3px 0 var(--coral-oscuro)}
+.premios{display:flex;gap:8px;justify-content:center;flex-wrap:wrap;margin:10px 0;font-weight:900}
+.nota{font-size:.9rem}
+.caja{background:var(--salvia-claro);border-radius:14px;padding:10px 12px;margin:10px 0;text-align:left;line-height:1.5}
+.caja.mate{background:var(--crema);border:2px solid var(--coral);font-weight:700;font-size:1.05rem;line-height:2}
+.lista{display:grid;gap:8px;text-align:left;margin:10px 0}
+.item{display:flex;align-items:center;gap:10px;padding:8px 10px;border-radius:14px;background:var(--crema)}
+.item .ico{flex:none;width:44px;height:44px;border-radius:12px;display:grid;place-items:center;font-size:1.4rem;background:var(--papel);font-weight:900;border:1px solid var(--linea)}
+.item div{flex:1;min-width:0}.item b{display:block}.item span{font-size:.85rem}
+.item.apagado{opacity:.5}
+.item .btn{min-height:44px;padding:.3em .8em;font-size:.9rem;flex:none}
+.interruptor{min-width:64px;min-height:44px;border-radius:999px;border:2px solid var(--espresso);background:var(--papel);font-weight:900;flex:none}
+.interruptor[aria-pressed="true"]{background:var(--salvia-oscuro);color:#fff}
+#aviso{position:fixed;left:50%;top:max(10px,env(safe-area-inset-top));transform:translate(-50%,-160%);z-index:80;padding:10px 16px;border-radius:16px;background:var(--espresso);color:var(--crema);
+  font-weight:900;box-shadow:0 10px 30px rgba(0,0,0,.35);transition:transform .35s cubic-bezier(.2,1.4,.5,1);max-width:92%;text-align:center}
+#aviso.ver{transform:translate(-50%,0)}
+.sinmov *,.sinmov *::before,.sinmov *::after{animation:none!important;transition:none!important}
+@media (prefers-reduced-motion:reduce){*,*::before,*::after{animation:none!important;transition:none!important}}
+</style>
+<script src="../../compartido/mathquest.js"></script>
+<script src="../../compartido/volver.js" defer></script>
+</head>
+<body>
+<canvas id="fx" aria-hidden="true"></canvas>
+
+<main id="pMenu" class="pantalla activa">
+  <h1 class="logo">FRACTION<br><b>MERGE</b><small>SUMA Y FUSIONA FRACCIONES</small></h1>
+  <img class="mascota" src="../../compartido/img/mascota.png" alt="" width="600" height="620">
+  <div class="cartera" id="cartera"></div>
+  <button class="btn oro grande" id="bJugar">▶ JUGAR</button>
+  <div class="fila">
+    <button class="btn" id="bNiveles">Niveles</button>
+    <button class="btn" id="bTienda">Tienda</button>
+    <button class="btn" id="bLogros">Logros</button>
+  </div>
+  <div class="fila">
+    <button class="btn gris" id="bComo">Cómo se juega</button>
+    <button class="btn gris" id="bAjustes">Ajustes</button>
+  </div>
+  <p class="pie"><a href="../../index.html">← Volver al mapa de πCHU</a><br>IES Alarifes Ruiz Florindo · Departamento de Matemáticas · 1.º ESO</p>
+</main>
+
+<section id="pMapa" class="pantalla" aria-label="Niveles">
+  <div class="barra">
+    <button class="redondo" id="bMapaAtras" aria-label="Volver al menú">←</button>
+    <h2>Niveles</h2>
+    <span class="chip" id="chipEst"></span>
+  </div>
+  <div id="listaNiveles"></div>
+</section>
+
+<section id="pJuego" class="pantalla" aria-label="Partida">
+  <div id="hud">
+    <button class="redondo" id="bPausa" aria-label="Pausa">II</button>
+    <div class="tit"><b id="hNombre"></b><span id="hEsc"></span></div>
+    <div class="dato" id="dRacha" title="Multiplicador por racha de entregas"><b id="hRacha">×1</b><span>racha</span></div>
+    <div class="dato"><b id="hPuntos">0</b><span>puntos</span></div>
+    <div class="dato" id="dMovs"><b id="hMovs">0</b><span id="hMovsEtq">movs</span></div>
+  </div>
+  <div id="pedidos" aria-label="Pedidos"></div>
+  <div id="medio">
+    <div id="progreso" aria-hidden="true"></div>
+    <div id="jefe"><div id="jefeCara"></div><div><div class="vida"><i id="jefeVida"></i></div><small id="jefeTxt"></small></div></div>
+    <div id="cinta" role="status" aria-live="polite"></div>
+  </div>
+  <div id="zona">
+    <div id="tablero" aria-label="Tablero"></div>
+    <div id="ultimo"><span id="ultimoTxt"></span><button id="bTerminar">Terminar</button></div>
+  </div>
+  <div id="poderes" aria-label="Poderes"></div>
+  <div id="guia" role="status"></div>
+</section>
+
+<div id="capa" role="dialog" aria-modal="true"><div class="ventana" id="ventana"></div></div>
+<div id="aviso" role="status" aria-live="polite"></div>
+
+<script>/* =========================================================
+   FRACTION MERGE · motor.js
+   Las MATEMÁTICAS y las reglas del tablero, sin nada de pantalla.
+   Se prueba solo con:  node tests/fraction_merge_motor.test.mjs
+
+   Idea del juego:
+   - Cada ficha es una fracción (1/2, 1/4, 3/8…).
+   - Al deslizar, dos fichas que chocan se SUMAN si el resultado no pasa de 1:
+         1/2 + 1/4 = 2/4 + 1/4 = 3/4
+   - Si la suma da exactamente 1, se completa una UNIDAD y la ficha desaparece.
+   - Los pedidos piden una fracción escrita de otra forma (6/8, un dibujo,
+     «tres cuartos», 1/2 + 1/4, 1 − 1/4, 0,75…). Se entregan tocando la ficha
+     que vale eso.
+   Las fracciones se escriben "3/4" en los textos; la pantalla las pinta apiladas.
+   Una ficha: { id, tipo:"fr", n, d, m, hielo }  → vale n/d (irreducible) y se ENSEÑA
+   como (n·m)/(d·m): con m > 1 está sin simplificar (2/4 en vez de 1/2).
+   ========================================================= */
+(function (raiz) {
+  "use strict";
+
+  const mcd = (a, b) => b ? mcd(b, a % b) : a;
+  const mcm = (a, b) => a / mcd(a, b) * b;
+  const red = (n, d) => { const g = mcd(n, d); return { n: n / g, d: d / g }; };
+  const suma = (a, b) => red(a.n * b.d + b.n * a.d, a.d * b.d);
+  const resta = (a, b) => red(a.n * b.d - b.n * a.d, a.d * b.d);
+  const igual = (a, b) => a.n * b.d === b.n * a.d;
+  const menorIgual1 = f => f.n <= f.d;
+  const txt = f => f.d === 1 ? String(f.n) : `${f.n}/${f.d}`;
+  const sobre = (f, D) => `${f.n * D / f.d}/${D}`;            // la misma fracción con denominador D
+
+  function azar(semilla) {
+    let a = semilla >>> 0;
+    return function () {
+      a = (a + 0x6D2B79F5) >>> 0;
+      let t = a;
+      t = Math.imul(t ^ (t >>> 15), t | 1);
+      t ^= t + Math.imul(t ^ (t >>> 7), t | 61);
+      return ((t ^ (t >>> 14)) >>> 0) / 4294967296;
+    };
+  }
+  const entero = (rng, a, b) => a + Math.floor(rng() * (b - a + 1));
+  const elige = (rng, lista) => lista[Math.floor(rng() * lista.length)];
+  function eligePeso(rng, pesos) {
+    const claves = Object.keys(pesos).filter(k => pesos[k] > 0);
+    let r = rng() * claves.reduce((s, k) => s + pesos[k], 0);
+    for (const k of claves) { r -= pesos[k]; if (r < 0) return k; }
+    return claves[claves.length - 1];
+  }
+
+  // ---------- Tablero ----------
+  function crear(n, semilla) { return { n, g: Array(n * n).fill(null), sig: 1, rng: azar(semilla == null ? Date.now() : semilla) }; }
+  const vacias = t => t.g.map((c, i) => c ? -1 : i).filter(i => i >= 0);
+  const fichas = t => t.g.filter(c => c && c.tipo === "fr");
+  function ponerFicha(t, i, n, d, m, hielo) { const f = red(n, d); t.g[i] = { id: t.sig++, tipo: "fr", n: f.n, d: f.d, m: m || 1, hielo: !!hielo }; return t.g[i]; }
+  function ponerRoca(t, i, vida) { t.g[i] = { id: t.sig++, tipo: "roca", vida: vida || 1 }; return t.g[i]; }
+
+  // Ficha nueva: una fracción unitaria 1/d. cfg: { dens, pesos, pEq (prob. de salir sin simplificar), verMax, hielo }
+  function generar(t, cfg) {
+    const libres = vacias(t);
+    if (!libres.length) return null;
+    const i = elige(t.rng, libres), pesos = {};
+    // Los medios salen la mitad de veces (son fichas grandes y atascan el tablero) y la ficha más
+    // pequeña del nivel sale el doble (sirve para rellenar lo que falta hasta la unidad).
+    const menor = Math.max(...cfg.dens);
+    cfg.dens.forEach(d => { pesos[d] = (cfg.pesos && cfg.pesos[d]) || (d === 2 ? 0.5 : d === menor ? 2 : 1); });
+    const d = +eligePeso(t.rng, pesos);
+    let m = 1;
+    if (t.rng() < (cfg.pEq || 0)) { const ms = [2, 3, 4].filter(k => d * k <= (cfg.verMax || 12)); if (ms.length) m = elige(t.rng, ms); }
+    ponerFicha(t, i, 1, d, m, t.rng() < (cfg.hielo || 0));
+    return i;
+  }
+
+  // Dos fichas se suman si el resultado no pasa de la unidad.
+  // Si el tablero se queda sin fichas (se han entregado todas), salen dos nuevas para poder seguir.
+  function rellenarSiVacio(t, cfg) {
+    if (fichas(t).some(f => !f.hielo)) return false;          // quedan fichas que se pueden mover
+    generar(t, cfg); generar(t, cfg);
+    return true;
+  }
+
+  const puedeFusionar = (a, c) => a.tipo === "fr" && c.tipo === "fr" && menorIgual1(suma(a, c));
+
+  function lineas(n, dir) {
+    const L = [];
+    for (let k = 0; k < n; k++) {
+      const l = [];
+      for (let p = 0; p < n; p++) {
+        if (dir === "izq") l.push(k * n + p);
+        else if (dir === "der") l.push(k * n + (n - 1 - p));
+        else if (dir === "arr") l.push(p * n + k);
+        else l.push((n - 1 - p) * n + k);
+      }
+      L.push(l);
+    }
+    return L;
+  }
+  function vecinas(n, i) {
+    const f = Math.floor(i / n), c = i % n, v = [];
+    if (f > 0) v.push(i - n); if (f < n - 1) v.push(i + n);
+    if (c > 0) v.push(i - 1); if (c < n - 1) v.push(i + 1);
+    return v;
+  }
+
+  // Desliza todo el tablero. Devuelve lo que ha pasado para poder animarlo.
+  //   movs:     [{ id, de, a, fusion }]
+  //   fusiones: [{ en, a:{n,d}, b:{n,d}, r:{n,d}, id, unidad }]   a = la que estaba quieta, b = la que llega
+  //             unidad = true → la suma da 1 y la casilla queda vacía
+  //   rotas:    [{ en, tipo:"roca"|"hielo"|"grieta" }]
+  function mover(t, dir) {
+    const n = t.n, g = t.g, movs = [], fusiones = [], rotas = [];
+    for (const l of lineas(n, dir)) {
+      let libre = 0, ult = -1;
+      const yaFus = {};
+      for (let p = 0; p < n; p++) {
+        const c = g[l[p]];
+        if (!c) continue;
+        if (c.tipo === "roca") { libre = p + 1; ult = -1; continue; }
+        if (c.hielo) { libre = p + 1; ult = p; continue; }
+        if (ult >= 0 && !yaFus[ult] && puedeFusionar(g[l[ult]], c)) {
+          const q = g[l[ult]], r = suma(q, c), unidad = r.n === r.d;
+          const f = { en: l[ult], a: { n: q.n, d: q.d }, b: { n: c.n, d: c.d }, r, id: t.sig++, unidad };
+          fusiones.push(f);
+          movs.push({ id: c.id, de: l[p], a: l[ult], fusion: true });
+          if (q.hielo) rotas.push({ en: l[ult], tipo: "hielo" });
+          g[l[p]] = null;
+          if (unidad) { g[l[ult]] = null; libre = ult; ult = -1; }
+          else { g[l[ult]] = { id: f.id, tipo: "fr", n: r.n, d: r.d, m: 1, hielo: false }; yaFus[ult] = true; }
+        } else {
+          if (libre !== p) { g[l[libre]] = c; g[l[p]] = null; movs.push({ id: c.id, de: l[p], a: l[libre], fusion: false }); }
+          ult = libre; libre++;
+        }
+      }
+    }
+    for (const f of fusiones) for (const v of vecinas(n, f.en)) {
+      const c = g[v];
+      if (!c) continue;
+      if (c.tipo === "roca") { c.vida--; if (c.vida <= 0) { g[v] = null; rotas.push({ en: v, tipo: "roca" }); } else rotas.push({ en: v, tipo: "grieta" }); }
+      else if (c.hielo) { c.hielo = false; rotas.push({ en: v, tipo: "hielo" }); }
+    }
+    return { movido: movs.length > 0, movs, fusiones, rotas };
+  }
+  function clonar(t) { return { n: t.n, g: t.g.map(c => c ? Object.assign({}, c) : null), sig: t.sig, rng: t.rng }; }
+  const hayMovimiento = t => ["izq", "der", "arr", "aba"].some(d => mover(clonar(t), d).movido);
+  function barajar(t) {
+    const pos = [], fs = [];
+    t.g.forEach((c, i) => { if (!c) pos.push(i); else if (c.tipo === "fr" && !c.hielo) { pos.push(i); fs.push(c); } });
+    for (const i of pos) t.g[i] = null;
+    for (let i = pos.length - 1; i > 0; i--) { const j = Math.floor(t.rng() * (i + 1)); [pos[i], pos[j]] = [pos[j], pos[i]]; }
+    fs.forEach((f, k) => { t.g[pos[k]] = f; });
+  }
+
+  // Poder ✂: parte la ficha en dos mitades iguales. Devuelve "" si se hace o el motivo por el que no.
+  // comun = denominador más grande del nivel (para no crear fracciones que no existen en él).
+  function poderPartir(t, i, comun) {
+    const f = t.g[i];
+    if (!f || f.tipo !== "fr") return "Elige una ficha.";
+    const h = red(f.n, f.d * 2);
+    if (comun % h.d !== 0) return `La mitad de ${txt(f)} es ${txt(h)}, y en este nivel no hay fichas con denominador ${h.d}.`;
+    const libres = vacias(t);
+    if (!libres.length) return "No queda ninguna casilla libre para la otra mitad.";
+    const n = t.n, dist = j => Math.abs(j % n - i % n) + Math.abs(Math.floor(j / n) - Math.floor(i / n));
+    libres.sort((a, b) => dist(a) - dist(b));
+    f.n = h.n; f.d = h.d; f.m = 1;
+    ponerFicha(t, libres[0], h.n, h.d, 1);
+    return "";
+  }
+
+  // ---------- Qué fracciones se pueden fabricar en un nivel ----------
+  // Todas las sumas (menores que 1) de fracciones unitarias 1/d con d en dens.
+  function alcanzables(dens) {
+    const L = dens.reduce(mcm, 1), ok = Array(L + 1).fill(false), lista = [];
+    ok[0] = true;
+    for (let k = 1; k < L; k++) { ok[k] = dens.some(d => k - L / d >= 0 && ok[k - L / d]); if (ok[k]) lista.push(red(k, L)); }
+    return lista;
+  }
+
+  // ---------- Pedidos ----------
+  const UNO = ["", "un", "dos", "tres", "cuatro", "cinco", "seis", "siete", "ocho", "nueve", "diez", "once"];
+  const PARTE = { 2: ["medio", "medios"], 3: ["tercio", "tercios"], 4: ["cuarto", "cuartos"], 5: ["quinto", "quintos"], 6: ["sexto", "sextos"],
+    8: ["octavo", "octavos"], 10: ["décimo", "décimos"], 12: ["doceavo", "doceavos"] };
+  const palabras = f => `${UNO[f.n]} ${PARTE[f.d][f.n === 1 ? 0 : 1]}`;
+  const decimal = f => (100 % f.d === 0) ? String(f.n * 100 / f.d / 100).replace(".", ",") : null;
+
+  // Pedido que vale exactamente f, escrito con la forma pedida. Devuelve null si esa forma no sirve para f.
+  function hacerPedido(forma, f, rng, cfg) {
+    const comun = cfg.comun, p = { n: f.n, d: f.d, forma }, F = txt(f);
+    if (forma === "frac") { p.texto = F; p.explica = `Busca la ficha que vale ${F}. Vale también si está sin simplificar.`; }
+    else if (forma === "equiv") {
+      const ms = [2, 3, 4].filter(k => f.d * k <= 24); if (!ms.length) return null;
+      const m = elige(rng, ms);
+      p.texto = `${f.n * m}/${f.d * m}`; p.explica = `${p.texto} = ${F}: se divide arriba y abajo entre ${m}.`;
+    } else if (forma === "dib") {
+      const m = f.d <= 4 && rng() < 0.4 ? 2 : 1;
+      p.dib = { pintadas: f.n * m, partes: f.d * m }; p.texto = `${f.n * m}/${f.d * m}`;
+      p.explica = `Hay ${f.d * m} partes iguales y ${f.n * m} pintadas: ${f.n * m}/${f.d * m}` + (m > 1 ? ` = ${F}.` : ".");
+    } else if (forma === "pal") {
+      if (!PARTE[f.d] || f.n > 11) return null;
+      p.texto = f.n === 1 && f.d === 2 ? "la mitad" : palabras(f); p.explica = `«${p.texto}» se escribe ${F}.`;
+    } else if (forma === "dec") {
+      const d = decimal(f); if (!d || d.length > 4) return null;
+      p.texto = d; p.explica = `${d} = ${f.n * 100 / f.d}/100 = ${F}.`;
+    } else if (forma === "sumaIgual" || forma === "restaIgual") {
+      // Mismo denominador: se suman o restan los numeradores.
+      const Ds = []; for (let D = f.d; D <= comun; D += f.d) if (comun % D === 0 && f.n * D / f.d >= (forma === "sumaIgual" ? 2 : 1) && f.n * D / f.d < D) Ds.push(D);
+      if (!Ds.length) return null;
+      const D = elige(rng, Ds), N = f.n * D / f.d;
+      if (forma === "sumaIgual") {
+        const i = entero(rng, 1, N - 1);
+        p.texto = `${i}/${D} + ${N - i}/${D}`;
+        p.explica = `Mismo denominador: se suman los numeradores. ${i} + ${N - i} = ${N}, así que da ${N}/${D}` + (D !== f.d ? ` = ${F}.` : ".");
+      } else {
+        const j = entero(rng, 1, D - N), a = N + j;
+        p.texto = `${a === D ? "1" : a + "/" + D} − ${j}/${D}`;
+        p.explica = (a === D ? `1 = ${D}/${D}. ` : "") + `Mismo denominador: se restan los numeradores. ${a} − ${j} = ${N}, así que da ${N}/${D}` + (D !== f.d ? ` = ${F}.` : ".");
+      }
+    } else if (forma === "suma" || forma === "resta") {
+      // Distinto denominador: primero se pasa a denominador común.
+      const todas = alcanzables(cfg.dens), pares = [];
+      for (const x of todas) {
+        const y = forma === "suma" ? resta(f, x) : suma(f, x);         // suma: x + y = f · resta: y − x = f
+        if (y.n <= 0 || y.n > y.d || x.d === y.d || comun % y.d !== 0) continue;
+        pares.push([x, y]);
+      }
+      if (!pares.length) return null;
+      const [x, y] = elige(rng, pares), M = mcm(x.d, y.d);
+      if (forma === "suma") {
+        p.texto = `${txt(x)} + ${txt(y)}`;
+        p.explica = `Denominador común ${M}: ${txt(x)} + ${txt(y)} = ${sobre(x, M)} + ${sobre(y, M)} = ${sobre(f, M)}` + (M !== f.d ? ` = ${F}.` : ".");
+      } else {
+        p.texto = `${txt(y)} − ${txt(x)}`;
+        p.explica = `Denominador común ${M}: ${txt(y)} − ${txt(x)} = ${sobre(y, M)} − ${sobre(x, M)} = ${sobre(f, M)}` + (M !== f.d ? ` = ${F}.` : ".");
+      }
+    } else if (forma === "falta") {
+      const x = resta({ n: 1, d: 1 }, f);
+      p.texto = `${txt(x)} + ? = 1`;
+      p.explica = `1 = ${f.d}/${f.d}. A ${sobre(x, f.d)} le faltan ${sobre(f, f.d)} para llegar a ${f.d}/${f.d}.`;
+    } else if (forma === "mitad") {
+      const x = red(f.n * 2, f.d); if (x.n >= x.d) return null;
+      p.texto = `la mitad de ${txt(x)}`; p.explica = `La mitad de ${txt(x)}: se multiplica el denominador por 2 → ${x.n}/${x.d * 2}` + (x.d * 2 !== f.d ? ` = ${F}.` : ".");
+    } else if (forma === "doble") {
+      const x = red(f.n, f.d * 2); if (x.d > 24) return null;
+      p.texto = `el doble de ${txt(x)}`; p.explica = `El doble de ${txt(x)}: se multiplica el numerador por 2 → ${x.n * 2}/${x.d}` + (x.d !== f.d ? ` = ${F}.` : ".");
+    } else throw new Error("Forma desconocida: " + forma);
+    return p;
+  }
+
+  // Pedido nuevo al azar. cfg: { dens, comun, formas:{forma:peso}, unidades (¿se piden 1/d sueltos?) }
+  // No se repite el valor de un pedido abierto: cada ficha solo corresponde a un pedido.
+  function nuevoPedido(cfg, rng, abiertos) {
+    const todas = alcanzables(cfg.dens), compuestas = todas.filter(f => f.n > 1);
+    // Las fracciones sueltas (1/4) se entregan nada más salir: solo se piden si el nivel lo dice o si hay muy pocas donde elegir.
+    const base = cfg.unidades || compuestas.length < 5 ? todas : compuestas;
+    const libres = base.filter(f => !(abiertos || []).some(p => p && igual(p, f)));
+    for (let intento = 0; intento < 80 && libres.length; intento++) {
+      const p = hacerPedido(eligePeso(rng, cfg.formas), elige(rng, libres), rng, cfg);
+      if (p) return p;
+    }
+    return libres.length ? hacerPedido("frac", elige(rng, libres), rng, cfg) : null;
+  }
+  const coincide = (f, p) => !!f && !!p && f.tipo === "fr" && igual(f, p);
+
+  // Explicación cuando se toca una ficha que no vale lo que ningún pedido: compara con el pedido más cercano.
+  function explicaError(f, pedidos) {
+    const ver = f.m > 1 ? `${f.n * f.m}/${f.d * f.m} = ${txt(f)}` : txt(f);
+    let t = `Tu ficha vale ${ver}.`;
+    const ps = (pedidos || []).filter(Boolean);
+    if (!ps.length) return t + " Ningún pedido vale eso ahora mismo.";
+    const dif = p => Math.abs(p.n / p.d - f.n / f.d);
+    const p = ps.slice().sort((a, b) => dif(a) - dif(b))[0], P = txt(p), M = mcm(p.d, f.d);
+    t += ` El pedido «${p.texto}» vale ${P}.`;
+    if (p.n * f.d > f.n * p.d) t += ` Te falta ${txt(resta(p, f))}: ${sobre(p, M)} − ${sobre(f, M)} = ${sobre(resta(p, f), M)}. Súmale otra ficha.`;
+    else t += ` Te has pasado en ${txt(resta(f, p))}. Puedes completarla hasta 1 para que desaparezca, o partirla con ✂.`;
+    return t;
+  }
+
+  const api = { mcd, mcm, red, suma, resta, igual, txt, sobre, azar, elige, eligePeso, crear, vacias, fichas, ponerFicha, ponerRoca, generar, rellenarSiVacio, puedeFusionar,
+    mover, clonar, hayMovimiento, barajar, poderPartir, alcanzables, hacerPedido, nuevoPedido, coincide, explicaError, vecinas, palabras, decimal };
+  if (typeof module !== "undefined" && module.exports) module.exports = api;
+  raiz.FraccionMotor = api;
+})(typeof window !== "undefined" ? window : globalThis);
+</script>
+<script>/* =========================================================
+   FRACTION MERGE · niveles.js
+   Los 13 niveles de la campaña (5 escalones) y el modo infinito.
+   Para retocar la dificultad basta con cambiar estos números:
+     n        tamaño del tablero (n × n)
+     dens     denominadores de las fichas que aparecen (siempre salen como 1/d)
+     comun    denominador común de todos ellos (el mayor que puede aparecer)
+     movs     movimientos disponibles
+     total    pedidos que hay que entregar
+     formas   cómo se escriben los pedidos (peso de cada forma):
+              frac 3/4 · dib dibujo · pal «tres cuartos» · equiv 6/8 · dec 0,75
+              sumaIgual 1/8 + 2/8 · restaIgual 7/8 − 4/8 · falta 1/4 + ? = 1
+              suma 1/2 + 1/4 · resta 1 − 1/4 (distinto denominador)
+              mitad «la mitad de 1/2» · doble «el doble de 1/8»
+     unidades true = también se piden fracciones sueltas como 1/4
+     pesos    { 4: 3 } = las fichas 1/4 salen el triple de veces
+     pEq      probabilidad de que una ficha salga sin simplificar (2/4 en vez de 1/2)
+     ayuda    las fichas enseñan un dibujo de su valor
+     rocas    rocas al empezar · hielo  probabilidad de ficha congelada
+     jefe     { cada: movimientos entre ataques }
+   ========================================================= */
+(function (raiz) {
+  "use strict";
+  const ESCALONES = ["", "Principiante", "Intermedio", "Avanzado", "Experto", "Jefe final"];
+  const NIVELES = [
+    { id: 1, esc: 1, nombre: "Mitades y cuartos", lema: "Junta dos fichas: se suman", n: 4, dens: [2, 4], comun: 4, movs: 20, total: 6,
+      formas: { frac: 2, dib: 3 }, unidades: true, ayuda: true, pesos: { 4: 3 } },
+    { id: 2, esc: 1, nombre: "Llegan los octavos", lema: "1/8 + 1/8 = 2/8 = 1/4", n: 4, dens: [2, 4, 8], comun: 8, movs: 40, total: 8,
+      formas: { frac: 2, dib: 2, pal: 2 }, ayuda: true },
+    { id: 3, esc: 1, nombre: "Iguales con otro disfraz", lema: "2/4 y 1/2 valen lo mismo", n: 4, dens: [2, 4, 8], comun: 8, movs: 38, total: 8,
+      formas: { equiv: 3, dib: 1, frac: 1 }, pEq: 0.3, verMax: 8, ayuda: true, rocas: 2 },
+
+    { id: 4, esc: 2, nombre: "Tercios y sextos", lema: "1/3 + 1/6 = 2/6 + 1/6 = 3/6 = 1/2", n: 5, dens: [2, 3, 6], comun: 6, movs: 30, total: 9,
+      formas: { frac: 1, pal: 2, equiv: 2, dib: 1 }, pEq: 0.2, verMax: 12 },
+    { id: 5, esc: 2, nombre: "Sumar con el mismo denominador", lema: "Se suman los numeradores", n: 5, dens: [2, 4, 8], comun: 8, movs: 44, total: 9,
+      formas: { sumaIgual: 3, restaIgual: 1, equiv: 1 }, pEq: 0.2, verMax: 8 },
+    { id: 6, esc: 2, nombre: "Hasta la unidad", lema: "¿Cuánto falta para llegar a 1?", n: 5, dens: [2, 3, 6], comun: 6, movs: 32, total: 10,
+      formas: { falta: 3, restaIgual: 2, pal: 1 }, pEq: 0.2, verMax: 12, hielo: 0.12 },
+
+    { id: 7, esc: 3, nombre: "Sumas con distinto denominador", lema: "Primero, denominador común", n: 5, dens: [2, 4, 8], comun: 8, movs: 54, total: 10,
+      formas: { suma: 3, sumaIgual: 1, equiv: 1 }, pEq: 0.25, verMax: 16 },
+    { id: 8, esc: 3, nombre: "Restas con distinto denominador", lema: "3/4 − 1/2 = 3/4 − 2/4 = 1/4", n: 5, dens: [2, 3, 6], comun: 6, movs: 32, total: 10,
+      formas: { resta: 3, suma: 1, falta: 1 }, pEq: 0.25, verMax: 12 },
+    { id: 9, esc: 3, nombre: "La cantera de los doceavos", lema: "Medios, tercios, cuartos y sextos juntos", n: 5, dens: [2, 3, 4, 6, 12], comun: 12, movs: 78, total: 10,
+      formas: { suma: 2, resta: 2, equiv: 1, pal: 1 }, pEq: 0.25, verMax: 12, rocas: 4, vidaRoca: 2 },
+
+    { id: 10, esc: 4, nombre: "Mitad y doble", lema: "La mitad de 1/2 es 1/4", n: 5, dens: [2, 4, 8], comun: 8, movs: 44, total: 10,
+      formas: { mitad: 2, doble: 2, suma: 1, resta: 1 }, pEq: 0.3, verMax: 16 },
+    { id: 11, esc: 4, nombre: "Quintos, décimos y decimales", lema: "1/2 = 0,5 y 1/10 = 0,1", n: 5, dens: [2, 5, 10], comun: 10, movs: 70, total: 10,
+      formas: { dec: 3, suma: 1, resta: 1, equiv: 1 }, pEq: 0.3, verMax: 20, hielo: 0.1, rocas: 2 },
+    { id: 12, esc: 4, nombre: "Todo mezclado", lema: "Todas las formas de escribir una fracción", n: 5, dens: [2, 3, 4, 6, 12], comun: 12, movs: 90, total: 12,
+      formas: { suma: 2, resta: 2, falta: 1, mitad: 1, doble: 1, equiv: 1, pal: 1 }, pEq: 0.3, verMax: 12, hielo: 0.08 },
+
+    { id: 13, esc: 5, nombre: "Quebrón, el Rompefracciones", lema: "Cada entrega le quita un escudo", n: 5, dens: [2, 3, 4, 6, 12], comun: 12, movs: 104, total: 14,
+      formas: { suma: 2, resta: 2, falta: 1, mitad: 1, equiv: 1, dib: 1 }, pEq: 0.3, verMax: 12, jefe: { cada: 7 } }
+  ];
+  const INFINITO = [
+    { hasta: 4, dens: [2, 4, 8], comun: 8, formas: { frac: 1, dib: 2, pal: 1, equiv: 1 }, pEq: 0.2, verMax: 8 },
+    { hasta: 10, dens: [2, 3, 6], comun: 6, formas: { equiv: 1, sumaIgual: 2, falta: 2, pal: 1 }, pEq: 0.25, verMax: 12 },
+    { hasta: 18, dens: [2, 4, 8], comun: 8, formas: { suma: 2, resta: 2, mitad: 1, equiv: 1 }, pEq: 0.3, verMax: 16, hielo: 0.05 },
+    { hasta: 1e9, dens: [2, 3, 4, 6, 12], comun: 12, formas: { suma: 2, resta: 2, falta: 1, mitad: 1, doble: 1 }, pEq: 0.3, verMax: 12, hielo: 0.06 }
+  ];
+  const api = { ESCALONES, NIVELES, INFINITO };
+  if (typeof module !== "undefined" && module.exports) module.exports = api;
+  raiz.FraccionNiveles = api;
+})(typeof window !== "undefined" ? window : globalThis);
+</script>
+<script>
+(function () {
+"use strict";
+const M = window.FraccionMotor, { NIVELES, INFINITO, ESCALONES } = window.FraccionNiveles, MQ = window.MathQuest;
+const $ = s => document.querySelector(s);
+const esc = s => String(s).replace(/[&<>"']/g, c => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" }[c]));
+// "3/4" → fracción apilada
+const mate = s => esc(s).replace(/(\d+)\/(\d+)/g, '<span class="fr"><span>$1</span><span>$2</span></span>');
+const hablar = s => String(s).replace(/(\d+)\/(\d+)/g, "$1 partido por $2");
+const sinMov = () => MQ.sinMovimiento();
+const MASCOTA = "../../compartido/img/mascota.png";
+
+/* =================== GUARDADO (pichu.fraction-merge.v1) =================== */
+const CLAVE = "pichu.fraction-merge.v1";
+function cargar() {
+  const b = { v: 1, estrellas: {}, mejor: {}, record: 0, skin: "clasico", skins: ["clasico"], mejoras: {}, derrotas: {}, dominio: 50, tutorial: false,
+    stats: { fusiones: 0, entregas: 0, unidades: 0, combos: 0, estrellas: 0, limpios: 0 }, misiones: [] };
+  try { const d = JSON.parse(localStorage.getItem(CLAVE)); if (d && d.v === 1) return Object.assign(b, d, { stats: Object.assign(b.stats, d.stats) }); } catch (e) { /* nada */ }
+  return b;
+}
+let S = cargar();
+function guardar() {
+  try { localStorage.setItem(CLAVE, JSON.stringify(S)); } catch (e) { /* modo privado: se juega igual, sin guardar */ }
+  const ids = NIVELES.map(n => n.id);
+  MQ.resumen("fraction-merge", { superados: ids.filter(i => S.estrellas[i] > 0).length, total: ids.length,
+    estrellas: ids.reduce((s, i) => s + (S.estrellas[i] || 0), 0), maxEstrellas: ids.length * 3, record: S.record });
+}
+
+/* =================== CATÁLOGOS =================== */
+const PODERES = [
+  { id: "martillo", icono: "🔨", nombre: "Martillo", tras: 2, base: 1, desc: "Rompe una roca, el hielo o una ficha que te estorbe." },
+  { id: "partir", icono: "✂", nombre: "Partir", tras: 4, base: 2, desc: "Parte una ficha en dos mitades iguales: 1/2 se convierte en dos fichas de 1/4." },
+  { id: "mezcla", icono: "🌀", nombre: "Mezcla", tras: 7, base: 1, desc: "Recoloca todas las fichas del tablero." }
+];
+const SKINS = [
+  { id: "clasico", nombre: "Clásico πCHU", precio: 0 }, { id: "pizarra", nombre: "Pizarra", precio: 80 },
+  { id: "pastel", nombre: "Pastel", precio: 120 }, { id: "papel", nombre: "Papel", precio: 200 }
+];
+const MISIONES = [
+  { id: "fus", txt: "Haz 30 sumas", stat: "fusiones", n: 30, premio: 20 },
+  { id: "ent", txt: "Entrega 10 pedidos", stat: "entregas", n: 10, premio: 25 },
+  { id: "uni", txt: "Completa 5 unidades (fichas que suman 1)", stat: "unidades", n: 5, premio: 25 },
+  { id: "com", txt: "Consigue 3 combos (2 sumas o más en un movimiento)", stat: "combos", n: 3, premio: 20 },
+  { id: "est", txt: "Gana 5 estrellas", stat: "estrellas", n: 5, premio: 30 },
+  { id: "lim", txt: "Supera 2 niveles sin errores", stat: "limpios", n: 2, premio: 30 }
+];
+const ETQ = { frac: "fracción", equiv: "equivalente", dib: "dibujo", pal: "en palabras", dec: "decimal", sumaIgual: "suma", restaIgual: "resta", suma: "suma", resta: "resta",
+  falta: "completa", mitad: "mitad", doble: "doble" };
+const PISTA = {
+  frac: "Busca la ficha que vale eso. Vale aunque esté sin simplificar.",
+  equiv: "Simplifica: divide el numerador y el denominador entre el mismo número.",
+  dib: "Cuenta las partes pintadas (numerador) y el total de partes iguales (denominador).",
+  pal: "Medios /2, tercios /3, cuartos /4, quintos /5, sextos /6, octavos /8…",
+  dec: "0,5 es la mitad; 0,25 la cuarta parte; 0,1 la décima parte.",
+  sumaIgual: "Mismo denominador: suma solo los numeradores.",
+  restaIgual: "Mismo denominador: resta solo los numeradores. El 1 es 4/4, 6/6, 8/8…",
+  suma: "Primero pon las dos fracciones con el mismo denominador.",
+  resta: "Primero pon las dos fracciones con el mismo denominador. El 1 es 4/4, 6/6, 8/8…",
+  falta: "Piensa el 1 como una fracción con ese denominador: 4/4, 6/6, 8/8…",
+  mitad: "La mitad de una fracción: el denominador se hace el doble.",
+  doble: "El doble de una fracción: el numerador se hace el doble."
+};
+const desbloqueado = id => id === 1 || S.estrellas[id - 1] > 0 || S.estrellas[id - 2] === 3;   // 3 estrellas = salto por dominio
+const poderLibre = p => S.estrellas[p.tras] > 0;
+function repartirMisiones() {
+  S.misiones = S.misiones.filter(m => MISIONES.some(x => x.id === m.id));
+  while (S.misiones.length < 3) {
+    const libres = MISIONES.filter(x => !S.misiones.some(m => m.id === x.id)), x = libres[Math.floor(Math.random() * libres.length)];
+    S.misiones.push({ id: x.id, desde: S.stats[x.stat] });
+  }
+}
+function revisarMisiones() {
+  let ganado = 0;
+  S.misiones = S.misiones.filter(m => {
+    const x = MISIONES.find(y => y.id === m.id);
+    if (S.stats[x.stat] - m.desde >= x.n) { ganado += x.premio; avisar(`🎯 Misión cumplida: ${x.txt} · +${x.premio} 🪙`); return false; }
+    return true;
+  });
+  if (ganado) MQ.sumar(0, ganado);
+  repartirMisiones();
+}
+// Dibujo de una fracción: círculo con "partes" sectores iguales y "pintadas" coloreadas.
+function tarta(pintadas, partes) {
+  let h = "";
+  for (let i = 0; i < partes; i++) {
+    const a0 = 2 * Math.PI * i / partes - Math.PI / 2, a1 = 2 * Math.PI * (i + 1) / partes - Math.PI / 2;
+    const p = a => `${(50 + 44 * Math.cos(a)).toFixed(2)} ${(50 + 44 * Math.sin(a)).toFixed(2)}`;
+    h += `<path d="M50 50L${p(a0)}A44 44 0 0 1 ${p(a1)}Z" fill="${i < pintadas ? "#E46D4D" : "#FFFCF3"}" stroke="#332B2A" stroke-width="3" stroke-linejoin="round"/>`;
+  }
+  return `<svg viewBox="0 0 100 100" aria-hidden="true">${h}</svg>`;
+}
+
+/* =================== SONIDO Y MÚSICA (generados, sin archivos) =================== */
+let AJ = MQ.leer().ajustes;
+const Son = (() => {
+  let ctx = null, reloj = null, paso = 0, sig = 0;
+  const ini = () => { if (ctx) { if (ctx.state === "suspended") ctx.resume(); return; }
+    try { ctx = new (window.AudioContext || window.webkitAudioContext)(); } catch (e) { ctx = null; } };
+  function nota(f, dur, tipo, vol, cuando) {
+    if (!ctx) return;
+    const o = ctx.createOscillator(), g = ctx.createGain(), t = (cuando || ctx.currentTime);
+    o.type = tipo || "sine"; o.frequency.setValueAtTime(f, t);
+    g.gain.setValueAtTime(0.0001, t); g.gain.exponentialRampToValueAtTime(vol || 0.12, t + 0.012); g.gain.exponentialRampToValueAtTime(0.0001, t + dur);
+    o.connect(g); g.connect(ctx.destination); o.start(t); o.stop(t + dur + 0.03);
+  }
+  const fx = lista => { if (!ctx || !AJ.sonido) return; const t = ctx.currentTime; lista.forEach(n => nota(n[0], n[1], n[2], n[3], t + (n[4] || 0))); };
+  const ACORDES = [[261.6, 329.6, 392], [220, 261.6, 329.6], [174.6, 220, 261.6], [196, 246.9, 293.7]];
+  function programar() {
+    if (!ctx || !AJ.musica || document.hidden) return;
+    if (sig < ctx.currentTime) sig = ctx.currentTime + 0.05;
+    while (sig < ctx.currentTime + 0.6) {
+      const ac = ACORDES[Math.floor(paso / 16) % 4], p = paso % 16;
+      if (p === 0 || p === 8) nota(ac[0] / 2, 0.5, "triangle", 0.06, sig);
+      if (p % 2 === 0) nota(ac[[0, 2, 1, 2, 0, 1, 2, 1][p / 2]] * 2, 0.24, "sine", 0.026, sig);
+      sig += 0.19; paso++;
+    }
+  }
+  return {
+    ini() { ini(); if (!reloj) reloj = setInterval(programar, 200); },
+    pausa(si) { if (ctx) si ? ctx.suspend() : ctx.resume(); },
+    mueve: () => fx([[190, 0.07, "triangle", 0.06]]),
+    tope: () => fx([[110, 0.1, "square", 0.04]]),
+    fusion: k => fx([[330 * Math.pow(2, k / 6), 0.18, "triangle", 0.13], [660 * Math.pow(2, k / 6), 0.22, "sine", 0.08, 0.06]]),
+    unidad: () => fx([[523, 0.1, "triangle", 0.12], [784, 0.1, "triangle", 0.12, 0.07], [1047, 0.35, "sine", 0.12, 0.14]]),
+    entrega: () => fx([[523, 0.12, "triangle", 0.12], [659, 0.12, "triangle", 0.12, 0.08], [784, 0.12, "triangle", 0.12, 0.16], [1047, 0.3, "sine", 0.12, 0.24]]),
+    error: () => fx([[196, 0.16, "sawtooth", 0.07], [147, 0.3, "sawtooth", 0.07, 0.13]]),
+    poder: () => fx([[392, 0.1, "square", 0.05], [587, 0.2, "square", 0.05, 0.08]]),
+    rompe: () => fx([[90, 0.2, "square", 0.08], [60, 0.25, "sawtooth", 0.06, 0.05]]),
+    ataque: () => fx([[110, 0.3, "sawtooth", 0.09], [82, 0.45, "sawtooth", 0.09, 0.2]]),
+    victoria: () => fx([[523, 0.15, "triangle", 0.13], [659, 0.15, "triangle", 0.13, 0.14], [784, 0.15, "triangle", 0.13, 0.28], [1047, 0.5, "triangle", 0.14, 0.42], [1319, 0.6, "sine", 0.1, 0.56]]),
+    derrota: () => fx([[392, 0.25, "triangle", 0.1], [330, 0.25, "triangle", 0.1, 0.22], [262, 0.5, "triangle", 0.1, 0.44]]),
+    clic: () => fx([[660, 0.05, "sine", 0.06]])
+  };
+})();
+document.addEventListener("pointerdown", () => Son.ini(), { passive: true });
+document.addEventListener("keydown", () => Son.ini());
+document.addEventListener("visibilitychange", () => Son.pausa(document.hidden));
+
+/* =================== PARTÍCULAS =================== */
+const Fx = (() => {
+  const cv = $("#fx"), c = cv.getContext("2d"); let ps = [], vivo = false, dpr = 1;
+  function medida() { dpr = Math.min(2, window.devicePixelRatio || 1); cv.width = innerWidth * dpr; cv.height = innerHeight * dpr; }
+  medida(); addEventListener("resize", medida);
+  function paso() {
+    c.clearRect(0, 0, cv.width, cv.height);
+    ps = ps.filter(p => p.v > 0);
+    for (const p of ps) {
+      p.x += p.dx; p.y += p.dy; p.dy += p.g; p.v -= p.dv; p.r += p.giro;
+      c.globalAlpha = Math.max(0, Math.min(1, p.v)); c.fillStyle = p.color;
+      c.save(); c.translate(p.x * dpr, p.y * dpr); c.rotate(p.r);
+      const t = p.t * dpr; if (p.forma === "o") { c.beginPath(); c.arc(0, 0, t / 2, 0, 7); c.fill(); } else c.fillRect(-t / 2, -t / 2, t, t * 0.6);
+      c.restore();
+    }
+    c.globalAlpha = 1;
+    if (ps.length) requestAnimationFrame(paso); else vivo = false;
+  }
+  function lanzar(lista) { if (sinMov()) return; ps.push(...lista); if (ps.length > 400) ps = ps.slice(-400); if (!vivo) { vivo = true; requestAnimationFrame(paso); } }
+  return {
+    estalla(x, y, color, n) {
+      lanzar(Array.from({ length: n || 14 }, () => { const a = Math.random() * 6.28, v = 2 + Math.random() * 5;
+        return { x, y, dx: Math.cos(a) * v, dy: Math.sin(a) * v, g: 0.12, v: 1, dv: 0.03, t: 5 + Math.random() * 7, color, forma: "o", r: 0, giro: 0 }; }));
+    },
+    confeti() {
+      const col = ["#E46D4D", "#5A8A78", "#332B2A", "#A8402A", "#3F6E5C", "#f2c14e"];
+      lanzar(Array.from({ length: 140 }, () => ({ x: Math.random() * innerWidth, y: -20 - Math.random() * 200, dx: (Math.random() - 0.5) * 3, dy: 2 + Math.random() * 4,
+        g: 0.03, v: 1.6, dv: 0.008, t: 8 + Math.random() * 8, color: col[Math.floor(Math.random() * col.length)], forma: "r", r: Math.random() * 6, giro: (Math.random() - 0.5) * 0.3 })));
+    }
+  };
+})();
+
+/* =================== UTILIDADES DE PANTALLA =================== */
+function pantalla(id) {
+  document.querySelectorAll(".pantalla").forEach(p => p.classList.toggle("activa", p.id === id));
+  document.body.classList.toggle("jugando", id === "pJuego");
+  document.body.classList.toggle("sinmov", sinMov());
+}
+let tAviso = 0;
+function avisar(txt) { const a = $("#aviso"); a.textContent = txt; a.classList.add("ver"); clearTimeout(tAviso); tAviso = setTimeout(() => a.classList.remove("ver"), 3200); }
+let alCerrar = null;
+function ventana(html, cerrar) {
+  $("#ventana").innerHTML = html; $("#capa").classList.add("ver"); alCerrar = cerrar || null;
+  const b = $("#ventana").querySelector("[data-foco]") || $("#ventana").querySelector("button"); if (b) b.focus();
+}
+function cerrarVentana() { $("#capa").classList.remove("ver"); const f = alCerrar; alCerrar = null; if (f) f(); }
+const abierta = () => $("#capa").classList.contains("ver");
+$("#ventana").addEventListener("click", e => { const b = e.target.closest("[data-a]"); if (!b) return; Son.clic(); ACCIONES[b.dataset.a](b); });
+function logro(id) { const l = MQ.logro(id); if (l) setTimeout(() => avisar(`${l.icono} Logro: ${l.titulo}`), 600); }
+function pintarCartera() {
+  const d = MQ.leer(), n = MQ.nivel(d.xp);
+  $("#cartera").innerHTML = `<span class="chip">⭐ Nivel ${n.nivel} · ${n.tiene}/${n.hace_falta} XP</span><span class="chip">🪙 ${d.monedas}</span>`;
+}
+
+/* =================== NIVELES =================== */
+function pintarMapa() {
+  repartirMisiones();
+  $("#chipEst").textContent = `★ ${NIVELES.reduce((s, n) => s + (S.estrellas[n.id] || 0), 0)}/${NIVELES.length * 3}`;
+  let h = "", escAnt = 0;
+  for (const n of NIVELES) {
+    if (n.esc !== escAnt) { h += `<h3 class="esc">Nivel ${n.esc} · ${ESCALONES[n.esc]}</h3>`; escAnt = n.esc; }
+    const e = S.estrellas[n.id] || 0, ab = desbloqueado(n.id);
+    h += `<button class="nivel ${n.jefe ? "jefe" : ""}" data-niv="${n.id}" ${ab ? "" : "disabled"} aria-label="Nivel ${n.id}: ${esc(n.nombre)}${ab ? "" : " (bloqueado)"}">
+      <span class="n">${ab ? (n.jefe ? "👑" : n.id) : "🔒"}</span><div><b>${esc(n.nombre)}</b><span>${esc(n.lema)}</span></div>
+      <span class="est" aria-label="${e} estrellas">${"★".repeat(e)}<span style="opacity:.25;color:var(--espresso)">${"★".repeat(3 - e)}</span></span></button>`;
+  }
+  const inf = S.estrellas[3] > 0;
+  h += `<h3 class="esc">Desafío especial</h3><button class="nivel inf" data-niv="inf" ${inf ? "" : "disabled"}>
+    <span class="n">${inf ? "∞" : "🔒"}</span><div><b>Partida infinita</b><span>${inf ? "Sin límite de movimientos. Récord: " + S.record + " puntos" : "Supera el nivel 3 para abrirla"}</span></div></button>`;
+  h += `<div class="misiones"><h3>🎯 Misiones</h3>` + S.misiones.map(m => { const x = MISIONES.find(y => y.id === m.id), v = Math.min(x.n, S.stats[x.stat] - m.desde);
+    return `<div class="mision"><span>${esc(x.txt)}</span><b>${v}/${x.n} · ${x.premio} 🪙</b><div class="prog"><i style="width:${100 * v / x.n}%"></i></div></div>`; }).join("") + `</div>`;
+  $("#listaNiveles").innerHTML = h;
+}
+$("#listaNiveles").addEventListener("click", e => { const b = e.target.closest("[data-niv]"); if (b && !b.disabled) { Son.clic(); empezar(b.dataset.niv === "inf" ? "inf" : +b.dataset.niv); } });
+
+/* =================== PARTIDA =================== */
+let J = null;
+const els = new Map();
+let geo = { lado: 0, celda: 0, hueco: 0 };
+
+function empezar(id) {
+  const inf = id === "inf";
+  const niv = inf ? Object.assign({ id: "inf", esc: 0, nombre: "Partida infinita", lema: "Entrega todos los pedidos que puedas", n: 5, total: Infinity, movs: Infinity }, INFINITO[0]) : NIVELES.find(n => n.id === id);
+  AJ = MQ.leer().ajustes;
+  let movs = niv.movs, extra = 0;
+  if (!inf) {
+    extra = Math.round(niv.movs * 0.15 * Math.min(3, S.derrotas[id] || 0));          // ayuda tras derrotas
+    movs = Math.round((niv.movs + extra) * (AJ.tranquilo ? 1.5 : 1));
+  }
+  J = { niv, inf, t: M.crear(niv.n), abiertos: [null, null, null], pendientes: niv.total, hechos: 0, total: niv.total, movs, movsIni: movs, extra,
+    puntos: 0, racha: 0, errores: 0, vidas: 3, nMov: 0, poder: null, bloq: false, fin: false, unidades: 0, fusiones: 0,
+    ayuda: !!niv.ayuda || S.dominio < 30, cargas: {}, jefe: niv.jefe ? { cuenta: niv.jefe.cada + (AJ.tranquilo ? 3 : 0) } : null,
+    guia: (!inf && id === 1 && !S.tutorial) ? 0 : -1 };
+  PODERES.forEach(p => { J.cargas[p.id] = poderLibre(p) ? p.base + (S.mejoras[p.id] || 0) : 0; });
+  for (let i = 0; i < (niv.rocas || 0); i++) M.ponerRoca(J.t, M.elige(J.t.rng, M.vacias(J.t)), niv.vidaRoca || 1);
+  for (let i = 0; i < 3; i++) M.generar(J.t, cfgFichas());
+  reponer();
+  els.forEach(el => el.remove()); els.clear();
+  pantalla("pJuego");
+  $("#tablero").className = "skin-" + S.skin;
+  $("#hNombre").textContent = inf ? niv.nombre : `${niv.id}. ${niv.nombre}`;
+  $("#hEsc").textContent = inf ? "Desafío especial" : `Nivel ${niv.esc} · ${ESCALONES[niv.esc]}`;
+  $("#jefe").style.display = J.jefe ? "flex" : "none";
+  if (J.jefe) $("#jefeCara").innerHTML = QUEBRON;
+  $("#progreso").style.display = J.jefe || inf ? "none" : "flex";
+  $("#ultimo").classList.remove("ver");
+  cinta(mate(niv.lema), true);
+  medir(); pintarTodo(); guia();
+  if (J.extra) avisar(`💪 Esta vez tienes ${J.extra} movimientos extra`);
+}
+// Configuración actual (en el modo infinito sube con las entregas y baja con los errores).
+function cfg() {
+  if (!J.inf) return J.niv;
+  const avance = Math.max(0, J.hechos - 3 * J.errores);
+  return INFINITO.find(x => avance < x.hasta);
+}
+function cfgFichas() { const c = cfg(); return { dens: c.dens, pesos: c.pesos, pEq: c.pEq, verMax: c.verMax, hielo: J.nMov < 3 ? 0 : c.hielo }; }
+function reponer() {
+  const c = Object.assign({}, cfg());
+  if (S.dominio < 30) c.formas = Object.assign({}, c.formas, { frac: (c.formas.frac || 0) + 2, dib: (c.formas.dib || 0) + 1 });    // dominio bajo: más pedidos sencillos
+  for (let k = 0; k < 3; k++) if (!J.abiertos[k] && J.pendientes > 0) {
+    const p = M.nuevoPedido(c, J.t.rng, J.abiertos.filter(Boolean));
+    if (!p) break;
+    p.pista = 0; p.nuevo = true; J.abiertos[k] = p; J.pendientes--;
+  }
+}
+
+/* ----- Medidas y dibujo ----- */
+function medir() {
+  const z = $("#zona"), lado = Math.max(120, Math.floor(Math.min(z.clientWidth, z.clientHeight)) - 10), n = J ? J.niv.n : 4;
+  const hueco = Math.round(lado * 0.022), celda = (lado - hueco * (n + 1)) / n;
+  geo = { lado, celda, hueco };
+  const tb = $("#tablero"); tb.style.width = tb.style.height = lado + "px"; tb.style.fontSize = (celda * 0.36) + "px";
+  tb.querySelectorAll(".hueco").forEach(h => h.remove());
+  if (!J) return;
+  for (let i = 0; i < n * n; i++) { const h = document.createElement("div"); h.className = "hueco"; const [x, y] = xy(i);
+    h.style.cssText = `left:${x}px;top:${y}px;width:${celda}px;height:${celda}px`; tb.prepend(h); }
+}
+const xy = i => { const n = J.niv.n; return [geo.hueco + (i % n) * (geo.celda + geo.hueco), geo.hueco + Math.floor(i / n) * (geo.celda + geo.hueco)]; };
+const colocar = (el, i) => { const [x, y] = xy(i); el.style.transform = `translate(${x}px,${y}px)`; el.dataset.i = i; };
+const centro = i => { const r = $("#tablero").getBoundingClientRect(), [x, y] = xy(i); return [r.left + x + geo.celda / 2, r.top + y + geo.celda / 2]; };
+const COLOR = { 2: "#3F6E5C", 3: "#A8402A", 4: "#2F6F8F", 5: "#8A5A12", 6: "#6B4E9B", 8: "#B03A6B", 10: "#5A6B1E", 12: "#4A4A8A" };
+const verFicha = c => `${c.n * c.m}/${c.d * c.m}`;
+
+function contenido(c) {
+  const dibujo = J.ayuda ? `<span class="tarta" style="background:conic-gradient(currentColor 0 ${100 * c.n / c.d}%,transparent 0)"></span>` : "";
+  const igual = J.ayuda && c.m > 1 ? `<small>=&nbsp;${mate(M.txt(c))}</small>` : "";
+  return `<span class="in"><span>${mate(verFicha(c))}</span>${igual}</span>${dibujo}`;
+}
+function pintarTablero(nuevas) {
+  const tb = $("#tablero"), vivos = new Set();
+  J.t.g.forEach((c, i) => {
+    if (!c) return;
+    vivos.add(c.id);
+    let el = els.get(c.id);
+    if (!el) {
+      el = document.createElement("button"); el.type = "button"; els.set(c.id, el); tb.appendChild(el);
+      el.className = "ficha " + (nuevas && nuevas.has(c.id) ? "pop" : "nace");
+      el.style.width = el.style.height = geo.celda + "px";
+    }
+    colocar(el, i);
+    const base = el.className.match(/\b(pop|nace)\b/), anim = base ? base[1] : "";
+    if (c.tipo === "roca") { el.className = `ficha roca ${c.vida > 1 ? "dura" : ""} ${anim}`; el.setAttribute("aria-label", "Roca"); el.innerHTML = ""; return; }
+    el.className = `ficha d${COLOR[c.d] ? c.d : 1} ${c.m > 1 ? "sinsimp" : ""} ${c.hielo ? "hielo" : ""} ${anim}`;
+    el.setAttribute("aria-label", hablar(verFicha(c)) + (c.hielo ? ", helada" : ""));
+    const h = contenido(c); if (el.dataset.h !== h) { el.innerHTML = h; el.dataset.h = h; }
+  });
+  els.forEach((el, id) => { if (!vivos.has(id)) { el.remove(); els.delete(id); } });
+}
+function pintarPedidos() {
+  $("#pedidos").innerHTML = J.abiertos.map((p, k) => p
+    ? `<button class="pedido ${p.nuevo ? "entra" : ""} ${p.texto.length > 9 ? "largo" : ""}" data-k="${k}" aria-label="Pedido: ${esc(p.dib ? `dibujo con ${p.dib.pintadas} de ${p.dib.partes} partes pintadas` : hablar(p.texto))}. Pulsa para ver una pista.">
+        <span class="etq">${ETQ[p.forma]}</span>${p.dib ? tarta(p.dib.pintadas, p.dib.partes) : `<span class="txt">${mate(p.texto)}</span>`}${p.pista ? '<span class="bombilla">💡</span>' : ""}</button>`
+    : `<div class="pedido vacio" aria-hidden="true">✓</div>`).join("");
+  J.abiertos.forEach(p => { if (p) p.nuevo = false; });
+}
+function pintarHud() {
+  $("#hPuntos").textContent = J.puntos;
+  $("#hRacha").textContent = "×" + String(mult()).replace(".", ",");
+  $("#dRacha").style.borderColor = mult() > 1 ? "var(--coral)" : "";
+  if (J.inf) { $("#hMovs").textContent = "❤".repeat(J.vidas) || "0"; $("#hMovsEtq").textContent = "vidas"; $("#hMovs").style.fontSize = ".95rem"; }
+  else { $("#hMovs").textContent = J.movs; $("#hMovsEtq").textContent = "movs"; $("#hMovs").style.fontSize = ""; }
+  $("#dMovs").classList.toggle("poco", !J.inf && J.movs <= 5);
+  if (!J.inf && !J.jefe) $("#progreso").innerHTML = Array.from({ length: J.total }, (_, i) => `<i class="${i < J.hechos ? "ok" : ""}"></i>`).join("");
+  if (J.jefe) { $("#jefeVida").style.width = (100 * (J.total - J.hechos) / J.total) + "%"; $("#jefeTxt").textContent = `Escudos ${J.total - J.hechos} · ataca en ${J.jefe.cuenta}`; }
+  $("#poderes").innerHTML = PODERES.map(p => poderLibre(p)
+    ? `<button class="poder" data-p="${p.id}" aria-pressed="${J.poder === p.id}" ${J.cargas[p.id] > 0 ? "" : "disabled"} aria-label="${p.nombre}: ${esc(hablar(p.desc))} Quedan ${J.cargas[p.id]}.">
+        ${p.icono}<small>${p.nombre}</small><span class="c">${J.cargas[p.id]}</span></button>`
+    : `<button class="poder candado" data-p="${p.id}" data-cerrado="1" aria-label="${p.nombre}: se desbloquea al superar el nivel ${p.tras}">🔒<small>Nivel ${p.tras}</small></button>`).join("");
+}
+function pintarTodo(nuevas) { pintarTablero(nuevas); pintarPedidos(); pintarHud(); }
+let tCinta = 0;
+function cinta(html, info) { const c = $("#cinta"); c.innerHTML = html; c.classList.toggle("info", !!info); clearTimeout(tCinta); if (!info) tCinta = setTimeout(() => { c.innerHTML = ""; }, 6000); }
+const mult = () => Math.min(3, 1 + Math.floor(J.racha / 2) * 0.5);
+
+const GUIA = ["👉 Desliza el dedo por el tablero: se mueven todas las fichas.",
+  "Junta dos fichas: se SUMAN. Si entre las dos hacen 1, desaparecen.",
+  "¡Bien! Ahora toca la ficha que valga lo mismo que un pedido de arriba."];
+function guia() { const g = $("#guia"); if (J.guia >= 0 && J.guia < GUIA.length) { g.textContent = GUIA[J.guia]; g.classList.add("ver"); } else g.classList.remove("ver"); }
+function avanzaGuia(paso) { if (J.guia === paso) { J.guia++; if (J.guia >= GUIA.length) { J.guia = -1; S.tutorial = true; guardar(); } guia(); } }
+
+/* ----- Deslizar ----- */
+function deslizar(dir) {
+  if (!J || J.bloq || J.fin || abierta()) return;
+  if (!J.inf && J.movs <= 0) return;
+  if (J.poder) { J.poder = null; pintarHud(); }
+  const r = M.mover(J.t, dir);
+  if (!r.movido) { const tb = $("#tablero"); tb.classList.remove("no"); void tb.offsetWidth; tb.classList.add("no"); Son.tope(); return; }
+  J.bloq = true; J.nMov++;
+  if (!J.inf) J.movs--;
+  for (const m of r.movs) { const el = els.get(m.id); if (el) { el.classList.remove("nace", "pop"); colocar(el, m.a); } }
+  Son.mueve(); avanzaGuia(0);
+  setTimeout(() => {
+    const nuevas = new Set(r.fusiones.map(f => f.id));
+    fusiones(r);
+    M.generar(J.t, cfgFichas());
+    ataqueJefe();
+    pintarTodo(nuevas);
+    J.bloq = false;
+    comprobarFin();
+  }, sinMov() ? 0 : 125);
+}
+// Texto de una suma con sus pasos: 1/2 + 1/4 = 2/4 + 1/4 = 3/4
+function pasosSuma(f) {
+  const D = M.mcm(f.a.d, f.b.d), na = f.a.n * D / f.a.d, nb = f.b.n * D / f.b.d;
+  let t = `${M.txt(f.a)} + ${M.txt(f.b)}`;
+  if (f.a.d !== f.b.d) t += ` = ${na}/${D} + ${nb}/${D}`;
+  t += ` = ${na + nb}/${D}`;
+  if (f.unidad) t += " = 1"; else if (f.r.d !== D) t += ` = ${M.txt(f.r)}`;
+  return t;
+}
+function fusiones(r) {
+  const k = r.fusiones.length;
+  if (k) {
+    let ver = r.fusiones[0], hayUnidad = false;
+    for (const f of r.fusiones) {
+      J.puntos += 10 * k; J.fusiones++; S.stats.fusiones++;
+      const [x, y] = centro(f.en);
+      if (f.unidad) {
+        hayUnidad = true; ver = f; J.puntos += 50; J.unidades++; S.stats.unidades++; logro("fm.unidad");
+        if (S.stats.unidades >= 25) logro("fm.unidades25");
+        if (J.unidades % 3 === 0 && poderLibre(PODERES[1])) { J.cargas.partir++; avisar("⚡ 3 unidades completas: +1 poder ✂"); }
+        Fx.estalla(x, y, "#E46D4D", 26);
+        if (!sinMov()) { const u = document.createElement("div"); u.className = "unidad"; u.textContent = "1"; const s = geo.celda;
+          u.style.cssText = `left:${x - s / 2}px;top:${y - s / 2}px;width:${s}px;height:${s}px;font-size:${s * 0.5}px`; document.body.appendChild(u); setTimeout(() => u.remove(), 720); }
+      } else { Fx.estalla(x, y, COLOR[f.r.d] || "#332B2A", 12); if (f.a.d !== f.b.d && ver.a.d === ver.b.d && !ver.unidad) ver = f; }
+    }
+    if (hayUnidad) Son.unidad(); else Son.fusion(k);
+    logro("fm.primera"); avanzaGuia(1);
+    if (k >= 2) S.stats.combos++;
+    if (k >= 3) logro("fm.combo3");
+    cinta(mate(pasosSuma(ver)) + (ver.unidad ? " <em>¡Unidad completa! +50</em>" : k > 1 ? ` <em>¡Combo ×${k}!</em>` : ""));
+  }
+  for (const x of r.rotas) { const [px, py] = centro(x.en); Fx.estalla(px, py, x.tipo === "hielo" ? "#7dd3fc" : "#8a8380", 12); }
+  if (r.rotas.length) Son.rompe();
+}
+function ataqueJefe() {
+  if (!J.jefe || J.hechos >= J.total) return;
+  if (--J.jefe.cuenta > 0) return;
+  J.jefe.cuenta = J.niv.jefe.cada + (AJ.tranquilo ? 3 : 0);
+  const libres = M.vacias(J.t), moviles = J.t.g.map((c, i) => c && c.tipo === "fr" && !c.hielo ? i : -1).filter(i => i >= 0);
+  if (libres.length > 4 && (Math.random() < 0.5 || !moviles.length)) { M.ponerRoca(J.t, M.elige(J.t.rng, libres), 1); avisar("👑 ¡Quebrón lanza una roca!"); }
+  else if (moviles.length > 1) { J.t.g[M.elige(J.t.rng, moviles)].hielo = true; avisar("👑 ¡Quebrón congela una ficha!"); }
+  else return;
+  J.jefe.ataques = (J.jefe.ataques || 0) + 1;
+  Son.ataque(); const tb = $("#tablero"); tb.classList.remove("temblor"); void tb.offsetWidth; tb.classList.add("temblor");
+}
+
+/* ----- Tocar una ficha: entregar o usar un poder ----- */
+function tocar(i) {
+  if (!J || J.bloq || J.fin || abierta()) return;
+  const c = J.t.g[i]; if (!c) return;
+  if (J.poder) return usarPoder(i, c);
+  if (c.tipo !== "fr") { cinta("Las rocas se rompen haciendo una suma justo al lado.", true); return; }
+  const k = J.abiertos.findIndex(p => M.coincide(c, p));
+  if (k >= 0) entregar(i, k, c); else fallo(i, c);
+}
+const DIFICIL = { suma: 1, resta: 1, falta: 1, mitad: 1, doble: 1, dec: 1 };
+function entregar(i, k, c) {
+  const p = J.abiertos[k], el = els.get(c.id), destino = $(`.pedido[data-k="${k}"]`);
+  const pts = Math.round((DIFICIL[p.forma] ? 150 : 100) * mult() * (p.pista >= 2 ? 0.5 : 1));
+  J.puntos += pts; J.racha++; J.hechos++; S.stats.entregas++;
+  if (S.stats.entregas >= 100) logro("fm.entregas100");
+  if (c.m > 1 || p.forma === "equiv") logro("fm.equiv");
+  if (p.forma !== "frac" && !p.pista) S.dominio = Math.min(100, S.dominio + 3);
+  if (J.inf && J.hechos >= 20) logro("fm.inf20");
+  if (J.inf && J.hechos % 5 === 0 && poderLibre(PODERES[1])) { J.cargas.partir++; avisar("🎁 5 entregas: +1 poder ✂"); }
+  J.t.g[i] = null;
+  if (el && destino && !sinMov()) {
+    const a = el.getBoundingClientRect(), b = destino.getBoundingClientRect(), v = el.cloneNode(true);
+    v.className = el.className.replace(/\b(nace|pop)\b/g, "") + " vuela"; v.style.cssText = `left:${a.left}px;top:${a.top}px;width:${a.width}px;height:${a.height}px;font-size:${geo.celda * 0.36}px;transform:none`;
+    document.body.appendChild(v);
+    requestAnimationFrame(() => { v.style.transform = `translate(${b.left + b.width / 2 - a.left - a.width / 2}px,${b.top + b.height / 2 - a.top - a.height / 2}px) scale(.35)`; v.style.opacity = ".3"; });
+    setTimeout(() => v.remove(), 400);
+  }
+  const [x, y] = centro(i); Fx.estalla(x, y, "#E46D4D", 24);
+  Son.entrega(); if (J.guia === 1) avanzaGuia(1); avanzaGuia(2);
+  cinta(`+${pts} · ` + mate(p.explica));
+  if (J.jefe) { const j = $("#jefe"); j.classList.remove("golpe"); void j.offsetWidth; j.classList.add("golpe"); }
+  J.abiertos[k] = null; reponer();
+  if (J.hechos < J.total) M.rellenarSiVacio(J.t, cfgFichas());
+  pintarTodo(); comprobarFin();
+}
+function fallo(i, c) {
+  const el = els.get(c.id); if (el) { el.classList.remove("mal", "nace", "pop"); void el.offsetWidth; el.classList.add("mal"); }
+  Son.error(); J.errores++; J.racha = 0; S.dominio = Math.max(0, S.dominio - 8);
+  let h = `<h2>Casi…</h2><div class="caja mate">${mate(M.explicaError(c, J.abiertos))}</div>`;
+  if (J.inf) { J.vidas--; h += `<p>Pierdes una vida. Te quedan ${J.vidas}.</p>`; }
+  else if (J.errores === 1) h += `<p>Esta vez no pasa nada: tienes una <b>segunda oportunidad</b>.</p>`;
+  else { J.movs = Math.max(0, J.movs - 1); h += `<p>Pierdes 1 movimiento.</p>`; }
+  if (J.errores === 2 && !J.ayuda) { J.ayuda = true; h += `<p>💡 Activo la <b>ayuda</b>: ahora cada ficha enseña un dibujo de lo que vale.</p>`; }
+  h += `<button class="btn oro" data-a="cerrar" data-foco>Entendido</button>`;
+  ventana(h, () => { pintarTodo(); comprobarFin(); });
+}
+function usarPoder(i, c) {
+  const id = J.poder, [x, y] = centro(i);
+  if (id === "martillo") {
+    if (c.tipo === "fr" && c.hielo) c.hielo = false; else J.t.g[i] = null;
+    Fx.estalla(x, y, "#332B2A", 18); Son.rompe(); cinta("🔨 ¡Fuera!", true);
+  } else if (id === "partir") {
+    if (c.tipo !== "fr") { cinta("Ese poder solo funciona con fichas.", true); return; }
+    const antes = M.txt(c), err = M.poderPartir(J.t, i, cfg().comun);
+    if (err) { Son.error(); ventana(`<h2>No se puede</h2><div class="caja mate">${mate(err)}</div><p class="nota">No gastas el poder.</p><button class="btn oro" data-a="cerrar" data-foco>Entendido</button>`); return; }
+    Son.poder(); Fx.estalla(x, y, COLOR[c.d] || "#332B2A", 16);
+    cinta(mate(`La mitad de ${antes} es ${M.txt(c)}: ${M.txt(c)} + ${M.txt(c)} = ${antes}`));
+  }
+  J.cargas[id]--; J.poder = null;
+  if (J.hechos < J.total) M.rellenarSiVacio(J.t, cfgFichas());
+  pintarTodo(); comprobarFin();
+}
+function elegirPoder(b) {
+  if (!J || J.fin || J.bloq) return;
+  const p = PODERES.find(x => x.id === b.dataset.p);
+  if (b.dataset.cerrado) { cinta(`🔒 ${p.nombre}: se desbloquea al superar el nivel ${p.tras}.`, true); return; }
+  if (J.cargas[p.id] <= 0) return;
+  Son.clic();
+  if (p.id === "mezcla") { M.barajar(J.t); J.cargas.mezcla--; Son.poder(); cinta("🌀 ¡Fichas recolocadas!", true); pintarTodo(); comprobarFin(); return; }
+  J.poder = J.poder === p.id ? null : p.id;
+  if (J.poder) cinta(`${p.icono} ${mate(p.desc)} <b>Toca una ficha.</b>`, true);
+  pintarHud();
+}
+
+/* ----- Final de la partida ----- */
+function comprobarFin() {
+  if (J.fin) return;
+  if (J.hechos >= J.total) return terminar(true);
+  if (J.inf && J.vidas <= 0) return terminar(false, "vidas");
+  const hayEntrega = M.fichas(J.t).some(f => J.abiertos.some(p => M.coincide(f, p)));
+  const sinMovs = !J.inf && J.movs <= 0, atasco = !M.hayMovimiento(J.t);
+  const u = $("#ultimo");
+  if (sinMovs || atasco) {
+    const util = PODERES.some(p => J.cargas[p.id] > 0 && (atasco && !sinMovs || p.id === "partir"));
+    if (!hayEntrega && !util) return terminar(false, sinMovs ? "movs" : "atasco");
+    $("#ultimoTxt").textContent = (sinMovs ? "Sin movimientos" : "Tablero bloqueado") + (hayEntrega ? ": ¡aún puedes entregar!" : ": usa un poder");
+    u.classList.add("ver");
+  } else u.classList.remove("ver");
+}
+function terminar(victoria, motivo) {
+  J.fin = true; $("#ultimo").classList.remove("ver"); $("#guia").classList.remove("ver");
+  const niv = J.niv, id = niv.id, foto = triste => `<img class="mascota2 ${triste ? "triste" : ""}" src="${MASCOTA}" alt="" width="600" height="620">`;
+  let xp, monedas, h;
+  if (J.inf) {
+    const record = J.puntos > S.record; if (record) S.record = J.puntos;
+    xp = Math.min(150, 5 * J.hechos); monedas = Math.min(60, 2 * J.hechos) + (record && J.hechos ? 10 : 0);
+    h = `${foto(!record)}<h2>${record ? "¡Nuevo récord!" : "Fin de la partida"}</h2>
+      <p>${motivo === "vidas" ? "Te has quedado sin vidas." : "El tablero se ha bloqueado."} Has entregado <b>${J.hechos}</b> pedidos.</p>
+      <div class="premios"><span class="chip">🏆 ${J.puntos} puntos</span><span class="chip">Récord: ${S.record}</span></div>`;
+    if (record) { Fx.confeti(); Son.victoria(); } else Son.derrota();
+  } else if (victoria) {
+    const resto = J.movs / J.movsIni, estrellas = J.errores <= 1 && resto >= 0.3 ? 3 : J.errores <= 3 && resto >= 0.1 ? 2 : 1;
+    J.puntos += J.movs * 20;
+    const primera = !S.estrellas[id], record = J.puntos > (S.mejor[id] || 0) && !primera, gana = Math.max(0, estrellas - (S.estrellas[id] || 0));
+    S.estrellas[id] = Math.max(S.estrellas[id] || 0, estrellas); S.mejor[id] = Math.max(S.mejor[id] || 0, J.puntos);
+    S.stats.estrellas += gana; S.derrotas[id] = 0;
+    if (J.errores === 0) { S.stats.limpios++; logro("fm.limpio"); }
+    xp = 20 + 10 * niv.esc + 10 * estrellas; monedas = 8 + 4 * estrellas + (primera ? 15 : 0) + (record ? 10 : 0);
+    if (NIVELES.filter(n => n.esc === niv.esc).every(n => S.estrellas[n.id] > 0)) logro(niv.esc === 5 ? "fm.jefe" : "fm.esc" + niv.esc);
+    if (NIVELES.every(n => S.estrellas[n.id] === 3)) logro("fm.estrellas");
+    const nuevos = PODERES.filter(p => p.tras === id && primera), sig = NIVELES.find(n => n.id === id + 1);
+    h = `${foto()}<h2>${niv.jefe ? "¡Quebrón derrotado!" : "¡Nivel superado!"}</h2>
+      <div class="estrellas" aria-label="${estrellas} de 3 estrellas">${[0, 1, 2].map(i => i < estrellas ? `<b style="animation-delay:${0.25 + i * 0.25}s">★</b>` : "★").join("")}</div>
+      <div class="premios"><span class="chip">🏆 ${J.puntos} puntos</span>${record ? '<span class="chip">📈 ¡Récord personal! +10 🪙</span>' : ""}</div>
+      <p class="nota">${J.errores === 0 ? "Sin errores." : J.errores + (J.errores === 1 ? " error" : " errores") + "."} Te han sobrado ${J.movs} movimientos (+${J.movs * 20} puntos).
+      ${estrellas < 3 ? "Para las 3 estrellas: como mucho 1 error y que te sobre el 30 % de los movimientos." : ""}</p>
+      ${nuevos.map(p => `<div class="caja">🔓 <b>Nuevo poder: ${p.icono} ${p.nombre}.</b> ${mate(p.desc)}</div>`).join("")}
+      ${id === 3 && primera ? '<div class="caja">🔓 <b>Partida infinita</b> desbloqueada: juega sin límite de movimientos y bate tu récord.</div>' : ""}`;
+    h += `<!--P--><div class="fila" style="margin-top:12px">${sig ? `<button class="btn oro" data-a="jugar" data-niv="${sig.id}" data-foco>Siguiente ▶</button>` : ""}
+      <button class="btn gris" data-a="jugar" data-niv="${id}">Repetir</button><button class="btn gris" data-a="mapa" ${sig ? "" : "data-foco"}>Niveles</button></div>`;
+    Fx.confeti(); Son.victoria();
+  } else {
+    S.derrotas[id] = (S.derrotas[id] || 0) + 1; xp = 8; monedas = 2;
+    const mas = Math.round(niv.movs * 0.15 * Math.min(3, S.derrotas[id]));
+    h = `${foto(true)}<h2>${motivo === "atasco" ? "Tablero bloqueado" : "Sin movimientos"}</h2>
+      <p>Has entregado <b>${J.hechos} de ${J.total}</b> pedidos. ¡Estás cerca!</p>
+      <div class="caja">💡 <b>Consejo:</b> ${consejo(niv)}</div>
+      <p class="nota">En el próximo intento tendrás <b>${mas} movimientos extra</b>.</p>
+      <!--P--><div class="fila" style="margin-top:12px"><button class="btn oro" data-a="jugar" data-niv="${id}" data-foco>Reintentar</button><button class="btn gris" data-a="mapa">Niveles</button></div>`;
+    Son.derrota();
+  }
+  const sube = MQ.sumar(xp, monedas);
+  const premios = `<div class="premios"><span class="chip">+${xp} XP</span><span class="chip">+${monedas} 🪙</span>${sube.subio ? `<span class="chip" style="border-color:var(--coral)">⭐ ¡Nivel ${sube.nivel}!</span>` : ""}</div>`;
+  h = J.inf ? h + premios + `<div class="fila" style="margin-top:12px"><button class="btn oro" data-a="jugar" data-niv="inf" data-foco>Otra vez</button><button class="btn gris" data-a="mapa">Niveles</button></div>`
+            : h.replace("<!--P-->", premios);
+  revisarMisiones(); guardar();
+  setTimeout(() => ventana(h, () => { if (J && J.fin) irMapa(); }), sinMov() ? 0 : 500);
+}
+function consejo(niv) {
+  const f = niv.formas;
+  if (f.suma || f.resta) return mate("para sumar o restar con distinto denominador, primero pásalas al mismo: 1/2 + 1/4 = 2/4 + 1/4 = 3/4. Eso es justo lo que hace el tablero al juntar dos fichas.");
+  if (f.falta) return mate("piensa el 1 con ese denominador: 1 = 6/6. Si tienes 1/6, te faltan 5/6. Las fichas que suman 1 desaparecen y dejan sitio.");
+  if (f.sumaIgual) return mate("con el mismo denominador solo se suman los numeradores: 1/8 + 2/8 = 3/8.");
+  if (f.equiv) return mate("2/4, 4/8 y 1/2 valen lo mismo. Simplifica el pedido antes de buscar la ficha.");
+  return mate("si una ficha te estorba, complétala hasta 1 para que desaparezca: a 3/4 le falta 1/4.");
+}
+const QUEBRON = `<img src="../../compartido/img/personajes/pirata.webp" alt="Quebrón" width="240" height="240">`;   // Quebrón tiene la cara de Pirata (personaje de la marca)
+
+/* =================== VENTANAS =================== */
+function irMapa() { J = null; pintarMapa(); pantalla("pMapa"); }
+function irMenu() { J = null; pintarCartera(); pantalla("pMenu"); }
+const interruptor = (clave, titulo, sub) => `<div class="item"><div><b>${titulo}</b><span>${sub}</span></div>
+  <button class="interruptor" data-a="ajuste" data-clave="${clave}" aria-pressed="${!!AJ[clave]}" aria-label="${titulo}">${AJ[clave] ? "Sí" : "No"}</button></div>`;
+const ajustesHTML = () => `<div class="lista">${interruptor("sonido", "Sonidos", "Efectos al sumar y entregar")}${interruptor("musica", "Música", "Melodía de fondo")}
+  ${interruptor("animaciones", "Animaciones", "Desactívalas si te marean o el dispositivo va lento")}
+  ${interruptor("tranquilo", "Modo tranquilo", "50 % más de movimientos y el jefe ataca más despacio")}</div>`;
+function vPausa() {
+  ventana(`<h2>Pausa</h2><p class="nota">${J.inf ? "Partida infinita" : `Nivel ${J.niv.id} · ${esc(J.niv.nombre)}`} · no hay límite de tiempo</p>${ajustesHTML()}
+    <div class="fila"><button class="btn oro" data-a="cerrar" data-foco>Seguir</button><button class="btn gris" data-a="jugar" data-niv="${J.niv.id}">Reiniciar</button>
+    <button class="btn gris" data-a="como">Ayuda</button><button class="btn gris" data-a="mapa">Salir</button></div>`);
+}
+function vAjustes() { ventana(`<h2>Ajustes</h2>${ajustesHTML()}<button class="btn oro" data-a="cerrar" data-foco>Listo</button>`); }
+function vComo() {
+  ventana(`<h2>Cómo se juega</h2><div class="izq">
+    <div class="caja"><b>1 · Desliza.</b> Todas las fichas se mueven a la vez. Con teclado: flechas.</div>
+    <div class="caja mate">${mate("2 · Suma. Dos fichas que chocan se suman: 1/2 + 1/4 = 2/4 + 1/4 = 3/4.")}</div>
+    <div class="caja"><b>3 · Completa la unidad.</b> Si dos fichas suman exactamente 1 (${mate("3/4 + 1/4")}), desaparecen y dan puntos. Si pasarían de 1, no se juntan.</div>
+    <div class="caja"><b>4 · Entrega.</b> Toca la ficha que valga lo mismo que un pedido de arriba. ${mate("Si piden 6/8, vale la ficha 3/4.")} Toca un pedido para ver una pista.</div>
+    <div class="caja"><b>Fichas claras</b> (${mate("2/4, 3/6")}…): están sin simplificar, pero valen lo mismo que su fracción simplificada.</div>
+    <div class="caja"><b>Rocas y hielo:</b> se rompen haciendo una suma justo al lado.</div>
+    <div class="caja"><b>Poderes:</b> ${PODERES.map(p => `${p.icono} ${mate(p.desc)}`).join(" ")}</div></div>
+    <button class="btn oro" data-a="cerrar" data-foco>¡Vamos!</button>`);
+}
+function vTienda() {
+  const d = MQ.leer();
+  const skins = SKINS.map(s => { const tengo = S.skins.includes(s.id), puesto = S.skin === s.id;
+    return `<div class="item"><span class="ico"><span class="skin-${s.id}" style="display:block;font-size:13px"><span class="ficha d3" style="position:static;width:34px;height:34px"><span class="in">${mate("1/3")}</span></span></span></span>
+      <div><b>${s.nombre}</b><span>Aspecto de las fichas</span></div>
+      ${puesto ? '<b style="color:var(--salvia-oscuro)">En uso</b>' : tengo ? `<button class="btn" data-a="poner" data-id="${s.id}">Usar</button>`
+        : `<button class="btn oro" data-a="comprar" data-id="${s.id}" ${d.monedas >= s.precio ? "" : "disabled"}>${s.precio} 🪙</button>`}</div>`; }).join("");
+  const mej = PODERES.map(p => { const n = S.mejoras[p.id] || 0, precio = 100 * (n + 1), libre = poderLibre(p);
+    return `<div class="item ${libre ? "" : "apagado"}"><span class="ico">${p.icono}</span><div><b>${p.nombre} +1</b><span>${libre ? `Empiezas cada nivel con ${p.base + n}${n < 2 ? " → " + (p.base + n + 1) : ""} usos` : "Se desbloquea en el nivel " + p.tras}</span></div>
+      ${!libre ? "🔒" : n >= 2 ? '<b style="color:var(--salvia-oscuro)">Máx.</b>' : `<button class="btn oro" data-a="mejora" data-id="${p.id}" ${d.monedas >= precio ? "" : "disabled"}>${precio} 🪙</button>`}</div>`; }).join("");
+  ventana(`<h2>Tienda</h2><p><span class="chip">🪙 ${d.monedas} monedas</span></p><p class="nota">Las monedas se ganan jugando. No se compran con dinero.</p>
+    <div class="lista">${skins}${mej}</div><button class="btn oro" data-a="cerrar" data-foco>Cerrar</button>`);
+}
+function vLogros() {
+  const d = MQ.leer(), mios = MQ.LOGROS.filter(l => l.juego === "fraction-merge");
+  ventana(`<h2>Logros y medallas</h2><p class="nota">${mios.filter(l => d.logros[l.id]).length} de ${mios.length} conseguidos</p><div class="lista">` +
+    mios.map(l => `<div class="item ${d.logros[l.id] ? "" : "apagado"}"><span class="ico">${d.logros[l.id] ? l.icono : "?"}</span><div><b>${esc(l.titulo)}</b><span>${esc(l.desc)}</span></div>${d.logros[l.id] ? "✅" : ""}</div>`).join("") +
+    `</div><button class="btn oro" data-a="cerrar" data-foco>Cerrar</button>`);
+}
+const ACCIONES = {
+  cerrar: cerrarVentana,
+  jugar: b => { alCerrar = null; cerrarVentana(); empezar(b.dataset.niv === "inf" ? "inf" : +b.dataset.niv); },
+  mapa: () => { alCerrar = null; cerrarVentana(); irMapa(); },
+  como: vComo,
+  ajuste: b => { const k = b.dataset.clave; AJ[k] = !AJ[k]; MQ.ajuste(k, AJ[k]); b.setAttribute("aria-pressed", AJ[k]); b.textContent = AJ[k] ? "Sí" : "No";
+    document.body.classList.toggle("sinmov", sinMov()); },
+  poner: b => { S.skin = b.dataset.id; guardar(); if (J) $("#tablero").className = "skin-" + S.skin; vTienda(); },
+  comprar: b => { const s = SKINS.find(x => x.id === b.dataset.id); if (MQ.gastar(s.precio)) { S.skins.push(s.id); S.skin = s.id; guardar(); avisar(`🎨 Nuevo aspecto: ${s.nombre}`); } vTienda(); pintarCartera(); },
+  mejora: b => { const n = S.mejoras[b.dataset.id] || 0; if (n < 2 && MQ.gastar(100 * (n + 1))) { S.mejoras[b.dataset.id] = n + 1; guardar(); } vTienda(); pintarCartera(); }
+};
+
+/* =================== ENTRADAS: táctil, ratón y teclado =================== */
+const zona = $("#zona"); let gesto = null, huboGesto = false;
+zona.addEventListener("pointerdown", e => { gesto = { x: e.clientX, y: e.clientY, id: e.pointerId }; huboGesto = false; });
+zona.addEventListener("pointermove", e => {
+  if (!gesto || e.pointerId !== gesto.id) return;
+  const dx = e.clientX - gesto.x, dy = e.clientY - gesto.y, u = Math.max(22, geo.celda * 0.3);
+  if (Math.max(Math.abs(dx), Math.abs(dy)) < u) return;
+  gesto = null; huboGesto = true;
+  deslizar(Math.abs(dx) > Math.abs(dy) ? (dx > 0 ? "der" : "izq") : (dy > 0 ? "aba" : "arr"));
+});
+// Sin esto, tras un deslizamiento rápido el navegador se "traga" el siguiente toque.
+$("#pJuego").addEventListener("touchmove", e => e.preventDefault(), { passive: false });
+const finGesto = () => { gesto = null; };
+zona.addEventListener("pointerup", finGesto); zona.addEventListener("pointercancel", finGesto);
+$("#tablero").addEventListener("click", e => {
+  if (huboGesto) { huboGesto = false; return; }
+  const f = e.target.closest(".ficha"); if (f) tocar(+f.dataset.i);
+});
+document.addEventListener("keydown", e => {
+  if (abierta()) { if (e.key === "Escape") cerrarVentana(); return; }
+  if (!J || J.fin) return;
+  const d = { ArrowLeft: "izq", ArrowRight: "der", ArrowUp: "arr", ArrowDown: "aba", a: "izq", d: "der", w: "arr", s: "aba" }[e.key];
+  if (d) { e.preventDefault(); deslizar(d); } else if (e.key === "Escape") vPausa();
+});
+$("#pedidos").addEventListener("click", e => {
+  const b = e.target.closest("[data-k]"); if (!b || !J || J.fin) return;
+  const p = J.abiertos[+b.dataset.k]; if (!p) return;
+  Son.clic(); p.pista = Math.min(2, p.pista + 1);
+  if (p.pista === 1) cinta("💡 " + mate(PISTA[p.forma]) + " (Toca otra vez para ver la solución)", true);
+  else ventana(`<h2>💡 Pista</h2><div class="caja mate">${mate(p.explica)}</div><p class="nota">Con la solución a la vista, este pedido da la mitad de puntos.</p><button class="btn oro" data-a="cerrar" data-foco>Entendido</button>`);
+  pintarPedidos();
+});
+$("#poderes").addEventListener("click", e => { const b = e.target.closest("[data-p]"); if (b) elegirPoder(b); });
+$("#bPausa").onclick = () => { Son.clic(); vPausa(); };
+$("#bTerminar").onclick = () => { if (J && !J.fin) terminar(false, J.inf || J.movs > 0 ? "atasco" : "movs"); };
+$("#bJugar").onclick = () => { Son.clic(); const sig = NIVELES.find(n => !S.estrellas[n.id] && desbloqueado(n.id)); if (sig) empezar(sig.id); else irMapa(); };
+$("#bNiveles").onclick = () => { Son.clic(); irMapa(); };
+$("#bMapaAtras").onclick = () => { Son.clic(); irMenu(); };
+$("#bTienda").onclick = () => { Son.clic(); vTienda(); };
+$("#bLogros").onclick = () => { Son.clic(); vLogros(); };
+$("#bAjustes").onclick = () => { Son.clic(); vAjustes(); };
+$("#bComo").onclick = () => { Son.clic(); vComo(); };
+let tMedir = 0;
+function remedir() { if (!J) return; medir(); els.forEach(el => { el.style.width = el.style.height = geo.celda + "px"; }); const sm = document.body.classList.contains("sinmov");
+  document.body.classList.add("sinmov"); pintarTablero(); void $("#tablero").offsetWidth; document.body.classList.toggle("sinmov", sm); }
+addEventListener("resize", () => { clearTimeout(tMedir); tMedir = setTimeout(remedir, 60); });
+if (window.ResizeObserver) new ResizeObserver(() => { clearTimeout(tMedir); tMedir = setTimeout(remedir, 60); }).observe(zona);
+document.addEventListener("contextmenu", e => { if (J) e.preventDefault(); });
+
+repartirMisiones(); guardar(); pintarCartera(); pantalla("pMenu");
+window.__FM = { get J() { return J; }, get S() { return S; }, empezar, deslizar, tocar, terminar };   // para las pruebas automáticas
+})();
+</script>
+</body>
+</html>
