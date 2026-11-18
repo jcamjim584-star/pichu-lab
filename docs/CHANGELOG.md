@@ -1,5 +1,15 @@
 # Registro de cambios
 
+## 0.9.2 · 18/11/2026
+- El repositorio se pone al día con el artefacto publicado en Claude (de 0.6.4 a 0.9.2), para poder editarlo también con Codex.
+- **Portada nueva: Mapa de mundos.** 11 islas (una por tema de 1.º ESO) unidas por un camino, con el personaje de cada juego;
+  πCHU señala el tema que se da en clase. Barra del jugador con nivel, monedas, logros y ajustes.
+- `compartido/mathquest.js`: progreso común de los juegos (`pichu.mathquest.v1`), lista de mundos y logros.
+- `compartido/img/personajes/`: 11 personajes en `.webp`.
+- Juegos nuevos: **Fraction Merge** (`applets/fraction-merge/`) y **Equation Merge** (`applets/equation-merge/`).
+  Solo está el HTML generado; faltan sus fuentes en `src/`.
+- Comprobado: `node tests/comprobar.mjs` «Todo correcto», portada y juegos nuevos a 390 px sin errores en la consola.
+
 ## 0.6.4 · 11/11/2026
 - Logo del IES Alarifes Ruiz Florindo en el recuadro del centro (`compartido/img/centro.jpg`, sacado del Drive del centro y sin metadatos).
 

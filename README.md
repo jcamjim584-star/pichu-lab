@@ -5,10 +5,16 @@
 Portada que reúne los juegos y laboratorios de matemáticas interactivos de Juan Antonio Campos Jiménez
 (ESO y Bachillerato). Web estática: HTML, CSS y JavaScript, sin frameworks, sin registro y sin recoger datos personales.
 
-## Qué incluye (versión 0.5.0)
+## Qué incluye (versión 0.9.2)
+La portada es un **Mapa de mundos**: cada tema de 1.º ESO es una isla con su personaje. La lista de mundos está en
+`compartido/mathquest.js` (`MUNDOS`); `"ahora: true"` marca el tema que se está dando en clase.
+El progreso común (nivel, XP, monedas, logros y ajustes) se guarda en `pichu.mathquest.v1`.
+
 | Juego | Curso (de momento no se muestra) | Estado |
 |---|---|---|
 | Factor Clash · duelos de divisibilidad | 1.º ESO | Disponible |
+| Fraction Merge · suma y fusiona fracciones | 1.º ESO | Disponible |
+| Equation Merge · ecuaciones de primer grado | 1.º ESO | Disponible |
 | Pizza Rush · Pizzería πCHU v0.2 (fracciones: equivalencias, suma, multiplicación y división) | 1.º ESO | Próximamente (en revisión) |
 | Integer Ninja v0.5 · enteros: signos, comparar, sumas, −( ), productos y cocientes | 1.º ESO | Disponible |
 | Laboratorio de Proporcionalidad · cartas de ecuaciones · cartas de funciones | 1.º ESO · 4.º ESO · 1.º Bach | En diseño |
@@ -56,6 +62,11 @@ Pruebas: `node src/integer-ninja/tests/engine.test.js` (motor), `node src/intege
 y `node src/integer-ninja/tests/retos.test.js` (navegador, necesitan Playwright).
 El ranking en vivo (Apps Script) **no viene configurado**: se activa desde *Retos y ranking* o con el enlace de clase
 cuando el centro lo autorice.
+
+## Fraction Merge y Equation Merge: cómo modificarlos
+Entraron desde el artefacto de Claude (0.9.2) **solo como HTML ya generado**: sus fuentes (`src/fraction-merge/`,
+`src/equation-merge/`) no están en el repositorio. Hasta recuperarlas, cualquier cambio se hace en
+`applets/<id>/index.html`.
 
 ## Publicar en GitHub Pages
 1. Sube esta carpeta a un repositorio **público** de GitHub (rama `main`).
