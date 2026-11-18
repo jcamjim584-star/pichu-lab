@@ -11,6 +11,7 @@
   - Guardado nuevo `pichu.pizzeria.v3` (la `v2` no se borra). Corregida la clave que declaraba `marca.js` (decía `v1`).
   - Pruebas: motor 605.183 comprobaciones (`tests/pizzeria_motor.test.mjs`) y navegador 53/53 (`tests/prueba_pizzeria.mjs`, sustituye a `prueba_pizzeria.py`).
   - Sigue en «Próximamente» hasta probarlo en clase.
+- Se retiran el cuestionario anónimo (`docs/aula/Cuestionario_anonimo_juegos_PICHU.docx`) y su script de Google Forms (`docs/aula/crear_cuestionario.gs`): no se van a usar.
 
 ## 0.6.4 · 11/11/2026
 - Logo del IES Alarifes Ruiz Florindo en el recuadro del centro (`compartido/img/centro.jpg`, sacado del Drive del centro y sin metadatos).
