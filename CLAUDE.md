@@ -1,4 +1,4 @@
-# πCHU LAB — instrucciones para Claude Code
+# GALOIS LEGACY (πCHU LAB) — instrucciones para Claude Code
 
 ## Quién soy y cómo trabajar conmigo
 - Juan Antonio Campos Jiménez, profesor de Matemáticas (1.º ESO, 4.º ESO Aplicadas, 1.º Bach CCSS) en Andalucía.
@@ -16,12 +16,13 @@ privacidad.html         página de privacidad
 accesibilidad.html      declaración de accesibilidad
 sw.js                   modo sin conexión (lista ARCHIVOS + VERSION)
 manifest.webmanifest    app instalable
-compartido/marca.css    identidad visual (solo portada y páginas propias)
+compartido/marca.css    identidad visual GALOIS LEGACY (portada y páginas propias)
 compartido/marca.js     nombre, versión y LISTA DE JUEGOS (MARCA.juegos)
 compartido/componentes.js  alias, exportar/importar/borrar, confirmación doble
-compartido/volver.js    botón "← πCHU" que se añade a cada juego
-compartido/mathquest.js progreso común (pichu.mathquest.v1), MUNDOS del mapa de la portada y LOGROS
-compartido/img/personajes/  personaje de cada mundo (.webp)
+compartido/volver.js    botón "← Mapa" que se añade a cada juego
+compartido/mathquest.js progreso común (pichu.mathquest.v1), MUNDOS (reinos de Gaussoria) y LOGROS
+compartido/img/personajes/  personaje de cada reino (.webp; por ahora, sus enemigos y jefes)
+compartido/img/galois/  logo, πCHU pixel e iconos (generados por src/galois/generar_graficos.py)
 applets/<id>/index.html cada juego, autocontenido
 src/<juego>/            fuentes de los juegos que se compilan (p. ej. src/pizzeria: motor.js + juego.html + personajes)
                         → python3 src/pizzeria/build.py genera applets/pizzeria/index.html (no editar el generado)
@@ -31,18 +32,25 @@ docs/fichas/            una ficha por juego
 ```
 
 ## Reglas que no se rompen
-1. **Los juegos no se reescriben.** A cada juego solo se le añade, antes de `</head>`:
-   `<script src="../../compartido/volver.js" defer></script>`
+1. **Los juegos se pueden adaptar a GALOIS LEGACY** (aspecto, textos, personajes e integración en el mundo),
+   pero **sin quitar preguntas, niveles, mecánicas ni progreso** sin consultarlo antes con Juan Antonio.
+   Las matemáticas de cada juego se respetan. Si el juego tiene fuentes en `src/`, se edita allí y se regenera.
+   Cada juego sigue cargando, antes de `</head>`: `<script src="../../compartido/volver.js" defer></script>`
 2. **Almacenamiento:** todos los juegos comparten `localStorage`. Cada juego usa claves que empiezan por
    `pichu.<id>.vN`. El alias común está en `pichu.perfil.v1`. **Prohibido `localStorage.clear()`.**
    Si cambias el formato de un guardado, crea una clave nueva (v+1) y migra desde la anterior sin borrarla.
 3. **Privacidad (alumnado menor):** solo alias, nunca nombres ni correos. Sin cookies, analítica,
    anuncios ni recursos de otros servidores (la fuente Lato está en `compartido/fuentes/`).
    El ranking con Apps Script es opcional y está desactivado hasta que el centro lo autorice.
-4. **Marca cambiable:** colores y tipografía solo en `:root` de `marca.css`; nombre y lema en `marca.js`.
-   Paleta: espresso #332B2A, salvia #5A8A78, coral #E46D4D, crema #F4EDD7.
-   Texto pequeño en coral → #A8402A. Botones con texto blanco → #3F6E5C.
-   El coral y el salvia normales NO sirven para texto pequeño sobre crema (contraste insuficiente).
+4. **Marca: GALOIS LEGACY · El legado de los matemáticos — un juego de πCHU LAB.**
+   Colores y tipografía solo en `:root` de `marca.css`; nombre, subtítulo y lema en `marca.js`.
+   Estilo: RPG de aventuras en pixel art de 16 bits, original (inspirado en los clásicos, sin copiar recursos de Zelda).
+   Paleta: noche #16122C, tinta #1E1A3A, pergamino #F3ECD6, verde #3E9A5E, azul #3A7BC8, oro #E8B53A, violeta #6A4BB8.
+   Texto pequeño: tinta, violeta #6A4BB8, oro oscuro #7A5200 o rubí #9E2B3A. Botones con texto blanco: verde oscuro #246B3E,
+   azul oscuro #1F4F8A o violeta oscuro #4A3290. El oro solo como texto sobre fondo oscuro (noche/tinta).
+   El verde y el azul normales NO sirven para texto pequeño sobre pergamino (contraste insuficiente).
+   Letras: Pixelify Sans solo en títulos grandes (en pequeño confunde 2/8 y E/€); Lato en textos, números y etiquetas. πCHU es el guía y compañero del jugador.
+   Los gráficos pixel art se generan con `python3 src/galois/generar_graficos.py`.
 5. **Accesibilidad (WCAG 2.2 AA):** teclado, foco visible, botones ≥ 44 px, nunca información solo por color,
    respetar `prefers-reduced-motion`. Confirmaciones con doble pulsación (no usar `confirm()`).
 

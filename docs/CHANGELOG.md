@@ -1,5 +1,22 @@
 # Registro de cambios
 
+## 1.0.0 · 19/11/2026 · GALOIS LEGACY, fase 1 (identidad)
+- πCHU pasa a ser **GALOIS LEGACY · El legado de los matemáticos — un juego de πCHU LAB**. Solo 1.º ESO.
+- **Pantalla de inicio** nueva: logo pixel art, subtítulo y πCHU (guía y compañero) contando la historia de Gaussoria en 4 pasos.
+- El Mapa de mundos pasa a ser el **Mapa de Gaussoria**: cada tema es un reino (Minas de los Primos, Reino de Hielo y Fuego,
+  Bosque de las Fracciones, Fortaleza del Álgebra…) y debajo se ve el juego que abre. Los reinos sin juego están «en la niebla».
+  Los personajes de cada isla se mantienen (por ahora hacen de enemigos y jefes).
+- Paleta nueva (verdes, azules, dorados y violetas) en `:root` de `marca.css`, con contraste AA comprobado. Los nombres de color
+  antiguos siguen funcionando como alias. Estilo pixel: esquinas rectas, bordes gruesos y sombras duras.
+- Letra pixel **Pixelify Sans** (OFL, en `compartido/fuentes/`) solo en títulos grandes; Lato en textos y números.
+- `src/galois/generar_graficos.py` crea el logo (letras pixel propias), πCHU en pixel art y los iconos de la app (`compartido/img/galois/`).
+- Botón de los juegos: «← πCHU» pasa a «← Mapa» con los colores nuevos. Manifiesto, privacidad y accesibilidad con el nombre nuevo.
+- `CLAUDE.md`: se cambian la regla 1 (los juegos se pueden adaptar sin quitar preguntas, niveles ni progreso) y la regla 4 (marca GALOIS LEGACY).
+- Arreglo: la portada tenía un envoltorio HTML duplicado (dos `<!doctype>` y dos `<body>`) que venía del artefacto.
+- No cambia ningún juego ni ningún guardado.
+- Comprobado: `node tests/comprobar.mjs` «Todo correcto»; inicio, mapa, un juego y privacidad a 390, 768 y 1280 px sin errores
+  en la consola y sin desbordamiento horizontal; el foco pasa al título del mapa al empezar.
+
 ## 0.9.2 · 18/11/2026
 - El repositorio se pone al día con el artefacto publicado en Claude (de 0.6.4 a 0.9.2), para poder editarlo también con Codex.
 - **Portada nueva: Mapa de mundos.** 11 islas (una por tema de 1.º ESO) unidas por un camino, con el personaje de cada juego;

@@ -60,22 +60,24 @@
   const sinMovimiento = () => !leer().ajustes.animaciones ||
     (window.matchMedia && window.matchMedia("(prefers-reduced-motion: reduce)").matches);
 
-  // ---------- Mundos del mapa de la portada ----------
+  // ---------- Reinos de Gaussoria (mapa de la portada de GALOIS LEGACY) ----------
+  // Cada tema de 1.º ESO es un reino. "reino" y "escenario" son el nombre y la descripción en el mundo del juego;
+  // "nombre" es el juego que se abre al entrar. Los personajes actuales hacen de enemigos y jefes por ahora.
   // "juego" es el id en MARCA.juegos (compartido/marca.js). Sin juego = todavía no existe.
   // El orden de esta lista es el orden del mapa. "ahora: true" marca el tema que se está dando en clase.
   // "personaje" es la imagen de compartido/img/personajes/<personaje>.webp que se ve en la isla del mapa.
   const MUNDOS = [
-    { id: "divisibilidad", personaje: "divison", juego: "expres", nombre: "Factor Clash", tema: "Divisibilidad", icono: "÷", url: "applets/expres/" },
-    { id: "enteros", personaje: "menos", juego: "integer-ninja", nombre: "Integer Ninja", tema: "Números enteros", icono: "±", url: "applets/integer-ninja/" },
-    { id: "fracciones", personaje: "pirata", juego: "fraction-merge", nombre: "Fraction Merge", tema: "Fracciones", icono: "½", url: "applets/fraction-merge/", mq: true, ahora: true },
-    { id: "ecuaciones", personaje: "incognito", juego: "equation-merge", nombre: "Equation Merge", tema: "Ecuaciones", icono: "x=", url: "applets/equation-merge/", mq: true },
-    { id: "potencias", personaje: "mago", juego: "", nombre: "Power Quest", tema: "Potencias y raíces", icono: "x²" },
-    { id: "proporcionalidad", personaje: "salsita", juego: "", nombre: "Ratio Run", tema: "Proporcionalidad", icono: "%" },
-    { id: "algebra", personaje: "arlequina", juego: "", nombre: "Algebra Royale", tema: "Expresiones algebraicas", icono: "3x" },
-    { id: "funciones", personaje: "pizarra", juego: "", nombre: "Graph Dash", tema: "Funciones y gráficas", icono: "ƒ" },
-    { id: "estadistica", personaje: "punteo", juego: "", nombre: "Data Ninja", tema: "Estadística", icono: "x̄" },
-    { id: "probabilidad", personaje: "duende", juego: "", nombre: "Probability Arena", tema: "Probabilidad", icono: "🎲" },
-    { id: "geometria", personaje: "reglino", juego: "", nombre: "Geometry Builder", tema: "Geometría", icono: "△" }
+    { id: "divisibilidad", reino: "Minas de los Primos", escenario: "Cuevas de gemas donde cada número esconde sus factores.", personaje: "divison", juego: "expres", nombre: "Factor Clash", tema: "Divisibilidad", icono: "÷", url: "applets/expres/" },
+    { id: "enteros", reino: "Reino de Hielo y Fuego", escenario: "Glaciares bajo cero y volcanes positivos.", personaje: "menos", juego: "integer-ninja", nombre: "Integer Ninja", tema: "Números enteros", icono: "±", url: "applets/integer-ninja/" },
+    { id: "fracciones", reino: "Bosque de las Fracciones", escenario: "Laberintos, puentes y árboles partidos en partes iguales.", personaje: "pirata", juego: "fraction-merge", nombre: "Fraction Merge", tema: "Fracciones", icono: "½", url: "applets/fraction-merge/", mq: true, ahora: true },
+    { id: "ecuaciones", reino: "Fortaleza del Álgebra", escenario: "Un castillo de incógnitas que solo se abre con ecuaciones.", personaje: "incognito", juego: "equation-merge", nombre: "Equation Merge", tema: "Ecuaciones", icono: "x=", url: "applets/equation-merge/", mq: true },
+    { id: "potencias", reino: "Cumbres de las Potencias", escenario: "Montañas que crecen al multiplicarse por sí mismas.", personaje: "mago", juego: "", nombre: "Power Quest", tema: "Potencias y raíces", icono: "x²" },
+    { id: "proporcionalidad", reino: "Valle de las Proporciones", escenario: "Molinos, recetas y mapas a escala.", personaje: "salsita", juego: "", nombre: "Ratio Run", tema: "Proporcionalidad", icono: "%" },
+    { id: "algebra", reino: "Torre de las Letras", escenario: "Donde los números se disfrazan de letras.", personaje: "arlequina", juego: "", nombre: "Algebra Royale", tema: "Expresiones algebraicas", icono: "3x" },
+    { id: "funciones", reino: "Llanuras de las Gráficas", escenario: "Caminos que suben, bajan y se cruzan en los ejes.", personaje: "pizarra", juego: "", nombre: "Graph Dash", tema: "Funciones y gráficas", icono: "ƒ" },
+    { id: "estadistica", reino: "Archipiélago de los Datos", escenario: "Islas de tablas, gráficos y medias.", personaje: "punteo", juego: "", nombre: "Data Ninja", tema: "Estadística", icono: "x̄" },
+    { id: "probabilidad", reino: "Laberinto del Azar", escenario: "Dados, monedas y puertas que se abren por suerte… o no.", personaje: "duende", juego: "", nombre: "Probability Arena", tema: "Probabilidad", icono: "🎲" },
+    { id: "geometria", reino: "Templo de la Geometría", escenario: "Ruinas de figuras, ángulos y acertijos espaciales.", personaje: "reglino", juego: "", nombre: "Geometry Builder", tema: "Geometría", icono: "△" }
   ];
 
   // ---------- Logros y medallas ----------

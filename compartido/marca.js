@@ -1,11 +1,14 @@
 /* =========================================================
-   πCHU · marca.js
+   GALOIS LEGACY · marca.js  (un juego de πCHU LAB)
    Nombre, lema y lista de juegos. Para añadir un juego nuevo
    basta con añadir un objeto a MARCA.juegos (ver CLAUDE.md).
    ========================================================= */
 window.MARCA = {
-  nombre: "πCHU",
-  lema: "Matemáticas que no te esperabas",
+  nombre: "GALOIS LEGACY",
+  lema: "El legado de los matemáticos",
+  firma: "Un juego de πCHU LAB",
+  mundo: "Gaussoria",                       // el universo del juego
+  guia: "πCHU",                             // la mascota: guía y compañero del jugador
   // Centro y departamento (aparecen al pie de la portada). Para poner el logo del centro,
   // la imagen está en compartido/img/centro.jpg; con logo vacío ("") solo se ve el texto.
   centro: {
@@ -14,7 +17,7 @@ window.MARCA = {
     lugar: "Fuentes de Andalucía (Sevilla)",
     logo: "compartido/img/centro.jpg"
   },
-  version: "0.9.2",
+  version: "1.0.0",
   autor: "Juan Antonio Campos Jiménez",
 
   // Cursos: de momento la portada NO los muestra (se organiza por juegos).

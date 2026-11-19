@@ -1,5 +1,5 @@
 /* =========================================================
-   πCHU · sw.js (service worker)
+   GALOIS LEGACY (πCHU LAB) · sw.js (service worker)
    Permite usar la web sin conexión y que se pueda instalar.
 
    ⚠️ CADA VEZ QUE PUBLIQUES CAMBIOS, sube el número de VERSION.
@@ -8,7 +8,7 @@
 
    Si añades un juego, añade su ruta a ARCHIVOS.
    ========================================================= */
-const VERSION = "pichu-v0.9.2";
+const VERSION = "pichu-v1.0.0";
 
 const ARCHIVOS = [
   "./",
@@ -24,6 +24,12 @@ const ARCHIVOS = [
   "compartido/fuentes/lato-latin-400-normal.woff2",
   "compartido/fuentes/lato-latin-700-normal.woff2",
   "compartido/fuentes/lato-latin-900-normal.woff2",
+  "compartido/fuentes/pixelify-sans-latin-400-normal.woff2",
+  "compartido/fuentes/pixelify-sans-latin-700-normal.woff2",
+  "compartido/img/galois/logo.svg",
+  "compartido/img/galois/pichu-guia.png",
+  "compartido/img/galois/icono-192.png",
+  "compartido/img/galois/icono-512.png",
   "compartido/img/logo.png",
   "compartido/img/mascota.png",
   "compartido/img/icono-192.png",

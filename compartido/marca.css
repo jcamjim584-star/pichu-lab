@@ -1,9 +1,9 @@
 /* =========================================================
-   πCHU · marca.css
+   GALOIS LEGACY · marca.css  (un juego de πCHU LAB)
    Identidad visual común de la portada y de las páginas
    compartidas. Para cambiar de marca, edita SOLO este bloque
    :root (colores, tipografía, radios) y compartido/marca.js.
-   Los juegos NO cargan este archivo: así no se rompe su estilo.
+   Estilo: RPG de aventuras en pixel art de 16 bits.
    ========================================================= */
 
 @font-face { font-family: "Lato"; font-weight: 400; font-style: normal; font-display: swap;
@@ -12,23 +12,47 @@
   src: url("fuentes/lato-latin-700-normal.woff2") format("woff2"); }
 @font-face { font-family: "Lato"; font-weight: 900; font-style: normal; font-display: swap;
   src: url("fuentes/lato-latin-900-normal.woff2") format("woff2"); }
+/* Letra pixel para títulos (Pixelify Sans, licencia OFL: fuentes/LICENCIA-pixelify-sans.txt) */
+@font-face { font-family: "Pixelify Sans"; font-weight: 400; font-style: normal; font-display: swap;
+  src: url("fuentes/pixelify-sans-latin-400-normal.woff2") format("woff2"); }
+@font-face { font-family: "Pixelify Sans"; font-weight: 700; font-style: normal; font-display: swap;
+  src: url("fuentes/pixelify-sans-latin-700-normal.woff2") format("woff2"); }
 
 :root {
-  /* Paleta oficial πCHU (30/10/2026) */
-  --espresso: #332B2A;
-  --salvia: #5A8A78;
-  --coral: #E46D4D;
-  --crema: #F4EDD7;
-  /* Variantes accesibles (contraste AA sobre crema/blanco) */
-  --coral-oscuro: #A8402A;   /* texto pequeño en coral */
-  --salvia-oscuro: #3F6E5C;  /* botones con texto blanco */
-  --papel: #FFFCF3;
-  --linea: #D9CFB4;
-  --salvia-claro: #DCE8E1;
+  /* Paleta GALOIS LEGACY (19/11/2026): verdes, azules, dorados y violetas */
+  --noche: #16122C;          /* cielo y fondos oscuros */
+  --noche-2: #251E4A;
+  --tinta: #1E1A3A;          /* texto y contornos */
+  --pergamino: #F3ECD6;      /* fondo claro */
+  --papel: #FFFBEF;          /* tarjetas */
+  --linea: #D8CCA8;
+  --verde: #3E9A5E;          /* decoración (NO para texto pequeño) */
+  --azul: #3A7BC8;           /* decoración (NO para texto pequeño) */
+  --oro: #E8B53A;            /* solo como texto sobre noche/tinta */
+  --oro-claro: #FFE08A;
+  --violeta: #6A4BB8;        /* sí sirve para texto pequeño */
+  /* Variantes accesibles (contraste AA comprobado) */
+  --verde-oscuro: #246B3E;   /* botones con texto blanco */
+  --azul-oscuro: #1F4F8A;    /* botones con texto blanco */
+  --violeta-oscuro: #4A3290; /* botones con texto blanco */
+  --oro-oscuro: #7A5200;     /* texto pequeño dorado sobre pergamino */
+  --rubi: #9E2B3A;           /* avisos y peligro */
+  --verde-claro: #DCEFE2;
+  --violeta-claro: #E7E0F7;
+
+  /* Nombres antiguos de πCHU: se mantienen para que nada se rompa */
+  --espresso: var(--tinta);
+  --crema: var(--pergamino);
+  --salvia: var(--verde);
+  --salvia-oscuro: var(--verde-oscuro);
+  --salvia-claro: var(--verde-claro);
+  --coral: var(--oro);
+  --coral-oscuro: var(--rubi);
 
   --fuente: "Lato", system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
-  --radio: 18px;
-  --sombra: 0 2px 0 rgba(51,43,42,.08), 0 8px 24px rgba(51,43,42,.08);
+  --fuente-pixel: "Pixelify Sans", "Lato", system-ui, sans-serif;
+  --radio: 6px;                                   /* esquinas casi rectas, como en los 16 bits */
+  --sombra: 0 4px 0 var(--tinta);                 /* sombras duras, sin difuminar */
 }
 
 *, *::before, *::after { box-sizing: border-box; }
@@ -38,12 +62,12 @@ body {
   background: var(--crema); line-height: 1.5; font-size: 1.0625rem;
 }
 img { max-width: 100%; height: auto; }
-a { color: var(--salvia-oscuro); font-weight: 700; }
-a:hover { color: var(--espresso); }
-h1, h2, h3 { line-height: 1.15; margin: 0 0 .4em; }
+a { color: var(--violeta-oscuro); font-weight: 700; }
+a:hover { color: var(--tinta); }
+h1, h2, h3 { line-height: 1.15; margin: 0 0 .4em; font-family: var(--fuente-pixel); font-weight: 700; letter-spacing: .01em; }
 
 /* Foco siempre visible al navegar con teclado */
-:focus-visible { outline: 3px solid var(--coral-oscuro); outline-offset: 3px; border-radius: 6px; }
+:focus-visible { outline: 3px solid var(--violeta); outline-offset: 3px; border-radius: 4px; }
 
 .salto { position: absolute; left: -999px; top: 8px; background: var(--espresso); color: #fff;
   padding: .6em 1em; border-radius: 10px; z-index: 100; }
@@ -54,23 +78,24 @@ h1, h2, h3 { line-height: 1.15; margin: 0 0 .4em; }
 /* Botones */
 .boton {
   display: inline-flex; align-items: center; justify-content: center; gap: .45em;
-  min-height: 44px; padding: .55em 1.1em; border-radius: 999px; border: 2px solid transparent;
+  min-height: 44px; padding: .55em 1.1em; border-radius: var(--radio); border: 3px solid var(--tinta); box-shadow: 0 3px 0 var(--tinta);
   font: inherit; font-weight: 700; cursor: pointer; text-decoration: none;
   background: var(--salvia-oscuro); color: #fff;
 }
-.boton:hover { background: var(--espresso); color: #fff; }
+.boton:hover { background: var(--violeta-oscuro); color: #fff; }
+.boton:active { transform: translateY(2px); box-shadow: 0 1px 0 var(--tinta); }
 .boton.secundario { background: transparent; color: var(--espresso); border-color: var(--espresso); }
 .boton.secundario:hover { background: var(--espresso); color: #fff; }
 .boton.peligro { background: transparent; color: var(--coral-oscuro); border-color: var(--coral-oscuro); }
 .boton.peligro:hover { background: var(--coral-oscuro); color: #fff; }
 .boton[disabled], .boton[aria-disabled="true"] { opacity: .55; cursor: not-allowed; }
 
-.tarjeta { background: var(--papel); border: 1px solid var(--linea); border-radius: var(--radio);
+.tarjeta { background: var(--papel); border: 3px solid var(--tinta); border-radius: var(--radio);
   box-shadow: var(--sombra); }
 
 .etiqueta { display: inline-block; font-size: .8rem; font-weight: 700; letter-spacing: .02em;
-  padding: .2em .7em; border-radius: 999px; background: var(--salvia-claro); color: var(--salvia-oscuro); }
-.etiqueta.pronto { background: #F1E1D9; color: var(--coral-oscuro); }
+  padding: .2em .7em; border-radius: 4px; background: var(--verde-claro); color: var(--verde-oscuro); }
+.etiqueta.pronto { background: var(--violeta-claro); color: var(--violeta-oscuro); }
 
 .aviso { padding: .8em 1em; border-radius: 12px; background: var(--salvia-claro); }
 
@@ -81,3 +106,6 @@ h1, h2, h3 { line-height: 1.15; margin: 0 0 .4em; }
 .sin-movimiento *, .sin-movimiento *::before, .sin-movimiento *::after { animation: none !important; transition: none !important; }
 
 .solo-lector { position: absolute !important; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0); white-space: nowrap; }
+
+/* Imágenes de pixel art: que se vean nítidas al ampliarlas */
+.pixel { image-rendering: pixelated; image-rendering: crisp-edges; }

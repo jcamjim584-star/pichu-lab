@@ -1,52 +1,84 @@
-<!doctype html><html><head><meta charset=utf8><meta name=viewport content="width=device-width,initial-scale=1"><style>:root{color-scheme:light}body{margin:0;padding:0;font:14px -apple-system,BlinkMacSystemFont,sans-serif;background:#fff;color:#000}img{max-width:100%}[hidden]:not([hidden=until-found i]){display:none!important}</style></head><body>
 <!doctype html>
 <html lang="es">
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>πCHU · Matemáticas que no te esperabas</title>
-  <meta name="description" content="Juegos y laboratorios de matemáticas interactivos para ESO y Bachillerato. Sin registro y sin recoger datos personales.">
-  <meta name="theme-color" content="#332B2A">
+  <title>GALOIS LEGACY · El legado de los matemáticos</title>
+  <meta name="description" content="GALOIS LEGACY, un juego de πCHU LAB: aventura RPG en pixel art para recuperar los símbolos de las matemáticas en los reinos de Gaussoria (1.º ESO). Sin registro y sin recoger datos personales.">
+  <meta name="theme-color" content="#16122C">
   <link rel="manifest" href="manifest.webmanifest">
-  <link rel="icon" href="compartido/img/icono-192.png">
-  <link rel="apple-touch-icon" href="compartido/img/icono-192.png">
+  <link rel="icon" href="compartido/img/galois/icono-192.png">
+  <link rel="apple-touch-icon" href="compartido/img/galois/icono-192.png">
   <link rel="stylesheet" href="compartido/marca.css">
   <style>
     /* ---------- Cabecera con la barra del jugador ---------- */
-    .cabecera { position: sticky; top: 0; z-index: 30; background: color-mix(in srgb, var(--crema) 92%, transparent);
-      backdrop-filter: blur(6px); border-bottom: 1px solid var(--linea); }
+    .cabecera { position: sticky; top: 0; z-index: 30; background: var(--noche); color: var(--pergamino);
+      border-bottom: 4px solid var(--oro); box-shadow: 0 4px 0 var(--tinta); }
     .cabecera .fila { display: flex; align-items: center; justify-content: space-between; gap: .6rem 1rem; flex-wrap: wrap; padding: .5rem 0; }
-    .logo { display: block; width: min(190px, 44vw); }
+    .marca { display: flex; align-items: center; gap: .6rem; text-decoration: none; color: var(--pergamino); }
+    .logo { display: block; width: min(150px, 34vw); height: auto; }
+    .firma { font-size: .8rem; font-weight: 700; line-height: 1.15; color: var(--oro-claro); }
+    @media (max-width: 420px) { .firma { display: none; } }
     .jugador { display: flex; align-items: center; gap: .4rem; flex-wrap: wrap; justify-content: flex-end; }
     .ficha-dato { display: inline-flex; align-items: center; gap: .3em; min-height: 44px; padding: .2em .8em; border-radius: 999px;
-      background: var(--papel); border: 2px solid var(--espresso); font-weight: 900; font: inherit; font-weight: 900; color: var(--espresso); }
-    button.ficha-dato { cursor: pointer; box-shadow: 0 3px 0 var(--espresso); }
-    button.ficha-dato:hover { background: var(--espresso); color: var(--crema); }
-    button.ficha-dato:active { transform: translateY(2px); box-shadow: 0 1px 0 var(--espresso); }
+      background: var(--noche-2); border: 3px solid var(--oro); border-radius: var(--radio); font: inherit;
+      font-weight: 900; color: var(--pergamino); }
+    button.ficha-dato { cursor: pointer; box-shadow: 0 3px 0 #000; }
+    button.ficha-dato:hover { background: var(--violeta-oscuro); }
+    button.ficha-dato:active { transform: translateY(2px); box-shadow: 0 1px 0 #000; }
+    .cabecera :focus-visible { outline-color: var(--oro-claro); }
     .nivel-xp { display: grid; gap: 2px; min-width: 7.5rem; }
-    .xp { height: 8px; border-radius: 9px; background: var(--crema); border: 1px solid var(--espresso); overflow: hidden; }
-    .xp i { display: block; height: 100%; background: var(--coral); transition: width .6s; }
+    .xp { height: 8px; border-radius: 0; background: var(--tinta); border: 1px solid var(--oro); overflow: hidden; }
+    .xp i { display: block; height: 100%; background: linear-gradient(var(--oro-claro) 0 40%, var(--oro) 40%); transition: width .6s; }
     .alias-chip { display: inline-flex; align-items: center; gap: .5em; font-size: .95rem; }
     .alias-chip[hidden] { display: none; }
 
+    /* ---------- Pantalla de inicio ---------- */
+    .inicio { position: relative; min-height: 100svh; display: grid; place-items: center; padding: 2rem 1rem 3rem; overflow: hidden;
+      color: var(--pergamino); text-align: center;
+      background:
+        radial-gradient(2px 2px at 12% 18%, var(--oro-claro) 98%, transparent), radial-gradient(2px 2px at 78% 12%, #fff 98%, transparent),
+        radial-gradient(2px 2px at 64% 32%, var(--oro-claro) 98%, transparent), radial-gradient(2px 2px at 30% 40%, #fff 98%, transparent),
+        radial-gradient(2px 2px at 90% 44%, var(--oro-claro) 98%, transparent), radial-gradient(2px 2px at 8% 60%, #fff 98%, transparent),
+        linear-gradient(var(--noche) 0 55%, var(--noche-2) 55% 70%, var(--violeta-oscuro) 70% 78%, #1F5A3A 78% 84%, #174A2F 84%); }
+    .inicio[hidden] { display: none; }
+    /* Montañas pixeladas del horizonte */
+    .inicio::after { content: ""; position: absolute; left: 0; right: 0; bottom: 16%; height: 64px; pointer-events: none;
+      background: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='96' height='32' shape-rendering='crispEdges'%3E%3Cpath d='M0 32V24h8v-8h8V8h8v8h8v8h8v-8h8V0h8v8h8v8h8v8h8v-8h8v16z' fill='%234A3290'/%3E%3C/svg%3E") repeat-x bottom / 192px 64px;
+      image-rendering: pixelated; }
+    .inicio-caja { position: relative; z-index: 1; width: min(560px, 100%); display: grid; gap: 1rem; justify-items: center; }
+    .inicio-logo { width: min(440px, 92vw); height: auto; filter: drop-shadow(0 6px 0 #000); }
+    .inicio-sub { margin: -.4rem 0 0; font-family: var(--fuente-pixel); font-size: clamp(1.15rem, 4.6vw, 1.6rem); color: var(--oro-claro); }
+    .inicio-firma { margin: 0; font-size: .95rem; letter-spacing: .14em; text-transform: uppercase; font-weight: 900; color: var(--pergamino); }
+    .dialogo { display: grid; grid-template-columns: auto 1fr; gap: .8rem; align-items: end; width: 100%; text-align: left; }
+    .dialogo img { width: 84px; height: auto; }
+    .dialogo-caja { min-height: 7.2em; padding: .8rem 1rem; background: var(--noche); border: 4px solid var(--pergamino);
+      border-radius: var(--radio); box-shadow: 0 0 0 3px var(--tinta), 0 6px 0 3px #000; line-height: 1.45; }
+    .dialogo-caja b { display: block; font-family: var(--fuente-pixel); color: var(--oro-claro); margin-bottom: .2rem; }
+    .inicio .boton { font-family: var(--fuente-pixel); font-size: 1.15rem; min-height: 52px; padding-inline: 1.4em; }
+    .boton.oro { background: var(--oro); color: var(--tinta); }
+    .boton.oro:hover { background: var(--oro-claro); color: var(--tinta); }
+    .inicio .botones-inicio { display: flex; flex-wrap: wrap; gap: .7rem; justify-content: center; }
+    .inicio :focus-visible { outline-color: var(--oro-claro); }
+    .parpadeo { animation: parpadeo 1.2s steps(2, jump-none) infinite; }
+    @keyframes parpadeo { 50% { opacity: .35; } }
+
     /* ---------- Título del mapa ---------- */
     .titulo-mapa { text-align: center; margin: 1.4rem auto .4rem; }
-    .titulo-mapa small { display: inline-block; padding: .15em .9em; border-radius: 999px; background: var(--espresso); color: var(--crema);
+    .titulo-mapa small { display: inline-block; padding: .15em .9em; border-radius: 4px; background: var(--noche); color: var(--oro-claro);
       font-weight: 900; letter-spacing: .12em; text-transform: uppercase; font-size: .8rem; }
-    .titulo-mapa h1 { font-size: clamp(2rem, 7vw, 3.2rem); font-weight: 900; margin: .25em 0 .1em; letter-spacing: -.01em; }
-    .titulo-mapa h1 span { color: var(--coral-oscuro); }
+    .titulo-mapa .h1 { font-size: clamp(2rem, 7vw, 3.2rem); margin: .25em 0 .1em; }
+    .titulo-mapa .h1 span { color: var(--violeta); }
+    .titulo-mapa .h1:focus { outline: none; }
     .titulo-mapa p { margin: 0 auto; max-width: 40ch; }
 
     /* ---------- Mapa de mundos ---------- */
-    .tablero-mapa { position: relative; max-width: 760px; margin: 1rem auto 0; padding: 2.2rem 1rem 1.5rem; border-radius: 32px;
-      border: 3px solid var(--espresso); box-shadow: 0 8px 0 var(--espresso);
+    .tablero-mapa { position: relative; max-width: 760px; margin: 1rem auto 0; padding: 2.2rem 1rem 1.5rem; border-radius: 10px;
+      border: 4px solid var(--tinta); box-shadow: 0 0 0 4px var(--oro), 0 8px 0 4px var(--tinta);
+      background-color: #2C5F9E;
       background:
-        radial-gradient(circle at 12% 8%, rgba(255,255,255,.7) 0 26px, transparent 27px),
-        radial-gradient(circle at 18% 6%, rgba(255,255,255,.7) 0 18px, transparent 19px),
-        radial-gradient(circle at 88% 46%, rgba(255,255,255,.6) 0 22px, transparent 23px),
-        radial-gradient(circle at 82% 45%, rgba(255,255,255,.6) 0 15px, transparent 16px),
-        url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='120' height='60'%3E%3Cpath d='M10 40q10-8 20 0t20 0M70 18q10-8 20 0t20 0' fill='none' stroke='%235A8A78' stroke-opacity='.28' stroke-width='3' stroke-linecap='round'/%3E%3C/svg%3E"),
-        linear-gradient(#DCE8E1, #CFE0D6); }
+        url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='48' height='32' shape-rendering='crispEdges'%3E%3Cpath d='M4 8h8v2H4zM28 22h8v2h-8z' fill='%23A9D0F5' fill-opacity='.55'/%3E%3Cpath d='M12 6h4v2h-4zM36 20h4v2h-4z' fill='%23A9D0F5' fill-opacity='.35'/%3E%3C/svg%3E") 0 0 / 96px 64px,
+        linear-gradient(#2F68AE, #24548F); image-rendering: pixelated; }
     .mapa { position: relative; margin-inline: auto; }
     .mapa svg.camino { position: absolute; inset: 0; width: 100%; height: 100%; pointer-events: none; overflow: visible; }
     .mundo { position: relative; z-index: 1; display: flex; align-items: center; gap: 12px; width: min(470px, 96%); margin: 0 0 30px;
@@ -55,51 +87,55 @@
     .mundo:last-child { margin-bottom: 4px; }
     /* La isla: un disco de color con el personaje del juego encima y una sombra de tierra debajo */
     .isla { flex: none; position: relative; width: 112px; height: 112px; border-radius: 50%; background: var(--c);
-      border: 3px solid var(--espresso); box-shadow: 0 7px 0 var(--espresso), inset 0 -10px 0 rgba(51,43,42,.08); }
-    .isla::before { content: ""; position: absolute; left: 8%; right: 8%; bottom: -20px; height: 16px; border-radius: 50%; background: rgba(51,43,42,.18); z-index: -1; }
+      border: 4px solid var(--tinta); box-shadow: 0 7px 0 #6B4A22, 0 11px 0 var(--tinta), inset 0 -10px 0 rgba(30,26,58,.12); }
+    .isla::before { content: ""; position: absolute; left: 8%; right: 8%; bottom: -20px; height: 16px; border-radius: 50%; background: rgba(30,26,58,.18); z-index: -1; }
     .isla img { position: absolute; left: 50%; bottom: 6px; width: 118%; max-width: none; height: auto; transform: translateX(-50%);
       border-radius: 0 0 999px 999px; transition: transform .25s; }
     .isla img.cuadro { width: 100%; height: 100%; bottom: 0; border-radius: 50%; object-fit: cover; }
     .isla .num { position: absolute; top: -8px; left: -8px; width: 36px; height: 36px; border-radius: 50%; display: grid; place-items: center;
-      background: var(--coral); color: var(--espresso); border: 3px solid var(--espresso); font-weight: 900; z-index: 2; }
+      background: var(--oro); color: var(--tinta); border: 3px solid var(--tinta); border-radius: 4px; font-weight: 900; z-index: 2; }
     a.mundo:hover .isla img, a.mundo:focus-visible .isla img { transform: translateX(-50%) translateY(-6px) rotate(-4deg); }
     a.mundo:hover .isla img.cuadro, a.mundo:focus-visible .isla img.cuadro { transform: translateX(-50%) scale(1.06); }
     a.mundo:focus-visible { outline: none; }
-    a.mundo:focus-visible .isla { outline: 4px solid var(--coral-oscuro); outline-offset: 5px; }
+    a.mundo:focus-visible .isla { outline: 4px solid var(--oro-claro); outline-offset: 5px; }
+    a.mundo:focus-visible .rotulo { outline: 4px solid var(--oro-claro); outline-offset: 3px; }
     a.mundo .isla { animation: flota 3.6s ease-in-out infinite; }
     a.mundo:nth-child(even) .isla { animation-delay: -1.8s; }
     @keyframes flota { 50% { transform: translateY(-5px); } }
-    .mundo.cerrado .isla { background: #E6DFCB; border-style: dashed; box-shadow: 0 7px 0 rgba(51,43,42,.35); }
+    /* Reinos aún cubiertos por la niebla oscura */
+    .mundo.cerrado .isla { background: #8C86A8; border-style: dashed; box-shadow: 0 7px 0 rgba(30,26,58,.45); }
     .mundo.cerrado .isla img { filter: grayscale(1) contrast(.8) opacity(.4); }   /* adelanto: el personaje en gris */
     .mundo.cerrado .isla .num { background: var(--linea); }
     .mundo.cerrado .isla::after { content: "🔒"; position: absolute; right: -6px; bottom: -4px; font-size: 1.4rem; z-index: 2; }
-    .rotulo { flex: 1; min-width: 0; padding: .55rem .8rem .65rem; background: var(--papel); border: 2px solid var(--espresso);
-      border-radius: 18px; box-shadow: 0 4px 0 var(--espresso); }
-    .rotulo small { display: block; font-size: .74rem; letter-spacing: .08em; text-transform: uppercase; color: var(--coral-oscuro); font-weight: 900; }
-    .rotulo b { display: block; font-size: 1.18rem; font-weight: 900; line-height: 1.15; }
+    .rotulo { flex: 1; min-width: 0; padding: .55rem .8rem .65rem; background: var(--papel); border: 3px solid var(--tinta);
+      border-radius: var(--radio); box-shadow: 0 0 0 2px var(--pergamino), 0 5px 0 2px var(--tinta); }
+    .rotulo small { display: block; font-size: .74rem; letter-spacing: .08em; text-transform: uppercase; color: var(--violeta); font-weight: 900; }
+    .rotulo b { display: block; font-family: var(--fuente-pixel); font-size: 1.2rem; font-weight: 700; line-height: 1.15; }
+    .rotulo .juego { display: block; font-size: .9rem; font-weight: 700; }
     .rotulo .estado { display: inline-flex; align-items: center; gap: .3em; margin-top: .35rem; font-size: .85rem; font-weight: 900;
-      padding: .15em .7em; border-radius: 999px; background: var(--salvia-oscuro); color: #fff; }
-    .mundo.cerrado .rotulo { background: #F8F3E3; border-style: dashed; box-shadow: none; }
-    .mundo.cerrado .rotulo .estado { background: #F1E1D9; color: var(--coral-oscuro); }
-    .rotulo .barra { height: 8px; border-radius: 9px; background: var(--crema); border: 1px solid var(--espresso); margin-top: .4rem; overflow: hidden; }
-    .rotulo .barra i { display: block; height: 100%; background: var(--coral); }
-    .mundo.ahora .isla { box-shadow: 0 7px 0 var(--espresso), 0 0 0 7px var(--papel), 0 0 0 10px var(--coral-oscuro); }
+      padding: .15em .7em; border-radius: 4px; background: var(--verde-oscuro); color: #fff; }
+    .mundo.cerrado .rotulo { background: #E9E5F2; border-style: dashed; box-shadow: none; }
+    .mundo.cerrado .rotulo .estado { background: var(--violeta-claro); color: var(--violeta-oscuro); }
+    .rotulo .barra { height: 8px; border-radius: 0; background: var(--pergamino); border: 1px solid var(--tinta); margin-top: .4rem; overflow: hidden; }
+    .rotulo .barra i { display: block; height: 100%; background: var(--oro); }
+    .mundo.ahora .isla { box-shadow: 0 7px 0 #6B4A22, 0 11px 0 var(--tinta), 0 0 0 7px var(--papel), 0 0 0 11px var(--oro); }
     /* πCHU señala el mundo que se está dando en clase */
     .mundo.ahora { margin-top: 92px; }
     .guia-pichu { position: absolute; z-index: 3; top: -100px; width: 84px; pointer-events: none; }
     .mundo:nth-child(odd) .guia-pichu { left: 14px; }
     .mundo:nth-child(even) .guia-pichu { right: 14px; }
-    .guia-pichu img { width: 100%; height: auto; animation: saluda 2.4s ease-in-out infinite; transform-origin: 50% 100%; }
-    @keyframes saluda { 50% { transform: rotate(-6deg) translateY(-3px); } }
-    .bocadillo { position: absolute; top: 14px; white-space: nowrap; padding: .3em .8em; border-radius: 14px; background: var(--espresso); color: var(--crema);
-      font-size: .85rem; font-weight: 900; }
+    .guia-pichu img { width: 100%; height: auto; animation: salta 1s steps(2, jump-none) infinite; transform-origin: 50% 100%; }
+    @keyframes salta { 50% { transform: translateY(-4px); } }
+    .bocadillo { position: absolute; top: 14px; white-space: nowrap; padding: .3em .8em; border-radius: 4px; background: var(--noche); color: var(--oro-claro);
+      border: 2px solid var(--pergamino); font-family: var(--fuente-pixel); font-size: .9rem; font-weight: 700; }
     .bocadillo::after { content: ""; position: absolute; top: 50%; margin-top: -7px; border: 7px solid transparent; }
     .mundo:nth-child(odd) .bocadillo { left: 92px; }
-    .mundo:nth-child(odd) .bocadillo::after { left: -13px; border-right-color: var(--espresso); }
+    .mundo:nth-child(odd) .bocadillo::after { left: -13px; border-right-color: var(--pergamino); }
     .mundo:nth-child(even) .bocadillo { right: 92px; }
-    .mundo:nth-child(even) .bocadillo::after { right: -13px; border-left-color: var(--espresso); }
+    .mundo:nth-child(even) .bocadillo::after { right: -13px; border-left-color: var(--pergamino); }
     .meta { text-align: center; margin: 4px 0 0; font-weight: 900; }
-    .meta span { display: inline-block; padding: .3em 1em; border-radius: 999px; background: var(--papel); border: 2px dashed var(--espresso); }
+    .meta span { display: inline-block; padding: .3em 1em; border-radius: 4px; background: var(--noche); color: var(--oro-claro); border: 2px dashed var(--oro);
+      font-family: var(--fuente-pixel); }
     @media (max-width: 420px) {
       .isla { width: 92px; height: 92px; } .rotulo b { font-size: 1.05rem; }
       .tablero-mapa { padding-inline: .6rem; border-radius: 26px; }
@@ -109,21 +145,21 @@
     }
 
     /* ---------- Ventanas (logros y ajustes) ---------- */
-    .capa { position: fixed; inset: 0; z-index: 60; background: rgba(51,43,42,.6); display: none; align-items: center; justify-content: center; padding: 14px; }
+    .capa { position: fixed; inset: 0; z-index: 60; background: rgba(30,26,58,.6); display: none; align-items: center; justify-content: center; padding: 14px; }
     .capa.ver { display: flex; }
     .ventana { width: min(480px, 100%); max-height: 100%; overflow: auto; padding: 1.1rem; text-align: center; }
-    .ventana h2 { font-size: 1.4rem; font-weight: 900; }
+    .ventana h2 { font-size: 1.5rem; }
     .lista { display: grid; gap: .5rem; text-align: left; margin: .7rem 0; }
-    .item { display: flex; align-items: center; gap: .7rem; padding: .5rem .7rem; border-radius: 14px; background: var(--crema); }
+    .item { display: flex; align-items: center; gap: .7rem; padding: .5rem .7rem; border-radius: var(--radio); background: var(--pergamino); border: 2px solid var(--linea); }
     .item .ico { flex: none; width: 44px; height: 44px; border-radius: 12px; display: grid; place-items: center; font-size: 1.4rem; background: var(--papel); border: 1px solid var(--linea); }
     .item div { flex: 1; min-width: 0; } .item b { display: block; } .item span { font-size: .9rem; }
     .item.apagado { opacity: .55; }
-    .interruptor { min-width: 64px; min-height: 44px; border-radius: 999px; border: 2px solid var(--espresso); background: var(--papel); color: var(--espresso); font: inherit; font-weight: 900; cursor: pointer; flex: none; }
+    .interruptor { min-width: 64px; min-height: 44px; border-radius: var(--radio); border: 2px solid var(--espresso); background: var(--papel); color: var(--espresso); font: inherit; font-weight: 900; cursor: pointer; flex: none; }
     .interruptor[aria-pressed="true"] { background: var(--salvia-oscuro); color: #fff; }
 
     /* ---------- Mis datos ---------- */
     .datos { padding: 1.2rem; margin: 2rem 0; }
-    .datos h2 { font-size: 1.35rem; font-weight: 900; }
+    .datos h2 { font-size: 1.45rem; }
     .datos .botones { display: flex; flex-wrap: wrap; gap: .6rem; margin: .8rem 0; }
     .estado { min-height: 1.5em; font-weight: 700; }
     form.alias { display: flex; flex-wrap: wrap; gap: .6rem; align-items: end; }
@@ -134,29 +170,46 @@
 
     /* ---------- Aviso de versión nueva ---------- */
     .novedad { position: fixed; left: 50%; bottom: 16px; transform: translateX(-50%); z-index: 50;
-      display: flex; gap: .8rem; align-items: center; padding: .7rem .7rem .7rem 1.1rem; border-radius: 999px;
-      background: var(--espresso); color: var(--crema); box-shadow: var(--sombra); }
+      display: flex; gap: .8rem; align-items: center; padding: .7rem .7rem .7rem 1.1rem; border-radius: var(--radio);
+      background: var(--noche); color: var(--pergamino); border: 3px solid var(--oro); box-shadow: 0 4px 0 #000; }
     .novedad[hidden] { display: none; }
-    .novedad .boton { background: var(--coral); color: var(--espresso); }
+    .novedad .boton { background: var(--oro); color: var(--tinta); }
 
     /* ---------- Pie ---------- */
     .centro { display: flex; align-items: center; gap: 1rem; margin: 2rem auto 1.5rem; padding: 1rem 1.25rem;
-      background: #fff; border: 1px solid var(--linea); border-radius: 16px; }
+      background: #fff; border: 3px solid var(--tinta); border-radius: var(--radio); }
     .centro img { width: auto; height: 72px; max-width: 40%; object-fit: contain; flex: none; border-radius: 6px; }
     .centro p { margin: 0; }
-    .centro-dep { font-weight: 700; font-size: .95rem; color: var(--espresso); }
+    .centro-dep { font-weight: 700; font-size: .95rem; color: var(--tinta); }
     .centro-nombre { font-weight: 900; font-size: 1.15rem; color: var(--espresso); }
     .centro-lugar { font-size: .9rem; color: var(--espresso); opacity: .85; }
-    footer { padding: 1.5rem 0 2.5rem; border-top: 1px solid var(--linea); font-size: .95rem; }
+    footer { padding: 1.5rem 0 2.5rem; border-top: 4px solid var(--tinta); font-size: .95rem; }
     footer nav { display: flex; flex-wrap: wrap; gap: 1rem; margin-bottom: .5rem; }
   </style>
 </head>
 <body>
-  <a class="salto" href="#mapa">Saltar al mapa</a>
+  <a class="salto" href="#juegos">Saltar al mapa</a>
+
+  <!-- ===== Pantalla de inicio de GALOIS LEGACY ===== -->
+  <section class="inicio" id="inicio" aria-labelledby="titInicio">
+    <div class="inicio-caja">
+      <h1 id="titInicio" style="margin:0"><img class="inicio-logo pixel" src="compartido/img/galois/logo.svg" alt="GALOIS LEGACY" width="440" height="208"></h1>
+      <p class="inicio-sub">El legado de los matemáticos</p>
+      <p class="inicio-firma">Un juego de πCHU LAB</p>
+      <div class="dialogo">
+        <img class="pixel" src="compartido/img/galois/pichu-guia.png" alt="πCHU, tu guía" width="84" height="99">
+        <div class="dialogo-caja" id="dialogo" aria-live="polite"></div>
+      </div>
+      <div class="botones-inicio">
+        <button class="boton secundario" type="button" id="bHistoria" style="background:var(--noche-2);color:var(--pergamino);border-color:var(--pergamino)">Siguiente ▸</button>
+        <button class="boton oro" type="button" id="bEmpezar"><span aria-hidden="true">▶&nbsp;</span>Empezar la aventura</button>
+      </div>
+    </div>
+  </section>
 
   <header class="cabecera">
     <div class="contenedor fila">
-      <a href="./" aria-label="πCHU, inicio"><img class="logo" src="compartido/img/logo.png" alt="πCHU · Matemáticas que no te esperabas" width="1200" height="450"></a>
+      <a class="marca" href="./?inicio" aria-label="GALOIS LEGACY, pantalla de inicio"><img class="logo pixel" src="compartido/img/galois/logo.svg" alt="" width="150" height="71"><span class="firma" aria-hidden="true">un juego de<br>πCHU LAB</span></a>
       <div class="jugador" aria-label="Mi progreso">
         <span class="ficha-dato nivel-xp"><span id="nivelTxt"></span><span class="xp" role="progressbar" aria-label="Experiencia" aria-valuemin="0" aria-valuemax="100" id="xpBarra"><i id="xp"></i></span></span>
         <span class="ficha-dato" id="monedasTxt"></span>
@@ -170,13 +223,13 @@
     <section class="contenedor" id="juegos" aria-labelledby="titJuegos">
       <div class="titulo-mapa">
         <small>1.º ESO</small>
-        <h1 id="titJuegos">Mapa de <span>mundos</span></h1>
-        <p>Cada mundo es un tema. Elige uno y juega: tu progreso se guarda solo en este dispositivo.
+        <h2 id="titJuegos" class="h1" tabindex="-1">Mapa de <span>Gaussoria</span></h2>
+        <p>Cada reino es un tema. Entra, supera sus pruebas y recupera su símbolo: tu progreso se guarda solo en este dispositivo.
           <span class="alias-chip" id="chipAlias" hidden>Juegas como <strong id="aliasActual"></strong> · <a href="#mis-datos">cambiar</a></span></p>
       </div>
       <div class="tablero-mapa">
         <nav class="mapa" id="mapa" aria-labelledby="titJuegos"></nav>
-        <p class="meta"><span>🏁 ¡Más mundos muy pronto!</span></p>
+        <p class="meta"><span>🌫️ La niebla oscura cubre más reinos… ¡muy pronto!</span></p>
       </div>
     </section>
 
@@ -222,12 +275,12 @@
         <a href="privacidad.html">Privacidad</a>
         <a href="accesibilidad.html">Accesibilidad</a>
       </nav>
-      <p style="margin:0">πCHU · <span id="version"></span> · Esta web no usa cookies ni analítica y no recoge datos personales.</p>
+      <p style="margin:0">GALOIS LEGACY · un juego de πCHU LAB · <span id="version"></span> · Esta web no usa cookies ni analítica y no recoge datos personales.</p>
     </div>
   </footer>
 
   <div class="novedad" id="novedad" role="status" hidden>
-    <span>Hay una versión nueva de πCHU.</span>
+    <span>Hay una versión nueva de GALOIS LEGACY.</span>
     <button class="boton" id="btnActualizar" type="button">Actualizar</button>
   </div>
 
@@ -244,6 +297,34 @@
     const esc = s => String(s).replace(/[&<>"']/g, c => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" }[c]));
 
     document.title = MARCA.nombre + " · " + MARCA.lema;
+
+    // ---------- Pantalla de inicio: πCHU cuenta la historia ----------
+    // Se ve al entrar; al volver de un juego en la misma sesión, se va directo al mapa.
+    // Con ?inicio se fuerza (el logo de la cabecera lleva ahí). Con ?mapa se salta.
+    const HISTORIA = [
+      `¡Hola! Soy <strong>${esc(MARCA.guia)}</strong> y voy a ser tu guía y compañero de aventura.`,
+      `El universo matemático de <strong>${esc(MARCA.mundo)}</strong> ha perdido los símbolos del conocimiento.`,
+      "Una fuerza oscura ha dividido el mundo en reinos, y la niebla cubre los caminos.",
+      "Supera pruebas, resuelve problemas y derrota a los enemigos de cada reino para recuperar sus símbolos. ¿Vamos?"
+    ];
+    let paso = 0;
+    const pintarHistoria = () => {
+      $("#dialogo").innerHTML = `<b>${esc(MARCA.guia)}</b>${HISTORIA[paso]}`;
+      $("#bHistoria").hidden = paso >= HISTORIA.length - 1;
+    };
+    const sesion = { leer: k => { try { return sessionStorage.getItem(k); } catch (e) { return null; } },
+                     poner: (k, v) => { try { sessionStorage.setItem(k, v); } catch (e) { /* sin almacenamiento */ } } };
+    function empezar() {
+      $("#inicio").hidden = true;
+      sesion.poner("pichu.galois.inicio", "1");
+      requestAnimationFrame(() => { camino(); $("#titJuegos").focus(); });
+    }
+    const q = new URLSearchParams(location.search);
+    if (q.has("mapa") || (!q.has("inicio") && sesion.leer("pichu.galois.inicio"))) $("#inicio").hidden = true;
+    else pintarHistoria();
+    $("#bHistoria").addEventListener("click", () => { paso = Math.min(paso + 1, HISTORIA.length - 1); pintarHistoria();
+      if (paso === HISTORIA.length - 1) $("#bEmpezar").focus(); });
+    $("#bEmpezar").addEventListener("click", empezar);
     $("#version").textContent = "versión " + MARCA.version;
     if (MARCA.centro) {
       const c = MARCA.centro;
@@ -262,26 +343,26 @@
 
     // ---------- Mapa de mundos (la lista está en compartido/mathquest.js → MUNDOS) ----------
     const MQ = window.MathQuest;
-    const COLORES = ["#F6DDD3", "#DCE8E1", "#F3E5B8"];     // disco de cada isla (coral, salvia y crema suaves)
+    const COLORES = ["#BFE3C8", "#C9DDF5", "#DCD2F3"];     // disco de cada isla (verde, azul y violeta suaves)
     function pintarMapa() {
       const d = MQ.leer();
-      $("#mapa").innerHTML = '<svg class="camino" aria-hidden="true"><path id="caminoBase" fill="none" stroke="#332B2A" stroke-width="18" stroke-linecap="round"/><path id="camino" fill="none" stroke="#F4EDD7" stroke-width="11" stroke-dasharray="1 16" stroke-linecap="round"/></svg>' +
+      $("#mapa").innerHTML = '<svg class="camino" aria-hidden="true"><path id="caminoBase" fill="none" stroke="#1E1A3A" stroke-width="18" stroke-linecap="square"/><path id="caminoArena" fill="none" stroke="#D9B878" stroke-width="12" stroke-linecap="square"/><path id="camino" fill="none" stroke="#7A5200" stroke-width="5" stroke-dasharray="6 10" stroke-linecap="butt"/></svg>' +
         MQ.MUNDOS.map((m, i) => {
           const j = MARCA.juegos.find(x => x.id === m.juego);
           const jugable = !!(j && j.estado === "jugar"), r = d.juegos[m.juego];
           let estado, barra = "";
           if (jugable && m.mq) {
-            estado = r && r.superados ? `★ ${r.estrellas}/${r.maxEstrellas} · ${r.superados} de ${r.total} niveles` : "▶ Jugar";
+            estado = r && r.superados ? `★ ${r.estrellas}/${r.maxEstrellas} · ${r.superados} de ${r.total} niveles` : "▶ Entrar";
             barra = `<div class="barra" aria-hidden="true"><i style="width:${r ? Math.round(100 * r.estrellas / r.maxEstrellas) : 0}%"></i></div>`;
-          } else estado = jugable ? "▶ Jugar" : "Próximamente";
+          } else estado = jugable ? "▶ Entrar" : "En la niebla · próximamente";
           // Las cartas de Factor Clash tienen fondo: se ven enteras dentro del círculo
           const cuadro = ["divison", "reglino", "punteo", "incognito"].includes(m.personaje) ? "cuadro" : "";
-          const guia = m.ahora && jugable ? `<span class="guia-pichu" aria-hidden="true"><img src="compartido/img/mascota.png" alt="" width="600" height="620"><span class="bocadillo">¡Ahora en clase!</span></span>` : "";
+          const guia = m.ahora && jugable ? `<span class="guia-pichu" aria-hidden="true"><img class="pixel" src="compartido/img/galois/pichu-guia.png" alt="" width="56" height="66"><span class="bocadillo">¡Ahora en clase!</span></span>` : "";
           const dentro = `<span class="isla" style="--c:${COLORES[i % 3]}" aria-hidden="true"><span class="num">${i + 1}</span>` +
             (m.personaje ? `<img class="${cuadro}" src="${esc(MQ.personaje(m.personaje))}" alt="" loading="lazy" width="240" height="240">` : "") + `</span>${guia}
-            <span class="rotulo"><small>Mundo ${i + 1} · ${esc(m.tema)}</small><b>${esc(m.nombre)}</b>
+            <span class="rotulo"><small>Reino ${i + 1} · ${esc(m.tema)}</small><b>${esc(m.reino || m.nombre)}</b>${jugable ? `<span class="juego">${esc(m.icono)} ${esc(m.nombre)}</span>` : ""}
             <span class="estado">${estado}</span>${barra}</span>`;
-          const etiqueta = `Mundo ${i + 1}, ${esc(m.tema)}: ${esc(m.nombre)}. ${m.ahora ? "Ahora en clase. " : ""}${estado.replace("▶ ", "")}`;
+          const etiqueta = `Reino ${i + 1}, ${esc(m.tema)}: ${esc(m.reino || m.nombre)}${jugable ? ", juego " + esc(m.nombre) : ""}. ${m.ahora ? "Ahora en clase. " : ""}${estado.replace("▶ ", "")}`;
           return jugable
             ? `<a class="mundo ${m.ahora ? "ahora" : ""}" href="${esc(m.url)}index.html" aria-label="${etiqueta}">${dentro}</a>`
             : `<div class="mundo cerrado" role="img" aria-label="${etiqueta}">${dentro}</div>`;
@@ -294,7 +375,7 @@
       const pts = [...mapa.querySelectorAll(".isla")].map(i => { const r = i.getBoundingClientRect(); return [r.left + r.width / 2 - base.left, r.top + r.height / 2 - base.top]; });
       let d = "";
       pts.forEach((p, i) => { if (!i) d = `M${p[0]} ${p[1]}`; else { const a = pts[i - 1], my = (a[1] + p[1]) / 2; d += ` C${a[0]} ${my} ${p[0]} ${my} ${p[0]} ${p[1]}`; } });
-      $("#camino").setAttribute("d", d); $("#caminoBase").setAttribute("d", d);
+      ["#camino", "#caminoBase", "#caminoArena"].forEach(id => { const el = $(id); if (el) el.setAttribute("d", d); });
     }
     addEventListener("resize", camino);
 
@@ -353,7 +434,7 @@
 
     $("#btnExportar").addEventListener("click", () => {
       const n = Datos.exportar();
-      estado(n ? `Descargado: ${n} ${n === 1 ? "registro" : "registros"} de πCHU.` : "Todavía no hay datos guardados, pero se ha descargado una copia vacía.");
+      estado(n ? `Descargado: ${n} ${n === 1 ? "registro" : "registros"} de GALOIS LEGACY.` : "Todavía no hay datos guardados, pero se ha descargado una copia vacía.");
     });
     $("#lblImportar").addEventListener("keydown", e => {
       if (e.key === "Enter" || e.key === " ") { e.preventDefault(); $("#archivoImportar").click(); }
@@ -369,7 +450,7 @@
       const n = Datos.borrarTodo();
       $("#campoAlias").value = "";
       pintarAlias();
-      estado(n ? "Datos de πCHU borrados de este dispositivo." : "No había datos de πCHU que borrar.");
+      estado(n ? "Datos de GALOIS LEGACY borrados de este dispositivo." : "No había datos de GALOIS LEGACY que borrar.");
     });
 
     // ---------- Sin conexión ----------
@@ -384,5 +465,3 @@
   </script>
 </body>
 </html>
-
-</body></html>

@@ -1,15 +1,38 @@
-# πCHU · Matemáticas que no te esperabas
+# GALOIS LEGACY · El legado de los matemáticos
+### Un juego de πCHU LAB
 
 **Web publicada:** https://jcamjim584-star.github.io/pichu-lab/
 
-Portada que reúne los juegos y laboratorios de matemáticas interactivos de Juan Antonio Campos Jiménez
-(ESO y Bachillerato). Web estática: HTML, CSS y JavaScript, sin frameworks, sin registro y sin recoger datos personales.
+Aventura RPG de matemáticas en pixel art (16 bits) para 1.º ESO, de Juan Antonio Campos Jiménez.
+El universo matemático de **Gaussoria** ha perdido los símbolos del conocimiento: cada tema es un **reino**
+y el jugador los recorre con **πCHU**, su guía y compañero. Web estática: HTML, CSS y JavaScript, sin frameworks,
+sin registro y sin recoger datos personales.
 
-## Qué incluye (versión 0.9.2)
-La portada es un **Mapa de mundos**: cada tema de 1.º ESO es una isla con su personaje. La lista de mundos está en
-`compartido/mathquest.js` (`MUNDOS`); `"ahora: true"` marca el tema que se está dando en clase.
-El progreso común (nivel, XP, monedas, logros y ajustes) se guarda en `pichu.mathquest.v1`.
+## Qué incluye (versión 1.0.0)
+- **Pantalla de inicio** con el logo GALOIS LEGACY y πCHU contando la historia (se salta al volver de un juego;
+  `?inicio` la fuerza y `?mapa` la omite).
+- **Mapa de Gaussoria**: 11 reinos (uno por tema de 1.º ESO). La lista está en `compartido/mathquest.js` (`MUNDOS`,
+  campos `reino` y `escenario`); `"ahora: true"` marca el tema que se da en clase. Los reinos sin juego aparecen «en la niebla».
+- Progreso común (nivel, XP, monedas, logros y ajustes) en `pichu.mathquest.v1`.
+- Identidad visual: paleta y letras en `compartido/marca.css`; gráficos pixel art (logo, πCHU, iconos) generados con
+  `python3 src/galois/generar_graficos.py` en `compartido/img/galois/`.
 
+| Reino | Juego que se abre | Estado |
+|---|---|---|
+| Minas de los Primos (divisibilidad) | Factor Clash | Disponible |
+| Reino de Hielo y Fuego (enteros) | Integer Ninja | Disponible |
+| Bosque de las Fracciones | Fraction Merge (y Pizza Rush, en revisión) | Disponible |
+| Fortaleza del Álgebra (ecuaciones) | Equation Merge | Disponible |
+| Potencias, proporcionalidad, expresiones algebraicas, funciones, estadística, probabilidad, geometría | — | En la niebla (próximamente) |
+
+**Hoja de ruta de GALOIS LEGACY** (cada fase se prueba y documenta antes de la siguiente):
+1. ✅ Identidad: nombre, logo, pantalla de inicio, paleta, letra pixel, πCHU guía (1.0.0).
+2. Mapa de Gaussoria explorable en vista cenital (teclado, cruceta táctil y lista accesible).
+3. Ocho matemáticos jugables (Galois, Gauss, Euler, Noether, Hipatia, Lovelace, Fibonacci, Fermat) con habilidades.
+4. Primera mazmorra RPG (Reino de Hielo y Fuego) con combate por preguntas, reutilizando el motor de Integer Ninja.
+5. Adaptación visual de cada juego al universo Galois.
+
+### Juegos (detalle)
 | Juego | Curso (de momento no se muestra) | Estado |
 |---|---|---|
 | Factor Clash · duelos de divisibilidad | 1.º ESO | Disponible |
