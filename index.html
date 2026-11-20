@@ -20,15 +20,15 @@
     .firma { font-size: .8rem; font-weight: 700; line-height: 1.15; color: var(--oro-claro); }
     @media (max-width: 420px) { .firma { display: none; } }
     .jugador { display: flex; align-items: center; gap: .4rem; flex-wrap: wrap; justify-content: flex-end; }
-    .ficha-dato { display: inline-flex; align-items: center; gap: .3em; min-height: 44px; padding: .2em .8em; border-radius: 999px;
-      background: var(--noche-2); border: 3px solid var(--oro); border-radius: var(--radio); font: inherit;
+    .ficha-dato { display: inline-flex; align-items: center; gap: .3em; min-height: 44px; padding: .2em .8em;
+      background: var(--noche-2); border: 3px solid var(--oro); font: inherit;
       font-weight: 900; color: var(--pergamino); }
     button.ficha-dato { cursor: pointer; box-shadow: 0 3px 0 #000; }
     button.ficha-dato:hover { background: var(--violeta-oscuro); }
     button.ficha-dato:active { transform: translateY(2px); box-shadow: 0 1px 0 #000; }
     .cabecera :focus-visible { outline-color: var(--oro-claro); }
     .nivel-xp { display: grid; gap: 2px; min-width: 7.5rem; }
-    .xp { height: 8px; border-radius: 0; background: var(--tinta); border: 1px solid var(--oro); overflow: hidden; }
+    .xp { height: 8px; background: var(--tinta); border: 1px solid var(--oro); overflow: hidden; }
     .xp i { display: block; height: 100%; background: linear-gradient(var(--oro-claro) 0 40%, var(--oro) 40%); transition: width .6s; }
     .alias-chip { display: inline-flex; align-items: center; gap: .5em; font-size: .95rem; }
     .alias-chip[hidden] { display: none; }
@@ -53,7 +53,7 @@
     .dialogo { display: grid; grid-template-columns: auto 1fr; gap: .8rem; align-items: end; width: 100%; text-align: left; }
     .dialogo img { width: 84px; height: auto; }
     .dialogo-caja { min-height: 7.2em; padding: .8rem 1rem; background: var(--noche); border: 4px solid var(--pergamino);
-      border-radius: var(--radio); box-shadow: 0 0 0 3px var(--tinta), 0 6px 0 3px #000; line-height: 1.45; }
+      box-shadow: 0 0 0 3px var(--tinta), 0 6px 0 3px #000; line-height: 1.45; }
     .dialogo-caja b { display: block; font-family: var(--fuente-pixel); color: var(--oro-claro); margin-bottom: .2rem; }
     .inicio .boton { font-family: var(--fuente-pixel); font-size: 1.15rem; min-height: 52px; padding-inline: 1.4em; }
     .boton.oro { background: var(--oro); color: var(--tinta); }
@@ -65,7 +65,7 @@
 
     /* ---------- Título del mapa ---------- */
     .titulo-mapa { text-align: center; margin: 1.4rem auto .4rem; }
-    .titulo-mapa small { display: inline-block; padding: .15em .9em; border-radius: 4px; background: var(--noche); color: var(--oro-claro);
+    .titulo-mapa small { display: inline-block; padding: .15em .9em; background: var(--noche); color: var(--oro-claro);
       font-weight: 900; letter-spacing: .12em; text-transform: uppercase; font-size: .8rem; }
     .titulo-mapa .h1 { font-size: clamp(2rem, 7vw, 3.2rem); margin: .25em 0 .1em; }
     .titulo-mapa .h1 span { color: var(--violeta); }
@@ -73,7 +73,7 @@
     .titulo-mapa p { margin: 0 auto; max-width: 40ch; }
 
     /* ---------- Mapa de mundos ---------- */
-    .tablero-mapa { position: relative; max-width: 760px; margin: 1rem auto 0; padding: 2.2rem 1rem 1.5rem; border-radius: 10px;
+    .tablero-mapa { position: relative; max-width: 760px; margin: 1rem auto 0; padding: 2.2rem 1rem 1.5rem;
       border: 4px solid var(--tinta); box-shadow: 0 0 0 4px var(--oro), 0 8px 0 4px var(--tinta);
       background-color: #2C5F9E;
       background:
@@ -86,14 +86,16 @@
     .mundo:nth-child(even) { margin-left: auto; flex-direction: row-reverse; text-align: right; }
     .mundo:last-child { margin-bottom: 4px; }
     /* La isla: un disco de color con el personaje del juego encima y una sombra de tierra debajo */
-    .isla { flex: none; position: relative; width: 112px; height: 112px; border-radius: 50%; background: var(--c);
-      border: 4px solid var(--tinta); box-shadow: 0 7px 0 #6B4A22, 0 11px 0 var(--tinta), inset 0 -10px 0 rgba(30,26,58,.12); }
-    .isla::before { content: ""; position: absolute; left: 8%; right: 8%; bottom: -20px; height: 16px; border-radius: 50%; background: rgba(30,26,58,.18); z-index: -1; }
+    /* La isla es pixel art (compartido/img/galois/isla-<color>.png, del generador) */
+    .isla { flex: none; position: relative; width: 112px; height: 126px; background: url("compartido/img/galois/isla-verde.png") 0 0 / 100% 100%;
+      image-rendering: pixelated; }
+    .isla.azul { background-image: url("compartido/img/galois/isla-azul.png"); }
+    .isla.violeta { background-image: url("compartido/img/galois/isla-violeta.png"); }
     /* Enemigo del reino (pixel art de las hojas del Drive) */
-    .isla img { position: absolute; left: 50%; bottom: 12px; width: 78%; max-width: none; height: auto; transform: translateX(-50%);
+    .isla img { position: absolute; left: 50%; bottom: 26px; width: 78%; max-width: none; height: auto; transform: translateX(-50%);
       image-rendering: pixelated; transition: transform .25s; }
-    .isla .num { position: absolute; top: -8px; left: -8px; width: 36px; height: 36px; border-radius: 50%; display: grid; place-items: center;
-      background: var(--oro); color: var(--tinta); border: 3px solid var(--tinta); border-radius: 4px; font-weight: 900; z-index: 2; }
+    .isla .num { position: absolute; top: -8px; left: -8px; width: 36px; height: 36px; display: grid; place-items: center;
+      background: var(--oro); color: var(--tinta); border: 3px solid var(--tinta); font-weight: 900; z-index: 2; }
     a.mundo:hover .isla img, a.mundo:focus-visible .isla img { transform: translateX(-50%) translateY(-6px) rotate(-4deg); }
     a.mundo:focus-visible { outline: none; }
     a.mundo:focus-visible .isla { outline: 4px solid var(--oro-claro); outline-offset: 5px; }
@@ -102,22 +104,22 @@
     a.mundo:nth-child(even) .isla { animation-delay: -1.8s; }
     @keyframes flota { 50% { transform: translateY(-5px); } }
     /* Reinos aún cubiertos por la niebla oscura */
-    .mundo.cerrado .isla { background: #8C86A8; border-style: dashed; box-shadow: 0 7px 0 rgba(30,26,58,.45); }
+    .mundo.cerrado .isla { background-image: url("compartido/img/galois/isla-niebla.png"); }
     .mundo.cerrado .isla img { filter: grayscale(1) contrast(.8) opacity(.4); }   /* adelanto: el personaje en gris */
     .mundo.cerrado .isla .num { background: var(--linea); }
     .mundo.cerrado .isla::after { content: "🔒"; position: absolute; right: -6px; bottom: -4px; font-size: 1.4rem; z-index: 2; }
     .rotulo { flex: 1; min-width: 0; padding: .55rem .8rem .65rem; background: var(--papel); border: 3px solid var(--tinta);
-      border-radius: var(--radio); box-shadow: 0 0 0 2px var(--pergamino), 0 5px 0 2px var(--tinta); }
+      box-shadow: 0 0 0 2px var(--pergamino), 0 5px 0 2px var(--tinta); }
     .rotulo small { display: block; font-size: .74rem; letter-spacing: .08em; text-transform: uppercase; color: var(--violeta); font-weight: 900; }
     .rotulo b { display: block; font-family: var(--fuente-pixel); font-size: 1.2rem; font-weight: 700; line-height: 1.15; }
     .rotulo .juego { display: block; font-size: .9rem; font-weight: 700; }
     .rotulo .estado { display: inline-flex; align-items: center; gap: .3em; margin-top: .35rem; font-size: .85rem; font-weight: 900;
-      padding: .15em .7em; border-radius: 4px; background: var(--verde-oscuro); color: #fff; }
+      padding: .15em .7em; background: var(--verde-oscuro); color: #fff; }
     .mundo.cerrado .rotulo { background: #E9E5F2; border-style: dashed; box-shadow: none; }
     .mundo.cerrado .rotulo .estado { background: var(--violeta-claro); color: var(--violeta-oscuro); }
-    .rotulo .barra { height: 8px; border-radius: 0; background: var(--pergamino); border: 1px solid var(--tinta); margin-top: .4rem; overflow: hidden; }
+    .rotulo .barra { height: 8px; background: var(--pergamino); border: 1px solid var(--tinta); margin-top: .4rem; overflow: hidden; }
     .rotulo .barra i { display: block; height: 100%; background: var(--oro); }
-    .mundo.ahora .isla { box-shadow: 0 7px 0 #6B4A22, 0 11px 0 var(--tinta), 0 0 0 7px var(--papel), 0 0 0 11px var(--oro); }
+    .mundo.ahora .isla { outline: 4px solid var(--oro); outline-offset: 4px; }
     /* πCHU señala el mundo que se está dando en clase */
     .mundo.ahora { margin-top: 92px; }
     .guia-pichu { position: absolute; z-index: 3; top: -100px; width: 84px; pointer-events: none; }
@@ -125,7 +127,7 @@
     .mundo:nth-child(even) .guia-pichu { right: 14px; }
     .guia-pichu img { width: 100%; height: auto; animation: salta 1s steps(2, jump-none) infinite; transform-origin: 50% 100%; }
     @keyframes salta { 50% { transform: translateY(-4px); } }
-    .bocadillo { position: absolute; top: 14px; white-space: nowrap; padding: .3em .8em; border-radius: 4px; background: var(--noche); color: var(--oro-claro);
+    .bocadillo { position: absolute; top: 14px; white-space: nowrap; padding: .3em .8em; background: var(--noche); color: var(--oro-claro);
       border: 2px solid var(--pergamino); font-family: var(--fuente-pixel); font-size: .9rem; font-weight: 700; }
     .bocadillo::after { content: ""; position: absolute; top: 50%; margin-top: -7px; border: 7px solid transparent; }
     .mundo:nth-child(odd) .bocadillo { left: 92px; }
@@ -133,11 +135,11 @@
     .mundo:nth-child(even) .bocadillo { right: 92px; }
     .mundo:nth-child(even) .bocadillo::after { right: -13px; border-left-color: var(--pergamino); }
     .meta { text-align: center; margin: 4px 0 0; font-weight: 900; }
-    .meta span { display: inline-block; padding: .3em 1em; border-radius: 4px; background: var(--noche); color: var(--oro-claro); border: 2px dashed var(--oro);
+    .meta span { display: inline-block; padding: .3em 1em; background: var(--noche); color: var(--oro-claro); border: 2px dashed var(--oro);
       font-family: var(--fuente-pixel); }
     @media (max-width: 420px) {
-      .isla { width: 92px; height: 92px; } .rotulo b { font-size: 1.05rem; }
-      .tablero-mapa { padding-inline: .6rem; border-radius: 26px; }
+      .isla { width: 92px; height: 104px; } .isla img { bottom: 20px; } .rotulo b { font-size: 1.05rem; }
+      .tablero-mapa { padding-inline: .6rem; }
       .guia-pichu { width: 74px; top: -92px; }
       .mundo:nth-child(odd) .guia-pichu { left: 9px; } .mundo:nth-child(even) .guia-pichu { right: 9px; }
       .mundo:nth-child(odd) .bocadillo { left: 80px; } .mundo:nth-child(even) .bocadillo { right: 80px; }
@@ -145,19 +147,19 @@
 
     /* ---------- Mapa explorable (compartido/gaussoria.js) ---------- */
     .vistas { display: flex; justify-content: center; flex-wrap: wrap; gap: .5rem; margin: .9rem 0 1rem; }
-    .boton-vista { min-height: 44px; padding: .45em 1em; border: 3px solid var(--tinta); border-radius: var(--radio); box-shadow: 0 3px 0 var(--tinta);
+    .boton-vista { min-height: 44px; padding: .45em 1em; border: 3px solid var(--tinta); box-shadow: 0 3px 0 var(--tinta);
       background: var(--papel); color: var(--tinta); font: inherit; font-weight: 900; cursor: pointer; }
     .boton-vista[aria-pressed="true"] { background: var(--noche); color: var(--oro-claro); }
     .boton-vista[aria-pressed="true"]::before { content: "✓ "; }
     .boton-vista:active { transform: translateY(2px); box-shadow: 0 1px 0 var(--tinta); }
     .explorar[hidden], .tablero-mapa[hidden] { display: none !important; }
     .explorar { max-width: 760px; margin: 0 auto; scroll-margin-top: 150px; }
-    .marco-lienzo { position: relative; border: 4px solid var(--tinta); border-radius: 10px; overflow: hidden; background: var(--noche); line-height: 0;
+    .marco-lienzo { position: relative; border: 4px solid var(--tinta); overflow: hidden; background: var(--noche); line-height: 0;
       box-shadow: 0 0 0 4px var(--oro), 0 8px 0 4px var(--tinta); }
     #lienzo { display: block; width: 100%; height: clamp(280px, 52svh, 520px); touch-action: none; cursor: pointer; }
-    #lienzo:focus-visible { outline: 4px solid var(--oro-claro); outline-offset: -6px; border-radius: 6px; }
+    #lienzo:focus-visible { outline: 4px solid var(--oro-claro); outline-offset: -6px; }
     .panel-reino { display: grid; grid-template-columns: auto 1fr; gap: .4rem .8rem; align-items: center; margin-top: 1.4rem; padding: .7rem .9rem;
-      background: var(--noche); color: var(--pergamino); border: 4px solid var(--pergamino); border-radius: var(--radio);
+      background: var(--noche); color: var(--pergamino); border: 4px solid var(--pergamino);
       box-shadow: 0 0 0 3px var(--tinta), 0 6px 0 3px #000; line-height: 1.45; }
     .panel-reino > img { width: 56px; height: auto; align-self: end; }
     .panel-reino .quien { display: block; font-family: var(--fuente-pixel); color: var(--oro-claro); }
@@ -169,7 +171,7 @@
     /* La cruceta va encima del mapa, en la esquina de abajo a la derecha (a mano del pulgar) */
     .cruceta { position: absolute; right: 10px; bottom: 10px; display: grid; grid-template-columns: repeat(3, 48px); grid-template-rows: repeat(3, 48px);
       gap: 3px; line-height: 1; opacity: .9; }
-    .cruceta button { border: 3px solid var(--tinta); border-radius: var(--radio); background: rgba(37,30,74,.88); color: var(--pergamino);
+    .cruceta button { border: 3px solid var(--tinta); background: rgba(37,30,74,.88); color: var(--pergamino);
       font: inherit; font-size: 1.3rem; font-weight: 900; box-shadow: 0 3px 0 var(--tinta); cursor: pointer;
       touch-action: none; user-select: none; -webkit-user-select: none; -webkit-touch-callout: none; }
     .cruceta button:active { transform: translateY(2px); box-shadow: 0 1px 0 var(--tinta); background: var(--violeta-oscuro); }
@@ -177,10 +179,10 @@
     .cruceta [data-dir="izquierda"] { grid-column: 1; grid-row: 2; }
     .cruceta [data-dir="derecha"] { grid-column: 3; grid-row: 2; }
     .cruceta [data-dir="abajo"] { grid-column: 2; grid-row: 3; }
-    .cruceta .centro-cruceta { grid-column: 2; grid-row: 2; background: rgba(22,18,44,.8); border-radius: 4px; }
+    .cruceta .centro-cruceta { grid-column: 2; grid-row: 2; background: rgba(22,18,44,.8); }
     .cruceta button:focus-visible { outline: 3px solid var(--oro-claro); outline-offset: 1px; }
     .ayuda { flex: 1; min-width: 15rem; margin: 0; font-size: .95rem; }
-    .ayuda kbd { display: inline-block; min-width: 1.6em; padding: 0 .35em; border: 2px solid var(--tinta); border-bottom-width: 3px; border-radius: 4px;
+    .ayuda kbd { display: inline-block; min-width: 1.6em; padding: 0 .35em; border: 2px solid var(--tinta); border-bottom-width: 3px;
       background: var(--papel); font: inherit; font-size: .85rem; font-weight: 900; text-align: center; }
 
     /* ---------- Elige tu matemático ---------- */
@@ -190,18 +192,18 @@
     .elegir h3:focus { outline: none; }
     .rejilla-heroes { display: grid; grid-template-columns: repeat(auto-fill, minmax(158px, 1fr)); gap: .8rem; margin: 1rem 0 1.2rem; }
     .carta-heroe { display: grid; justify-items: center; align-content: start; gap: .25rem; padding: .8rem .6rem .9rem; min-height: 44px;
-      background: var(--papel); color: var(--tinta); border: 3px solid var(--tinta); border-radius: var(--radio); box-shadow: 0 4px 0 var(--tinta);
+      background: var(--papel); color: var(--tinta); border: 3px solid var(--tinta); box-shadow: 0 4px 0 var(--tinta);
       font: inherit; text-align: center; cursor: pointer; }
     .carta-heroe:hover { transform: translateY(-2px); box-shadow: 0 6px 0 var(--tinta); }
     .carta-heroe:active { transform: translateY(2px); box-shadow: 0 1px 0 var(--tinta); }
     .carta-heroe img { width: 96px; height: 96px; object-fit: contain; image-rendering: pixelated; background: var(--violeta-claro);
-      border: 3px solid var(--tinta); border-radius: 4px; }
+      border: 3px solid var(--tinta); }
     .carta-heroe b { font-family: var(--fuente-pixel); font-size: 1.2rem; line-height: 1.1; margin-top: .2rem; }
     .carta-heroe small { font-size: .8rem; font-weight: 900; color: var(--violeta); }
     .carta-heroe span { font-size: .88rem; line-height: 1.35; }
     .carta-heroe[aria-pressed="true"] { background: var(--noche); color: var(--pergamino); box-shadow: 0 0 0 3px var(--oro), 0 4px 0 3px var(--tinta); }
     .carta-heroe[aria-pressed="true"] small { color: var(--oro-claro); }
-    .carta-heroe .elegido { margin-top: .3rem; padding: .1em .6em; border-radius: 4px; background: var(--oro); color: var(--tinta); font-weight: 900; }
+    .carta-heroe .elegido { margin-top: .3rem; padding: .1em .6em; background: var(--oro); color: var(--tinta); font-weight: 900; }
 
     /* ---------- Ventanas (logros y ajustes) ---------- */
     .capa { position: fixed; inset: 0; z-index: 60; background: rgba(30,26,58,.6); display: none; align-items: center; justify-content: center; padding: 14px; }
@@ -209,11 +211,11 @@
     .ventana { width: min(480px, 100%); max-height: 100%; overflow: auto; padding: 1.1rem; text-align: center; }
     .ventana h2 { font-size: 1.5rem; }
     .lista { display: grid; gap: .5rem; text-align: left; margin: .7rem 0; }
-    .item { display: flex; align-items: center; gap: .7rem; padding: .5rem .7rem; border-radius: var(--radio); background: var(--pergamino); border: 2px solid var(--linea); }
-    .item .ico { flex: none; width: 44px; height: 44px; border-radius: 12px; display: grid; place-items: center; font-size: 1.4rem; background: var(--papel); border: 1px solid var(--linea); }
+    .item { display: flex; align-items: center; gap: .7rem; padding: .5rem .7rem; background: var(--pergamino); border: 2px solid var(--linea); }
+    .item .ico { flex: none; width: 44px; height: 44px; display: grid; place-items: center; font-size: 1.4rem; background: var(--papel); border: 1px solid var(--linea); }
     .item div { flex: 1; min-width: 0; } .item b { display: block; } .item span { font-size: .9rem; }
     .item.apagado { opacity: .55; }
-    .interruptor { min-width: 64px; min-height: 44px; border-radius: var(--radio); border: 2px solid var(--espresso); background: var(--papel); color: var(--espresso); font: inherit; font-weight: 900; cursor: pointer; flex: none; }
+    .interruptor { min-width: 64px; min-height: 44px; border: 2px solid var(--espresso); background: var(--papel); color: var(--espresso); font: inherit; font-weight: 900; cursor: pointer; flex: none; }
     .interruptor[aria-pressed="true"] { background: var(--salvia-oscuro); color: #fff; }
 
     /* ---------- Mis datos ---------- */
@@ -223,28 +225,77 @@
     .estado { min-height: 1.5em; font-weight: 700; }
     form.alias { display: flex; flex-wrap: wrap; gap: .6rem; align-items: end; }
     form.alias label { display: grid; gap: .2rem; font-weight: 700; }
-    form.alias input { min-height: 44px; padding: .4em .8em; border-radius: 12px; border: 2px solid var(--espresso);
+    form.alias input { min-height: 44px; padding: .4em .8em; border: 2px solid var(--espresso);
       font: inherit; background: #fff; color: var(--espresso); width: 16ch; }
     .error { color: var(--coral-oscuro); font-weight: 700; }
 
     /* ---------- Aviso de versión nueva ---------- */
     .novedad { position: fixed; left: 50%; bottom: 16px; transform: translateX(-50%); z-index: 50;
-      display: flex; gap: .8rem; align-items: center; padding: .7rem .7rem .7rem 1.1rem; border-radius: var(--radio);
+      display: flex; gap: .8rem; align-items: center; padding: .7rem .7rem .7rem 1.1rem;
       background: var(--noche); color: var(--pergamino); border: 3px solid var(--oro); box-shadow: 0 4px 0 #000; }
     .novedad[hidden] { display: none; }
     .novedad .boton { background: var(--oro); color: var(--tinta); }
 
     /* ---------- Pie ---------- */
     .centro { display: flex; align-items: center; gap: 1rem; margin: 2rem auto 1.5rem; padding: 1rem 1.25rem;
-      background: #fff; border: 3px solid var(--tinta); border-radius: var(--radio); }
-    .centro img { width: auto; height: 72px; max-width: 40%; object-fit: contain; flex: none; border-radius: 6px; }
+      background: #fff; border: 3px solid var(--tinta); }
+    .centro img { width: auto; height: 72px; max-width: 40%; object-fit: contain; flex: none; }
     .centro p { margin: 0; }
     .centro-dep { font-weight: 700; font-size: .95rem; color: var(--tinta); }
     .centro-nombre { font-weight: 900; font-size: 1.15rem; color: var(--espresso); }
     .centro-lugar { font-size: .9rem; color: var(--espresso); opacity: .85; }
     footer { padding: 1.5rem 0 2.5rem; border-top: 4px solid var(--tinta); font-size: .95rem; }
     footer nav { display: flex; flex-wrap: wrap; gap: 1rem; margin-bottom: .5rem; }
-  </style>
+  
+    /* ---------- Estilo pixel (1.3.0): bordes escalonados sin esquinas, como en los 16 bits ----------
+       El borde se dibuja con 4 sombras (arriba, abajo, izquierda, derecha): así las esquinas quedan «mordidas». */
+    .ficha-dato { border: 0; margin: 3px;
+      box-shadow: 0 -3px 0 var(--oro), 0 3px 0 var(--oro), -3px 0 0 var(--oro), 3px 0 0 var(--oro); }
+    button.ficha-dato { box-shadow: 0 -3px 0 var(--oro), 0 3px 0 var(--oro), -3px 0 0 var(--oro), 3px 0 0 var(--oro), 0 7px 0 #000; }
+    button.ficha-dato:active { box-shadow: 0 -3px 0 var(--oro), 0 3px 0 var(--oro), -3px 0 0 var(--oro), 3px 0 0 var(--oro); }
+    .ficha-dato:focus-visible { outline-offset: 7px; }
+    .dialogo-caja, .panel-reino { border: 0; margin: 4px;
+      box-shadow: 0 -4px 0 var(--pergamino), 0 4px 0 var(--pergamino), -4px 0 0 var(--pergamino), 4px 0 0 var(--pergamino), 0 11px 0 #000; }
+    .rotulo { border: 0; margin: 3px;
+      box-shadow: 0 -3px 0 var(--tinta), 0 3px 0 var(--tinta), -3px 0 0 var(--tinta), 3px 0 0 var(--tinta), 0 8px 0 rgba(22,18,44,.45); }
+    .mundo.cerrado .rotulo { box-shadow: 0 -3px 0 #6E6890, 0 3px 0 #6E6890, -3px 0 0 #6E6890, 3px 0 0 #6E6890; border: 0; }
+    .isla .num { border: 0; box-shadow: 0 -3px 0 var(--tinta), 0 3px 0 var(--tinta), -3px 0 0 var(--tinta), 3px 0 0 var(--tinta); }
+    .boton-vista, .carta-heroe { border: 0; margin: 3px;
+      box-shadow: 0 -3px 0 var(--tinta), 0 3px 0 var(--tinta), -3px 0 0 var(--tinta), 3px 0 0 var(--tinta), 0 7px 0 rgba(22,18,44,.45); }
+    .boton-vista:active, .carta-heroe:active { box-shadow: 0 -3px 0 var(--tinta), 0 3px 0 var(--tinta), -3px 0 0 var(--tinta), 3px 0 0 var(--tinta); }
+    .carta-heroe:hover { box-shadow: 0 -3px 0 var(--tinta), 0 3px 0 var(--tinta), -3px 0 0 var(--tinta), 3px 0 0 var(--tinta), 0 9px 0 rgba(22,18,44,.45); }
+    .carta-heroe[aria-pressed="true"] { box-shadow: 0 -3px 0 var(--oro), 0 3px 0 var(--oro), -3px 0 0 var(--oro), 3px 0 0 var(--oro), 0 7px 0 var(--tinta); }
+    .boton-vista:focus-visible, .carta-heroe:focus-visible { outline-offset: 7px; }
+    .marco-lienzo, .tablero-mapa { border: 0; margin: 8px;
+      box-shadow: 0 -4px 0 var(--tinta), 0 4px 0 var(--tinta), -4px 0 0 var(--tinta), 4px 0 0 var(--tinta),
+        0 -8px 0 var(--oro), 0 8px 0 var(--oro), -8px 0 0 var(--oro), 8px 0 0 var(--oro), 0 14px 0 var(--tinta); }
+    .tablero-mapa { margin: 1.4rem auto 0; }
+    .cruceta button { border: 0; box-shadow: 0 -3px 0 var(--tinta), 0 3px 0 var(--tinta), -3px 0 0 var(--tinta), 3px 0 0 var(--tinta),
+      inset -3px -3px 0 rgba(0,0,0,.3), inset 3px 3px 0 rgba(255,255,255,.15); }
+    .cruceta { gap: 7px; }
+    .item { border: 0; margin: 2px;
+      box-shadow: 0 -2px 0 var(--linea), 0 2px 0 var(--linea), -2px 0 0 var(--linea), 2px 0 0 var(--linea); }
+    .interruptor { border: 0; margin: 3px;
+      box-shadow: 0 -3px 0 var(--tinta), 0 3px 0 var(--tinta), -3px 0 0 var(--tinta), 3px 0 0 var(--tinta); }
+    .interruptor:focus-visible { outline-offset: 6px; }
+    form.alias input { border: 0; margin: 3px; box-shadow: 0 -3px 0 var(--tinta), 0 3px 0 var(--tinta), -3px 0 0 var(--tinta), 3px 0 0 var(--tinta),
+      inset 3px 3px 0 rgba(22,18,44,.12); }
+    form.alias input:focus-visible { outline-offset: 6px; }
+    .novedad { border: 0; box-shadow: 0 -3px 0 var(--oro), 0 3px 0 var(--oro), -3px 0 0 var(--oro), 3px 0 0 var(--oro), 0 8px 0 #000; }
+    .centro { background: var(--papel); border: 0; margin: 2rem 4px 1.5rem;
+      box-shadow: 0 -4px 0 var(--tinta), 0 4px 0 var(--tinta), -4px 0 0 var(--tinta), 4px 0 0 var(--tinta), 0 10px 0 rgba(22,18,44,.3); }
+    .centro img { image-rendering: auto; }
+    .meta span { border-style: solid; }
+    /* Pie de noche estrellada con almenas pixel */
+    footer { position: relative; margin-top: 3rem; background: var(--noche); color: var(--pergamino); border-top: 4px solid var(--oro); }
+    footer::before { content: ""; position: absolute; left: 0; right: 0; top: -16px; height: 12px; pointer-events: none;
+      background: linear-gradient(90deg, var(--noche) 0 12px, transparent 12px 24px) 0 0 / 24px 12px repeat-x; }
+    footer a { color: var(--oro-claro); }
+    /* La ventana tiene desplazamiento (overflow) y recortaría el borde de sombras: lleva borde normal */
+    .ventana { margin: 0; border: 4px solid var(--tinta); box-shadow: 0 0 0 4px var(--oro), 0 12px 0 4px #000; }
+    footer a:hover { color: #fff; }
+    footer :focus-visible { outline-color: var(--oro-claro); }
+</style>
 </head>
 <body>
   <a class="salto" href="#juegos">Saltar al mapa</a>
@@ -438,7 +489,6 @@
 
     // ---------- Mapa de mundos (la lista está en compartido/mathquest.js → MUNDOS) ----------
     const MQ = window.MathQuest;
-    const COLORES = ["#BFE3C8", "#C9DDF5", "#DCD2F3"];     // disco de cada isla (verde, azul y violeta suaves)
     function pintarMapa() {
       const d = MQ.leer();
       $("#mapa").innerHTML = '<svg class="camino" aria-hidden="true"><path id="caminoBase" fill="none" stroke="#1E1A3A" stroke-width="18" stroke-linecap="square"/><path id="caminoArena" fill="none" stroke="#D9B878" stroke-width="12" stroke-linecap="square"/><path id="camino" fill="none" stroke="#7A5200" stroke-width="5" stroke-dasharray="6 10" stroke-linecap="butt"/></svg>' +
@@ -451,7 +501,7 @@
             barra = `<div class="barra" aria-hidden="true"><i style="width:${r ? Math.round(100 * r.estrellas / r.maxEstrellas) : 0}%"></i></div>`;
           } else estado = jugable ? "▶ Entrar" : "En la niebla · próximamente";
           const guia = m.ahora && jugable ? `<span class="guia-pichu" aria-hidden="true"><img class="pixel" src="compartido/img/galois/pichu-guia.png" alt="" width="56" height="66"><span class="bocadillo">¡Ahora en clase!</span></span>` : "";
-          const dentro = `<span class="isla" style="--c:${COLORES[i % 3]}" aria-hidden="true"><span class="num">${i + 1}</span>` +
+          const dentro = `<span class="isla ${["verde", "azul", "violeta"][i % 3]}" aria-hidden="true"><span class="num">${i + 1}</span>` +
             (m.enemigo ? `<img src="${esc(MQ.enemigo(m.enemigo, true))}" alt="" loading="lazy" width="96" height="96">` : "") + `</span>${guia}
             <span class="rotulo"><small>Reino ${i + 1} · ${esc(m.tema)}</small><b>${esc(m.reino || m.nombre)}</b>${jugable ? `<span class="juego">${esc(m.icono)} ${esc(m.nombre)}</span>` : ""}
             <span class="estado">${estado}</span>${barra}</span>`;

@@ -8,7 +8,7 @@ El universo matemático de **Gaussoria** ha perdido los símbolos del conocimien
 y el jugador los recorre con **πCHU**, su guía y compañero. Web estática: HTML, CSS y JavaScript, sin frameworks,
 sin registro y sin recoger datos personales.
 
-## Qué incluye (versión 1.2.0)
+## Qué incluye (versión 1.3.0)
 - **Pantalla de inicio** con el logo GALOIS LEGACY y πCHU contando la historia (se salta al volver de un juego;
   `?inicio` la fuerza y `?mapa` la omite).
 - **Elige tu matemático**: Hipatia, Ada Lovelace, Emmy Noether, Sophie Germain, Gauss, Fibonacci, Ramanujan o Al-Juarismi
@@ -39,7 +39,8 @@ sin registro y sin recoger datos personales.
 3. ✅ Matemáticos jugables (1.2.0): Hipatia, Lovelace, Noether, Germain, Gauss, Fibonacci, Ramanujan y Al-Juarismi (los del Drive).
    Solo cambian el aspecto: **no tienen habilidades** (decisión del 20/11/2026). Galois se añadirá cuando tenga sprite.
 4. Primera mazmorra RPG (Reino de Hielo y Fuego) con combate por preguntas, reutilizando el motor de Integer Ninja.
-5. Adaptación visual de cada juego al universo Galois.
+5. Todo en pixel art. ✅ Portada, páginas propias y marco «◀ Mapa» de los juegos (1.3.0). Pendiente: el interior de cada
+   juego (divisibilidad fácil, Integer Ninja, Fraction Merge y Equation Merge), sin quitar preguntas, niveles ni progreso.
 
 ### Juegos (detalle)
 | Juego | Curso (de momento no se muestra) | Estado |

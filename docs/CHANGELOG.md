@@ -1,5 +1,19 @@
 # Registro de cambios
 
+## 1.3.0 · 20/11/2026 · Todo en pixel art (portada) y marco Galois en los juegos
+- **Estilo pixel en toda la portada y en las páginas propias:** esquinas rectas y bordes «escalonados» (sin esquinas,
+  dibujados con sombras), botones con relieve de consola de 16 bits, pergamino con punteado pixel, pie de noche con almenas,
+  ventanas de logros y ajustes, «Mis datos», alias, cruceta y fichas de la cabecera con el mismo marco.
+- **Islas de la vista de lista en pixel art** (`compartido/img/galois/isla-verde|azul|violeta|niebla.png`, generadas por
+  `src/galois/generar_graficos.py`) en lugar de círculos de CSS.
+- **Marco Galois en los juegos** (`compartido/volver.js`): la insignia «◀ Mapa» es pixel, con la cara del matemático elegido
+  y letra pixel propia («GaloisPixel», para no pisar las letras del juego). Mide 44 px (antes 40, por debajo del mínimo).
+- **Arreglo:** el enlace de volver apuntaba a `../../index.html` desde `compartido/`, que en GitHub Pages (`/pichu-lab/`) se salía
+  de la web. Ahora va a `../index.html` (comprobado sirviendo la web en `/pichu-lab/`).
+- No cambia el interior de ningún juego (será el paso siguiente, juego a juego) ni ningún guardado.
+- Comprobado: «Todo correcto»; inicio, elegir, mapa, lista, logros, privacidad y Fraction Merge con la insignia a 390 y 1280 px,
+  sin errores en la consola ni desbordamiento horizontal.
+
 ## 1.2.1 · 20/11/2026
 - **Arreglo:** en la primera visita la web ya no se recarga sola al activar el modo sin conexión (si el alumno pulsaba
   «Empezar» en ese momento, volvía a la pantalla de inicio). Solo se recarga al instalar una actualización.

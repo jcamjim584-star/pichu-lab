@@ -19,7 +19,7 @@ manifest.webmanifest    app instalable
 compartido/marca.css    identidad visual GALOIS LEGACY (portada y páginas propias)
 compartido/marca.js     nombre, versión y LISTA DE JUEGOS (MARCA.juegos)
 compartido/componentes.js  alias, exportar/importar/borrar, confirmación doble
-compartido/volver.js    botón "← Mapa" que se añade a cada juego
+compartido/volver.js    marco Galois: insignia pixel "◀ Mapa" con el matemático elegido, en cada juego
 compartido/mathquest.js progreso común (pichu.mathquest.v1), MUNDOS (reinos de Gaussoria) y LOGROS
 compartido/gaussoria.js  mapa explorable: terreno (MAPA) y motor; las puertas están en MUNDOS[i].puerta
 compartido/img/personajes/  personaje de cada reino (.webp; por ahora, sus enemigos y jefes)

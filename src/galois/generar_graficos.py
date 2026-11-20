@@ -7,6 +7,7 @@ Crea, sin descargar nada de Internet, los gráficos de la identidad del juego:
   compartido/img/galois/heroes/<id>-retrato.png  su retrato para la pantalla «Elige tu matemático»
   compartido/img/galois/enemigos/<id>.png        enemigos de los reinos, pequeños (mapa)
   compartido/img/galois/enemigos/<id>-grande.png enemigos de los reinos, grandes (vista de lista)
+  compartido/img/galois/isla-<color>.png         islas pixel de la vista de lista (verde, azul, violeta y niebla)
   compartido/img/galois/icono-192.png     icono de la app
   compartido/img/galois/icono-512.png
 
@@ -243,6 +244,44 @@ def personajes():
     return n
 
 
+# ---------------------------------------------------------------
+# 4. Islas de la vista de lista: disco pixel con borde, brillo y tierra debajo
+# ---------------------------------------------------------------
+ISLAS = {  # nombre: (claro, medio, oscuro)
+    "verde": ("#DCEFE2", "#BFE3C8", "#8FC9A0"),
+    "azul": ("#E2EDFA", "#C9DDF5", "#93B7E3"),
+    "violeta": ("#ECE6F8", "#DCD2F3", "#B3A3E0"),
+    "niebla": ("#B4AFC8", "#8C86A8", "#6E6890"),
+}
+
+
+def islas():
+    import math
+    n, r = 32, 13.6                                # lienzo de 32×36 «píxeles gordos»
+    for nombre, (claro, medio, oscuro) in ISLAS.items():
+        im = Image.new("RGBA", (n, n + 4), (0, 0, 0, 0))
+        px = im.load()
+        cx = cy = (n - 1) / 2
+        dentro = lambda x, y, rr=r: math.hypot(x - cx, (y - cy)) <= rr
+        tierra = "#6B4A22" if nombre != "niebla" else "#4E4866"
+        for y in range(n + 4):
+            for x in range(n):
+                if dentro(x, y - 4) and not dentro(x, y):           # tierra que asoma por debajo
+                    px[x, y] = hex_rgb(tierra) + (255,)
+        for y in range(n):
+            for x in range(n):
+                if dentro(x, y):
+                    d = (x - cx) * -0.5 + (y - cy) * 0.9          # luz de arriba a la izquierda
+                    c = claro if d < -6 else (medio if d < 6 else oscuro)
+                    px[x, y] = hex_rgb(c) + (255,)
+        # contorno de 1 píxel en tinta
+        borde = [(x, y) for y in range(n + 4) for x in range(n) if px[x, y][3] == 0 and any(
+            0 <= x + dx < n and 0 <= y + dy < n + 4 and px[x + dx, y + dy][3] == 255 for dx, dy in ((1, 0), (-1, 0), (0, 1), (0, -1)))]
+        for q in borde:
+            px[q] = hex_rgb(TINTA) + (255,)
+        im.save(SALIDA / f"isla-{nombre}.png", optimize=True)
+
+
 if __name__ == "__main__":
     SALIDA.mkdir(parents=True, exist_ok=True)
     w, h = logo_svg()
@@ -250,5 +289,6 @@ if __name__ == "__main__":
     for lado in (192, 512):
         icono(spr, lado)
     n = personajes()
+    islas()
     print(f"Logo {w}×{h} px de arte · πCHU {spr.width}×{spr.height} · iconos 192 y 512 · "
           f"{n['heroes']} matemáticos y {n['enemigos']} enemigos → {SALIDA.relative_to(RAIZ)}")

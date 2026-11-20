@@ -51,7 +51,7 @@
 
   --fuente: "Lato", system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
   --fuente-pixel: "Pixelify Sans", "Lato", system-ui, sans-serif;
-  --radio: 6px;                                   /* esquinas casi rectas, como en los 16 bits */
+  --radio: 0px;                                   /* esquinas rectas, como en los 16 bits */
   --sombra: 0 4px 0 var(--tinta);                 /* sombras duras, sin difuminar */
 }
 
@@ -59,7 +59,10 @@
 html { -webkit-text-size-adjust: 100%; }
 body {
   margin: 0; font-family: var(--fuente); color: var(--espresso);
-  background: var(--crema); line-height: 1.5; font-size: 1.0625rem;
+  line-height: 1.5; font-size: 1.0625rem;
+  /* Pergamino con un punteado pixel muy suave (da textura sin molestar al leer) */
+  background: var(--crema) url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='16' height='16' shape-rendering='crispEdges'%3E%3Cpath d='M2 3h1v1H2zM11 9h1v1h-1zM6 13h1v1H6zM14 1h1v1h-1z' fill='%23D8CCA8'/%3E%3C/svg%3E") 0 0 / 32px 32px;
+  image-rendering: pixelated;
 }
 img { max-width: 100%; height: auto; }
 a { color: var(--violeta-oscuro); font-weight: 700; }
@@ -67,37 +70,44 @@ a:hover { color: var(--tinta); }
 h1, h2, h3 { line-height: 1.15; margin: 0 0 .4em; font-family: var(--fuente-pixel); font-weight: 700; letter-spacing: .01em; }
 
 /* Foco siempre visible al navegar con teclado */
-:focus-visible { outline: 3px solid var(--violeta); outline-offset: 3px; border-radius: 4px; }
+:focus-visible { outline: 3px solid var(--violeta); outline-offset: 3px; }
 
 .salto { position: absolute; left: -999px; top: 8px; background: var(--espresso); color: #fff;
-  padding: .6em 1em; border-radius: 10px; z-index: 100; }
+  padding: .6em 1em; z-index: 100; }
 .salto:focus { left: 8px; }
 
 .contenedor { width: min(1100px, 100% - 2rem); margin-inline: auto; }
 
-/* Botones */
+/* Botones pixel: borde escalonado (sin esquinas), relieve claro/oscuro y sombra dura.
+   El color del borde es --bc. El borde se dibuja con sombras, por eso llevan margin: 3px. */
 .boton {
+  --bc: var(--tinta);
   display: inline-flex; align-items: center; justify-content: center; gap: .45em;
-  min-height: 44px; padding: .55em 1.1em; border-radius: var(--radio); border: 3px solid var(--tinta); box-shadow: 0 3px 0 var(--tinta);
+  min-height: 44px; padding: .55em 1.1em; margin: 3px; border: 0; border-radius: 0;
+  box-shadow: 0 -3px 0 var(--bc), 0 3px 0 var(--bc), -3px 0 0 var(--bc), 3px 0 0 var(--bc), 0 7px 0 rgba(22,18,44,.4),
+    inset -3px -3px 0 rgba(0,0,0,.22), inset 3px 3px 0 rgba(255,255,255,.2);
   font: inherit; font-weight: 700; cursor: pointer; text-decoration: none;
   background: var(--salvia-oscuro); color: #fff;
 }
 .boton:hover { background: var(--violeta-oscuro); color: #fff; }
-.boton:active { transform: translateY(2px); box-shadow: 0 1px 0 var(--tinta); }
-.boton.secundario { background: transparent; color: var(--espresso); border-color: var(--espresso); }
+.boton:active { transform: translateY(3px);
+  box-shadow: 0 -3px 0 var(--bc), 0 3px 0 var(--bc), -3px 0 0 var(--bc), 3px 0 0 var(--bc), inset 3px 3px 0 rgba(0,0,0,.22); }
+.boton:focus-visible { outline-offset: 7px; }
+.boton.secundario { background: var(--papel); color: var(--espresso); }
 .boton.secundario:hover { background: var(--espresso); color: #fff; }
-.boton.peligro { background: transparent; color: var(--coral-oscuro); border-color: var(--coral-oscuro); }
+.boton.peligro { --bc: var(--coral-oscuro); background: var(--papel); color: var(--coral-oscuro); }
 .boton.peligro:hover { background: var(--coral-oscuro); color: #fff; }
 .boton[disabled], .boton[aria-disabled="true"] { opacity: .55; cursor: not-allowed; }
 
-.tarjeta { background: var(--papel); border: 3px solid var(--tinta); border-radius: var(--radio);
-  box-shadow: var(--sombra); }
+/* Tarjeta pixel: borde escalonado de 4 px y sombra dura debajo */
+.tarjeta { background: var(--papel); border: 0; border-radius: 0; margin: 4px;
+  box-shadow: 0 -4px 0 var(--tinta), 0 4px 0 var(--tinta), -4px 0 0 var(--tinta), 4px 0 0 var(--tinta), 0 10px 0 rgba(22,18,44,.3); }
 
 .etiqueta { display: inline-block; font-size: .8rem; font-weight: 700; letter-spacing: .02em;
-  padding: .2em .7em; border-radius: 4px; background: var(--verde-claro); color: var(--verde-oscuro); }
+  padding: .2em .7em; background: var(--verde-claro); color: var(--verde-oscuro); }
 .etiqueta.pronto { background: var(--violeta-claro); color: var(--violeta-oscuro); }
 
-.aviso { padding: .8em 1em; border-radius: 12px; background: var(--salvia-claro); }
+.aviso { padding: .8em 1em; background: var(--salvia-claro); border-left: 4px solid var(--verde-oscuro); }
 
 /* Respeta "reducir movimiento" del sistema y el ajuste propio */
 @media (prefers-reduced-motion: reduce) {

@@ -8,7 +8,7 @@
 
    Si añades un juego, añade su ruta a ARCHIVOS.
    ========================================================= */
-const VERSION = "pichu-v1.2.1";
+const VERSION = "pichu-v1.3.0";
 
 const ARCHIVOS = [
   "./",
@@ -65,6 +65,10 @@ const ARCHIVOS = [
   "compartido/img/galois/enemigos/mediana_traviesa-grande.png",
   "compartido/img/galois/enemigos/dado_caotico.png",
   "compartido/img/galois/enemigos/dado_caotico-grande.png",
+  "compartido/img/galois/isla-verde.png",
+  "compartido/img/galois/isla-azul.png",
+  "compartido/img/galois/isla-violeta.png",
+  "compartido/img/galois/isla-niebla.png",
   "compartido/img/galois/icono-192.png",
   "compartido/img/galois/icono-512.png",
   "compartido/img/logo.png",
