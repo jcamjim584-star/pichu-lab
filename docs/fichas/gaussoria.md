@@ -4,11 +4,13 @@
 |---|---|
 | Dónde | Portada (`index.html`), motor y terreno en `compartido/gaussoria.js` |
 | Reinos | `compartido/mathquest.js` → `MUNDOS` (campo `puerta: [columna, fila]`) |
-| Guardado | `pichu.galois.v1` → `{ v: 1, pos: { x, y, dir }, vista: "explorar" \| "lista" }` |
-| Gráficos | Casillas, edificios y explorador dibujados por código; πCHU pequeño en `compartido/img/galois/pichu-mini.png` |
+| Guardado | `pichu.galois.v1` → `{ v: 1, heroe, pos: { x, y, dir }, vista: "explorar" \| "lista" }` |
+| Gráficos | Casillas y edificios dibujados por código; matemáticos y enemigos en `compartido/img/galois/heroes/` y `enemigos/` (del Drive) |
 
 ## Cómo se juega
-- El explorador sale de la plaza de la estrella (abajo, en el centro) con πCHU detrás.
+- Primero se elige un matemático («Elige tu matemático»; se puede cambiar cuando se quiera).
+- El matemático sale de la plaza de la estrella (abajo, en el centro).
+- Junto a cada edificio espera el enemigo del reino (`enemigo` en `MUNDOS`).
 - Se camina por la hierba, los caminos y los puentes; los árboles, las rocas y el agua no se pueden pisar.
 - Cada reino es un edificio con su número. Se entra **desde la casilla de abajo**, pisando la puerta.
 - Al pisar una puerta, πCHU dice qué reino es y qué juego abre. **Intro** o el botón **Entrar en …** abre el juego.
@@ -31,8 +33,8 @@
 ## Accesibilidad
 - **Ver como lista** muestra los reinos como enlaces normales (la vista de islas de la versión 1.0).
 - El lienzo tiene nombre e instrucciones; al llegar a una puerta se anuncia el reino (`aria-live`).
-- Sin animaciones (sistema o ajuste «Animaciones»), el explorador salta de casilla en casilla y el agua no se mueve.
+- Sin animaciones (sistema o ajuste «Animaciones»), el matemático salta de casilla en casilla y el agua no se mueve.
 
 ## Pendiente (fases siguientes)
-- Fase 3: el explorador se cambia por los ocho matemáticos jugables.
+- Fase 3: habilidades de cada matemático. Geometría: falta su enemigo.
 - Probar en clase: ritmo de los pasos (150 ms por casilla) y tamaño de la cruceta.

@@ -89,13 +89,12 @@
     .isla { flex: none; position: relative; width: 112px; height: 112px; border-radius: 50%; background: var(--c);
       border: 4px solid var(--tinta); box-shadow: 0 7px 0 #6B4A22, 0 11px 0 var(--tinta), inset 0 -10px 0 rgba(30,26,58,.12); }
     .isla::before { content: ""; position: absolute; left: 8%; right: 8%; bottom: -20px; height: 16px; border-radius: 50%; background: rgba(30,26,58,.18); z-index: -1; }
-    .isla img { position: absolute; left: 50%; bottom: 6px; width: 118%; max-width: none; height: auto; transform: translateX(-50%);
-      border-radius: 0 0 999px 999px; transition: transform .25s; }
-    .isla img.cuadro { width: 100%; height: 100%; bottom: 0; border-radius: 50%; object-fit: cover; }
+    /* Enemigo del reino (pixel art de las hojas del Drive) */
+    .isla img { position: absolute; left: 50%; bottom: 12px; width: 78%; max-width: none; height: auto; transform: translateX(-50%);
+      image-rendering: pixelated; transition: transform .25s; }
     .isla .num { position: absolute; top: -8px; left: -8px; width: 36px; height: 36px; border-radius: 50%; display: grid; place-items: center;
       background: var(--oro); color: var(--tinta); border: 3px solid var(--tinta); border-radius: 4px; font-weight: 900; z-index: 2; }
     a.mundo:hover .isla img, a.mundo:focus-visible .isla img { transform: translateX(-50%) translateY(-6px) rotate(-4deg); }
-    a.mundo:hover .isla img.cuadro, a.mundo:focus-visible .isla img.cuadro { transform: translateX(-50%) scale(1.06); }
     a.mundo:focus-visible { outline: none; }
     a.mundo:focus-visible .isla { outline: 4px solid var(--oro-claro); outline-offset: 5px; }
     a.mundo:focus-visible .rotulo { outline: 4px solid var(--oro-claro); outline-offset: 3px; }
@@ -184,6 +183,26 @@
     .ayuda kbd { display: inline-block; min-width: 1.6em; padding: 0 .35em; border: 2px solid var(--tinta); border-bottom-width: 3px; border-radius: 4px;
       background: var(--papel); font: inherit; font-size: .85rem; font-weight: 900; text-align: center; }
 
+    /* ---------- Elige tu matemático ---------- */
+    .elegir { max-width: 760px; margin: 0 auto; scroll-margin-top: 150px; text-align: center; }
+    .elegir[hidden] { display: none; }
+    .elegir h3 { font-size: clamp(1.5rem, 5vw, 2rem); }
+    .elegir h3:focus { outline: none; }
+    .rejilla-heroes { display: grid; grid-template-columns: repeat(auto-fill, minmax(158px, 1fr)); gap: .8rem; margin: 1rem 0 1.2rem; }
+    .carta-heroe { display: grid; justify-items: center; align-content: start; gap: .25rem; padding: .8rem .6rem .9rem; min-height: 44px;
+      background: var(--papel); color: var(--tinta); border: 3px solid var(--tinta); border-radius: var(--radio); box-shadow: 0 4px 0 var(--tinta);
+      font: inherit; text-align: center; cursor: pointer; }
+    .carta-heroe:hover { transform: translateY(-2px); box-shadow: 0 6px 0 var(--tinta); }
+    .carta-heroe:active { transform: translateY(2px); box-shadow: 0 1px 0 var(--tinta); }
+    .carta-heroe img { width: 96px; height: 96px; object-fit: contain; image-rendering: pixelated; background: var(--violeta-claro);
+      border: 3px solid var(--tinta); border-radius: 4px; }
+    .carta-heroe b { font-family: var(--fuente-pixel); font-size: 1.2rem; line-height: 1.1; margin-top: .2rem; }
+    .carta-heroe small { font-size: .8rem; font-weight: 900; color: var(--violeta); }
+    .carta-heroe span { font-size: .88rem; line-height: 1.35; }
+    .carta-heroe[aria-pressed="true"] { background: var(--noche); color: var(--pergamino); box-shadow: 0 0 0 3px var(--oro), 0 4px 0 3px var(--tinta); }
+    .carta-heroe[aria-pressed="true"] small { color: var(--oro-claro); }
+    .carta-heroe .elegido { margin-top: .3rem; padding: .1em .6em; border-radius: 4px; background: var(--oro); color: var(--tinta); font-weight: 900; }
+
     /* ---------- Ventanas (logros y ajustes) ---------- */
     .capa { position: fixed; inset: 0; z-index: 60; background: rgba(30,26,58,.6); display: none; align-items: center; justify-content: center; padding: 14px; }
     .capa.ver { display: flex; }
@@ -270,12 +289,19 @@
       <div class="vistas" role="group" aria-label="Cómo ver el mapa">
         <button class="boton-vista" type="button" id="bVistaExplorar" aria-pressed="true">🧭 Explorar el mapa</button>
         <button class="boton-vista" type="button" id="bVistaLista" aria-pressed="false">📜 Ver como lista</button>
+        <button class="boton-vista" type="button" id="bHeroe">🎓 Cambiar de matemático</button>
+      </div>
+      <div class="elegir" id="elegir" hidden>
+        <h3 id="titElegir" tabindex="-1">Elige tu matemático</h3>
+        <p>Recorrerás Gaussoria con el matemático que elijas. Puedes cambiarlo cuando quieras.</p>
+        <div class="rejilla-heroes" id="rejillaHeroes"></div>
+        <button class="boton secundario" type="button" id="bVolverMapa" hidden>← Volver al mapa</button>
       </div>
       <div class="explorar" id="explorar">
         <div class="marco-lienzo">
           <canvas id="lienzo" class="pixel" tabindex="0" role="application" aria-roledescription="mapa de juego"
             aria-label="Mapa de Gaussoria. Muévete con las flechas y pulsa Intro en la puerta de un reino para entrar." aria-describedby="ayudaMapa textoReino"></canvas>
-          <div class="cruceta" role="group" aria-label="Cruceta para mover al explorador">
+          <div class="cruceta" role="group" aria-label="Cruceta para mover a tu matemático">
             <button type="button" data-dir="arriba" aria-label="Mover arriba">▲</button>
             <button type="button" data-dir="izquierda" aria-label="Mover a la izquierda">◀</button>
             <span class="centro-cruceta" aria-hidden="true"></span>
@@ -424,11 +450,9 @@
             estado = r && r.superados ? `★ ${r.estrellas}/${r.maxEstrellas} · ${r.superados} de ${r.total} niveles` : "▶ Entrar";
             barra = `<div class="barra" aria-hidden="true"><i style="width:${r ? Math.round(100 * r.estrellas / r.maxEstrellas) : 0}%"></i></div>`;
           } else estado = jugable ? "▶ Entrar" : "En la niebla · próximamente";
-          // Las cartas de Factor Clash tienen fondo: se ven enteras dentro del círculo
-          const cuadro = ["divison", "reglino", "punteo", "incognito"].includes(m.personaje) ? "cuadro" : "";
           const guia = m.ahora && jugable ? `<span class="guia-pichu" aria-hidden="true"><img class="pixel" src="compartido/img/galois/pichu-guia.png" alt="" width="56" height="66"><span class="bocadillo">¡Ahora en clase!</span></span>` : "";
           const dentro = `<span class="isla" style="--c:${COLORES[i % 3]}" aria-hidden="true"><span class="num">${i + 1}</span>` +
-            (m.personaje ? `<img class="${cuadro}" src="${esc(MQ.personaje(m.personaje))}" alt="" loading="lazy" width="240" height="240">` : "") + `</span>${guia}
+            (m.enemigo ? `<img src="${esc(MQ.enemigo(m.enemigo, true))}" alt="" loading="lazy" width="96" height="96">` : "") + `</span>${guia}
             <span class="rotulo"><small>Reino ${i + 1} · ${esc(m.tema)}</small><b>${esc(m.reino || m.nombre)}</b>${jugable ? `<span class="juego">${esc(m.icono)} ${esc(m.nombre)}</span>` : ""}
             <span class="estado">${estado}</span>${barra}</span>`;
           const etiqueta = `Reino ${i + 1}, ${esc(m.tema)}: ${esc(m.reino || m.nombre)}${jugable ? ", juego " + esc(m.nombre) : ""}. ${m.ahora ? "Ahora en clase. " : ""}${estado.replace("▶ ", "")}`;
@@ -449,7 +473,7 @@
     addEventListener("resize", camino);
 
     // ---------- Mapa explorable (motor en compartido/gaussoria.js) ----------
-    // Guarda la posición del explorador y la vista elegida en pichu.galois.v1 (clave propia, regla 2).
+    // Guarda el matemático elegido, su posición y la vista elegida en pichu.galois.v1 (clave propia, regla 2).
     const CLAVE_GALOIS = "pichu.galois.v1";
     const galois = {
       leer() { try { const d = JSON.parse(localStorage.getItem(CLAVE_GALOIS)); if (d && d.v === 1) return d; } catch (e) { /* sin datos */ } return { v: 1 }; },
@@ -464,10 +488,13 @@
     const textoEstado = m => { const r = MQ.leer().juegos[m.juego];
       return m.mq && r && r.superados ? ` Llevas ${r.estrellas} de ${r.maxEstrellas} estrellas y ${r.superados} de ${r.total} niveles.` : ""; };
     const ahoraM = MQ.MUNDOS.find(m => m.ahora && jugableM(m));
+    // Matemático elegido (se guarda su id en pichu.galois.v1 → heroe)
+    let elegido = MQ.HEROES.find(h => h.id === guardado.heroe) || null;
     function textoPanel(i) {
       if (i === null || i === undefined) {
-        return ahoraM ? `Sigue el camino hasta el <b class="reino-nombre">!</b> dorado: en clase estamos en el Reino ${MQ.MUNDOS.indexOf(ahoraM) + 1}, <b class="reino-nombre">${esc(ahoraM.reino)}</b>.`
-                      : "Explora Gaussoria: cada edificio es la puerta de un reino.";
+        const hola = elegido ? `¡Adelante, ${esc(elegido.nombre)}! ` : "";
+        return ahoraM ? hola + `Sigue el camino hasta el <b class="reino-nombre">!</b> dorado: en clase estamos en el Reino ${MQ.MUNDOS.indexOf(ahoraM) + 1}, <b class="reino-nombre">${esc(ahoraM.reino)}</b>.`
+                      : hola + "Explora Gaussoria: cada edificio es la puerta de un reino.";
       }
       const m = MQ.MUNDOS[i], cab = `Reino ${i + 1} · ${esc(m.tema)}: <b class="reino-nombre">${esc(m.reino)}</b>. `;
       return jugableM(m) ? cab + `${esc(m.escenario)} Aquí te espera <b>${esc(m.nombre)}</b>.${esc(textoEstado(m))}`
@@ -485,9 +512,9 @@
     const motor = hayLienzo ? Gaussoria.crear({
       lienzo,
       mundos: MQ.MUNDOS.map((m, i) => ({ indice: i, puerta: m.puerta, jugable: jugableM(m), ahora: !!m.ahora,
-        imagen: m.personaje ? MQ.personaje(m.personaje) : "", cuadro: ["divison", "reglino", "punteo", "incognito"].includes(m.personaje) })),
+        imagen: m.enemigo ? MQ.enemigo(m.enemigo) : "" })),
       posicion: guardado.pos,
-      guia: "compartido/img/galois/pichu-mini.png",
+      heroe: elegido ? MQ.heroe(elegido.id) : "",
       sinMovimiento: () => MQ.sinMovimiento(),
       alPisar,
       alMoverse: pos => galois.guardar({ pos }),
@@ -497,6 +524,8 @@
     // Cambiar entre el mapa explorable y la lista
     function ponerVista(v, enfocar) {
       vista = v === "explorar" && motor ? "explorar" : "lista";
+      if (vista === "explorar" && !elegido && $("#inicio").hidden) { mostrarElegir(); return; }
+      $("#elegir").hidden = true;
       $("#explorar").hidden = vista !== "explorar";
       $(".tablero-mapa").hidden = vista !== "lista";
       $("#bVistaExplorar").setAttribute("aria-pressed", vista === "explorar");
@@ -506,6 +535,36 @@
       if (enfocar && vista === "explorar") { lienzo.focus({ preventScroll: true }); $("#explorar").scrollIntoView({ block: "start" }); }
       else if (enfocar) $("#titJuegos").focus();
     }
+    // ---------- Elige tu matemático ----------
+    function pintarElegir() {
+      $("#rejillaHeroes").innerHTML = MQ.HEROES.map(h => {
+        const si = elegido && elegido.id === h.id;
+        return `<button class="carta-heroe" type="button" data-heroe="${esc(h.id)}" aria-pressed="${!!si}">
+          <img src="${esc(MQ.heroe(h.id, true))}" alt="" width="96" height="96">
+          <b>${esc(h.nombre)}</b><small>${esc(h.epoca)}</small><span>${esc(h.frase)}</span>
+          ${si ? '<span class="elegido">✓ Elegido</span>' : ""}</button>`;
+      }).join("");
+    }
+    function mostrarElegir() {
+      if (motor) motor.parar();
+      pintarElegir();
+      $("#explorar").hidden = true; $(".tablero-mapa").hidden = true; $("#elegir").hidden = false;
+      $("#bVolverMapa").hidden = !elegido;
+      $("#titElegir").focus();
+      $("#elegir").scrollIntoView({ block: "start" });
+    }
+    $("#rejillaHeroes").addEventListener("click", e => {
+      const b = e.target.closest("[data-heroe]");
+      if (!b) return;
+      elegido = MQ.HEROES.find(h => h.id === b.dataset.heroe);
+      galois.guardar({ heroe: elegido.id });
+      if (motor) { motor.ponerHeroe(MQ.heroe(elegido.id)); alPisar(motor.actual()); }
+      $("#avisoMapa").textContent = `Has elegido a ${elegido.nombre}.`;
+      galois.guardar({ vista: "explorar" });
+      ponerVista("explorar", true);
+    });
+    $("#bVolverMapa").addEventListener("click", () => ponerVista(vista === "lista" ? "lista" : "explorar", true));
+    $("#bHeroe").addEventListener("click", mostrarElegir);
     $("#bVistaExplorar").addEventListener("click", () => { galois.guardar({ vista: "explorar" }); ponerVista("explorar", true); });
     $("#bVistaLista").addEventListener("click", () => { galois.guardar({ vista: "lista" }); ponerVista("lista"); });
     // Cruceta: mantener pulsado camina; con el teclado (Intro/Espacio sobre el botón) da un paso

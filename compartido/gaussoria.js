@@ -1,8 +1,8 @@
 /* =========================================================
    GALOIS LEGACY · gaussoria.js  (un juego de πCHU LAB)
    Mapa de Gaussoria explorable en vista cenital (desde arriba).
-   El explorador camina por casillas con πCHU detrás; al pisar la
-   puerta de un reino se puede entrar en su juego.
+   El matemático elegido camina por casillas; al pisar la puerta
+   de un reino se puede entrar en su juego.
 
    - MAPA: el terreno, una letra por casilla (leyenda abajo).
    - Las puertas de los reinos NO están en MAPA: están en
@@ -148,20 +148,6 @@
       "................"
     ]
   };
-  // El explorador (12×15): cabeza según hacia dónde mira, cuerpo y piernas (3 pasos)
-  const EXPLORADOR_COL = { o: "#16122C", h: "#6B3F1E", s: "#F2C28B", e: "#16122C", c: "#3A7BC8", b: "#7A5200",
-    g: "#E8B53A", p: "#3E3A6A", k: "#5A3418" };
-  const CABEZA = {
-    abajo: ["....oooo....", "...ohhhho...", "..ohhhhhho..", "..ohssssho..", "..osesseso..", "..osssssso..", "...oossoo..."],
-    arriba: ["....oooo....", "...ohhhho...", "..ohhhhhho..", "..ohhhhhho..", "..ohhhhhho..", "..oohhhhoo..", "...oossoo..."],
-    lado: ["....oooo....", "...ohhhho...", "..ohhhhhho..", "..osshhhho..", "..oeshhhho..", "..osssssho..", "...oossoo..."]
-  };
-  const CUERPO = ["..occcccco..", ".osccccccso.", ".osbbggbbso.", "..occcccco.."];
-  const PIERNAS = [
-    ["...oppppo...", "...opoopo...", "...okooko...", "...oo..oo..."],
-    ["...oppppo...", "...opoopo...", "...okooo....", "...oo......."],
-    ["...oppppo...", "...opoopo...", "....oooko...", ".......oo..."]
-  ];
   // Cifras pixel de 3×5 para el número de cada reino
   const CIFRAS = ["111101101101111", "010110010010111", "111001111100111", "111001111001111", "101101111001001",
     "111100111001111", "111100111101111", "111001010010010", "111101111101111", "111101111001111"];
@@ -181,7 +167,7 @@
   const azar = (x, y, i) => { let h = (x * 374761393 + y * 668265263 + i * 2147483647) | 0; h = (h ^ (h >>> 13)) * 1274126177; return ((h ^ (h >>> 16)) >>> 0) / 4294967296; };
 
   // ---------- Crear el mapa en un <canvas> ----------
-  // op = { lienzo, mundos: [{ indice, puerta, jugable, ahora, imagen, cuadro }], posicion, guia,
+  // op = { lienzo, mundos: [{ indice, puerta, jugable, ahora, imagen }], posicion, heroe (imagen del matemático),
   //        sinMovimiento(), alPisar(mundo|null), alMoverse(pos), alEntrar(mundo) }
   function crear(op) {
     const lienzo = op.lienzo, ctx = lienzo.getContext("2d");
@@ -192,10 +178,7 @@
     // Posición inicial: la guardada (si se puede pisar) o la salida
     let pos = op.posicion && sePuedePisar(op.posicion.x, op.posicion.y, edificios) ? { x: op.posicion.x, y: op.posicion.y } : salida();
     let dir = (op.posicion && op.posicion.dir) || "abajo";
-    let amigo = { x: pos.x, y: pos.y + (sePuedePisar(pos.x, pos.y + 1, edificios) ? 1 : 0) };   // πCHU
-    let amigoAntes = { ...amigo };
     let paso = null;               // { desde, hasta, t0 } mientras se camina de una casilla a otra
-    let pasoN = 0;                 // para alternar las piernas
     let ruta_ = [];                // casillas pendientes al tocar el mapa
     const pulsadas = [];           // direcciones mantenidas (teclado o cruceta), la última manda
     let puertaActual = enPuerta(pos.x, pos.y);
@@ -204,8 +187,15 @@
     // --- Capa fija: terreno + edificios (se pinta una vez, a escala de arte) ---
     const fija = document.createElement("canvas");
     fija.width = ANCHO * C; fija.height = ALTO * C;
-    const imagenes = {}, guia = new Image();
-    if (op.guia) { guia.src = op.guia; guia.onload = () => dibujar(performance.now()); }
+    const imagenes = {};
+    // El matemático elegido (imagen pequeña de pixel art, compartido/img/galois/heroes/<id>.png)
+    let heroe = new Image();
+    function ponerHeroe(src) {
+      const img = new Image();
+      img.onload = () => { heroe = img; dibujar(performance.now()); };
+      img.src = src;
+    }
+    if (op.heroe) ponerHeroe(op.heroe);
     function pintarFija() {
       const f = fija.getContext("2d");
       f.imageSmoothingEnabled = false;
@@ -318,28 +308,18 @@
         const p = CIFRAS[+d];
         for (let k = 0; k < 15; k++) if (p[k] === "1") { f.fillStyle = COL.o; f.fillRect(nx + 2 + i * 4 + (k % 3), ny + 1 + Math.floor(k / 3), 1, 1); }
       });
-      // Personaje del reino junto al edificio (por ahora, sus enemigos y jefes)
+      // Enemigo del reino junto al edificio (pixel art ya preparado: se pinta a su tamaño)
       const img = imagenes[m.indice];
       if (img && img.complete && img.naturalWidth) {
-        const lado = 22, lx = X + 48 - 6, ly = Y + 32 - lado + 2;
-        // Se reduce en un lienzo aparte (suavizado) y luego se amplía sin suavizar: queda pixelado
-        const c = document.createElement("canvas"); c.width = c.height = lado;
-        const g = c.getContext("2d");
-        g.imageSmoothingEnabled = true; g.imageSmoothingQuality = "high";
-        if (m.cuadro) {                                 // imágenes con fondo: recortadas en círculo
-          g.beginPath(); g.arc(lado / 2, lado / 2, lado / 2 - 1, 0, 2 * Math.PI); g.fillStyle = COL.o; g.fill();
-          g.save(); g.beginPath(); g.arc(lado / 2, lado / 2, lado / 2 - 2, 0, 2 * Math.PI); g.clip();
-          g.drawImage(img, 0, 0, lado, lado); g.restore();
-        } else g.drawImage(img, 0, 0, lado, lado);
-        if (gris) {                                     // en gris y medio transparente, solo el personaje
-          g.globalCompositeOperation = "saturation"; g.fillStyle = "#808080"; g.fillRect(0, 0, lado, lado);
-          g.globalCompositeOperation = "destination-in";
-          if (m.cuadro) { g.beginPath(); g.arc(lado / 2, lado / 2, lado / 2 - 1, 0, 2 * Math.PI); g.fill(); }
-          else g.drawImage(img, 0, 0, lado, lado);
-          f.globalAlpha = .5;
-        }
-        f.drawImage(c, lx, ly);
-        f.globalAlpha = 1;
+        const w = img.naturalWidth, h = img.naturalHeight, lx = X + 44, ly = Y + 33 - h;
+        if (gris) {                                     // en gris y medio transparente
+          const c = document.createElement("canvas"); c.width = w; c.height = h;
+          const g = c.getContext("2d");
+          g.drawImage(img, 0, 0);
+          g.globalCompositeOperation = "saturation"; g.fillStyle = "#808080"; g.fillRect(0, 0, w, h);
+          g.globalCompositeOperation = "destination-in"; g.drawImage(img, 0, 0);
+          f.globalAlpha = .55; f.drawImage(c, lx, ly); f.globalAlpha = 1;
+        } else f.drawImage(img, lx, ly);
       }
     }
     // Niebla oscura sobre los reinos que aún no tienen juego
@@ -366,18 +346,6 @@
     });
     pintarFija();
 
-    // --- Sprites del explorador ya pintados (cabeza × piernas, y espejo) ---
-    const sprites = {};
-    for (const d of ["abajo", "arriba", "izquierda", "derecha"]) {
-      sprites[d] = PIERNAS.map((p, i) => {
-        const c = document.createElement("canvas"); c.width = 12; c.height = 15;
-        const g = c.getContext("2d");
-        const cabeza = d === "abajo" ? CABEZA.abajo : d === "arriba" ? CABEZA.arriba : CABEZA.lado;
-        pintarPx(g, cabeza.concat(CUERPO, p), EXPLORADOR_COL, 0, 0, d === "derecha");
-        return c;
-      });
-    }
-
     // --- Tamaño: escala entera para que los píxeles se vean nítidos ---
     let k = 3, vw = 0, vh = 0;
     function redimensionar() {
@@ -396,17 +364,14 @@
       dir = d;
       const [dx, dy] = DIRS[d], n = { x: pos.x + dx, y: pos.y + dy };
       if (!sePuedePisar(n.x, n.y, edificios)) { ruta_ = []; return false; }
-      amigoAntes = { ...amigo };
-      const destinoAmigo = { ...pos };
-      paso = { desde: { ...pos }, hasta: n, t0: performance.now(), amigoHasta: destinoAmigo };
-      pasoN++;
+      paso = { desde: { ...pos }, hasta: n, t0: performance.now() };
       if (op.sinMovimiento()) terminarPaso();                // sin animación: salta a la casilla
       return true;
     }
     function terminarPaso() {
       if (!paso) return;
       const anterior = puertaActual;
-      pos = paso.hasta; amigo = paso.amigoHasta; paso = null;
+      pos = paso.hasta; paso = null;
       puertaActual = enPuerta(pos.x, pos.y);
       op.alMoverse && op.alMoverse({ x: pos.x, y: pos.y, dir });
       if (puertaActual !== anterior) op.alPisar && op.alPisar(puertaActual);
@@ -424,7 +389,7 @@
       if (d) { ultimoPasoSinMov = t; intentar(d); }
     }
 
-    // --- Cámara: centrada en el explorador, sin salirse del mapa (en píxeles de arte) ---
+    // --- Cámara: centrada en el jugador, sin salirse del mapa (en píxeles de arte) ---
     let ultimaCamara = [0, 0];
     function camara(fx, fy) {
       const mw = ANCHO * C, mh = ALTO * C;
@@ -438,13 +403,11 @@
     function dibujar(t) {
       if (!vw) return;
       // Posición en píxeles de arte (con el paso a medias si se está andando)
-      let fx = pos.x, fy = pos.y, ax = amigo.x, ay = amigo.y, avance = 0;
+      let fx = pos.x, fy = pos.y, avance = 0;
       if (paso) {
         avance = Math.min(1, (t - paso.t0) / DURACION);
         fx = paso.desde.x + (paso.hasta.x - paso.desde.x) * avance;
         fy = paso.desde.y + (paso.hasta.y - paso.desde.y) * avance;
-        ax = amigoAntes.x + (paso.amigoHasta.x - amigoAntes.x) * avance;
-        ay = amigoAntes.y + (paso.amigoHasta.y - amigoAntes.y) * avance;
       }
       const [cx, cy] = camara(fx, fy);
 
@@ -480,21 +443,16 @@
         pintarPx(ctx, [".ooo.", "oyyyo", "oyyyo", "oggyo", "oggyo", ".ogo.", "..o..", ".ooo.", "oggyo", ".ooo."],
           { o: COL.o, y: COL.oroCla, g: COL.oro }, m.puerta[0] * C + 5, (m.puerta[1] - 1) * C - 13 - bote);
       });
-      // πCHU y el explorador: primero el que está más arriba
-      const sombra = (x, y) => { ctx.fillStyle = "rgba(22,18,44,.35)"; ctx.fillRect(Math.round(x * C) + 3, Math.round(y * C) + 13, 10, 2); };
-      const pintaAmigo = () => {
-        sombra(ax, ay);
-        if (guia.complete && guia.naturalWidth) {
-          const bote = quieto || !paso ? 0 : Math.round(Math.sin(avance * Math.PI) * 2);
-          ctx.drawImage(guia, Math.round(ax * C + C / 2 - guia.naturalWidth / 2), Math.round(ay * C + C - guia.naturalHeight) - bote);
-        }
-      };
-      const pintaExplorador = () => {
-        sombra(fx, fy);
-        const cuadro = paso && !quieto ? (avance < .5 ? (pasoN % 2 ? 1 : 2) : 0) : 0;
-        ctx.drawImage(sprites[dir][cuadro], Math.round(fx * C) + 2, Math.round(fy * C) + 1);
-      };
-      if (ay < fy) { pintaAmigo(); pintaExplorador(); } else { pintaExplorador(); pintaAmigo(); }
+      // El matemático elegido: sombra, saltito al andar y mirando hacia el lado al que camina
+      ctx.fillStyle = "rgba(22,18,44,.35)";
+      ctx.fillRect(Math.round(fx * C) + 2, Math.round(fy * C) + 13, 12, 3);
+      if (heroe.complete && heroe.naturalWidth) {
+        const w = heroe.naturalWidth, h = heroe.naturalHeight;
+        const bote = paso && !quieto ? Math.round(Math.sin(avance * Math.PI) * 2) : 0;
+        const x = Math.round(fx * C + C / 2 - w / 2), y = Math.round(fy * C + C - h + 1) - bote;
+        if (dir === "izquierda") { ctx.save(); ctx.translate(x + w, y); ctx.scale(-1, 1); ctx.drawImage(heroe, 0, 0); ctx.restore(); }
+        else ctx.drawImage(heroe, x, y);
+      }
     }
 
     // --- Bucle: solo mientras el mapa se ve ---
@@ -525,7 +483,7 @@
     function soltar(d) { const i = pulsadas.indexOf(d); if (i >= 0) pulsadas.splice(i, 1); }
     function unPaso(d) { ruta_ = []; if (!paso) intentar(d); }
 
-    // --- Tocar o hacer clic en el mapa: el explorador va andando hasta allí ---
+    // --- Tocar o hacer clic en el mapa: el jugador va andando hasta allí ---
     lienzo.addEventListener("pointerdown", e => {
       const r = lienzo.getBoundingClientRect(), dpr = lienzo.width / r.width;
       const [cx, cy] = ultimaCamara;
@@ -541,7 +499,7 @@
 
     function entrar() { if (puertaActual && op.alEntrar) op.alEntrar(puertaActual); }
 
-    return { arrancar, parar, redimensionar, pulsar, soltar, unPaso, entrar,
+    return { arrancar, parar, redimensionar, pulsar, soltar, unPaso, entrar, ponerHeroe,
       actual: () => puertaActual, posicion: () => ({ x: pos.x, y: pos.y, dir }) };
   }
 

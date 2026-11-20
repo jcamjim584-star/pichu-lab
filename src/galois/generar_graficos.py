@@ -3,9 +3,15 @@
 Crea, sin descargar nada de Internet, los gráficos de la identidad del juego:
   compartido/img/galois/logo.svg          logotipo «GALOIS LEGACY» (letras pixel propias)
   compartido/img/galois/pichu-guia.png    πCHU en pixel art (a partir de compartido/img/mascota.png)
-  compartido/img/galois/pichu-mini.png    πCHU pequeño, el compañero que sigue al explorador en el mapa
+  compartido/img/galois/heroes/<id>.png          los 8 matemáticos jugables, pequeños, para caminar por el mapa
+  compartido/img/galois/heroes/<id>-retrato.png  su retrato para la pantalla «Elige tu matemático»
+  compartido/img/galois/enemigos/<id>.png        enemigos de los reinos, pequeños (mapa)
+  compartido/img/galois/enemigos/<id>-grande.png enemigos de los reinos, grandes (vista de lista)
   compartido/img/galois/icono-192.png     icono de la app
   compartido/img/galois/icono-512.png
+
+Los matemáticos y los enemigos salen de las hojas del Drive de GALOIS LEGACY, guardadas en
+src/galois/drive/ (heroes.png, enemigos.png y atlas.json, que dice dónde está cada uno).
 
 Uso (desde la carpeta del repositorio):
   python3 src/galois/generar_graficos.py
@@ -182,11 +188,67 @@ def icono(spr, lado):
     grande.convert("RGB").save(SALIDA / f"icono-{lado}.png", optimize=True)
 
 
+# ---------------------------------------------------------------
+# 3. Matemáticos y enemigos (hojas del Drive en src/galois/drive/)
+# ---------------------------------------------------------------
+DRIVE = RAIZ / "src/galois/drive"
+
+
+def recorte(atlas, nombre):
+    """Recorta un dibujo de su hoja y quita el borde transparente."""
+    a = atlas[nombre]
+    hoja = Image.open(DRIVE / Path(a["atlas"]).name).convert("RGBA")
+    c = hoja.crop((a["x"], a["y"], a["x"] + a["width"], a["y"] + a["height"]))
+    return c.crop(c.getbbox())
+
+
+def sprite(im, alto):
+    """Versión pequeña de pixel art: se reduce promediando, la transparencia
+    queda en sí/no y se añade un contorno de 1 píxel en tinta."""
+    ancho = max(1, round(im.width * alto / im.height))
+    peq = im.resize((ancho, alto), Image.BOX)
+    px = peq.load()
+    for y in range(peq.height):
+        for x in range(peq.width):
+            r, g, b, a = px[x, y]
+            px[x, y] = (r, g, b, 255 if a > 110 else 0)
+    spr = Image.new("RGBA", (ancho + 2, alto + 2), (0, 0, 0, 0))
+    spr.paste(peq, (1, 1), peq)
+    p = spr.load()
+    marco = [(x, y) for y in range(spr.height) for x in range(spr.width)
+             if p[x, y][3] == 0 and any(0 <= x + dx < spr.width and 0 <= y + dy < spr.height and p[x + dx, y + dy][3] == 255
+                                        for dx, dy in ((1, 0), (-1, 0), (0, 1), (0, -1)))]
+    for q in marco:
+        p[q] = hex_rgb(NOCHE) + (255,)
+    return spr
+
+
+def personajes():
+    import json
+    atlas = json.loads((DRIVE / "atlas.json").read_text(encoding="utf-8"))
+    n = {"heroes": 0, "enemigos": 0}
+    for nombre, a in atlas.items():
+        carpeta = Path(a["atlas"]).stem               # "heroes" o "enemigos" (los iconos no se usan todavía)
+        if carpeta not in n:
+            continue
+        (SALIDA / carpeta).mkdir(exist_ok=True)
+        im = recorte(atlas, nombre)
+        if carpeta == "heroes":
+            sprite(im, 26).save(SALIDA / carpeta / f"{nombre}.png", optimize=True)
+            im.resize((96, round(96 * im.height / im.width)), Image.BOX).save(SALIDA / carpeta / f"{nombre}-retrato.png", optimize=True)
+        else:
+            sprite(im, 22).save(SALIDA / carpeta / f"{nombre}.png", optimize=True)
+            im.resize((96, round(96 * im.height / im.width)), Image.BOX).save(SALIDA / carpeta / f"{nombre}-grande.png", optimize=True)
+        n[carpeta] += 1
+    return n
+
+
 if __name__ == "__main__":
     SALIDA.mkdir(parents=True, exist_ok=True)
     w, h = logo_svg()
     spr = pichu_pixel()
-    pichu_pixel(alto=20, nombre="pichu-mini.png")      # compañero del mapa de Gaussoria
     for lado in (192, 512):
         icono(spr, lado)
-    print(f"Logo {w}×{h} px de arte · πCHU {spr.width}×{spr.height} · iconos 192 y 512 → {SALIDA.relative_to(RAIZ)}")
+    n = personajes()
+    print(f"Logo {w}×{h} px de arte · πCHU {spr.width}×{spr.height} · iconos 192 y 512 · "
+          f"{n['heroes']} matemáticos y {n['enemigos']} enemigos → {SALIDA.relative_to(RAIZ)}")

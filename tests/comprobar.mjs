@@ -80,5 +80,22 @@ for (const [i, m] of MUNDOS.entries()) {
   ok(`${nombre}: se puede llegar andando desde la salida`, G.ruta(inicio, { x, y }, edificios) !== null);
 }
 
+// 6. Matemáticos jugables y enemigos de los reinos (gráficos del Drive, src/galois/generar_graficos.py)
+const MQ = ctxMQ.window.MathQuest;
+const idsHeroes = new Set();
+for (const h of MQ.HEROES) {
+  ok(`Matemático con id único: ${h.id}`, !idsHeroes.has(h.id)); idsHeroes.add(h.id);
+  for (const f of [`compartido/img/galois/heroes/${h.id}.png`, `compartido/img/galois/heroes/${h.id}-retrato.png`]) {
+    ok(`${h.nombre}: existe ${f}`, existsSync(join(raiz, f)));
+    ok(`${h.nombre}: ${f} está en la caché sin conexión`, ARCHIVOS.includes(f));
+  }
+}
+for (const m of MUNDOS.filter(m => m.enemigo)) {
+  for (const f of [`compartido/img/galois/enemigos/${m.enemigo}.png`, `compartido/img/galois/enemigos/${m.enemigo}-grande.png`]) {
+    ok(`${m.reino}: existe ${f}`, existsSync(join(raiz, f)));
+    ok(`${m.reino}: ${f} está en la caché sin conexión`, ARCHIVOS.includes(f));
+  }
+}
+
 console.log(fallos ? `\n${fallos} comprobaciones fallidas` : "\nTodo correcto");
 process.exit(fallos ? 1 : 0);

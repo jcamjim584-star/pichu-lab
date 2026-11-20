@@ -1,5 +1,20 @@
 # Registro de cambios
 
+## 1.2.0 · 20/11/2026 · Elige tu matemático y personajes del Drive
+- **Elige tu matemático**: al empezar la aventura se elige entre los 8 matemáticos del Drive (Hipatia, Ada Lovelace, Emmy Noether,
+  Sophie Germain, Gauss, Fibonacci, Ramanujan y Al-Juarismi), cada uno con su época y una frase. Ese matemático es el que camina
+  por el mapa (mira hacia el lado al que anda y da un saltito en cada paso). Botón «Cambiar de matemático» en cualquier momento.
+- **Enemigos del Drive** junto a cada reino, en el mapa y en la vista de lista: Primox (divisibilidad), Negatrón (enteros),
+  Denominadorón (fracciones), Incógnita X (ecuaciones), Potenciator, Porcentajín, Polinomio mutante, Pendientor, Mediana traviesa
+  y Dado caótico. Geometría no tiene enemigo todavía (no hay ninguno en el Drive). Sustituyen a las imágenes .webp en la portada;
+  los juegos siguen usando sus personajes de siempre.
+- **Se quita el πCHU pequeño** que seguía al explorador (y el explorador provisional). πCHU sigue como guía en el bocadillo.
+- Hojas originales del Drive en `src/galois/drive/`; `generar_graficos.py` crea `compartido/img/galois/heroes/` y `enemigos/`.
+- `MUNDOS` gana el campo `enemigo`; lista nueva `HEROES`. `pichu.galois.v1` guarda también `heroe` (campo nuevo, sin cambiar los demás).
+- `tests/comprobar.mjs`: cada matemático y cada enemigo usado tiene sus imágenes y están en la caché sin conexión.
+- Comprobado: «Todo correcto»; en Chromium a 390 y 760 px, sin errores en la consola ni desbordamiento: inicio → elegir → mapa,
+  caminar, cambiar de matemático (queda marcado el elegido) y vista de lista con los enemigos nuevos.
+
 ## 1.1.0 · 20/11/2026 · GALOIS LEGACY, fase 2 (mapa explorable)
 - El **Mapa de Gaussoria** se puede recorrer en vista cenital (pixel art de 16×16): un **explorador** provisional camina por los
   caminos con **πCHU** detrás. Cada reino es un edificio con su número y su personaje; al pisar la puerta, πCHU cuenta qué reino es

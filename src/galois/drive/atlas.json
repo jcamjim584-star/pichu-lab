@@ -1,0 +1,380 @@
+{
+ "hipatia": {
+  "atlas": "atlas/heroes.png",
+  "x": 0,
+  "y": 0,
+  "width": 256,
+  "height": 256
+ },
+ "ada_lovelace": {
+  "atlas": "atlas/heroes.png",
+  "x": 256,
+  "y": 0,
+  "width": 256,
+  "height": 256
+ },
+ "emmy_noether": {
+  "atlas": "atlas/heroes.png",
+  "x": 512,
+  "y": 0,
+  "width": 256,
+  "height": 256
+ },
+ "sophie_germain": {
+  "atlas": "atlas/heroes.png",
+  "x": 768,
+  "y": 0,
+  "width": 256,
+  "height": 256
+ },
+ "gauss": {
+  "atlas": "atlas/heroes.png",
+  "x": 0,
+  "y": 256,
+  "width": 256,
+  "height": 256
+ },
+ "fibonacci": {
+  "atlas": "atlas/heroes.png",
+  "x": 256,
+  "y": 256,
+  "width": 256,
+  "height": 256
+ },
+ "ramanujan": {
+  "atlas": "atlas/heroes.png",
+  "x": 512,
+  "y": 256,
+  "width": 256,
+  "height": 256
+ },
+ "al_juarismi": {
+  "atlas": "atlas/heroes.png",
+  "x": 768,
+  "y": 256,
+  "width": 256,
+  "height": 256
+ },
+ "potenciator": {
+  "atlas": "atlas/enemigos.png",
+  "x": 0,
+  "y": 0,
+  "width": 256,
+  "height": 256
+ },
+ "radicosmico": {
+  "atlas": "atlas/enemigos.png",
+  "x": 256,
+  "y": 0,
+  "width": 256,
+  "height": 256
+ },
+ "multiplax": {
+  "atlas": "atlas/enemigos.png",
+  "x": 512,
+  "y": 0,
+  "width": 256,
+  "height": 256
+ },
+ "primox": {
+  "atlas": "atlas/enemigos.png",
+  "x": 768,
+  "y": 0,
+  "width": 256,
+  "height": 256
+ },
+ "negatron": {
+  "atlas": "atlas/enemigos.png",
+  "x": 1024,
+  "y": 0,
+  "width": 256,
+  "height": 256
+ },
+ "parentesis_maldito": {
+  "atlas": "atlas/enemigos.png",
+  "x": 0,
+  "y": 256,
+  "width": 256,
+  "height": 256
+ },
+ "denominadoron": {
+  "atlas": "atlas/enemigos.png",
+  "x": 256,
+  "y": 256,
+  "width": 256,
+  "height": 256
+ },
+ "simplifract": {
+  "atlas": "atlas/enemigos.png",
+  "x": 512,
+  "y": 256,
+  "width": 256,
+  "height": 256
+ },
+ "senor_escala": {
+  "atlas": "atlas/enemigos.png",
+  "x": 768,
+  "y": 256,
+  "width": 256,
+  "height": 256
+ },
+ "porcentajin": {
+  "atlas": "atlas/enemigos.png",
+  "x": 1024,
+  "y": 256,
+  "width": 256,
+  "height": 256
+ },
+ "incognita_x": {
+  "atlas": "atlas/enemigos.png",
+  "x": 0,
+  "y": 512,
+  "width": 256,
+  "height": 256
+ },
+ "polinomio_mutante": {
+  "atlas": "atlas/enemigos.png",
+  "x": 256,
+  "y": 512,
+  "width": 256,
+  "height": 256
+ },
+ "equilibrius": {
+  "atlas": "atlas/enemigos.png",
+  "x": 512,
+  "y": 512,
+  "width": 256,
+  "height": 256
+ },
+ "despejador_oscuro": {
+  "atlas": "atlas/enemigos.png",
+  "x": 768,
+  "y": 512,
+  "width": 256,
+  "height": 256
+ },
+ "pendientor": {
+  "atlas": "atlas/enemigos.png",
+  "x": 1024,
+  "y": 512,
+  "width": 256,
+  "height": 256
+ },
+ "parabola_vortice": {
+  "atlas": "atlas/enemigos.png",
+  "x": 0,
+  "y": 768,
+  "width": 256,
+  "height": 256
+ },
+ "mediana_traviesa": {
+  "atlas": "atlas/enemigos.png",
+  "x": 256,
+  "y": 768,
+  "width": 256,
+  "height": 256
+ },
+ "grafico_tramposo": {
+  "atlas": "atlas/enemigos.png",
+  "x": 512,
+  "y": 768,
+  "width": 256,
+  "height": 256
+ },
+ "dado_caotico": {
+  "atlas": "atlas/enemigos.png",
+  "x": 768,
+  "y": 768,
+  "width": 256,
+  "height": 256
+ },
+ "ruleta_imposible": {
+  "atlas": "atlas/enemigos.png",
+  "x": 1024,
+  "y": 768,
+  "width": 256,
+  "height": 256
+ },
+ "terreno_cesped": {
+  "atlas": "atlas/iconos.png",
+  "x": 0,
+  "y": 0,
+  "width": 128,
+  "height": 128
+ },
+ "terreno_tierra": {
+  "atlas": "atlas/iconos.png",
+  "x": 128,
+  "y": 0,
+  "width": 128,
+  "height": 128
+ },
+ "terreno_roca": {
+  "atlas": "atlas/iconos.png",
+  "x": 256,
+  "y": 0,
+  "width": 128,
+  "height": 128
+ },
+ "terreno_ladrillo": {
+  "atlas": "atlas/iconos.png",
+  "x": 384,
+  "y": 0,
+  "width": 128,
+  "height": 128
+ },
+ "agua": {
+  "atlas": "atlas/iconos.png",
+  "x": 512,
+  "y": 0,
+  "width": 128,
+  "height": 128
+ },
+ "lava": {
+  "atlas": "atlas/iconos.png",
+  "x": 640,
+  "y": 0,
+  "width": 128,
+  "height": 128
+ },
+ "hielo": {
+  "atlas": "atlas/iconos.png",
+  "x": 0,
+  "y": 128,
+  "width": 128,
+  "height": 128
+ },
+ "estrella": {
+  "atlas": "atlas/iconos.png",
+  "x": 128,
+  "y": 128,
+  "width": 128,
+  "height": 128
+ },
+ "trofeo": {
+  "atlas": "atlas/iconos.png",
+  "x": 256,
+  "y": 128,
+  "width": 128,
+  "height": 128
+ },
+ "calendario": {
+  "atlas": "atlas/iconos.png",
+  "x": 384,
+  "y": 128,
+  "width": 128,
+  "height": 128
+ },
+ "libro": {
+  "atlas": "atlas/iconos.png",
+  "x": 512,
+  "y": 128,
+  "width": 128,
+  "height": 128
+ },
+ "engranaje": {
+  "atlas": "atlas/iconos.png",
+  "x": 640,
+  "y": 128,
+  "width": 128,
+  "height": 128
+ },
+ "tienda": {
+  "atlas": "atlas/iconos.png",
+  "x": 0,
+  "y": 256,
+  "width": 128,
+  "height": 128
+ },
+ "llave": {
+  "atlas": "atlas/iconos.png",
+  "x": 128,
+  "y": 256,
+  "width": 128,
+  "height": 128
+ },
+ "candado": {
+  "atlas": "atlas/iconos.png",
+  "x": 256,
+  "y": 256,
+  "width": 128,
+  "height": 128
+ },
+ "cofre": {
+  "atlas": "atlas/iconos.png",
+  "x": 384,
+  "y": 256,
+  "width": 128,
+  "height": 128
+ },
+ "pocion_azul": {
+  "atlas": "atlas/iconos.png",
+  "x": 512,
+  "y": 256,
+  "width": 128,
+  "height": 128
+ },
+ "pocion_roja": {
+  "atlas": "atlas/iconos.png",
+  "x": 640,
+  "y": 256,
+  "width": 128,
+  "height": 128
+ },
+ "pocion_verde": {
+  "atlas": "atlas/iconos.png",
+  "x": 0,
+  "y": 384,
+  "width": 128,
+  "height": 128
+ },
+ "corazon": {
+  "atlas": "atlas/iconos.png",
+  "x": 128,
+  "y": 384,
+  "width": 128,
+  "height": 128
+ },
+ "moneda": {
+  "atlas": "atlas/iconos.png",
+  "x": 256,
+  "y": 384,
+  "width": 128,
+  "height": 128
+ },
+ "diamante": {
+  "atlas": "atlas/iconos.png",
+  "x": 384,
+  "y": 384,
+  "width": 128,
+  "height": 128
+ },
+ "escudo": {
+  "atlas": "atlas/iconos.png",
+  "x": 512,
+  "y": 384,
+  "width": 128,
+  "height": 128
+ },
+ "medalla": {
+  "atlas": "atlas/iconos.png",
+  "x": 640,
+  "y": 384,
+  "width": 128,
+  "height": 128
+ },
+ "corona": {
+  "atlas": "atlas/iconos.png",
+  "x": 0,
+  "y": 512,
+  "width": 128,
+  "height": 128
+ },
+ "misiones": {
+  "atlas": "atlas/iconos.png",
+  "x": 128,
+  "y": 512,
+  "width": 128,
+  "height": 128
+ }
+}

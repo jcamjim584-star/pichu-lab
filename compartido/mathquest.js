@@ -66,20 +66,35 @@
   // "juego" es el id en MARCA.juegos (compartido/marca.js). Sin juego = todavía no existe.
   // El orden de esta lista es el orden del mapa. "ahora: true" marca el tema que se está dando en clase.
   // "personaje" es la imagen de compartido/img/personajes/<personaje>.webp que se ve en la isla del mapa.
+  // "enemigo" es el enemigo del reino en el mapa y en la lista (compartido/img/galois/enemigos/<enemigo>.png,
+  //   sacado de las hojas del Drive con src/galois/generar_graficos.py). Sin enemigo, el reino no muestra ninguno.
   // "puerta" es [columna, fila] de la puerta del reino en el mapa explorable (compartido/gaussoria.js, MAPA).
   //   El edificio ocupa la fila de encima y las casillas de los lados; se entra desde la casilla de abajo.
   const MUNDOS = [
-    { id: "divisibilidad", puerta: [10, 27], reino: "Minas de los Primos", escenario: "Cuevas de gemas donde cada número esconde sus factores.", personaje: "divison", juego: "expres", nombre: "Factor Clash", tema: "Divisibilidad", icono: "÷", url: "applets/expres/" },
-    { id: "enteros", puerta: [5, 20], reino: "Reino de Hielo y Fuego", escenario: "Glaciares bajo cero y volcanes positivos.", personaje: "menos", juego: "integer-ninja", nombre: "Integer Ninja", tema: "Números enteros", icono: "±", url: "applets/integer-ninja/" },
-    { id: "fracciones", puerta: [11, 12], reino: "Bosque de las Fracciones", escenario: "Laberintos, puentes y árboles partidos en partes iguales.", personaje: "pirata", juego: "fraction-merge", nombre: "Fraction Merge", tema: "Fracciones", icono: "½", url: "applets/fraction-merge/", mq: true, ahora: true },
-    { id: "ecuaciones", puerta: [16, 9], reino: "Fortaleza del Álgebra", escenario: "Un castillo de incógnitas que solo se abre con ecuaciones.", personaje: "incognito", juego: "equation-merge", nombre: "Equation Merge", tema: "Ecuaciones", icono: "x=", url: "applets/equation-merge/", mq: true },
-    { id: "potencias", puerta: [24, 9], reino: "Cumbres de las Potencias", escenario: "Montañas que crecen al multiplicarse por sí mismas.", personaje: "mago", juego: "", nombre: "Power Quest", tema: "Potencias y raíces", icono: "x²" },
-    { id: "proporcionalidad", puerta: [32, 9], reino: "Valle de las Proporciones", escenario: "Molinos, recetas y mapas a escala.", personaje: "salsita", juego: "", nombre: "Ratio Run", tema: "Proporcionalidad", icono: "%" },
-    { id: "algebra", puerta: [39, 14], reino: "Torre de las Letras", escenario: "Donde los números se disfrazan de letras.", personaje: "arlequina", juego: "", nombre: "Algebra Royale", tema: "Expresiones algebraicas", icono: "3x" },
-    { id: "funciones", puerta: [30, 20], reino: "Llanuras de las Gráficas", escenario: "Caminos que suben, bajan y se cruzan en los ejes.", personaje: "pizarra", juego: "", nombre: "Graph Dash", tema: "Funciones y gráficas", icono: "ƒ" },
-    { id: "estadistica", puerta: [36, 27], reino: "Archipiélago de los Datos", escenario: "Islas de tablas, gráficos y medias.", personaje: "punteo", juego: "", nombre: "Data Ninja", tema: "Estadística", icono: "x̄" },
-    { id: "probabilidad", puerta: [24, 15], reino: "Laberinto del Azar", escenario: "Dados, monedas y puertas que se abren por suerte… o no.", personaje: "duende", juego: "", nombre: "Probability Arena", tema: "Probabilidad", icono: "🎲" },
+    { id: "divisibilidad", enemigo: "primox", puerta: [10, 27], reino: "Minas de los Primos", escenario: "Cuevas de gemas donde cada número esconde sus factores.", personaje: "divison", juego: "expres", nombre: "Factor Clash", tema: "Divisibilidad", icono: "÷", url: "applets/expres/" },
+    { id: "enteros", enemigo: "negatron", puerta: [5, 20], reino: "Reino de Hielo y Fuego", escenario: "Glaciares bajo cero y volcanes positivos.", personaje: "menos", juego: "integer-ninja", nombre: "Integer Ninja", tema: "Números enteros", icono: "±", url: "applets/integer-ninja/" },
+    { id: "fracciones", enemigo: "denominadoron", puerta: [11, 12], reino: "Bosque de las Fracciones", escenario: "Laberintos, puentes y árboles partidos en partes iguales.", personaje: "pirata", juego: "fraction-merge", nombre: "Fraction Merge", tema: "Fracciones", icono: "½", url: "applets/fraction-merge/", mq: true, ahora: true },
+    { id: "ecuaciones", enemigo: "incognita_x", puerta: [16, 9], reino: "Fortaleza del Álgebra", escenario: "Un castillo de incógnitas que solo se abre con ecuaciones.", personaje: "incognito", juego: "equation-merge", nombre: "Equation Merge", tema: "Ecuaciones", icono: "x=", url: "applets/equation-merge/", mq: true },
+    { id: "potencias", enemigo: "potenciator", puerta: [24, 9], reino: "Cumbres de las Potencias", escenario: "Montañas que crecen al multiplicarse por sí mismas.", personaje: "mago", juego: "", nombre: "Power Quest", tema: "Potencias y raíces", icono: "x²" },
+    { id: "proporcionalidad", enemigo: "porcentajin", puerta: [32, 9], reino: "Valle de las Proporciones", escenario: "Molinos, recetas y mapas a escala.", personaje: "salsita", juego: "", nombre: "Ratio Run", tema: "Proporcionalidad", icono: "%" },
+    { id: "algebra", enemigo: "polinomio_mutante", puerta: [39, 14], reino: "Torre de las Letras", escenario: "Donde los números se disfrazan de letras.", personaje: "arlequina", juego: "", nombre: "Algebra Royale", tema: "Expresiones algebraicas", icono: "3x" },
+    { id: "funciones", enemigo: "pendientor", puerta: [30, 20], reino: "Llanuras de las Gráficas", escenario: "Caminos que suben, bajan y se cruzan en los ejes.", personaje: "pizarra", juego: "", nombre: "Graph Dash", tema: "Funciones y gráficas", icono: "ƒ" },
+    { id: "estadistica", enemigo: "mediana_traviesa", puerta: [36, 27], reino: "Archipiélago de los Datos", escenario: "Islas de tablas, gráficos y medias.", personaje: "punteo", juego: "", nombre: "Data Ninja", tema: "Estadística", icono: "x̄" },
+    { id: "probabilidad", enemigo: "dado_caotico", puerta: [24, 15], reino: "Laberinto del Azar", escenario: "Dados, monedas y puertas que se abren por suerte… o no.", personaje: "duende", juego: "", nombre: "Probability Arena", tema: "Probabilidad", icono: "🎲" },
     { id: "geometria", puerta: [17, 15], reino: "Templo de la Geometría", escenario: "Ruinas de figuras, ángulos y acertijos espaciales.", personaje: "reglino", juego: "", nombre: "Geometry Builder", tema: "Geometría", icono: "△" }
+  ];
+
+  // ---------- Matemáticos jugables (se elige uno en «Elige tu matemático») ----------
+  // Imágenes: compartido/img/galois/heroes/<id>.png (mapa) y <id>-retrato.png (pantalla de elegir).
+  const HEROES = [
+    { id: "hipatia", nombre: "Hipatia", epoca: "Alejandría, hacia el año 400", frase: "Enseñó matemáticas y astronomía en la gran biblioteca de Alejandría." },
+    { id: "ada_lovelace", nombre: "Ada Lovelace", epoca: "Londres, 1815–1852", frase: "Escribió el primer algoritmo pensado para que lo hiciera una máquina." },
+    { id: "emmy_noether", nombre: "Emmy Noether", epoca: "Alemania, 1882–1935", frase: "Una de las grandes del álgebra: encontró orden donde otros veían caos." },
+    { id: "sophie_germain", nombre: "Sophie Germain", epoca: "París, 1776–1831", frase: "Estudió los números primos y firmaba sus cartas como «Monsieur Le Blanc»." },
+    { id: "gauss", nombre: "Gauss", epoca: "Alemania, 1777–1855", frase: "De niño sumó todos los números del 1 al 100 en un momento." },
+    { id: "fibonacci", nombre: "Fibonacci", epoca: "Pisa, hacia 1170–1250", frase: "Llevó a Europa nuestras cifras y la sucesión 1, 1, 2, 3, 5, 8…" },
+    { id: "ramanujan", nombre: "Ramanujan", epoca: "India, 1887–1920", frase: "Aprendió casi solo y llenó cuadernos de fórmulas sorprendentes." },
+    { id: "al_juarismi", nombre: "Al-Juarismi", epoca: "Bagdad, hacia 780–850", frase: "De su nombre viene «algoritmo», y de su libro, la palabra «álgebra»." }
   ];
 
   // ---------- Logros y medallas ----------
@@ -123,7 +138,9 @@
     return `<img src="${BASE}img/mascota.png" alt="πCHU" width="600" height="620" style="width:100%;height:auto${gesto === "triste" ? ";filter:grayscale(.7);transform:rotate(-6deg)" : ""}">`;
   }
   const personaje = id => `${BASE}img/personajes/${id}.webp`;
+  const heroe = (id, retrato) => `${BASE}img/galois/heroes/${id}${retrato ? "-retrato" : ""}.png`;
+  const enemigo = (id, grande) => `${BASE}img/galois/enemigos/${id}${grande ? "-grande" : ""}.png`;
 
   window.MathQuest = { CLAVE, leer, guardar, nivel, sumar, gastar, logro, resumen, ajuste, sinMovimiento,
-    MUNDOS, LOGROS, AVATARES, avatarSVG, personaje };
+    MUNDOS, HEROES, LOGROS, AVATARES, avatarSVG, personaje, heroe, enemigo };
 })();
