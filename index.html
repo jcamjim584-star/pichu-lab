@@ -144,6 +144,46 @@
       .mundo:nth-child(odd) .bocadillo { left: 80px; } .mundo:nth-child(even) .bocadillo { right: 80px; }
     }
 
+    /* ---------- Mapa explorable (compartido/gaussoria.js) ---------- */
+    .vistas { display: flex; justify-content: center; flex-wrap: wrap; gap: .5rem; margin: .9rem 0 1rem; }
+    .boton-vista { min-height: 44px; padding: .45em 1em; border: 3px solid var(--tinta); border-radius: var(--radio); box-shadow: 0 3px 0 var(--tinta);
+      background: var(--papel); color: var(--tinta); font: inherit; font-weight: 900; cursor: pointer; }
+    .boton-vista[aria-pressed="true"] { background: var(--noche); color: var(--oro-claro); }
+    .boton-vista[aria-pressed="true"]::before { content: "✓ "; }
+    .boton-vista:active { transform: translateY(2px); box-shadow: 0 1px 0 var(--tinta); }
+    .explorar[hidden], .tablero-mapa[hidden] { display: none !important; }
+    .explorar { max-width: 760px; margin: 0 auto; scroll-margin-top: 150px; }
+    .marco-lienzo { position: relative; border: 4px solid var(--tinta); border-radius: 10px; overflow: hidden; background: var(--noche); line-height: 0;
+      box-shadow: 0 0 0 4px var(--oro), 0 8px 0 4px var(--tinta); }
+    #lienzo { display: block; width: 100%; height: clamp(280px, 52svh, 520px); touch-action: none; cursor: pointer; }
+    #lienzo:focus-visible { outline: 4px solid var(--oro-claro); outline-offset: -6px; border-radius: 6px; }
+    .panel-reino { display: grid; grid-template-columns: auto 1fr; gap: .4rem .8rem; align-items: center; margin-top: 1.4rem; padding: .7rem .9rem;
+      background: var(--noche); color: var(--pergamino); border: 4px solid var(--pergamino); border-radius: var(--radio);
+      box-shadow: 0 0 0 3px var(--tinta), 0 6px 0 3px #000; line-height: 1.45; }
+    .panel-reino > img { width: 56px; height: auto; align-self: end; }
+    .panel-reino .quien { display: block; font-family: var(--fuente-pixel); color: var(--oro-claro); }
+    .panel-reino .reino-nombre { color: var(--oro-claro); }
+    .panel-reino .boton { grid-column: 1 / -1; justify-self: start; font-family: var(--fuente-pixel); font-size: 1.1rem; }
+    .panel-reino .boton[hidden] { display: none; }
+    .panel-reino :focus-visible { outline-color: var(--oro-claro); }
+    .mandos { display: flex; flex-wrap: wrap; gap: 1rem 1.4rem; align-items: center; margin-top: 1.2rem; }
+    /* La cruceta va encima del mapa, en la esquina de abajo a la derecha (a mano del pulgar) */
+    .cruceta { position: absolute; right: 10px; bottom: 10px; display: grid; grid-template-columns: repeat(3, 48px); grid-template-rows: repeat(3, 48px);
+      gap: 3px; line-height: 1; opacity: .9; }
+    .cruceta button { border: 3px solid var(--tinta); border-radius: var(--radio); background: rgba(37,30,74,.88); color: var(--pergamino);
+      font: inherit; font-size: 1.3rem; font-weight: 900; box-shadow: 0 3px 0 var(--tinta); cursor: pointer;
+      touch-action: none; user-select: none; -webkit-user-select: none; -webkit-touch-callout: none; }
+    .cruceta button:active { transform: translateY(2px); box-shadow: 0 1px 0 var(--tinta); background: var(--violeta-oscuro); }
+    .cruceta [data-dir="arriba"] { grid-column: 2; grid-row: 1; }
+    .cruceta [data-dir="izquierda"] { grid-column: 1; grid-row: 2; }
+    .cruceta [data-dir="derecha"] { grid-column: 3; grid-row: 2; }
+    .cruceta [data-dir="abajo"] { grid-column: 2; grid-row: 3; }
+    .cruceta .centro-cruceta { grid-column: 2; grid-row: 2; background: rgba(22,18,44,.8); border-radius: 4px; }
+    .cruceta button:focus-visible { outline: 3px solid var(--oro-claro); outline-offset: 1px; }
+    .ayuda { flex: 1; min-width: 15rem; margin: 0; font-size: .95rem; }
+    .ayuda kbd { display: inline-block; min-width: 1.6em; padding: 0 .35em; border: 2px solid var(--tinta); border-bottom-width: 3px; border-radius: 4px;
+      background: var(--papel); font: inherit; font-size: .85rem; font-weight: 900; text-align: center; }
+
     /* ---------- Ventanas (logros y ajustes) ---------- */
     .capa { position: fixed; inset: 0; z-index: 60; background: rgba(30,26,58,.6); display: none; align-items: center; justify-content: center; padding: 14px; }
     .capa.ver { display: flex; }
@@ -227,7 +267,35 @@
         <p>Cada reino es un tema. Entra, supera sus pruebas y recupera su símbolo: tu progreso se guarda solo en este dispositivo.
           <span class="alias-chip" id="chipAlias" hidden>Juegas como <strong id="aliasActual"></strong> · <a href="#mis-datos">cambiar</a></span></p>
       </div>
-      <div class="tablero-mapa">
+      <div class="vistas" role="group" aria-label="Cómo ver el mapa">
+        <button class="boton-vista" type="button" id="bVistaExplorar" aria-pressed="true">🧭 Explorar el mapa</button>
+        <button class="boton-vista" type="button" id="bVistaLista" aria-pressed="false">📜 Ver como lista</button>
+      </div>
+      <div class="explorar" id="explorar">
+        <div class="marco-lienzo">
+          <canvas id="lienzo" class="pixel" tabindex="0" role="application" aria-roledescription="mapa de juego"
+            aria-label="Mapa de Gaussoria. Muévete con las flechas y pulsa Intro en la puerta de un reino para entrar." aria-describedby="ayudaMapa textoReino"></canvas>
+          <div class="cruceta" role="group" aria-label="Cruceta para mover al explorador">
+            <button type="button" data-dir="arriba" aria-label="Mover arriba">▲</button>
+            <button type="button" data-dir="izquierda" aria-label="Mover a la izquierda">◀</button>
+            <span class="centro-cruceta" aria-hidden="true"></span>
+            <button type="button" data-dir="derecha" aria-label="Mover a la derecha">▶</button>
+            <button type="button" data-dir="abajo" aria-label="Mover abajo">▼</button>
+          </div>
+        </div>
+        <div class="panel-reino">
+          <img class="pixel" src="compartido/img/galois/pichu-guia.png" alt="" width="56" height="66">
+          <p style="margin:0"><span class="quien">πCHU</span><span id="textoReino"></span></p>
+          <a class="boton oro" id="bEntrar" href="#" hidden></a>
+        </div>
+        <div class="mandos">
+          <p class="ayuda" id="ayudaMapa"><strong>Cómo moverte:</strong> haz clic en el mapa y usa las flechas o <kbd>W</kbd> <kbd>A</kbd> <kbd>S</kbd> <kbd>D</kbd>;
+            en la puerta de un reino, pulsa <kbd>Intro</kbd> para entrar. En el móvil, usa la cruceta de la esquina o toca el sitio al que quieres ir.
+            Si lo prefieres, pulsa <strong>Ver como lista</strong>.</p>
+        </div>
+        <p class="solo-lector" id="avisoMapa" aria-live="polite"></p>
+      </div>
+      <div class="tablero-mapa" hidden>
         <nav class="mapa" id="mapa" aria-labelledby="titJuegos"></nav>
         <p class="meta"><span>🌫️ La niebla oscura cubre más reinos… ¡muy pronto!</span></p>
       </div>
@@ -288,6 +356,7 @@
 
   <script src="compartido/marca.js"></script>
   <script src="compartido/mathquest.js"></script>
+  <script src="compartido/gaussoria.js"></script>
   <script src="compartido/componentes.js"></script>
   <script>
   (function () {
@@ -317,7 +386,7 @@
     function empezar() {
       $("#inicio").hidden = true;
       sesion.poner("pichu.galois.inicio", "1");
-      requestAnimationFrame(() => { camino(); $("#titJuegos").focus(); });
+      requestAnimationFrame(() => { ponerVista(vista, true); });
     }
     const q = new URLSearchParams(location.search);
     if (q.has("mapa") || (!q.has("inicio") && sesion.leer("pichu.galois.inicio"))) $("#inicio").hidden = true;
@@ -378,6 +447,80 @@
       ["#camino", "#caminoBase", "#caminoArena"].forEach(id => { const el = $(id); if (el) el.setAttribute("d", d); });
     }
     addEventListener("resize", camino);
+
+    // ---------- Mapa explorable (motor en compartido/gaussoria.js) ----------
+    // Guarda la posición del explorador y la vista elegida en pichu.galois.v1 (clave propia, regla 2).
+    const CLAVE_GALOIS = "pichu.galois.v1";
+    const galois = {
+      leer() { try { const d = JSON.parse(localStorage.getItem(CLAVE_GALOIS)); if (d && d.v === 1) return d; } catch (e) { /* sin datos */ } return { v: 1 }; },
+      guardar(cambios) { try { localStorage.setItem(CLAVE_GALOIS, JSON.stringify(Object.assign(galois.leer(), cambios))); } catch (e) { /* sin almacenamiento */ } }
+    };
+    const lienzo = $("#lienzo");
+    const hayLienzo = !!(window.Gaussoria && lienzo.getContext && lienzo.getContext("2d"));
+    const guardado = galois.leer();
+    let vista = hayLienzo && guardado.vista !== "lista" ? "explorar" : "lista";
+    if (!hayLienzo) $("#bVistaExplorar").hidden = true;
+    const jugableM = m => { const j = MARCA.juegos.find(x => x.id === m.juego); return !!(j && j.estado === "jugar"); };
+    const textoEstado = m => { const r = MQ.leer().juegos[m.juego];
+      return m.mq && r && r.superados ? ` Llevas ${r.estrellas} de ${r.maxEstrellas} estrellas y ${r.superados} de ${r.total} niveles.` : ""; };
+    const ahoraM = MQ.MUNDOS.find(m => m.ahora && jugableM(m));
+    function textoPanel(i) {
+      if (i === null || i === undefined) {
+        return ahoraM ? `Sigue el camino hasta el <b class="reino-nombre">!</b> dorado: en clase estamos en el Reino ${MQ.MUNDOS.indexOf(ahoraM) + 1}, <b class="reino-nombre">${esc(ahoraM.reino)}</b>.`
+                      : "Explora Gaussoria: cada edificio es la puerta de un reino.";
+      }
+      const m = MQ.MUNDOS[i], cab = `Reino ${i + 1} · ${esc(m.tema)}: <b class="reino-nombre">${esc(m.reino)}</b>. `;
+      return jugableM(m) ? cab + `${esc(m.escenario)} Aquí te espera <b>${esc(m.nombre)}</b>.${esc(textoEstado(m))}`
+                         : cab + "La niebla oscura todavía lo cubre… ¡muy pronto podrás entrar!";
+    }
+    function alPisar(mundo) {
+      const i = mundo ? mundo.indice : null, m = mundo ? MQ.MUNDOS[i] : null;
+      $("#textoReino").innerHTML = textoPanel(i);
+      const b = $("#bEntrar"), puede = !!(m && jugableM(m));
+      b.hidden = !puede;
+      if (puede) { b.href = m.url + "index.html"; b.innerHTML = `<span aria-hidden="true">▶&nbsp;</span>Entrar en ${esc(m.nombre)}`; }
+      // Aviso para lectores de pantalla solo al llegar a una puerta (no en cada paso)
+      if (m) $("#avisoMapa").textContent = $("#textoReino").textContent + (puede ? " Pulsa Intro para entrar." : "");
+    }
+    const motor = hayLienzo ? Gaussoria.crear({
+      lienzo,
+      mundos: MQ.MUNDOS.map((m, i) => ({ indice: i, puerta: m.puerta, jugable: jugableM(m), ahora: !!m.ahora,
+        imagen: m.personaje ? MQ.personaje(m.personaje) : "", cuadro: ["divison", "reglino", "punteo", "incognito"].includes(m.personaje) })),
+      posicion: guardado.pos,
+      guia: "compartido/img/galois/pichu-mini.png",
+      sinMovimiento: () => MQ.sinMovimiento(),
+      alPisar,
+      alMoverse: pos => galois.guardar({ pos }),
+      alEntrar: mundo => { const m = MQ.MUNDOS[mundo.indice]; if (jugableM(m)) location.href = m.url + "index.html"; }
+    }) : null;
+    if (motor) alPisar(motor.actual());
+    // Cambiar entre el mapa explorable y la lista
+    function ponerVista(v, enfocar) {
+      vista = v === "explorar" && motor ? "explorar" : "lista";
+      $("#explorar").hidden = vista !== "explorar";
+      $(".tablero-mapa").hidden = vista !== "lista";
+      $("#bVistaExplorar").setAttribute("aria-pressed", vista === "explorar");
+      $("#bVistaLista").setAttribute("aria-pressed", vista === "lista");
+      if (motor) { if (vista === "explorar" && $("#inicio").hidden) motor.arrancar(); else motor.parar(); }
+      if (vista === "lista") requestAnimationFrame(camino);
+      if (enfocar && vista === "explorar") { lienzo.focus({ preventScroll: true }); $("#explorar").scrollIntoView({ block: "start" }); }
+      else if (enfocar) $("#titJuegos").focus();
+    }
+    $("#bVistaExplorar").addEventListener("click", () => { galois.guardar({ vista: "explorar" }); ponerVista("explorar", true); });
+    $("#bVistaLista").addEventListener("click", () => { galois.guardar({ vista: "lista" }); ponerVista("lista"); });
+    // Cruceta: mantener pulsado camina; con el teclado (Intro/Espacio sobre el botón) da un paso
+    document.querySelectorAll(".cruceta [data-dir]").forEach(b => {
+      const d = b.dataset.dir, soltar = () => motor && motor.soltar(d);
+      b.addEventListener("pointerdown", e => { if (!motor) return; e.preventDefault(); try { b.setPointerCapture(e.pointerId); } catch (er) { /* */ } motor.pulsar(d); });
+      ["pointerup", "pointercancel", "lostpointercapture"].forEach(t => b.addEventListener(t, soltar));
+      b.addEventListener("click", e => { if (motor && e.detail === 0) motor.unPaso(d); });
+      b.addEventListener("contextmenu", e => e.preventDefault());
+    });
+    addEventListener("resize", () => { if (motor && vista === "explorar") motor.redimensionar(); });
+    document.addEventListener("visibilitychange", () => {
+      if (!motor) return;
+      if (document.hidden) motor.parar(); else if (vista === "explorar" && $("#inicio").hidden) motor.arrancar();
+    });
 
     function pintarProgreso() {
       const d = MQ.leer(), n = MQ.nivel(d.xp);
@@ -460,7 +603,8 @@
     });
 
     pintarProgreso(); pintarMapa(); pintarAlias();
-    addEventListener("pageshow", () => { pintarProgreso(); pintarMapa(); });      // al volver de un juego, progreso al día
+    ponerVista(vista, false);
+    addEventListener("pageshow", () => { pintarProgreso(); pintarMapa(); if (motor) alPisar(motor.actual()); });      // al volver de un juego, progreso al día
   })();
   </script>
 </body>

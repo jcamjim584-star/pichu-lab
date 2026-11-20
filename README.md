@@ -8,12 +8,17 @@ El universo matemático de **Gaussoria** ha perdido los símbolos del conocimien
 y el jugador los recorre con **πCHU**, su guía y compañero. Web estática: HTML, CSS y JavaScript, sin frameworks,
 sin registro y sin recoger datos personales.
 
-## Qué incluye (versión 1.0.0)
+## Qué incluye (versión 1.1.0)
 - **Pantalla de inicio** con el logo GALOIS LEGACY y πCHU contando la historia (se salta al volver de un juego;
   `?inicio` la fuerza y `?mapa` la omite).
-- **Mapa de Gaussoria**: 11 reinos (uno por tema de 1.º ESO). La lista está en `compartido/mathquest.js` (`MUNDOS`,
-  campos `reino` y `escenario`); `"ahora: true"` marca el tema que se da en clase. Los reinos sin juego aparecen «en la niebla».
-- Progreso común (nivel, XP, monedas, logros y ajustes) en `pichu.mathquest.v1`.
+- **Mapa de Gaussoria explorable** (vista cenital, pixel art): el explorador camina con πCHU detrás y entra en cada reino
+  por la puerta de su edificio. Se mueve con flechas/WASD, con la cruceta táctil o tocando el mapa; Intro entra.
+  Motor y terreno en `compartido/gaussoria.js` (ficha: `docs/fichas/gaussoria.md`).
+- **Ver como lista**: la vista de islas de siempre, accesible para lector de pantalla. La web recuerda la vista elegida.
+- 11 reinos (uno por tema de 1.º ESO). La lista está en `compartido/mathquest.js` (`MUNDOS`, campos `reino`, `escenario`
+  y `puerta`); `"ahora: true"` marca el tema que se da en clase (en el mapa, con una «!» dorada). Los reinos sin juego están «en la niebla».
+- Progreso común (nivel, XP, monedas, logros y ajustes) en `pichu.mathquest.v1`; posición del explorador y vista elegida
+  en `pichu.galois.v1`.
 - Identidad visual: paleta y letras en `compartido/marca.css`; gráficos pixel art (logo, πCHU, iconos) generados con
   `python3 src/galois/generar_graficos.py` en `compartido/img/galois/`.
 
@@ -27,7 +32,7 @@ sin registro y sin recoger datos personales.
 
 **Hoja de ruta de GALOIS LEGACY** (cada fase se prueba y documenta antes de la siguiente):
 1. ✅ Identidad: nombre, logo, pantalla de inicio, paleta, letra pixel, πCHU guía (1.0.0).
-2. Mapa de Gaussoria explorable en vista cenital (teclado, cruceta táctil y lista accesible).
+2. ✅ Mapa de Gaussoria explorable en vista cenital (teclado, cruceta táctil y lista accesible) (1.1.0).
 3. Ocho matemáticos jugables (Galois, Gauss, Euler, Noether, Hipatia, Lovelace, Fibonacci, Fermat) con habilidades.
 4. Primera mazmorra RPG (Reino de Hielo y Fuego) con combate por preguntas, reutilizando el motor de Integer Ninja.
 5. Adaptación visual de cada juego al universo Galois.

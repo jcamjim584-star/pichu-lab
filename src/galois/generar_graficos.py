@@ -3,6 +3,7 @@
 Crea, sin descargar nada de Internet, los gráficos de la identidad del juego:
   compartido/img/galois/logo.svg          logotipo «GALOIS LEGACY» (letras pixel propias)
   compartido/img/galois/pichu-guia.png    πCHU en pixel art (a partir de compartido/img/mascota.png)
+  compartido/img/galois/pichu-mini.png    πCHU pequeño, el compañero que sigue al explorador en el mapa
   compartido/img/galois/icono-192.png     icono de la app
   compartido/img/galois/icono-512.png
 
@@ -120,7 +121,7 @@ def hex_rgb(h):
     return tuple(int(h[i:i + 2], 16) for i in (1, 3, 5))
 
 
-def pichu_pixel(alto=64):
+def pichu_pixel(alto=64, nombre="pichu-guia.png"):
     im = Image.open(RAIZ / "compartido/img/mascota.png").convert("RGBA")
     im = im.crop(im.getbbox())
     ancho = round(im.width * alto / im.height)
@@ -154,7 +155,7 @@ def pichu_pixel(alto=64):
                 marco.append((x, y))
     for p in marco:
         px[p] = tinta
-    spr.save(SALIDA / "pichu-guia.png", optimize=True)
+    spr.save(SALIDA / nombre, optimize=True)
     return spr
 
 
@@ -185,6 +186,7 @@ if __name__ == "__main__":
     SALIDA.mkdir(parents=True, exist_ok=True)
     w, h = logo_svg()
     spr = pichu_pixel()
+    pichu_pixel(alto=20, nombre="pichu-mini.png")      # compañero del mapa de Gaussoria
     for lado in (192, 512):
         icono(spr, lado)
     print(f"Logo {w}×{h} px de arte · πCHU {spr.width}×{spr.height} · iconos 192 y 512 → {SALIDA.relative_to(RAIZ)}")

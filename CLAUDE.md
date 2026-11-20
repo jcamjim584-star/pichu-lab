@@ -21,8 +21,9 @@ compartido/marca.js     nombre, versión y LISTA DE JUEGOS (MARCA.juegos)
 compartido/componentes.js  alias, exportar/importar/borrar, confirmación doble
 compartido/volver.js    botón "← Mapa" que se añade a cada juego
 compartido/mathquest.js progreso común (pichu.mathquest.v1), MUNDOS (reinos de Gaussoria) y LOGROS
+compartido/gaussoria.js  mapa explorable: terreno (MAPA) y motor; las puertas están en MUNDOS[i].puerta
 compartido/img/personajes/  personaje de cada reino (.webp; por ahora, sus enemigos y jefes)
-compartido/img/galois/  logo, πCHU pixel e iconos (generados por src/galois/generar_graficos.py)
+compartido/img/galois/  logo, πCHU pixel (guía y mini), iconos (generados por src/galois/generar_graficos.py)
 applets/<id>/index.html cada juego, autocontenido
 src/<juego>/            fuentes de los juegos que se compilan (p. ej. src/pizzeria: motor.js + juego.html + personajes)
                         → python3 src/pizzeria/build.py genera applets/pizzeria/index.html (no editar el generado)

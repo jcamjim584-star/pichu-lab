@@ -1,5 +1,25 @@
 # Registro de cambios
 
+## 1.1.0 · 20/11/2026 · GALOIS LEGACY, fase 2 (mapa explorable)
+- El **Mapa de Gaussoria** se puede recorrer en vista cenital (pixel art de 16×16): un **explorador** provisional camina por los
+  caminos con **πCHU** detrás. Cada reino es un edificio con su número y su personaje; al pisar la puerta, πCHU cuenta qué reino es
+  y qué juego abre, y aparece el botón «Entrar en …». Los reinos sin juego tienen candado y niebla («¡muy pronto!»).
+- Controles: flechas o W A S D (con el mapa enfocado) e Intro para entrar; cruceta táctil en la esquina del mapa; tocar o hacer
+  clic en un sitio lleva andando hasta allí (si se toca un edificio, hasta su puerta).
+- **Ver como lista**: la vista de islas anterior sigue disponible con un botón; la web recuerda la vista elegida.
+- Accesibilidad: el lienzo tiene nombre e instrucciones, se anuncia la llegada a cada puerta (aviso `aria-live`), botones de 48 px,
+  y sin animaciones (sistema o ajuste de los juegos) el explorador salta de casilla en casilla y el agua no se mueve.
+- Archivo nuevo `compartido/gaussoria.js` (terreno en letras y motor). `MUNDOS` gana el campo `puerta: [columna, fila]`.
+- Guardado nuevo `pichu.galois.v1` (posición del explorador y vista). **No cambia ningún guardado anterior ni ningún juego.**
+  Al volver de un juego, el explorador aparece en la puerta por la que entró.
+- `src/galois/generar_graficos.py` crea también `pichu-mini.png` (πCHU pequeño que sigue al explorador).
+- `tests/comprobar.mjs`: cada reino tiene puerta, su edificio cabe sobre terreno libre sin montarse en otro, se entra desde abajo
+  y se llega andando desde la salida.
+- Privacidad y accesibilidad explican el mapa y la clave nueva.
+- Comprobado: `node tests/comprobar.mjs` «Todo correcto»; en Chromium a 390, 760 y 1280 px sin errores en la consola ni
+  desbordamiento horizontal; caminar con teclado, cruceta y toque; entrar con Intro en Fraction Merge y volver a la misma puerta;
+  reino en la niebla sin botón de entrar; vista de lista recordada al recargar; modo sin movimiento.
+
 ## 1.0.0 · 19/11/2026 · GALOIS LEGACY, fase 1 (identidad)
 - πCHU pasa a ser **GALOIS LEGACY · El legado de los matemáticos — un juego de πCHU LAB**. Solo 1.º ESO.
 - **Pantalla de inicio** nueva: logo pixel art, subtítulo y πCHU (guía y compañero) contando la historia de Gaussoria en 4 pasos.
