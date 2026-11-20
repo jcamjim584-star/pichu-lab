@@ -31,7 +31,9 @@
     nombre: 'πCHU ARCADE',
     colores: { espresso: '#332B2A', salvia: '#5A8A78', salviaOsc: '#3F6E5C', coral: '#E46D4D', coralOsc: '#A8402A', crema: '#F4EDD7', mostaza: '#E8B53A' },
     fuente: "'Lato', system-ui, sans-serif",
+    fuentePixel: "'Pixelify Sans', 'Lato', system-ui, sans-serif",
   };
+  const FUENTE_LISA = MARCA.fuente;
   const C = MARCA.colores;
 
   // Frutas "normales" (llevan un número). Cada una: color de piel, pulpa y forma.
@@ -185,7 +187,7 @@
   function defaultSave() {
     return {
       alias: '', aliases: [], profiles: {}, seenHowto: false,
-      settings: { sound: true, music: true, reduce: prefersReduced, tap: false, relax: false, math: 0, motor: 1, decide: true },
+      settings: { sound: true, music: true, reduce: prefersReduced, tap: false, relax: false, math: 0, motor: 1, decide: true, pixel: true },
       teacher: { group: '', on: false, add: true, sub: true, mul: false, div: false, exact: true, filter: true, specials: true, bombs: true, hints: true, decide: true, min: -20, max: 20, speed: 1, dur: 90, diff: 1 },
       stats: [],
     };
@@ -281,40 +283,109 @@
       lose: () => [67, 63, 60, 55].forEach((m, i) => tone(midi(m), 0.3, 'triangle', 0.1, null, i * 0.2)),
       click: () => tone(660, 0.05, 'triangle', 0.06),
     };
-    /* ---- Música: secuenciador muy sencillo (bajo + melodía) ---- */
+    /* ---- Música de aventura (v0.6): chiptune original al estilo de las consolas de 8 bits ----
+       Cada pieza tiene acordes (uno por compás), una melodía escrita en corcheas [nota MIDI, duración en corcheas]
+       (0 = silencio) y unos "instrumentos": pulso 25 % (melodía), triángulo (bajo), arpegio y percusión de ruido.
+       Todas las melodías están compuestas para este juego. 60 = do central. */
     const TRACKS = {
-      menu: { bpm: 100, chords: [[48, 52, 55], [45, 48, 52], [41, 45, 48], [43, 47, 50]], lead: [0, 2, 1, 2, 0, 2, 1, 3], vol: 0.6 },
-      game: { bpm: 128, chords: [[48, 52, 55], [45, 48, 52], [41, 45, 48], [43, 47, 50]], lead: [0, 1, 2, 3, 2, 1, 2, 0], vol: 0.8 },
-      boss: { bpm: 150, chords: [[45, 48, 52], [41, 45, 48], [43, 47, 50], [40, 44, 47]], lead: [0, 2, 0, 3, 1, 2, 3, 1], vol: 0.9 },
+      // Menú y mapa de la aventura: tema heroico «de partir de viaje» (do mayor, I–♭VII–IV–I)
+      menu: { bpm: 112, vol: 0.75, arp: 'pulse', drums: 'march',
+        chords: [[48, 52, 55], [46, 50, 53], [41, 45, 48], [48, 52, 55], [45, 48, 52], [41, 45, 48], [43, 47, 50], [43, 47, 50],
+          [48, 52, 55], [46, 50, 53], [41, 45, 48], [48, 52, 55], [41, 45, 48], [43, 47, 50], [48, 52, 55], [48, 52, 55]],
+        lead: [[67, 3], [60, 1], [64, 2], [67, 2], [70, 3], [69, 1], [67, 2], [65, 2], [69, 3], [72, 1], [69, 2], [65, 2], [67, 6], [0, 2],
+          [69, 2], [72, 2], [76, 3], [74, 1], [72, 2], [69, 2], [65, 2], [69, 2], [71, 3], [67, 1], [71, 2], [74, 2], [79, 6], [0, 2],
+          [67, 3], [60, 1], [64, 2], [67, 2], [70, 3], [69, 1], [67, 2], [65, 2], [69, 3], [72, 1], [69, 2], [65, 2], [67, 6], [0, 2],
+          [77, 3], [76, 1], [74, 2], [72, 2], [74, 3], [71, 1], [67, 2], [71, 2], [72, 8], [67, 2], [64, 2], [60, 4]] },
+      // Presentación de cada nivel: «la historia», tranquila y misteriosa (la menor, arpegio de arpa)
+      story: { bpm: 84, vol: 0.7, arp: 'harp', drums: null,
+        chords: [[45, 48, 52], [41, 45, 48], [48, 52, 55], [43, 47, 50], [45, 48, 52], [41, 45, 48], [40, 44, 47], [40, 44, 47]],
+        lead: [[76, 4], [72, 2], [74, 2], [72, 6], [69, 2], [67, 4], [72, 2], [76, 2], [74, 8],
+          [76, 3], [77, 1], [76, 2], [72, 2], [77, 4], [76, 2], [72, 2], [71, 6], [68, 2], [71, 8]] },
+      // Partida: «¡al ataque!», enérgica (re menor)
+      game: { bpm: 138, vol: 0.62, arp: 'pulse', drums: 'run',
+        chords: [[50, 53, 57], [48, 52, 55], [46, 50, 53], [48, 52, 55], [50, 53, 57], [48, 52, 55], [46, 50, 53], [45, 49, 52]],
+        lead: [[62, 1], [65, 1], [69, 2], [67, 1], [65, 1], [64, 1], [65, 1], [64, 2], [67, 2], [72, 2], [67, 2],
+          [65, 1], [67, 1], [70, 2], [69, 1], [67, 1], [65, 1], [62, 1], [64, 4], [67, 2], [0, 2],
+          [74, 2], [72, 1], [69, 1], [72, 2], [74, 2], [76, 2], [74, 1], [72, 1], [67, 4],
+          [70, 2], [69, 1], [67, 1], [65, 2], [67, 2], [69, 4], [73, 2], [76, 2]] },
+      // Jefes: tensa y rápida (la menor con ♭II y el tritono)
+      boss: { bpm: 160, vol: 0.7, arp: 'pulse', drums: 'boss',
+        chords: [[45, 48, 52], [46, 50, 53], [45, 48, 52], [40, 44, 47]],
+        lead: [[69, 1], [69, 1], [72, 1], [69, 1], [75, 2], [74, 2], [70, 1], [70, 1], [74, 1], [70, 1], [77, 2], [76, 2],
+          [69, 1], [72, 1], [76, 1], [81, 1], [80, 2], [76, 2], [68, 2], [71, 2], [74, 2], [76, 2]] },
     };
+    // La melodía se convierte en una tabla: paso (semicorchea) → nota
+    Object.values(TRACKS).forEach((tr) => {
+      tr.len = tr.chords.length * 16; tr.notes = {};
+      let pos = 0;
+      for (const [m, d] of tr.lead) { if (m) tr.notes[pos % tr.len] = [m, d * 2]; pos += d * 2; }
+    });
+    let pulseWave = null, echo = null;
+    function musicBus() {
+      if (!pulseWave) { // onda de pulso al 25 %: el sonido típico de las consolas antiguas
+        const n = 24, re = new Float32Array(n), im = new Float32Array(n);
+        for (let k = 1; k < n; k++) im[k] = (2 / (k * Math.PI)) * Math.sin(k * Math.PI * 0.25);
+        pulseWave = ctx.createPeriodicWave(re, im);
+      }
+      if (!echo) { // eco suave para la melodía (da sensación de "gran aventura")
+        echo = ctx.createDelay(1); const fb = ctx.createGain(), wet = ctx.createGain();
+        fb.gain.value = 0.28; wet.gain.value = 0.35;
+        echo.connect(fb); fb.connect(echo); echo.connect(wet); wet.connect(musicGain);
+      }
+    }
     function playStep(tr, s, t) {
-      const bar = Math.floor(s / 16) % tr.chords.length, ch = tr.chords[bar], st = s % 16;
-      const note = (m, dur, type, vol) => {
+      const pos = s % tr.len, bar = Math.floor(pos / 16), st = pos % 16, ch = tr.chords[bar];
+      const spb = 60 / tr.bpm / 4; // segundos por semicorchea
+      const voice = (m, dur, kind, vol, toEcho) => {
         const o = ctx.createOscillator(), g = ctx.createGain();
-        o.type = type; o.frequency.value = midi(m);
-        g.gain.setValueAtTime(0.0001, t); g.gain.exponentialRampToValueAtTime(vol * tr.vol, t + 0.01);
-        g.gain.exponentialRampToValueAtTime(0.0001, t + dur);
-        o.connect(g); g.connect(musicGain); o.start(t); o.stop(t + dur + 0.02);
+        if (kind === 'pulse') o.setPeriodicWave(pulseWave); else o.type = kind;
+        o.frequency.value = midi(m);
+        const v = vol * tr.vol;
+        g.gain.setValueAtTime(0.0001, t); g.gain.exponentialRampToValueAtTime(v, t + 0.012);
+        g.gain.setValueAtTime(v, t + Math.max(0.02, dur - 0.06)); g.gain.exponentialRampToValueAtTime(0.0001, t + dur);
+        if (kind === 'pulse' && dur > 0.35) { // vibrato en las notas largas
+          const lfo = ctx.createOscillator(), lg = ctx.createGain();
+          lfo.frequency.value = 5.5; lg.gain.setValueAtTime(0, t); lg.gain.linearRampToValueAtTime(midi(m) * 0.012, t + dur * 0.6);
+          lfo.connect(lg); lg.connect(o.frequency); lfo.start(t); lfo.stop(t + dur + 0.02);
+        }
+        o.connect(g); g.connect(musicGain); if (toEcho) g.connect(echo);
+        o.start(t); o.stop(t + dur + 0.02);
       };
-      if (st % 4 === 0) note(ch[0] - 12, 0.22, 'triangle', 0.22);
-      if (st % 4 === 2) note(ch[0], 0.1, 'triangle', 0.1);
+      const hit = (dur, vol, type, f) => {
+        const n = ctx.createBufferSource(); n.buffer = noiseBuf;
+        const fl = ctx.createBiquadFilter(); fl.type = type; fl.frequency.value = f;
+        const g = ctx.createGain(); g.gain.setValueAtTime(vol * tr.vol, t); g.gain.exponentialRampToValueAtTime(0.0001, t + dur);
+        n.connect(fl); fl.connect(g); g.connect(musicGain); n.start(t, Math.random() * 0.5); n.stop(t + dur + 0.02);
+      };
+      const kick = () => {
+        const o = ctx.createOscillator(), g = ctx.createGain();
+        o.type = 'sine'; o.frequency.setValueAtTime(150, t); o.frequency.exponentialRampToValueAtTime(45, t + 0.12);
+        g.gain.setValueAtTime(0.35 * tr.vol, t); g.gain.exponentialRampToValueAtTime(0.0001, t + 0.15);
+        o.connect(g); g.connect(musicGain); o.start(t); o.stop(t + 0.17);
+      };
+      // melodía
+      const n = tr.notes[pos];
+      if (n) voice(n[0], n[1] * spb * 0.95, 'pulse', 0.075, true);
+      // bajo de triángulo: fundamental y octava (y la quinta en la marcha)
       if (st % 2 === 0) {
-        const idx = tr.lead[(st / 2) % 8];
-        const m = idx === 3 ? ch[0] + 24 : ch[idx] + 12 + (bar % 2 ? 0 : 12);
-        if (!(st === 14 && bar % 2)) note(m, 0.12, 'square', 0.05);
+        const pat = tr.drums === 'march' ? [0, 12, 7, 12] : tr.drums ? [0, 12, 0, 12] : [0, 7, 12, 7];
+        if (tr.drums || st % 4 === 0) voice(ch[0] - 12 + pat[(st / 2) % 4], spb * (tr.drums ? 1.8 : 3.6), 'triangle', 0.2);
       }
-      if (st % 8 === 4) { // caja
-        const s2 = ctx.createBufferSource(); s2.buffer = noiseBuf;
-        const g = ctx.createGain(); g.gain.setValueAtTime(0.06 * tr.vol, t); g.gain.exponentialRampToValueAtTime(0.0001, t + 0.08);
-        const f = ctx.createBiquadFilter(); f.type = 'highpass'; f.frequency.value = 2500;
-        s2.connect(f); f.connect(g); g.connect(musicGain); s2.start(t); s2.stop(t + 0.1);
-      }
+      // arpegio
+      if (tr.arp === 'harp') voice(ch[st % 3] + 12 + (st % 6 >= 3 ? 12 : 0), spb * 3, 'triangle', 0.07);
+      else if (st % 2 === 1) voice(ch[(st >> 1) % 3] + 12, spb * 0.9, 'pulse', 0.022);
+      // percusión
+      if (tr.drums === 'march') { if (st === 0 || st === 8) kick(); if (st === 4 || st === 12) hit(0.12, 0.09, 'bandpass', 1800); if (st === 14) hit(0.06, 0.05, 'bandpass', 1800); if (st % 2 === 0) hit(0.03, 0.025, 'highpass', 7000); }
+      else if (tr.drums === 'run') { if (st % 8 === 0 || st === 10) kick(); if (st % 8 === 4) hit(0.1, 0.08, 'bandpass', 2000); if (st % 2 === 0) hit(0.03, 0.03, 'highpass', 7000); }
+      else if (tr.drums === 'boss') { if (st % 4 === 0) kick(); if (st % 8 === 4) hit(0.12, 0.1, 'bandpass', 1500); hit(0.025, st % 2 ? 0.02 : 0.035, 'highpass', 7500); }
     }
     function music(name) {
       if (!ctx) return;
       if (track && track.name === name && musicTimer) return;
       stopMusic();
       if (!save.settings.music || !name) return;
+      if (!TRACKS[name]) return;
+      musicBus();
       track = Object.assign({ name }, TRACKS[name]);
       step = 0; nextT = ctx.currentTime + 0.05;
       musicTimer = setInterval(() => {
@@ -338,16 +409,44 @@
      4. LIENZO Y DIBUJO
      ================================================================= */
   const canvas = $('#game');
-  const ctx = canvas.getContext('2d');
+  const mainCtx = canvas.getContext('2d');
+  let ctx = mainCtx; // lienzo en el que se dibuja ahora (el grande o la capa pixel)
   let W = 0, H = 0, DPR = 1, R = 44; // R = radio base de las frutas
   let bgCanvas = null;
+  /* ---------- Estilo pixel art (v0.6) ----------
+     El mundo (fondo, frutas, espada, jefes, partículas) se dibuja en una capa pequeña
+     (1 píxel de la capa = PX píxeles de la pantalla) y se amplía SIN suavizar: así se ven
+     los cuadraditos. Los números y textos se dibujan aparte, a tamaño real, para que
+     siempre se lean bien. Se puede desactivar en Ajustes («Gráficos pixel»). */
+  const lo = document.createElement('canvas');
+  const loCtx = lo.getContext('2d');
+  let PX = 1;
+  const pixelOn = () => save.settings.pixel !== false;
+  function applyPixel() {
+    document.documentElement.classList.toggle('pixel', pixelOn());
+    MARCA.fuente = pixelOn() ? MARCA.fuentePixel : FUENTE_LISA;
+  }
+  /** Dibuja fn() en la capa pixel y la pega ampliada en el lienzo grande */
+  function pixelLayer(fn) {
+    if (PX <= 1) { fn(); return; }
+    loCtx.setTransform(1, 0, 0, 1, 0, 0); loCtx.clearRect(0, 0, lo.width, lo.height);
+    loCtx.setTransform(1 / PX, 0, 0, 1 / PX, 0, 0);
+    ctx = loCtx;
+    try { fn(); } finally { ctx = mainCtx; }
+    mainCtx.save(); mainCtx.setTransform(1, 0, 0, 1, 0, 0); mainCtx.imageSmoothingEnabled = false;
+    mainCtx.drawImage(lo, 0, 0, lo.width * PX * DPR, lo.height * PX * DPR);
+    mainCtx.restore();
+  }
   const layout = { lineY: 160, playTop: 190 };
 
   function resize() {
     DPR = Math.min(window.devicePixelRatio || 1, 2);
     W = window.innerWidth; H = window.innerHeight;
     canvas.width = Math.round(W * DPR); canvas.height = Math.round(H * DPR);
-    ctx.setTransform(DPR, 0, 0, DPR, 0, 0);
+    mainCtx.setTransform(DPR, 0, 0, DPR, 0, 0);
+    // tamaño del "píxel gordo": 3 en un móvil, hasta 4 en pantallas grandes
+    PX = pixelOn() ? clamp(Math.round(Math.min(W, H) / 130), 2, 4) : 1;
+    lo.width = Math.ceil(W / PX); lo.height = Math.ceil(H / PX);
     R = clamp(Math.min(W * 0.105, H * 0.068), 34, 60);
     buildBackground();
     measureLayout();
@@ -371,9 +470,10 @@
   /* ---------- Fondo ---------- */
   function buildBackground() {
     bgCanvas = document.createElement('canvas');
-    bgCanvas.width = Math.round(W * DPR); bgCanvas.height = Math.round(H * DPR);
+    const k = PX > 1 ? 1 / PX : DPR; // en pixel art, el fondo ya se fabrica pequeño
+    bgCanvas.width = Math.round(W * k); bgCanvas.height = Math.round(H * k);
     const b = bgCanvas.getContext('2d');
-    b.setTransform(DPR, 0, 0, DPR, 0, 0);
+    b.setTransform(k, 0, 0, k, 0, 0);
     const id = P().bg;
     let g;
     if (id === 'night') {
@@ -582,6 +682,15 @@
     }
   }
   function roundRect(c, x, y, w, h, r) {
+    if (PX > 1) { // esquina "mordida" de pixel art en vez de curva
+      const s = Math.min(r, PX * 2, w / 2, h / 2), t = s / 2;
+      c.beginPath(); c.moveTo(x + s, y); c.lineTo(x + w - s, y); c.lineTo(x + w - s, y + t); c.lineTo(x + w - t, y + t);
+      c.lineTo(x + w - t, y + s); c.lineTo(x + w, y + s); c.lineTo(x + w, y + h - s); c.lineTo(x + w - t, y + h - s);
+      c.lineTo(x + w - t, y + h - t); c.lineTo(x + w - s, y + h - t); c.lineTo(x + w - s, y + h); c.lineTo(x + s, y + h);
+      c.lineTo(x + s, y + h - t); c.lineTo(x + t, y + h - t); c.lineTo(x + t, y + h - s); c.lineTo(x, y + h - s);
+      c.lineTo(x, y + s); c.lineTo(x + t, y + s); c.lineTo(x + t, y + t); c.lineTo(x + s, y + t); c.closePath();
+      return;
+    }
     c.beginPath(); c.moveTo(x + r, y); c.arcTo(x + w, y, x + w, y + h, r); c.arcTo(x + w, y + h, x, y + h, r);
     c.arcTo(x, y + h, x, y, r); c.arcTo(x, y, x + w, y, r); c.closePath();
   }
@@ -607,6 +716,8 @@
       c.drawImage(img, -img.naturalWidth * k / 2, -img.naturalHeight * k / 2, img.naturalWidth * k, img.naturalHeight * k);
     } else { c.fillStyle = C.espresso; c.beginPath(); c.arc(0, 0, r, 0, TAU); c.fill(); }
     c.restore();
+  }
+  function drawBossBar(c, b) {
     if (b.defeated) return;
     // barra de vida con el nombre
     const bw = Math.min(W * 0.6, 300), bx = W / 2 - bw / 2, by = b.baseY - b.r - 26;
@@ -1451,62 +1562,79 @@
 
   /* ---------- Dibujo ---------- */
   function render() {
-    ctx.save();
-    if (fx.shake) ctx.translate((rng() - 0.5) * fx.shake, (rng() - 0.5) * fx.shake);
-    drawBackground(clock);
-    // manchas de zumo
-    for (const s of fx.splats) {
-      ctx.globalAlpha = Math.min(1, s.life / s.max) * 0.35;
-      ctx.fillStyle = s.color; ctx.beginPath();
-      for (let i = 0; i < 7; i++) { const a = (i / 7) * TAU + s.seed * 6, rr = s.r * (0.5 + ((i * 37 + s.seed * 100) % 10) / 14); ctx.moveTo(s.x + Math.cos(a) * rr + rr * 0.3, s.y + Math.sin(a) * rr); ctx.arc(s.x + Math.cos(a) * rr, s.y + Math.sin(a) * rr, rr * 0.3, 0, TAU); }
-      ctx.arc(s.x, s.y, s.r * 0.6, 0, TAU); ctx.fill();
-    }
-    ctx.globalAlpha = 1;
-    if (game) {
-      if (game.step && game.step.type === 'exact') drawNumberLine();
-      else if (game.mission) drawMissionLine();
-      if (game.boss) drawBoss(ctx, game.boss, clock);
-    }
-    // mitades
-    for (const h of fx.halves) drawHalf(h);
-    // frutas
-    const list = game ? game.fruits : attract;
-    for (const f of list) {
-      if (f.cut || f.gone) continue;
-      ctx.save(); ctx.translate(f.x, f.y);
-      if (f.alpha != null) ctx.globalAlpha = Math.max(0, f.alpha);
-      if (game && game.hintIds.includes(f.id)) {
-        ctx.strokeStyle = C.mostaza; ctx.lineWidth = 6; ctx.setLineDash([10, 8]); ctx.lineDashOffset = -clock * 40;
-        ctx.beginPath(); ctx.arc(0, 0, f.r * 1.35, 0, TAU); ctx.stroke(); ctx.setLineDash([]);
-        const idx = game.hintIds.indexOf(f.id);
-        if (game.step.type === 'exact') { ctx.fillStyle = C.mostaza; ctx.beginPath(); ctx.arc(f.r, -f.r, 14, 0, TAU); ctx.fill(); ctx.fillStyle = C.espresso; ctx.font = `900 16px ${MARCA.fuente}`; ctx.textAlign = 'center'; ctx.textBaseline = 'middle'; ctx.fillText(String(idx + 1), f.r, -f.r + 1); }
+    // temblor de pantalla: el mismo desplazamiento para todas las capas
+    const shx = fx.shake ? (rng() - 0.5) * fx.shake : 0, shy = fx.shake ? (rng() - 0.5) * fx.shake : 0;
+    const shaken = (fn) => { ctx.save(); ctx.translate(shx, shy); fn(); ctx.restore(); };
+    // 1) Capa pixel del fondo: escenario y manchas de zumo
+    pixelLayer(() => shaken(() => {
+      drawBackground(clock);
+      for (const s of fx.splats) {
+        ctx.globalAlpha = Math.min(1, s.life / s.max) * 0.35;
+        ctx.fillStyle = s.color; ctx.beginPath();
+        for (let i = 0; i < 7; i++) { const a = (i / 7) * TAU + s.seed * 6, rr = s.r * (0.5 + ((i * 37 + s.seed * 100) % 10) / 14); ctx.moveTo(s.x + Math.cos(a) * rr + rr * 0.3, s.y + Math.sin(a) * rr); ctx.arc(s.x + Math.cos(a) * rr, s.y + Math.sin(a) * rr, rr * 0.3, 0, TAU); }
+        ctx.arc(s.x, s.y, s.r * 0.6, 0, TAU); ctx.fill();
       }
-      ctx.save(); ctx.rotate(f.rot); drawFruitBody(ctx, f.kind, f.r, clock); ctx.restore();
-      drawBadge(ctx, f.op, f.r); // el número nunca gira: siempre legible
-      ctx.restore();
-    }
-    if (game && game.decision) drawDecision(game.decision);
-    // partículas
-    for (const p of fx.particles) {
-      ctx.globalAlpha = clamp(p.life / p.max, 0, 1);
-      ctx.fillStyle = p.color;
-      if (p.shape === 'coin') { ctx.beginPath(); ctx.ellipse(p.x, p.y, p.r * Math.abs(Math.sin(clock * 6 + p.x)), p.r, 0, 0, TAU); ctx.fill(); ctx.strokeStyle = '#a07a1a'; ctx.lineWidth = 2; ctx.stroke(); }
-      else if (p.shape === 'star') { drawStar(p.x, p.y, p.r * 1.4); }
-      else { ctx.beginPath(); ctx.arc(p.x, p.y, p.r, 0, TAU); ctx.fill(); }
-    }
-    ctx.globalAlpha = 1;
-    for (const r of fx.rings) { ctx.strokeStyle = `rgba(255,224,102,${r.life * 2})`; ctx.lineWidth = 8; ctx.beginPath(); ctx.arc(r.x, r.y, r.r, 0, TAU); ctx.stroke(); }
-    drawBlade();
-    // textos flotantes
-    ctx.textAlign = 'center'; ctx.textBaseline = 'middle';
-    for (const t of fx.texts) {
-      const a = clamp(t.life / t.max * 1.5, 0, 1);
-      ctx.globalAlpha = a; ctx.font = `900 ${t.size}px ${MARCA.fuente}`;
-      ctx.lineWidth = 5; ctx.strokeStyle = C.espresso; ctx.strokeText(t.text, t.x, t.y); ctx.fillStyle = t.color; ctx.fillText(t.text, t.x, t.y);
-    }
-    ctx.globalAlpha = 1;
-    if (fx.banner) drawBanner(fx.banner);
-    ctx.restore();
+      ctx.globalAlpha = 1;
+    }));
+    // 2) Recta numérica, nítida (lleva números pequeños)
+    shaken(() => {
+      if (game) {
+        if (game.step && game.step.type === 'exact') drawNumberLine();
+        else if (game.mission) drawMissionLine();
+      }
+    });
+    // 3) Capa pixel del mundo: jefe, mitades, frutas, partículas y espada
+    const list = game ? game.fruits : attract;
+    pixelLayer(() => shaken(() => {
+      if (game && game.boss) drawBoss(ctx, game.boss, clock);
+      for (const h of fx.halves) drawHalf(h);
+      for (const f of list) {
+        if (f.cut || f.gone) continue;
+        ctx.save(); ctx.translate(f.x, f.y);
+        if (f.alpha != null) ctx.globalAlpha = Math.max(0, f.alpha);
+        if (game && game.hintIds.includes(f.id)) {
+          ctx.strokeStyle = C.mostaza; ctx.lineWidth = 6; ctx.setLineDash([10, 8]); ctx.lineDashOffset = -clock * 40;
+          ctx.beginPath(); ctx.arc(0, 0, f.r * 1.35, 0, TAU); ctx.stroke(); ctx.setLineDash([]);
+        }
+        ctx.rotate(f.rot); drawFruitBody(ctx, f.kind, f.r, clock);
+        ctx.restore();
+      }
+      for (const p of fx.particles) {
+        ctx.globalAlpha = clamp(p.life / p.max, 0, 1);
+        ctx.fillStyle = p.color;
+        if (p.shape === 'coin') { ctx.beginPath(); ctx.ellipse(p.x, p.y, p.r * Math.abs(Math.sin(clock * 6 + p.x)), p.r, 0, 0, TAU); ctx.fill(); ctx.strokeStyle = '#a07a1a'; ctx.lineWidth = 2; ctx.stroke(); }
+        else if (p.shape === 'star') { drawStar(p.x, p.y, p.r * 1.4); }
+        else if (PX > 1) { ctx.fillRect(p.x - p.r, p.y - p.r, p.r * 2, p.r * 2); } // en pixel art, chispas cuadradas
+        else { ctx.beginPath(); ctx.arc(p.x, p.y, p.r, 0, TAU); ctx.fill(); }
+      }
+      ctx.globalAlpha = 1;
+      for (const r of fx.rings) { ctx.strokeStyle = `rgba(255,224,102,${r.life * 2})`; ctx.lineWidth = 8; ctx.beginPath(); ctx.arc(r.x, r.y, r.r, 0, TAU); ctx.stroke(); }
+      drawBlade();
+    }));
+    // 4) Encima, nítido: barra del jefe, números de las frutas, pistas, textos y carteles
+    shaken(() => {
+      if (game && game.boss) drawBossBar(ctx, game.boss);
+      for (const f of list) {
+        if (f.cut || f.gone) continue;
+        ctx.save(); ctx.translate(f.x, f.y);
+        if (f.alpha != null) ctx.globalAlpha = Math.max(0, f.alpha);
+        if (game && game.hintIds.includes(f.id) && game.step.type === 'exact') {
+          const idx = game.hintIds.indexOf(f.id);
+          ctx.fillStyle = C.mostaza; ctx.beginPath(); ctx.arc(f.r, -f.r, 14, 0, TAU); ctx.fill(); ctx.fillStyle = C.espresso; ctx.font = `900 16px ${MARCA.fuente}`; ctx.textAlign = 'center'; ctx.textBaseline = 'middle'; ctx.fillText(String(idx + 1), f.r, -f.r + 1);
+        }
+        drawBadge(ctx, f.op, f.r); // el número nunca gira: siempre legible
+        ctx.restore();
+      }
+      if (game && game.decision) drawDecision(game.decision);
+      ctx.textAlign = 'center'; ctx.textBaseline = 'middle';
+      for (const t of fx.texts) {
+        const a = clamp(t.life / t.max * 1.5, 0, 1);
+        ctx.globalAlpha = a; ctx.font = `900 ${t.size}px ${MARCA.fuente}`;
+        ctx.lineWidth = 5; ctx.strokeStyle = C.espresso; ctx.lineJoin = PX > 1 ? 'miter' : 'round'; ctx.strokeText(t.text, t.x, t.y); ctx.fillStyle = t.color; ctx.fillText(t.text, t.x, t.y);
+      }
+      ctx.globalAlpha = 1;
+      if (fx.banner) drawBanner(fx.banner);
+    });
     if (fx.flash > 0) { ctx.fillStyle = `rgba(255,240,200,${fx.flash})`; ctx.fillRect(0, 0, W, H); }
   }
   function drawDecision(dec) {
@@ -1530,13 +1658,17 @@
     ctx.fillStyle = k < 0.3 ? C.coral : C.salvia; roundRect(ctx, W / 2 - bw / 2 + 14, cy + bh / 2 - 12, (bw - 28) * clamp(k, 0, 1), 6, 3); ctx.fill();
     ctx.restore();
     // las semillas se vuelven a dibujar por encima del velo
-    for (const sd of dec.seeds) {
-      if (sd.cut || sd.gone) continue;
-      ctx.save(); ctx.translate(sd.x, sd.y);
-      if (game.hintIds.includes(sd.id)) { ctx.strokeStyle = C.mostaza; ctx.lineWidth = 6; ctx.setLineDash([10, 8]); ctx.lineDashOffset = -clock * 40; ctx.beginPath(); ctx.arc(0, 0, sd.r * 1.3, 0, TAU); ctx.stroke(); ctx.setLineDash([]); }
-      drawFruitBody(ctx, 'seed', sd.r, clock); drawBadge(ctx, sd.op, sd.r);
-      ctx.restore();
-    }
+    const seeds = dec.seeds.filter((sd) => !sd.cut && !sd.gone);
+    const m = ctx.getTransform(); // la capa pixel hereda el temblor de pantalla
+    pixelLayer(() => {
+      for (const sd of seeds) {
+        ctx.save(); ctx.translate(sd.x + m.e / DPR, sd.y + m.f / DPR);
+        if (game.hintIds.includes(sd.id)) { ctx.strokeStyle = C.mostaza; ctx.lineWidth = 6; ctx.setLineDash([10, 8]); ctx.lineDashOffset = -clock * 40; ctx.beginPath(); ctx.arc(0, 0, sd.r * 1.3, 0, TAU); ctx.stroke(); ctx.setLineDash([]); }
+        drawFruitBody(ctx, 'seed', sd.r, clock);
+        ctx.restore();
+      }
+    });
+    for (const sd of seeds) { ctx.save(); ctx.translate(sd.x, sd.y); drawBadge(ctx, sd.op, sd.r); ctx.restore(); }
   }
   function drawStar(x, y, r) {
     ctx.beginPath();
@@ -1886,6 +2018,8 @@
       el.classList.remove('hidden');
       if (push !== false) screenStack.push(id);
       el.scrollTop = 0;
+      // fuera de la partida: «La historia» en la presentación del nivel y el tema de la aventura en el resto
+      if (!game) setMusic(id === 'sIntro' ? 'story' : 'menu');
       const f = el.querySelector('button, select, input');
       if (f && !('ontouchstart' in window)) setTimeout(() => f.focus({ preventScroll: true }), 30);
     }
@@ -2013,13 +2147,17 @@
     $('#optTap').checked = s.tap; $('#optRelax').checked = s.relax;
     $('#optMath').value = String(s.math); $('#optMotor').value = String(s.motor);
     $('#optDecide').checked = s.decide !== false;
+    $('#optPixel').checked = s.pixel !== false;
   }
   function readSettings() {
     const s = save.settings;
     s.sound = $('#optSound').checked; s.music = $('#optMusic').checked; s.reduce = $('#optReduce').checked;
     s.tap = $('#optTap').checked; s.relax = $('#optRelax').checked;
     s.math = +$('#optMath').value; s.motor = +$('#optMotor').value; s.decide = $('#optDecide').checked;
+    const pixelChanged = (s.pixel !== false) !== $('#optPixel').checked;
+    s.pixel = $('#optPixel').checked;
     applyReduce(); persist();
+    if (pixelChanged) { applyPixel(); resize(); }
     if (!s.music) Sound.stopMusic(); else Sound.music(wantedMusic);
   }
   function applyReduce() { document.documentElement.classList.toggle('reduce-motion', !!save.settings.reduce); }
@@ -2535,6 +2673,7 @@
 
   /* ---------- Arranque ---------- */
   applyReduce();
+  applyPixel();
   resize();
   openScreen('sMenu');
   // Al entrar, se abre directamente el modo aventura (mapa de niveles); con ?menu se queda en el menú.

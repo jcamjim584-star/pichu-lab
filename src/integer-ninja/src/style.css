@@ -262,3 +262,35 @@ legend { font-weight: 900; color: var(--salvia-osc); padding: 0 6px; }
   .level .s { font-size: .95rem; }
   .level .s .superado { font-size: .58rem; padding: 1px 4px; }
 }
+
+/* ===== v0.6: estilo pixel art (html.pixel; se quita en Ajustes → Gráficos pixel) =====
+   Esquinas rectas, sombras duras de "escalón", letra pixel en títulos, botones y marcador.
+   Los textos largos (explicaciones) siguen en Lato para que se lean con comodidad. */
+html.pixel { --font-pix: 'Pixelify Sans', 'Lato', system-ui, sans-serif; }
+html.pixel *, html.pixel *::before, html.pixel *::after { border-radius: 0 !important; }
+html.pixel img { image-rendering: pixelated; }
+html.pixel :is(h2, h3, .btn, .hud-btn, .title, .brand-chip, .subtitle, .menu-stats, .lbl, .hud-score b, .hud-mult, .goal-kicker,
+  .goal-main, .hud-time, .hud-acc b, .hud-streak, .hud-progress, .boss-bar, .bubble, .level .n, .level .t b, .level .s,
+  .intro-kicker, .intro-enemy b, .records b, .stars, .result-kicker, .result-score, .result-grid b, .rc-head, .tabs button, .seg button,
+  .chip, .duel-code, .rank-list .pos, .rank-list .pts, #toast, .badge, .trophy, legend, .coins-line, .item small) {
+  font-family: var(--font-pix); letter-spacing: .5px;
+}
+html.pixel .title span { -webkit-text-stroke: 0; text-shadow: 3px 0 0 var(--espresso), -3px 0 0 var(--espresso), 0 3px 0 var(--espresso), 0 -3px 0 var(--espresso),
+  3px 3px 0 var(--espresso), -3px 3px 0 var(--espresso), 3px -3px 0 var(--espresso), -3px -3px 0 var(--espresso), 0 7px 0 var(--coral), 0 10px 0 var(--espresso); }
+/* marco de 8 bits: borde doble con un "bisel" claro arriba y oscuro abajo */
+html.pixel .panel { border-width: 4px; box-shadow: inset 0 0 0 3px var(--crema), inset 0 0 0 5px var(--crema-2), 6px 6px 0 var(--espresso-2), 0 18px 40px rgba(0,0,0,.35); }
+html.pixel .btn, html.pixel .hud-btn, html.pixel .level, html.pixel .hud-goal, html.pixel #toast, html.pixel .bubble {
+  box-shadow: inset -3px -3px 0 rgba(0,0,0,.18), inset 3px 3px 0 rgba(255,255,255,.35), 4px 4px 0 var(--espresso);
+}
+html.pixel .btn:active, html.pixel .hud-btn:active, html.pixel .level:active { transform: translate(3px, 3px); box-shadow: inset 3px 3px 0 rgba(0,0,0,.18), 1px 1px 0 var(--espresso); }
+html.pixel .btn.primary { text-shadow: 2px 2px 0 var(--coral-osc); }
+html.pixel .hud-score, html.pixel .hud-time, html.pixel .hud-acc, html.pixel .hud-streak { box-shadow: 3px 3px 0 rgba(0,0,0,.45); }
+/* barras de progreso con "segmentos", como las de vida de las consolas antiguas */
+html.pixel .hud-progress i, html.pixel .boss-bar i { background-image: repeating-linear-gradient(90deg, transparent 0 8px, rgba(0,0,0,.28) 8px 10px); }
+html.pixel .hud-progress i { background-color: var(--salvia); }
+html.pixel .boss-bar i { background-color: var(--coral); }
+html.pixel .menu-pichu, html.pixel .intro-pichu, html.pixel .result-pichu, html.pixel #pichuPop .pichu-img { filter: drop-shadow(4px 4px 0 rgba(0,0,0,.35)); }
+/* animaciones a saltos (como los sprites), salvo si se pide reducir el movimiento */
+html.pixel .menu-pichu { animation-timing-function: steps(4, end); }
+html.pixel .intro-enemy img { animation-timing-function: steps(3, end); }
+html.pixel .level .s .superado { transform: none; }

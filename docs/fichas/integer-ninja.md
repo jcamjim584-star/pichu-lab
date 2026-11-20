@@ -1,4 +1,4 @@
-# Ficha · Integer Ninja v0.5
+# Ficha · Integer Ninja v0.6
 
 | | |
 |---|---|
@@ -20,6 +20,15 @@
 ## Bombas (corrección del 10/11/2026)
 La bomba que asoma detrás de la fruta que cortas no explota: zona de corte al 60 %, escudo si la fruta se corta en el mismo
 trazo, margen de 150 ms y el toque elige la fruta antes que la bomba. Una bomba sola sí explota.
+
+## Pixel art y música (v0.6, 20/11/2026)
+- El mundo (fondo, frutas, espada, partículas, jefes) se dibuja en una capa pequeña que se amplía sin suavizar.
+  Los **números de las frutas, la recta y los textos se dibujan aparte, nítidos**, con la letra Pixelify Sans.
+- Guardianes y πCHU pasan a pixel art al compilar (`build.py`, con Pillow). Menús con esquinas rectas y sombras duras.
+- **Ajustes → 👾 Gráficos pixel**: se puede volver al aspecto liso (`settings.pixel` dentro de `pichu.integerNinja.v1`;
+  los guardados antiguos lo reciben activado por defecto, sin cambiar de clave).
+- Música chiptune original, compuesta para el juego: tema de la aventura (menú y mapa), «La historia» (presentación de
+  cada nivel), «¡Al ataque!» (partida) y la del jefe. Se apaga en Ajustes → Música.
 
 ## Pruebas
 `node src/integer-ninja/tests/engine.test.js` · `browser.test.js` · `retos.test.js` · `apps-script.test.js`.
