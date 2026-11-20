@@ -14,7 +14,7 @@ window.MARCA = {
     lugar: "Fuentes de Andalucía (Sevilla)",
     logo: "compartido/img/centro.jpg"
   },
-  version: "0.9.2",
+  version: "0.9.3",
   autor: "Juan Antonio Campos Jiménez",
 
   // Cursos: de momento la portada NO los muestra (se organiza por juegos).

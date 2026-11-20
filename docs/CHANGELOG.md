@@ -1,5 +1,18 @@
 # Registro de cambios
 
+## 0.9.3 · 20/11/2026
+- **Integer Ninja v0.6: pixel art y música de aventura.**
+  - Frutas, fondo, espada, partículas y jefes se ven en pixel art (capa pequeña ampliada sin suavizar).
+    Los números de las frutas, la recta numérica y los carteles se dibujan aparte y siempre nítidos.
+  - Letra pixel **Pixelify Sans** (licencia OFL, alojada en `compartido/fuentes/`) en títulos, botones y marcador;
+    las explicaciones largas siguen en Lato.
+  - Guardianes y πCHU convertidos a pixel art al compilar (`src/integer-ninja/build.py`, con Pillow). El juego pasa de 715 KB a 278 KB.
+  - Menús con esquinas rectas, sombras duras, barras segmentadas y animaciones «a saltos» como los sprites.
+  - Nueva opción **Ajustes → 👾 Gráficos pixel** para volver al aspecto liso (se guarda en `pichu.integerNinja.v1`, sin clave nueva).
+  - Música chiptune original: tema de la aventura (menú y mapa), «La historia» (presentación de cada nivel),
+    «¡Al ataque!» (partida) y la del jefe. Melodía con onda de pulso, eco y vibrato; bajo de triángulo; percusión de ruido.
+- Comprobado: motor 899.015 comprobaciones, navegador 107/107 (61 fps), retos 31/31, Apps Script 20/20, `node tests/comprobar.mjs`.
+
 ## 0.9.2 · 18/11/2026
 - El repositorio se pone al día con el artefacto publicado en Claude (de 0.6.4 a 0.9.2), para poder editarlo también con Codex.
 - **Portada nueva: Mapa de mundos.** 11 islas (una por tema de 1.º ESO) unidas por un camino, con el personaje de cada juego;

@@ -5,7 +5,7 @@
 Portada que reúne los juegos y laboratorios de matemáticas interactivos de Juan Antonio Campos Jiménez
 (ESO y Bachillerato). Web estática: HTML, CSS y JavaScript, sin frameworks, sin registro y sin recoger datos personales.
 
-## Qué incluye (versión 0.9.2)
+## Qué incluye (versión 0.9.3)
 La portada es un **Mapa de mundos**: cada tema de 1.º ESO es una isla con su personaje. La lista de mundos está en
 `compartido/mathquest.js` (`MUNDOS`); `"ahora: true"` marca el tema que se está dando en clase.
 El progreso común (nivel, XP, monedas, logros y ajustes) se guarda en `pichu.mathquest.v1`.
@@ -16,7 +16,7 @@ El progreso común (nivel, XP, monedas, logros y ajustes) se guarda en `pichu.ma
 | Fraction Merge · suma y fusiona fracciones | 1.º ESO | Disponible |
 | Equation Merge · ecuaciones de primer grado | 1.º ESO | Disponible |
 | Pizza Rush · Pizzería πCHU v0.2 (fracciones: equivalencias, suma, multiplicación y división) | 1.º ESO | Próximamente (en revisión) |
-| Integer Ninja v0.5 · enteros: signos, comparar, sumas, −( ), productos y cocientes | 1.º ESO | Disponible |
+| Integer Ninja v0.6 · enteros: signos, comparar, sumas, −( ), productos y cocientes · pixel art y música de aventura | 1.º ESO | Disponible |
 | Laboratorio de Proporcionalidad · cartas de ecuaciones · cartas de funciones | 1.º ESO · 4.º ESO · 1.º Bach | En diseño |
 
 Funciones comunes:
@@ -85,4 +85,5 @@ Entraron desde el artefacto de Claude (0.9.2) **solo como HTML ya generado**: su
 ## Licencia y créditos
 - Código y contenidos: © Juan Antonio Campos Jiménez. Licencia pendiente de decidir (propuesta: CC BY-NC-SA 4.0 para contenidos).
 - Tipografía Lato (Łukasz Dziedzic), licencia SIL Open Font License 1.1, alojada en `compartido/fuentes/`.
+- Tipografía Pixelify Sans (The Pixelify Sans Project Authors), licencia SIL OFL 1.1, alojada en `compartido/fuentes/` (texto de la licencia en `OFL-pixelify-sans.txt`). La usa Integer Ninja.
 - Marca y mascota πCHU: identidad propia del proyecto.

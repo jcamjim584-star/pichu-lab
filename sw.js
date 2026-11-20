@@ -8,7 +8,7 @@
 
    Si añades un juego, añade su ruta a ARCHIVOS.
    ========================================================= */
-const VERSION = "pichu-v0.9.2";
+const VERSION = "pichu-v0.9.3";
 
 const ARCHIVOS = [
   "./",
@@ -24,6 +24,8 @@ const ARCHIVOS = [
   "compartido/fuentes/lato-latin-400-normal.woff2",
   "compartido/fuentes/lato-latin-700-normal.woff2",
   "compartido/fuentes/lato-latin-900-normal.woff2",
+  "compartido/fuentes/pixelify-sans-latin-400-normal.woff2",
+  "compartido/fuentes/pixelify-sans-latin-700-normal.woff2",
   "compartido/img/logo.png",
   "compartido/img/mascota.png",
   "compartido/img/icono-192.png",

@@ -1,6 +1,6 @@
 # INTEGER NINJA · El ataque de los números enteros (πCHU ARCADE)
 
-**Curso:** 1.º ESO · **Contenido:** números enteros (signo, comparación, orden, suma, resta, opuesto, multiplicación, división exacta, valor absoluto) · **Versión:** v0.4 (03/11/2026)
+**Curso:** 1.º ESO · **Contenido:** números enteros (signo, comparación, orden, suma, resta, opuesto, multiplicación, división exacta, valor absoluto) · **Versión:** v0.6 (20/11/2026)
 
 ## Qué es
 Un arcade de cortar frutas. Cada fruta lleva un entero; al deslizar el dedo (o el ratón con el botón pulsado) se corta y su número se incorpora a un **acumulador**. El alumnado tiene que llegar **exactamente** a un objetivo. Una **recta numérica** bajo el marcador muestra cada corte como un salto, de modo que la suma de enteros se ve como un desplazamiento.
@@ -16,6 +16,12 @@ Un arcade de cortar frutas. Cada fruta lleva un entero; al deslizar el dedo (o e
   5. La tormenta matemática: operaciones combinadas y valor absoluto.
   6. Jefe final, el Rey de los Signos: 3 fases, 10 de vida y dos ataques (bombardeo y cambio de signo del objetivo).
 - **Modo relajado** (en Ajustes): sin reloj y sin perder vidas, con frutas más lentas y pistas automáticas.
+
+## Novedades v0.6: pixel art y música de aventura
+- El mundo se dibuja en una capa pequeña ampliada sin suavizar (pixel art); números, recta y textos van aparte y nítidos.
+- Letra Pixelify Sans (OFL) en títulos y botones; guardianes y πCHU pasan a pixel art en `build.py` (necesita Pillow; sin él usa las originales).
+- Ajustes → 👾 Gráficos pixel para volver al aspecto liso.
+- Música chiptune original: tema de la aventura (menú/mapa), «La historia» (presentación del nivel), «¡Al ataque!» (partida) y jefe.
 
 ## Novedades v0.2: aprender de verdad el signo menos y la regla de los signos
 - 🌱 **Semillas de decisión:** al cortar −( ), la piña (×) o el coco (÷), el juego va a cámara lenta y salen dos semillas con resultados de signo contrario. Hay que cortar la correcta. Después aparece la tabla de la regla con la fila resaltada: en verde si se acierta y en coral si se falla (además, el acumulador no cambia y se pierde una vida).
