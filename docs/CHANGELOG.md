@@ -1,5 +1,10 @@
 # Registro de cambios
 
+## 1.2.1 · 20/11/2026
+- **Arreglo:** en la primera visita la web ya no se recarga sola al activar el modo sin conexión (si el alumno pulsaba
+  «Empezar» en ese momento, volvía a la pantalla de inicio). Solo se recarga al instalar una actualización.
+- Los matemáticos no tendrán habilidades: solo cambian el aspecto (hoja de ruta actualizada). Galois se añadirá cuando tenga sprite.
+
 ## 1.2.0 · 20/11/2026 · Elige tu matemático y personajes del Drive
 - **Elige tu matemático**: al empezar la aventura se elige entre los 8 matemáticos del Drive (Hipatia, Ada Lovelace, Emmy Noether,
   Sophie Germain, Gauss, Fibonacci, Ramanujan y Al-Juarismi), cada uno con su época y una frase. Ese matemático es el que camina

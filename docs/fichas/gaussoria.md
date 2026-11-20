@@ -36,5 +36,6 @@
 - Sin animaciones (sistema o ajuste «Animaciones»), el matemático salta de casilla en casilla y el agua no se mueve.
 
 ## Pendiente (fases siguientes)
-- Fase 3: habilidades de cada matemático. Geometría: falta su enemigo.
+- Los matemáticos no tienen habilidades (decisión del 20/11/2026). Galois se añadirá cuando tenga sprite.
+- Geometría: falta su enemigo.
 - Probar en clase: ritmo de los pasos (150 ms por casilla) y tamaño de la cruceta.

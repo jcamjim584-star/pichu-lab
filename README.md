@@ -36,8 +36,8 @@ sin registro y sin recoger datos personales.
 **Hoja de ruta de GALOIS LEGACY** (cada fase se prueba y documenta antes de la siguiente):
 1. ✅ Identidad: nombre, logo, pantalla de inicio, paleta, letra pixel, πCHU guía (1.0.0).
 2. ✅ Mapa de Gaussoria explorable en vista cenital (teclado, cruceta táctil y lista accesible) (1.1.0).
-3. Ocho matemáticos jugables con habilidades. ✅ Ya se eligen (1.2.0): Hipatia, Lovelace, Noether, Germain, Gauss, Fibonacci,
-   Ramanujan y Al-Juarismi (los del Drive). Pendiente: sus habilidades.
+3. ✅ Matemáticos jugables (1.2.0): Hipatia, Lovelace, Noether, Germain, Gauss, Fibonacci, Ramanujan y Al-Juarismi (los del Drive).
+   Solo cambian el aspecto: **no tienen habilidades** (decisión del 20/11/2026). Galois se añadirá cuando tenga sprite.
 4. Primera mazmorra RPG (Reino de Hielo y Fuego) con combate por preguntas, reutilizando el motor de Integer Ninja.
 5. Adaptación visual de cada juego al universo Galois.
 

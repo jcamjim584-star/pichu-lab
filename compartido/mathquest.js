@@ -85,6 +85,8 @@
   ];
 
   // ---------- Matemáticos jugables (se elige uno en «Elige tu matemático») ----------
+  // Solo cambian el aspecto: no tienen habilidades. Para añadir uno (p. ej. Galois), sus imágenes en
+  // heroes/ y un objeto más en esta lista (y sus dos imágenes en ARCHIVOS de sw.js).
   // Imágenes: compartido/img/galois/heroes/<id>.png (mapa) y <id>-retrato.png (pantalla de elegir).
   const HEROES = [
     { id: "hipatia", nombre: "Hipatia", epoca: "Alejandría, hacia el año 400", frase: "Enseñó matemáticas y astronomía en la gran biblioteca de Alejandría." },
