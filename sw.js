@@ -8,7 +8,7 @@
 
    Si añades un juego, añade su ruta a ARCHIVOS.
    ========================================================= */
-const VERSION = "pichu-v1.3.0";
+const VERSION = "pichu-v1.4.0";
 
 const ARCHIVOS = [
   "./",
@@ -88,7 +88,8 @@ const ARCHIVOS = [
   "compartido/img/personajes/reglino.webp",
   "compartido/img/personajes/salsita.webp",
   // Juegos
-  "applets/expres/",
+  "applets/minas/",
+  "applets/minas/motor.js",
   "applets/pizzeria/",
   "applets/integer-ninja/",
   "applets/equation-merge/",

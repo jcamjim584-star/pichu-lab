@@ -1,5 +1,16 @@
 # Registro de cambios
 
+## 1.4.0 · 20/11/2026 · Minas de los Primos sustituye a Factor Clash
+- **Juego nuevo en el reino 1: Divisibilidad exprés** (`applets/minas/`), el modo fácil de πCHU ROYALE
+  (`jantoniolade-blip/pichu-lab`, rama `dev`, `juegos/divisibilidad/facil.html`): 10 preguntas de 4 opciones contra Múltiplax o
+  Prímox, sin perder vidas, con explicación tras cada respuesta. `motor.js` es copia literal (mismas preguntas y corrección).
+- Adaptado a las reglas: letras locales en lugar de Google Fonts, paleta y marco pixel GALOIS LEGACY, el matemático del mapa como
+  acompañante, guardado `pichu.minas.v1`, ✔/✘ además del color, una columna de temas en el móvil y resumen de estrellas en el mapa.
+- **Factor Clash** pasa a «pronto» y deja de abrirse desde el mapa; el juego sigue en `applets/expres/` y su guardado
+  `pichu.expres.v3` no se toca. Sale de la caché sin conexión (1,5 MB menos).
+- Comprobado: «Todo correcto»; partida completa con teclado (teclas 1–4), récord guardado, resumen en el mapa, a 390 px sin
+  desbordamiento, sin errores en la consola y sin ninguna petición a otros servidores.
+
 ## 1.3.0 · 20/11/2026 · Todo en pixel art (portada) y marco Galois en los juegos
 - **Estilo pixel en toda la portada y en las páginas propias:** esquinas rectas y bordes «escalonados» (sin esquinas,
   dibujados con sombras), botones con relieve de consola de 16 bits, pergamino con punteado pixel, pie de noche con almenas,

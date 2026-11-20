@@ -8,7 +8,7 @@ El universo matemático de **Gaussoria** ha perdido los símbolos del conocimien
 y el jugador los recorre con **πCHU**, su guía y compañero. Web estática: HTML, CSS y JavaScript, sin frameworks,
 sin registro y sin recoger datos personales.
 
-## Qué incluye (versión 1.3.0)
+## Qué incluye (versión 1.4.0)
 - **Pantalla de inicio** con el logo GALOIS LEGACY y πCHU contando la historia (se salta al volver de un juego;
   `?inicio` la fuerza y `?mapa` la omite).
 - **Elige tu matemático**: Hipatia, Ada Lovelace, Emmy Noether, Sophie Germain, Gauss, Fibonacci, Ramanujan o Al-Juarismi
@@ -27,7 +27,7 @@ sin registro y sin recoger datos personales.
 
 | Reino | Juego que se abre | Estado |
 |---|---|---|
-| Minas de los Primos (divisibilidad) | Factor Clash | Disponible |
+| Minas de los Primos (divisibilidad) | Divisibilidad exprés (modo fácil, `applets/minas/`) | Disponible |
 | Reino de Hielo y Fuego (enteros) | Integer Ninja | Disponible |
 | Bosque de las Fracciones | Fraction Merge (y Pizza Rush, en revisión) | Disponible |
 | Fortaleza del Álgebra (ecuaciones) | Equation Merge | Disponible |
@@ -40,12 +40,13 @@ sin registro y sin recoger datos personales.
    Solo cambian el aspecto: **no tienen habilidades** (decisión del 20/11/2026). Galois se añadirá cuando tenga sprite.
 4. Primera mazmorra RPG (Reino de Hielo y Fuego) con combate por preguntas, reutilizando el motor de Integer Ninja.
 5. Todo en pixel art. ✅ Portada, páginas propias y marco «◀ Mapa» de los juegos (1.3.0). Pendiente: el interior de cada
-   juego (divisibilidad fácil, Integer Ninja, Fraction Merge y Equation Merge), sin quitar preguntas, niveles ni progreso.
+   juego (Integer Ninja, Fraction Merge y Equation Merge; Minas de los Primos ya llega en pixel art), sin quitar preguntas, niveles ni progreso.
 
 ### Juegos (detalle)
 | Juego | Curso (de momento no se muestra) | Estado |
 |---|---|---|
-| Factor Clash · duelos de divisibilidad | 1.º ESO | Disponible |
+| Divisibilidad exprés · Minas de los Primos (modo fácil: 10 preguntas de 4 opciones) | 1.º ESO | Disponible |
+| Factor Clash · duelos de divisibilidad | 1.º ESO | Retirado del mapa (1.4.0; su guardado se conserva) |
 | Fraction Merge · suma y fusiona fracciones | 1.º ESO | Disponible |
 | Equation Merge · ecuaciones de primer grado | 1.º ESO | Disponible |
 | Pizza Rush · Pizzería πCHU v0.2 (fracciones: equivalencias, suma, multiplicación y división) | 1.º ESO | Próximamente (en revisión) |

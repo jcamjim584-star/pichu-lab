@@ -1,0 +1,364 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="theme-color" content="#16122C">
+<meta name="description" content="GALOIS LEGACY · Minas de los Primos: divisibilidad en modo fácil, una pregunta cada vez. Divisores, primos, MCD y mcm para 1.º ESO.">
+<title>Minas de los Primos · GALOIS LEGACY</title>
+<link rel="icon" href="../../compartido/img/galois/icono-192.png">
+<!--
+  Minas de los Primos (GALOIS LEGACY). Viene del «modo fácil» de πCHU ROYALE
+  (jantoniolade-blip/pichu-lab, rama dev, juegos/divisibilidad/facil.html, commit 3e7ae85).
+  Las preguntas, la respuesta correcta y las explicaciones salen de motor.js, copia literal del
+  motor del Duelo de divisibilidad (no editar motor.js aquí).
+  Cambios de la adaptación: letras locales (sin Google Fonts), paleta y marco GALOIS LEGACY,
+  el héroe es el matemático elegido en el mapa, guardado en pichu.minas.v1 y resumen para el mapa.
+-->
+<style>
+  @font-face { font-family: "Pixelify Sans"; font-weight: 700; font-display: swap; src: url("../../compartido/fuentes/pixelify-sans-latin-700-normal.woff2") format("woff2"); }
+  @font-face { font-family: "Lato"; font-weight: 400; font-display: swap; src: url("../../compartido/fuentes/lato-latin-400-normal.woff2") format("woff2"); }
+  @font-face { font-family: "Lato"; font-weight: 700; font-display: swap; src: url("../../compartido/fuentes/lato-latin-700-normal.woff2") format("woff2"); }
+  @font-face { font-family: "Lato"; font-weight: 900; font-display: swap; src: url("../../compartido/fuentes/lato-latin-900-normal.woff2") format("woff2"); }
+  /* Paleta GALOIS LEGACY (la de compartido/marca.css) con los nombres que usaba el juego original */
+  :root {
+    --px-bg: #16122C; --px-bg-deep: #0F0C20; --px-panel: #251E4A; --px-panel-2: #4A3290;
+    --px-dorado: #E8B53A; --px-dorado-osc: #B97A12; --px-crema: #F3ECD6; --px-turquesa: #FFE08A;
+    --px-alerta: #E46666; --px-negro: #0F0C20;
+    --px-font-title: "Pixelify Sans", "Lato", system-ui, sans-serif;   /* solo títulos grandes */
+    --px-font-body: "Lato", system-ui, sans-serif;                     /* textos y números */
+    --px-u: 4px;
+  }
+  * { box-sizing: border-box; }
+  html, body { margin: 0; }
+  body {
+    min-height: 100vh; min-height: 100dvh;
+    color: var(--px-crema); font-family: var(--px-font-body); font-size: 19px; line-height: 1.4;
+    padding: max(12px, env(safe-area-inset-top)) max(16px, env(safe-area-inset-right)) max(84px, env(safe-area-inset-bottom)) max(16px, env(safe-area-inset-left));
+    /* Cueva de las minas: roca oscura con gemas pixel */
+    background: var(--px-bg) url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='32' height='32' shape-rendering='crispEdges'%3E%3Cpath d='M3 5h2v1H3zM20 12h1v1h-1zM9 22h2v1H9zM27 27h1v1h-1z' fill='%23251E4A'/%3E%3Cpath d='M25 4h1v1h-1zM6 15h1v1H6z' fill='%236A4BB8'/%3E%3Cpath d='M15 28h1v1h-1z' fill='%23E8B53A'/%3E%3C/svg%3E") 0 0 / 64px 64px;
+    image-rendering: pixelated;
+  }
+  main { max-width: 720px; margin: 0 auto; }
+  .oculto { display: none !important; }
+  button { font: inherit; }
+  :focus-visible { outline: 3px solid var(--px-turquesa); outline-offset: 4px; }
+
+  /* Marco pixel: borde grueso, esquinas recortadas y sombra dura */
+  .px-box { background: var(--px-panel); color: var(--px-crema); border: var(--px-u) solid var(--px-negro);
+    box-shadow: inset -4px -4px 0 rgba(0,0,0,.35), inset 4px 4px 0 rgba(255,255,255,.1), 4px 4px 0 var(--px-negro);
+    clip-path: polygon(0 4px, 4px 4px, 4px 0, calc(100% - 4px) 0, calc(100% - 4px) 4px, 100% 4px, 100% calc(100% - 4px), calc(100% - 4px) calc(100% - 4px), calc(100% - 4px) 100%, 4px 100%, 4px calc(100% - 4px), 0 calc(100% - 4px)); }
+  .px-title { font-family: var(--px-font-title); font-weight: 700; color: var(--px-dorado); letter-spacing: 1px; line-height: 1.2;
+    text-shadow: 3px 3px 0 var(--px-negro), -1px -1px 0 var(--px-negro), 1px -1px 0 var(--px-negro), -1px 1px 0 var(--px-negro); }
+  .px-btn { font-weight: 900; font-size: 19px; line-height: 1.3; color: var(--px-negro); background: var(--px-dorado);
+    border: var(--px-u) solid var(--px-negro); box-shadow: inset -4px -4px 0 var(--px-dorado-osc), inset 4px 4px 0 rgba(255,255,255,.45), 0 4px 0 var(--px-negro);
+    padding: 12px 18px; min-height: 48px; cursor: pointer; text-transform: uppercase; }
+  .px-btn:hover { filter: brightness(1.08); }
+  .px-btn:active { transform: translateY(4px); box-shadow: inset -4px -4px 0 var(--px-dorado-osc), inset 4px 4px 0 rgba(255,255,255,.45); }
+  .px-btn:disabled { opacity: .5; cursor: default; }
+
+  h1 { font-size: clamp(28px, 7vw, 42px); margin: 4px 0 2px; text-align: center; }
+  .sub { text-align: center; margin: 0 0 16px; color: var(--px-turquesa); font-weight: 700; }
+  .panel { padding: 16px; margin-bottom: 14px; }
+  .panel h2 { font-size: 17px; letter-spacing: .06em; margin: 0 0 10px; color: var(--px-turquesa); text-transform: uppercase; font-weight: 900; }
+  .opciones-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(min(100%, 230px), 1fr)); gap: 10px; }
+  .elegir { font-weight: 700; color: var(--px-negro); background: var(--px-crema); border: 4px solid var(--px-negro); box-shadow: inset -4px -4px 0 #CDBB98, 0 4px 0 var(--px-negro); padding: 10px; min-height: 52px; cursor: pointer; text-align: left; display: flex; gap: 8px; align-items: center; }
+  .elegir[aria-pressed="true"] { background: var(--px-dorado); box-shadow: inset -4px -4px 0 var(--px-dorado-osc), 0 4px 0 var(--px-negro); }
+  .elegir { position: relative; padding-right: 22px; }
+  .elegir[aria-pressed="true"]::after { content: "✓"; position: absolute; top: 4px; right: 6px; font-weight: 900; }
+  .elegir span { min-width: 0; }
+  .elegir img { width: 44px; height: auto; image-rendering: pixelated; flex: none; }
+  .elegir small { display: block; font-weight: 400; font-size: 15px; }
+  .start { display: block; width: 100%; font-size: 20px; margin-top: 4px; }
+  .heroe-elegido { display: flex; gap: 12px; align-items: center; }
+  .heroe-elegido img { width: 64px; height: auto; image-rendering: pixelated; }
+  .heroe-elegido p { margin: 0; }
+  .heroe-elegido a { color: var(--px-turquesa); font-weight: 700; }
+
+  /* Combate */
+  .hud { display: grid; grid-template-columns: 1fr auto; gap: 10px; align-items: center; margin-bottom: 12px; }
+  .enemigo { display: flex; gap: 12px; align-items: center; padding: 10px; }
+  .enemigo img { width: 84px; height: auto; image-rendering: pixelated; flex: none; }
+  .enemigo img.golpe { animation: golpe .4s steps(4); }
+  .enemigo img.ko { filter: grayscale(1) brightness(.6); transform: rotate(20deg); }
+  @keyframes golpe { 25% { transform: translateX(8px); filter: brightness(2); } 75% { transform: translateX(-6px); } }
+  .enemigo b { display: block; color: var(--px-dorado); font-size: 20px; }
+  .vida { height: 16px; background: var(--px-negro); border: 3px solid var(--px-negro); margin-top: 6px; }
+  .vida i { display: block; height: 100%; background: repeating-linear-gradient(90deg, var(--px-alerta) 0 8px, #FF8A8A 8px 12px); transition: width .3s steps(4); }
+  .contador { font-weight: 900; font-size: 18px; line-height: 1.3; text-align: center; padding: 10px; min-width: 96px; }
+  .contador span { display: block; font-size: 13px; font-weight: 700; color: var(--px-turquesa); text-transform: uppercase; letter-spacing: .05em; }
+  .pregunta { font-size: clamp(21px, 5vw, 27px); line-height: 1.3; font-weight: 700; text-align: center; margin: 4px 0 14px; }
+  .pregunta b { color: var(--px-dorado); }
+  .respuestas { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+  .resp { font-weight: 900; font-size: clamp(22px, 6vw, 30px); color: var(--px-negro); background: var(--px-crema); border: 4px solid var(--px-negro); box-shadow: inset -5px -5px 0 #CDBB98, inset 5px 5px 0 #fff, 0 5px 0 var(--px-negro); min-height: 76px; cursor: pointer; }
+  .resp:active { transform: translateY(5px); box-shadow: inset -5px -5px 0 #CDBB98, inset 5px 5px 0 #fff; }
+  /* El resultado no va solo por color: lleva ✔ o ✘ */
+  .resp.bien { background: #8EE6C9; box-shadow: inset -5px -5px 0 #3E8F8A, 0 5px 0 var(--px-negro); }
+  .resp.mal { background: #FFB3B3; box-shadow: inset -5px -5px 0 #A63C3C, 0 5px 0 var(--px-negro); }
+  .resp.bien::before { content: "✔ "; } .resp.mal::before { content: "✘ "; }
+  .resp:disabled { cursor: default; }
+  .resp .k { display: block; font-size: 12px; font-weight: 700; opacity: .65; }
+  .feedback { margin-top: 14px; padding: 12px 14px; line-height: 1.4; }
+  .feedback h3 { margin: 0 0 6px; font-size: 20px; }
+  .feedback.ok h3 { color: #8EE6C9; } .feedback.ko h3 { color: #FFB3B3; }
+  .fila { display: flex; gap: 10px; flex-wrap: wrap; justify-content: center; margin-top: 12px; }
+  .secundario { background: var(--px-crema); box-shadow: inset -4px -4px 0 #CDBB98, inset 4px 4px 0 #fff, 0 4px 0 var(--px-negro); }
+  .heroe-dice { display: flex; gap: 10px; align-items: center; margin-top: 12px; }
+  .heroe-dice img { width: 56px; height: auto; image-rendering: pixelated; flex: none; }
+  .heroe-dice p { margin: 0; background: var(--px-crema); color: var(--px-negro); border: 3px solid var(--px-negro); box-shadow: 3px 3px 0 var(--px-negro); padding: 8px 10px; font-weight: 700; line-height: 1.3; }
+  .final { text-align: center; }
+  .final h2 { font-family: var(--px-font-title); font-size: 26px; color: var(--px-dorado); text-transform: none; letter-spacing: 0; }
+  .estrellas { font-size: 44px; letter-spacing: 6px; color: var(--px-dorado); text-shadow: 3px 3px 0 var(--px-negro); }
+  .estrellas .off { color: #5D4A80; }
+  .final .grande { font-weight: 900; font-size: 30px; color: var(--px-dorado); margin: 8px 0; }
+  @media (max-width: 420px) { .enemigo img { width: 64px; } .resp { min-height: 68px; } }
+  @media (prefers-reduced-motion: reduce) { *, *::before { animation: none !important; transition: none !important; } }
+</style>
+<script src="../../compartido/volver.js" defer></script>
+</head>
+<body>
+<main>
+  <!-- ============ INICIO ============ -->
+  <section id="sInicio">
+    <h1 class="px-title">Minas de los Primos</h1>
+    <p class="sub">Divisibilidad · una pregunta cada vez</p>
+    <div class="panel px-box">
+      <h2>1 · Elige tema</h2>
+      <div class="opciones-grid" id="temas" role="group" aria-label="Tema"></div>
+    </div>
+    <div class="panel px-box">
+      <h2>2 · Dificultad</h2>
+      <div class="opciones-grid" id="niveles" role="group" aria-label="Dificultad"></div>
+    </div>
+    <div class="panel px-box">
+      <h2>3 · Tu matemático</h2>
+      <div class="heroe-elegido"><img id="hMenu" alt="" width="64" height="70"><p><b id="hNombre"></b> te acompaña en las minas.<br><small>Se cambia en el <a href="../../index.html">Mapa de Gaussoria</a>.</small></p></div>
+    </div>
+    <button class="px-btn start" id="bEmpezar">▶ ¡A jugar!</button>
+  </section>
+
+  <!-- ============ COMBATE ============ -->
+  <section id="sJuego" class="oculto" aria-live="polite">
+    <div class="hud">
+      <div class="enemigo px-box">
+        <img id="eImg" alt="" width="84" height="84">
+        <div style="flex:1"><b id="eNombre"></b><small id="eReto"></small><div class="vida" aria-hidden="true"><i id="eVida" style="width:100%"></i></div></div>
+      </div>
+      <div class="contador px-box"><span>Pregunta</span><div id="cNum">1/10</div><span>Aciertos</span><div id="cOk">0</div></div>
+    </div>
+    <div class="panel px-box">
+      <div class="pregunta" id="pTexto"></div>
+      <div class="respuestas" id="pResp"></div>
+      <div class="fila"><button class="px-btn secundario" id="bPista">💡 Pista</button></div>
+      <div class="feedback px-box oculto" id="fb" role="status"><h3 id="fbTit"></h3><div id="fbTxt"></div></div>
+      <div class="fila oculto" id="filaSig"><button class="px-btn" id="bSig">Siguiente ▶</button></div>
+      <div class="heroe-dice"><img id="hImg" alt=""><p id="hDice">¡Vamos allá!</p></div>
+    </div>
+  </section>
+
+  <!-- ============ FINAL ============ -->
+  <section id="sFinal" class="oculto">
+    <div class="panel px-box final">
+      <h2 id="fTitulo">¡Combate terminado!</h2>
+      <img id="fImg" alt="" width="120" height="120" style="image-rendering:pixelated">
+      <div class="estrellas" id="fEstrellas" aria-label=""></div>
+      <div class="grande" id="fAciertos"></div>
+      <p id="fTexto"></p>
+      <p id="fRecord"></p>
+      <div class="fila">
+        <button class="px-btn" id="bOtra">↻ Otra vez</button>
+        <button class="px-btn secundario" id="bMenu">Cambiar tema</button>
+      </div>
+    </div>
+  </section>
+</main>
+
+<script src="motor.js"></script>
+<script src="../../compartido/mathquest.js"></script>
+<script>
+(function () {
+  'use strict';
+  /* Las preguntas, la respuesta correcta y la explicación salen del MOTOR del
+     Duelo de divisibilidad (motor.js). Aquí solo se muestran como pregunta
+     de 4 opciones. Fallar no quita vidas: se ve la explicación y se sigue. */
+  const Q = window.PichuRoyale;
+  const A = '../../compartido/img/galois/';
+  const $ = (s) => document.querySelector(s);
+  const NPREG = 10;
+  const CLAVE = 'pichu.minas.v1';          // { cfg: { tema, nivel }, rec: { "tema-nivel": mejores aciertos } }
+
+  const TEMAS = [
+    { id: 'div', nombre: 'Divisores', desc: '¿Cuántos divisores? · El intruso', tipos: ['cuantos', 'intruso'], enemigo: 'multiplax' },
+    { id: 'fac', nombre: 'Primos y potencias', desc: 'Reconstruye el número', tipos: ['reconstruye'], enemigo: 'primox' },
+    { id: 'mm', nombre: 'MCD y mcm', desc: 'Cálculo mental', tipos: ['mcd', 'mcm'], enemigo: 'multiplax' },
+    { id: 'mix', nombre: 'Mezcla', desc: 'Todo, con número secreto', tipos: ['cuantos', 'intruso', 'reconstruye', 'mcd', 'mcm', 'secreto'], enemigo: 'primox' }
+  ];
+  const NIVELES = [{ id: 0, nombre: 'Fácil', desc: 'Números pequeños' }, { id: 2, nombre: 'Medio', desc: 'Números más grandes' }];
+  const ENEMIGOS = { multiplax: 'Múltiplax', primox: 'Prímox' };
+  const HEROES = window.MathQuest ? MathQuest.HEROES : [{ id: 'hipatia', nombre: 'Hipatia' }];
+  const ANIMO_OK = ['¡Eso es!', '¡Muy bien pensado!', '¡Directo al blanco!', '¡Imparable!', '¡Genial!'];
+  const ANIMO_KO = ['¡Casi! Lee la explicación.', 'Equivocarse también enseña.', 'Mira el porqué y a por la siguiente.', '¡Ánimo, la próxima es tuya!'];
+
+  let cfg = { tema: 'div', nivel: 0 };
+  let rec = {};
+  try {
+    const d = JSON.parse(localStorage.getItem(CLAVE) || '{}');
+    if (d.cfg) cfg = Object.assign(cfg, d.cfg);
+    if (d.rec) rec = d.rec;
+  } catch (e) { /* sin guardado */ }
+  const save = () => { try { localStorage.setItem(CLAVE, JSON.stringify({ cfg, rec })); } catch (e) { /* sin almacenamiento */ } };
+  // El matemático es el elegido en el Mapa de Gaussoria (pichu.galois.v1); solo se lee
+  let heroe = HEROES[0];
+  try { const g = JSON.parse(localStorage.getItem('pichu.galois.v1') || '{}'); heroe = HEROES.find((h) => h.id === g.heroe) || heroe; } catch (e) { /* */ }
+  const imgHeroe = (grande) => A + 'heroes/' + heroe.id + (grande ? '-retrato' : '') + '.png';
+
+  const pick = (a) => a[Math.floor(Math.random() * a.length)];
+  const shuffle = (a) => { a = a.slice(); for (let i = a.length - 1; i > 0; i--) { const j = Math.floor(Math.random() * (i + 1)); [a[i], a[j]] = [a[j], a[i]]; } return a; };
+  const estrellas = (ok) => ok >= 9 ? 3 : ok >= 7 ? 2 : ok >= 5 ? 1 : 0;
+
+  // Resumen para el mapa (estrellas y combates superados), como hacen los demás juegos
+  function resumenMapa() {
+    if (!window.MathQuest) return;
+    const claves = TEMAS.flatMap((t) => NIVELES.map((n) => t.id + '-' + n.id));
+    const est = claves.map((k) => estrellas(rec[k] || 0));
+    MathQuest.resumen('minas', { superados: est.filter((s) => s > 0).length, total: claves.length,
+      estrellas: est.reduce((a, b) => a + b, 0), maxEstrellas: claves.length * 3 });
+  }
+
+  /* ---------- Menú ---------- */
+  function boton(cont, grupo, item, html) {
+    const b = document.createElement('button');
+    b.className = 'elegir'; b.type = 'button'; b.innerHTML = html;
+    b.setAttribute('aria-pressed', String(cfg[grupo] === item));
+    // Al elegir se repinta el menú; el foco vuelve al botón elegido (para el teclado)
+    b.addEventListener('click', () => { cfg[grupo] = item; save(); pintarMenu(); const nb = document.querySelector(`[data-g="${grupo}"][data-i="${item}"]`); if (nb) nb.focus(); });
+    b.dataset.g = grupo; b.dataset.i = item;
+    cont.appendChild(b);
+  }
+  function pintarMenu() {
+    const t = $('#temas'), n = $('#niveles');
+    t.innerHTML = n.innerHTML = '';
+    TEMAS.forEach((x) => boton(t, 'tema', x.id, `<img src="${A}enemigos/${x.enemigo}.png" alt=""><span>${x.nombre}<small>${x.desc}</small></span>`));
+    NIVELES.forEach((x) => boton(n, 'nivel', x.id, `<span>${x.nombre}<small>${x.desc}</small></span>`));
+    $('#hMenu').src = imgHeroe(true); $('#hNombre').textContent = heroe.nombre;
+  }
+
+  /* ---------- Preguntas a partir del motor ---------- */
+  function nuevaPregunta(tema) {
+    for (let intento = 0; intento < 20; intento++) {
+      const tipo = pick(tema.tipos);
+      const r = Q.GEN[tipo](cfg.nivel, Math.random);
+      r.tipo = tipo;
+      r.mano = r.valores.map((n, i) => ({ id: i + 1, n }));
+      const evalua = (n) => Q.evaluar(r, [{ id: 99, n }]);
+      const buenas = [...new Set(r.valores)].filter((n) => evalua(n).ok);
+      const malas = [...new Set(r.valores)].filter((n) => !evalua(n).ok);
+      if (buenas.length !== 1 || malas.length < 3) continue;
+      const opciones = shuffle([buenas[0], ...shuffle(malas).slice(0, 3)]);
+      // En pantalla hablamos de «número», no de «carta»
+      const texto = r.enunciado.replace(/\bcarta\b/g, 'número');
+      return { r, texto, opciones, correcta: buenas[0], evalua };
+    }
+    return null;
+  }
+
+  /* ---------- Partida ---------- */
+  let P = null;
+  function empezar() {
+    const tema = TEMAS.find((x) => x.id === cfg.tema) || TEMAS[0];
+    P = { tema, n: 0, ok: 0, actual: null };
+    $('#eImg').src = A + 'enemigos/' + tema.enemigo + '-grande.png';
+    $('#eImg').classList.remove('ko');
+    $('#eNombre').textContent = ENEMIGOS[tema.enemigo];
+    $('#eReto').textContent = tema.nombre + ' · ' + (NIVELES.find((x) => x.id === cfg.nivel) || NIVELES[0]).nombre;
+    $('#hImg').src = imgHeroe(false);
+    $('#hDice').textContent = '¡A por ' + ENEMIGOS[tema.enemigo] + '! Cada acierto le quita vida.';
+    mostrar('#sJuego');
+    siguiente();
+  }
+  function siguiente() {
+    if (P.n >= NPREG) return P.fin ? null : terminar();
+    P.actual = nuevaPregunta(P.tema);
+    P.respondida = false;
+    $('#cNum').textContent = (P.n + 1) + '/' + NPREG;
+    $('#cOk').textContent = P.ok;
+    $('#pTexto').innerHTML = P.actual.texto;
+    const box = $('#pResp'); box.innerHTML = '';
+    P.actual.opciones.forEach((v, i) => {
+      const b = document.createElement('button');
+      b.className = 'resp'; b.type = 'button'; b.dataset.v = v;
+      b.innerHTML = `${v}<span class="k">${i + 1}</span>`;
+      b.setAttribute('aria-label', `Respuesta ${i + 1}: ${v}`);
+      b.addEventListener('click', () => responder(v));
+      box.appendChild(b);
+    });
+    $('#fb').classList.add('oculto');
+    $('#filaSig').classList.add('oculto');
+    $('#bPista').disabled = false;
+    box.querySelector('.resp').focus({ preventScroll: true });
+  }
+  function responder(v) {
+    if (P.respondida) return;
+    P.respondida = true; P.n++;
+    const e = P.actual.evalua(v);
+    document.querySelectorAll('.resp').forEach((b) => {
+      b.disabled = true;
+      if (+b.dataset.v === P.actual.correcta) b.classList.add('bien');
+      else if (+b.dataset.v === v) b.classList.add('mal');
+    });
+    const fb = $('#fb');
+    fb.classList.remove('oculto', 'ok', 'ko');
+    if (e.ok) {
+      P.ok++;
+      fb.classList.add('ok'); $('#fbTit').textContent = '✔ ¡Correcto!'; $('#fbTxt').innerHTML = e.explicacion;
+      $('#hDice').textContent = pick(ANIMO_OK);
+      const img = $('#eImg'); img.classList.remove('golpe'); void img.offsetWidth; img.classList.add('golpe');
+    } else {
+      fb.classList.add('ko'); $('#fbTit').textContent = '✘ No es ' + v; $('#fbTxt').innerHTML = e.error;
+      $('#hDice').textContent = pick(ANIMO_KO);
+    }
+    $('#eVida').style.width = Math.max(0, 100 - P.ok * (100 / NPREG)) + '%';
+    $('#cOk').textContent = P.ok;
+    $('#bPista').disabled = true;
+    $('#filaSig').classList.remove('oculto');
+    $('#bSig').textContent = P.n >= NPREG ? 'Ver resultado ▶' : 'Siguiente ▶';
+    $('#bSig').focus({ preventScroll: true });
+  }
+  function terminar() {
+    P.fin = true;
+    const s = estrellas(P.ok);
+    const key = cfg.tema + '-' + cfg.nivel;
+    const nuevo = !(rec[key] >= P.ok);
+    if (nuevo) { rec[key] = P.ok; save(); }
+    resumenMapa();
+    $('#fImg').src = A + 'enemigos/' + P.tema.enemigo + '-grande.png';
+    $('#fImg').style.filter = P.ok >= NPREG / 2 ? 'grayscale(1) brightness(.6)' : '';
+    $('#fTitulo').textContent = P.ok >= NPREG / 2 ? '¡Has derrotado a ' + ENEMIGOS[P.tema.enemigo] + '!' : ENEMIGOS[P.tema.enemigo] + ' resiste…';
+    $('#fEstrellas').innerHTML = [0, 1, 2].map((i) => `<span class="${i < s ? '' : 'off'}">★</span>`).join('');
+    $('#fEstrellas').setAttribute('aria-label', s + ' de 3 estrellas');
+    $('#fAciertos').textContent = P.ok + ' / ' + NPREG;
+    $('#fTexto').textContent = s === 3 ? '¡Dominas este tema! Prueba la dificultad media u otro tema.' : s >= 1 ? '¡Buen trabajo! Repite para conseguir más estrellas.' : 'Cada intento cuenta. Usa la pista y lee las explicaciones.';
+    $('#fRecord').textContent = nuevo ? '🏆 ¡Nuevo récord en este tema!' : 'Tu récord: ' + rec[key] + ' / ' + NPREG;
+    mostrar('#sFinal');
+    $('#bOtra').focus({ preventScroll: true });
+  }
+  function mostrar(id) {
+    ['#sInicio', '#sJuego', '#sFinal'].forEach((s) => $(s).classList.toggle('oculto', s !== id));
+    window.scrollTo(0, 0);
+  }
+
+  $('#bEmpezar').addEventListener('click', empezar);
+  $('#bSig').addEventListener('click', siguiente);
+  $('#bOtra').addEventListener('click', empezar);
+  $('#bMenu').addEventListener('click', () => { pintarMenu(); mostrar('#sInicio'); });
+  $('#bPista').addEventListener('click', () => { $('#hDice').innerHTML = P.actual.r.pista; $('#bPista').disabled = true; });
+  document.addEventListener('keydown', (ev) => {
+    if ($('#sJuego').classList.contains('oculto')) return;
+    const k = +ev.key;
+    if (k >= 1 && k <= 4 && !P.respondida) { const b = document.querySelectorAll('.resp')[k - 1]; if (b) b.click(); }
+  });
+  pintarMenu();
+})();
+</script>
+</body>
+</html>

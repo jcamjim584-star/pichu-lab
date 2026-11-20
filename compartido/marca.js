@@ -17,7 +17,7 @@ window.MARCA = {
     lugar: "Fuentes de Andalucía (Sevilla)",
     logo: "compartido/img/centro.jpg"
   },
-  version: "1.3.0",
+  version: "1.4.0",
   autor: "Juan Antonio Campos Jiménez",
 
   // Cursos: de momento la portada NO los muestra (se organiza por juegos).
@@ -28,6 +28,19 @@ window.MARCA = {
   // estado: "jugar" (disponible) | "pronto" (aún no subido o en diseño)
   juegos: [
     {
+      id: "minas",
+      titulo: "Divisibilidad exprés",
+      subtitulo: "Minas de los Primos",
+      curso: "1.º ESO",
+      saber: "Divisores, primos y potencias, MCD y mcm",
+      descripcion: "Modo fácil: 10 preguntas de 4 opciones contra Múltiplax o Prímox. Fallar no quita vidas: se ve la explicación y se sigue.",
+      simbolo: "÷",
+      // Viene del modo fácil de πCHU ROYALE; motor.js es copia literal del motor del Duelo de divisibilidad
+      url: "applets/minas/",
+      estado: "jugar",
+      claves: ["pichu.minas.v1"]
+    },
+    {
       id: "expres",
       titulo: "Factor Clash",
       subtitulo: "Duelos de divisibilidad",
@@ -35,8 +48,10 @@ window.MARCA = {
       saber: "Múltiplos, divisores, primos, MCD y mcm",
       descripcion: "Combates de cartas rápidos contra cinco rivales. Elige compañero, cumple la misión y usa su poder.",
       simbolo: "÷",
+      // Desde 1.4.0 el reino de divisibilidad abre Minas de los Primos. El juego sigue en applets/expres/
+      // y su guardado pichu.expres.v3 se conserva (no se borra nada).
       url: "applets/expres/",
-      estado: "jugar",
+      estado: "pronto",
       claves: ["pichu.expres.v3"]
     },
     {
