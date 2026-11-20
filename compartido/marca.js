@@ -17,7 +17,7 @@ window.MARCA = {
     lugar: "Fuentes de Andalucía (Sevilla)",
     logo: "compartido/img/centro.jpg"
   },
-  version: "1.4.0",
+  version: "1.5.0",
   autor: "Juan Antonio Campos Jiménez",
 
   // Cursos: de momento la portada NO los muestra (se organiza por juegos).
@@ -68,6 +68,19 @@ window.MARCA = {
       claves: ["pichu.integerNinja.v1"]
     },
     {
+      id: "laboratorio",
+      titulo: "Laboratorio πCHU",
+      subtitulo: "Fracciones con Biología y Geología",
+      curso: "1.º ESO",
+      saber: "Fracciones: representar, medir, equivalentes, simplificar, operar y problemas",
+      descripcion: "Seis estaciones (la Tierra, la atmósfera, la célula, el laboratorio, los ecosistemas…) con tareas de colorear, medir en la probeta, escribir y construir operaciones.",
+      simbolo: "½",
+      // Viene de πCHU ROYALE (jantoniolade-blip/pichu-lab, rama dev, juegos/fracciones): copia del artefacto «Laboratorio πCHU»
+      url: "applets/laboratorio/",
+      estado: "jugar",
+      claves: ["pichu.laboratorio.v1"]
+    },
+    {
       id: "fraction-merge",
       titulo: "Fraction Merge",
       subtitulo: "Suma y fusiona fracciones",
@@ -76,8 +89,9 @@ window.MARCA = {
       descripcion: "Desliza y junta fichas: las fracciones se suman, y si llegan a 1 desaparecen. 13 niveles, poderes, un jefe final y partida infinita.",
       simbolo: "½",
       // Fuentes en src/fraction-merge/ → python3 src/fraction-merge/build.py genera applets/fraction-merge/index.html
+      // Desde 1.5.0: «próximamente» (el reino 3 abre el Laboratorio πCHU). Juego y guardado se conservan.
       url: "applets/fraction-merge/",
-      estado: "jugar",
+      estado: "pronto",
       claves: ["pichu.fraction-merge.v1", "pichu.mathquest.v1"]
     },
     {
@@ -90,8 +104,9 @@ window.MARCA = {
       simbolo: "x=",
       // Fuentes en src/equation-merge/ → python3 src/equation-merge/build.py genera applets/equation-merge/index.html
       // (Sustituye a Power Merge desde la 0.9.0; su guardado pichu.power-merge.v1 se conserva, sin uso)
+      // Desde 1.5.0: «próximamente» (el reino 4 queda en la niebla). Juego y guardado se conservan.
       url: "applets/equation-merge/",
-      estado: "jugar",
+      estado: "pronto",
       claves: ["pichu.equation-merge.v1", "pichu.mathquest.v1"]
     },
     {

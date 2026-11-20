@@ -1,5 +1,17 @@
 # Registro de cambios
 
+## 1.5.0 · 20/11/2026 · El Laboratorio πCHU sustituye a Fraction Merge; Equation Merge, próximamente
+- **Reino 3 (Fracciones): Laboratorio πCHU** (`applets/laboratorio/`), de `jantoniolade-blip/pichu-lab` (rama `dev`,
+  `juegos/fracciones`, copia del artefacto «Laboratorio πCHU»): fracciones con Biología y Geología en 6 estaciones.
+  Jugabilidad sin cambios. Sin Google Fonts (letras locales), paleta y letras GALOIS LEGACY en su capa pixel, rótulo nuevo y
+  vuelta con la insignia «◀ Mapa». Guarda en `pichu.laboratorio.v1`.
+- **Fraction Merge y Equation Merge pasan a «próximamente»**: el reino 4 queda en la niebla. Los juegos siguen en `applets/` y
+  sus guardados no se tocan; salen de la caché sin conexión.
+- Portada: los logros solo cuentan los de juegos disponibles (si no hay ninguno, el botón no aparece) y el texto de ajustes ya no
+  nombra juegos retirados.
+- Comprobado: «Todo correcto»; lista de reinos, Laboratorio (menú y alias) a 360, 390 y 1280 px, sin errores en la consola, sin
+  desbordamiento y sin peticiones a otros servidores.
+
 ## 1.4.0 · 20/11/2026 · Minas de los Primos sustituye a Factor Clash
 - **Juego nuevo en el reino 1: Divisibilidad exprés** (`applets/minas/`), el modo fácil de πCHU ROYALE
   (`jantoniolade-blip/pichu-lab`, rama `dev`, `juegos/divisibilidad/facil.html`): 10 preguntas de 4 opciones contra Múltiplax o

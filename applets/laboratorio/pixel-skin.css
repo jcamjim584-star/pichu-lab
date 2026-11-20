@@ -1,0 +1,60 @@
+/* =====================================================================
+   GALOIS LEGACY · capa pixel art 16-bit para el Laboratorio πCHU (fracciones)
+   Se carga DESPUÉS del <style> original y solo sobrescribe aspecto.
+   El cuaderno (papel) sigue claro: ahí se escriben y colorean fracciones.
+   ===================================================================== */
+:root {
+  --mesa: #16122C;
+  --mesa-2: #251E4A;
+  --papel: #F3ECD6;
+  --papel-2: #FFFBEF;
+  --linea: #d9c8ef;
+  --tinta: #16122C;
+  --salvia: #3E9A5E;
+  --salvia-osc: #246B3E;
+  --coral: #e46666;
+  --coral-osc: #a63c3c;
+  --mostaza: #E8B53A;
+  --font: 'Lato', system-ui, sans-serif;            /* textos y números (regla 4) */
+  --px-digits: 'Lato', system-ui, sans-serif;
+  --px-lavanda: #6A4BB8;
+}
+html { font-synthesis: none; }
+html, body, button, input, select, textarea { font-variant-ligatures: none; font-feature-settings: "liga" 0, "clig" 0; }
+body { font-size: 19px; }
+body::before { background: radial-gradient(circle at 20% 10%, rgba(164,119,212,.22), transparent 45%), radial-gradient(circle at 85% 90%, rgba(107,201,195,.16), transparent 45%); }
+img { image-rendering: pixelated; }
+:focus-visible { outline: 3px dashed var(--mostaza); outline-offset: 3px; }
+
+/* Botones */
+.btn { border-radius: 0; border: 4px solid var(--tinta); box-shadow: inset -4px -4px 0 rgba(0,0,0,.2), inset 4px 4px 0 rgba(255,255,255,.35), 0 4px 0 var(--tinta); transition: none; font-size: 1.1rem; }
+.btn:active { transform: translateY(4px); box-shadow: inset -4px -4px 0 rgba(0,0,0,.2), inset 4px 4px 0 rgba(255,255,255,.35), 0 0 0 var(--tinta); }
+.btn.primary { background: var(--mostaza); color: var(--tinta); text-shadow: none; }
+.btn.green { background: var(--salvia-osc); text-shadow: none; }
+
+/* Menú */
+.brand { border-radius: 0; background: var(--mesa-2); color: var(--mostaza); box-shadow: 3px 3px 0 var(--tinta); font-family: var(--font); font-size: 1rem; letter-spacing: 2px; padding: 6px 10px; }
+.hero h1 { font-family: 'Pixelify Sans', 'Lato', sans-serif; font-weight: 700; font-size: clamp(1.7rem, 7.6vw, 3.4rem); line-height: 1.05; overflow-wrap: normal; /* Pixelify es ancha: que «Laboratorio» quepa entero */ min-width: 0; -webkit-text-stroke: 0; color: var(--papel); text-shadow: 4px 4px 0 var(--px-lavanda), 8px 8px 0 var(--tinta); }
+.hero img { animation: pxBob 1.2s steps(2) infinite; }
+@keyframes pxBob { 50% { transform: translateY(-6px); } }
+.station { border-radius: 0; border: 4px solid var(--tinta); box-shadow: 5px 5px 0 var(--tinta); }
+.station .ic { border-radius: 0; background: var(--mesa-2); }
+.station small { color: #5d4a80; }
+
+/* Cuaderno y tareas */
+.paper { border-radius: 0; border: 4px solid var(--tinta); box-shadow: inset 0 0 0 3px var(--mostaza), inset 0 0 0 6px var(--tinta), 7px 7px 0 var(--tinta); padding: 20px; }
+.paper h2 { text-transform: uppercase; }
+.muted, .log, .stats small { color: #5d4a80; }
+.chip, .progress i, .topic > div, .lab-ctrl .group, .vial, .sign, .op, .cell, .fin input, input.numin, .tin, textarea, pre.cert, .stats div, .fact, .toast { border-radius: 0; }
+.chip { background: var(--mesa-2); border: 3px solid var(--tinta); box-shadow: inset 0 0 0 2px var(--px-lavanda); }
+.cell { border-width: 3px; }
+.cell.on { background: #4c9bc9; }
+.fb .bubble { border-radius: 0; box-shadow: 3px 3px 0 var(--tinta); }
+.fact { background: var(--mesa-2); }
+.bigstars { color: var(--mostaza); }
+.stats b { font-family: var(--px-digits); font-weight: 400; font-size: 1rem; line-height: 1.6; }
+
+/* Enlace a la portada πCHU ROYALE (solo en el menú de estaciones) */
+.px-back { display: inline-block; margin: 0 0 12px; font-family: var(--px-digits); font-size: .6rem; line-height: 1.4; color: var(--papel); text-decoration: none; background: #160f26; border: 3px solid var(--tinta); box-shadow: 3px 3px 0 var(--tinta); padding: 8px 10px; }
+.px-back:focus-visible { outline: 3px dashed var(--mostaza); }
+.hero > div { min-width: 0; }

@@ -1,0 +1,971 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Laboratorio πCHU · GALOIS LEGACY</title>
+<meta name="description" content="Laboratorio πCHU: fracciones con Biología y Geología de 1.º ESO. Colorea, mide en la probeta, simplifica y resuelve problemas de la Tierra, la atmósfera, la célula y los ecosistemas.">
+<meta name="theme-color" content="#16122C">
+<!-- GALOIS LEGACY: viene de jantoniolade-blip/pichu-lab (rama dev, juegos/fracciones, commit 3e7ae85), copia del artefacto
+     «Laboratorio πCHU». Jugabilidad sin cambios. Letras locales en lugar de Google Fonts (privacidad, regla 3). -->
+<link rel="icon" href="../../compartido/img/galois/icono-192.png">
+<style>
+  @font-face { font-family: "Lato"; font-weight: 400; font-display: swap; src: url("../../compartido/fuentes/lato-latin-400-normal.woff2") format("woff2"); }
+  @font-face { font-family: "Lato"; font-weight: 700; font-display: swap; src: url("../../compartido/fuentes/lato-latin-700-normal.woff2") format("woff2"); }
+  @font-face { font-family: "Lato"; font-weight: 900; font-display: swap; src: url("../../compartido/fuentes/lato-latin-900-normal.woff2") format("woff2"); }
+  @font-face { font-family: "Pixelify Sans"; font-weight: 700; font-display: swap; src: url("../../compartido/fuentes/pixelify-sans-latin-700-normal.woff2") format("woff2"); }
+</style>
+<style>
+/* Diseño: cuaderno de laboratorio sobre la mesa oscura de πCHU ARCADE.
+   Un solo tema (marca πCHU): colores fijos y explícitos. */
+:root {
+  color-scheme: dark;
+  --mesa: #2A2322;
+  --mesa-2: #332B2A;
+  --papel: #F4EDD7;
+  --papel-2: #FFF8E8;
+  --linea: #E2D6B4;
+  --tinta: #332B2A;
+  --salvia: #5A8A78;
+  --salvia-osc: #3F6E5C;
+  --agua: #4C9BC9;
+  --agua-osc: #2D6F96;
+  --coral: #E46D4D;
+  --coral-osc: #A8402A;
+  --mostaza: #E8B53A;
+  --font: 'Lato', system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif;
+}
+* { box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
+html, body { height: 100%; }
+body { margin: 0; background: var(--mesa); color: var(--papel); font-family: var(--font); font-size: 16px; }
+body::before { content: ""; position: fixed; inset: 0; pointer-events: none; background: radial-gradient(circle at 20% 10%, rgba(90,138,120,.18), transparent 45%), radial-gradient(circle at 85% 90%, rgba(76,155,201,.14), transparent 45%); }
+button, input { font-family: inherit; }
+:focus-visible { outline: 3px solid var(--mostaza); outline-offset: 2px; }
+.hidden { display: none !important; }
+#app { position: relative; max-width: 760px; margin: 0 auto; padding: 14px max(16px, env(safe-area-inset-left, 0px)) 40px max(16px, env(safe-area-inset-right, 0px)); }
+
+/* ---------- Botones ---------- */
+.btn { appearance: none; border: 3px solid var(--tinta); background: var(--papel); color: var(--tinta); font-weight: 900; font-size: 1rem; padding: 11px 16px; border-radius: 14px; cursor: pointer; box-shadow: 0 4px 0 var(--tinta); min-height: 48px; transition: transform .08s, box-shadow .08s; }
+.btn:active { transform: translateY(3px); box-shadow: 0 1px 0 var(--tinta); }
+.btn.primary { background: var(--coral); color: #fff; text-shadow: 0 2px 0 var(--coral-osc); }
+.btn.green { background: var(--salvia); color: #fff; text-shadow: 0 2px 0 var(--salvia-osc); }
+.btn.small { min-height: 40px; padding: 7px 12px; font-size: .92rem; }
+.btn[disabled] { opacity: .45; cursor: not-allowed; }
+.row { display: flex; flex-wrap: wrap; gap: 10px; align-items: center; }
+.row.end { justify-content: flex-end; }
+.row.center { justify-content: center; }
+
+/* ---------- Cabecera y menú ---------- */
+.brand { display: inline-block; background: var(--salvia-osc); color: var(--papel); border: 3px solid var(--tinta); border-radius: 999px; padding: 4px 12px; font-weight: 900; letter-spacing: 3px; font-size: .78rem; }
+.hero { display: grid; grid-template-columns: auto 1fr; gap: 14px; align-items: center; margin: 10px 0 18px; }
+.hero img { width: min(120px, 26vw); filter: drop-shadow(0 6px 0 rgba(0,0,0,.35)); animation: bob 2.6s ease-in-out infinite; }
+@keyframes bob { 50% { transform: translateY(-6px) rotate(2deg); } }
+.hero h1 { margin: 6px 0 4px; font-size: clamp(2rem, 8vw, 3.2rem); line-height: .95; font-weight: 900; color: var(--papel); -webkit-text-stroke: 2px var(--tinta); text-shadow: 0 5px 0 var(--salvia), 0 8px 0 var(--tinta); paint-order: stroke fill; text-wrap: balance; }
+.hero p { margin: 8px 0 0; color: #E9DFC2; line-height: 1.4; max-width: 46ch; }
+.who { margin: 6px 0 14px; color: #E9DFC2; font-weight: 700; }
+.who button { background: none; border: none; color: var(--mostaza); font: inherit; text-decoration: underline; cursor: pointer; padding: 6px; }
+.stations { display: grid; grid-template-columns: repeat(auto-fill, minmax(220px, 1fr)); gap: 12px; }
+.station { text-align: left; display: grid; grid-template-columns: auto 1fr; gap: 4px 12px; align-items: center; background: var(--papel); color: var(--tinta); border: 3px solid var(--tinta); border-radius: 18px; padding: 12px; cursor: pointer; box-shadow: 0 5px 0 var(--tinta); font: inherit; min-width: 0; }
+.station:active { transform: translateY(3px); box-shadow: 0 2px 0 var(--tinta); }
+.station .ic { grid-row: span 3; width: 54px; height: 54px; border-radius: 14px; display: grid; place-items: center; font-size: 1.8rem; background: var(--mesa-2); border: 3px solid var(--tinta); }
+.station b { font-size: 1.05rem; }
+.station small { color: #6a5d58; line-height: 1.3; }
+.station .st { color: var(--mostaza); font-size: 1.1rem; letter-spacing: 2px; text-shadow: 0 1px 0 var(--tinta); }
+.station .st .off { color: var(--linea); text-shadow: none; }
+.foot { margin-top: 18px; display: flex; flex-wrap: wrap; gap: 10px; justify-content: center; }
+.link { background: none; border: none; color: #E9DFC2; text-decoration: underline; font: inherit; cursor: pointer; padding: 8px; }
+
+/* ---------- Papel (cuaderno) ---------- */
+.paper { background: var(--papel); color: var(--tinta); border: 3px solid var(--tinta); border-radius: 22px; box-shadow: 0 7px 0 var(--tinta), 0 16px 34px rgba(0,0,0,.35);
+  background-image: repeating-linear-gradient(to bottom, transparent 0 29px, rgba(90,138,120,.16) 29px 30px); padding: 16px; }
+.paper h2 { margin: 0 0 6px; font-size: 1.5rem; font-weight: 900; text-wrap: balance; }
+.paper h3 { margin: 14px 0 6px; font-size: 1.05rem; color: var(--salvia-osc); }
+.kicker { font-size: .72rem; letter-spacing: 2px; font-weight: 900; color: var(--salvia-osc); text-transform: uppercase; }
+.muted { color: #6a5d58; line-height: 1.45; }
+
+/* ---------- Barra superior de la tarea ---------- */
+.topbar { display: flex; align-items: center; justify-content: space-between; gap: 10px; margin-bottom: 12px; flex-wrap: wrap; }
+.topbar .where { font-weight: 900; color: #E9DFC2; }
+.chips { display: flex; gap: 8px; align-items: center; }
+.chip { background: var(--mesa-2); border: 2px solid rgba(244,237,215,.25); border-radius: 12px; padding: 5px 10px; font-weight: 900; font-variant-numeric: tabular-nums; white-space: nowrap; }
+.progress { display: flex; gap: 5px; }
+.progress i { width: 22px; height: 8px; border-radius: 4px; background: rgba(244,237,215,.2); }
+.progress i.done { background: var(--salvia); }
+.progress i.now { background: var(--mostaza); }
+.drops { letter-spacing: 1px; }
+.drops .gone { opacity: .25; filter: grayscale(1); }
+
+/* ---------- Tarea ---------- */
+.t-text { font-size: 1.12rem; line-height: 1.5; margin: 6px 0 12px; font-weight: 700; }
+.t-visual { display: flex; justify-content: center; margin: 8px 0 12px; min-width: 0; }
+.t-answer { display: flex; flex-wrap: wrap; gap: 10px; align-items: center; justify-content: center; margin: 8px 0; font-size: 1.15rem; font-weight: 900; }
+.t-actions { display: flex; flex-wrap: wrap; gap: 10px; justify-content: space-between; margin-top: 14px; }
+.prompt { width: 100%; text-align: center; font-weight: 700; font-size: 1.02rem; }
+
+/* fracción escrita (entrada) */
+.fin { display: inline-flex; flex-direction: column; align-items: center; gap: 3px; vertical-align: middle; }
+.fin input { width: 3.4em; text-align: center; font-size: 1.3rem; font-weight: 900; padding: 5px 4px; border: 3px solid var(--tinta); border-radius: 10px; background: #fff; color: var(--tinta); -moz-appearance: textfield; }
+.fin input::-webkit-outer-spin-button, .fin input::-webkit-inner-spin-button { -webkit-appearance: none; margin: 0; }
+.fin .bar { width: 100%; height: 4px; background: var(--tinta); border-radius: 2px; }
+.fin input[readonly] { background: var(--papel-2); border-style: dashed; }
+input.numin { width: 5em; text-align: center; font-size: 1.3rem; font-weight: 900; padding: 8px; border: 3px solid var(--tinta); border-radius: 10px; background: #fff; color: var(--tinta); }
+
+/* fracción apilada (texto) */
+.fr { display: inline-flex; flex-direction: column; vertical-align: middle; text-align: center; line-height: 1.02; font-size: .86em; margin: 0 .1em; font-weight: 900; }
+.fr i { font-style: normal; padding: 0 .14em; }
+.fr i:first-child { border-bottom: .12em solid currentColor; }
+
+/* rejilla para colorear */
+.grid { display: grid; gap: 6px; }
+.cell { width: clamp(38px, 12vw, 56px); aspect-ratio: 1; border: 3px solid var(--tinta); border-radius: 12px; background: var(--papel-2); font-size: clamp(1.1rem, 5vw, 1.6rem); cursor: pointer; display: grid; place-items: center; padding: 0; transition: transform .1s, background .15s; }
+.cell:active { transform: scale(.92); }
+.cell.on { background: var(--agua); }
+.cell.on.green { background: var(--salvia); }
+.cell.on.coral { background: var(--coral); }
+.cell .e { filter: saturate(1.1); }
+.count-pill { margin-top: 8px; text-align: center; font-weight: 900; color: var(--salvia-osc); }
+
+/* probeta */
+.lab { display: grid; grid-template-columns: auto 1fr; gap: 16px; align-items: start; width: 100%; }
+.lab svg { width: 130px; height: auto; }
+.lab-ctrl { display: flex; flex-direction: column; gap: 10px; min-width: 0; }
+.lab-ctrl .group { background: var(--papel-2); border: 2px solid var(--linea); border-radius: 14px; padding: 8px 10px; }
+.lab-ctrl .group b { display: block; font-size: .8rem; letter-spacing: 1.5px; color: var(--salvia-osc); margin-bottom: 6px; }
+.divsel { display: flex; align-items: center; gap: 10px; font-weight: 900; font-size: 1.2rem; }
+.divsel .btn { min-width: 46px; padding: 6px; }
+.vials { display: flex; flex-wrap: wrap; gap: 8px; }
+.vial { border: 3px solid var(--tinta); border-radius: 12px; background: #DDEFF8; color: var(--tinta); font-weight: 900; padding: 6px 10px; cursor: pointer; box-shadow: 0 3px 0 var(--tinta); display: inline-flex; align-items: center; gap: 6px; font-size: 1rem; min-height: 46px; }
+.vial.out { background: #F6DCD3; }
+.vial:active { transform: translateY(2px); box-shadow: 0 1px 0 var(--tinta); }
+.log { font-size: .95rem; color: #6a5d58; min-height: 1.4em; }
+
+/* barras de equivalencia */
+.bars svg { width: min(520px, 100%); height: auto; }
+
+/* signos de comparación */
+.signs { display: flex; gap: 8px; }
+.sign { width: 54px; height: 54px; font-size: 1.6rem; font-weight: 900; border: 3px solid var(--tinta); border-radius: 14px; background: var(--papel-2); cursor: pointer; color: var(--tinta); }
+.sign.on { background: var(--mostaza); }
+.ops { display: flex; gap: 6px; }
+.op { width: 48px; height: 48px; font-size: 1.4rem; font-weight: 900; border: 3px solid var(--tinta); border-radius: 12px; background: var(--papel-2); cursor: pointer; color: var(--tinta); }
+.op.on { background: var(--mostaza); }
+
+/* respuesta de πCHU */
+.fb { display: grid; grid-template-columns: auto 1fr; gap: 10px; align-items: end; margin-top: 14px; }
+.fb img { width: 64px; }
+.fb .bubble { background: #fff; border: 3px solid var(--tinta); border-radius: 16px 16px 16px 4px; padding: 10px 12px; line-height: 1.45; font-weight: 700; box-shadow: 0 3px 0 var(--tinta); min-width: 0; }
+.fb.ok .bubble { border-color: var(--salvia-osc); background: #E6F0EB; }
+.fb.ko .bubble { border-color: var(--coral-osc); background: #FBE7E0; }
+.fb.hint .bubble { border-color: #b08a1e; background: #FFF4D2; }
+.fb.ok img { animation: cheer .7s; }
+.fb.ko img { animation: shake .5s; }
+@keyframes cheer { 40% { transform: translateY(-12px) rotate(-8deg); } }
+@keyframes shake { 25% { transform: translateX(-5px) rotate(-6deg); } 75% { transform: translateX(5px) rotate(6deg); } }
+.fact { margin-top: 12px; background: var(--mesa-2); color: var(--papel); border-radius: 16px; padding: 12px 14px; border: 3px solid var(--tinta); line-height: 1.45; display: grid; grid-template-columns: auto 1fr; gap: 10px; align-items: start; }
+.fact .ic { font-size: 1.6rem; }
+.fact b { color: var(--mostaza); display: block; font-size: .78rem; letter-spacing: 2px; }
+
+/* intro y resultados */
+.topic { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin: 10px 0; }
+.topic > div { background: var(--papel-2); border: 2px solid var(--linea); border-radius: 14px; padding: 10px 12px; line-height: 1.45; }
+.topic b { display: block; font-size: .75rem; letter-spacing: 2px; color: var(--salvia-osc); margin-bottom: 4px; }
+.bigstars { font-size: 2.6rem; letter-spacing: 8px; text-align: center; color: var(--mostaza); text-shadow: 0 3px 0 var(--tinta); }
+.bigstars .off { color: var(--linea); text-shadow: none; }
+.stats { display: grid; grid-template-columns: repeat(3, 1fr); gap: 8px; margin: 10px 0; }
+.stats div { background: var(--papel-2); border: 2px solid var(--linea); border-radius: 12px; padding: 8px; text-align: center; }
+.stats b { display: block; font-size: 1.4rem; }
+.stats small { color: #6a5d58; font-weight: 700; }
+pre.cert { white-space: pre-wrap; background: var(--papel-2); border: 2px dashed var(--salvia); border-radius: 12px; padding: 10px; font-size: .9rem; user-select: text; -webkit-user-select: text; }
+textarea, .tin { width: 100%; font: inherit; border: 2px solid var(--tinta); border-radius: 12px; padding: 8px; background: #fff; color: var(--tinta); }
+.verify { font-weight: 900; min-height: 1.3em; }
+.verify.ok { color: var(--salvia-osc); } .verify.ko { color: var(--coral-osc); }
+.toast { position: fixed; left: 50%; bottom: calc(18px + env(safe-area-inset-bottom, 0px)); transform: translateX(-50%); background: var(--mostaza); color: var(--tinta); border: 3px solid var(--tinta); border-radius: 14px; padding: 8px 14px; font-weight: 900; z-index: 50; box-shadow: 0 4px 0 var(--tinta); max-width: calc(100vw - 32px); text-align: center; }
+.pop { animation: pop .3s cubic-bezier(.2,1.4,.4,1); }
+@keyframes pop { from { transform: scale(.94); opacity: 0; } }
+@media (max-width: 520px) {
+  .lab { grid-template-columns: 1fr; justify-items: center; }
+  .lab svg { width: 110px; }
+  .topic { grid-template-columns: 1fr; }
+  .t-text { font-size: 1.04rem; }
+}
+@media (prefers-reduced-motion: reduce) { *, *::before, *::after { animation: none !important; transition: none !important; } }
+</style>
+<!-- Capa pixel art GALOIS LEGACY (solo aspecto). Quitar estas líneas para volver al aspecto original. -->
+<link rel="stylesheet" href="pixel-skin.css">
+<script src="pixel-sprites.js" data-selector="img" data-grid="80"></script>
+<script src="../../compartido/volver.js" defer></script>
+</head>
+<body>
+
+<div id="app">
+  <!-- ===== MENÚ ===== -->
+  <section id="sMenu">
+    <span class="brand">GALOIS LEGACY · BIOLOGÍA + MATES</span>
+    <div class="hero">
+      <img class="pichu" alt="πCHU, la mascota del laboratorio" src="data:image/webp;base64,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">
+      <div>
+        <h1>Laboratorio πCHU</h1>
+        <p>Fracciones de verdad en la Tierra, el aire, la célula y los seres vivos. Aquí no se adivina: <b>colorea, mide, escribe y razona</b>.</p>
+      </div>
+    </div>
+    <div class="who" id="who"></div>
+    <div class="stations" id="stations"></div>
+    <div class="foot">
+      <button class="link" id="bHow">¿Cómo funciona?</button>
+      <button class="link" id="bTeacher">👩‍🏫 Zona docente</button>
+    </div>
+  </section>
+
+  <!-- ===== ALIAS ===== -->
+  <section id="sAlias" class="hidden">
+    <div class="paper pop">
+      <h2>¿Quién trabaja hoy en el laboratorio?</h2>
+      <p class="muted">Escribe el alias que acordéis en clase (no tu nombre completo). Sale en el justificante para Classroom.</p>
+      <input class="tin" id="aliasIn" maxlength="20" autocomplete="off" placeholder="p. ej. Bióloga7" aria-label="Alias">
+      <p class="verify ko" id="aliasErr"></p>
+      <div class="row end"><button class="btn primary" id="bAliasOk">Entrar al laboratorio</button></div>
+    </div>
+  </section>
+
+  <!-- ===== CÓMO FUNCIONA ===== -->
+  <section id="sHow" class="hidden">
+    <div class="paper pop">
+      <h2>¿Cómo funciona?</h2>
+      <div class="topic">
+        <div><b>6 ESTACIONES</b>Cada estación es un tema de Biología y Geología de 1.º ESO y trabaja una destreza con fracciones. Tiene 5 tareas.</div>
+        <div><b>⚗️ 5 REACTIVOS</b>Cada vez que compruebas una respuesta incorrecta gastas un reactivo. Si te quedas sin reactivos, repites la estación. ¡Piensa antes de comprobar!</div>
+        <div><b>🖍️ COLOREAR · 🧪 MEDIR</b>Colorea partes de una rejilla o llena la probeta: primero elige en cuántas partes dividirla (el denominador común).</div>
+        <div><b>⌨️ ESCRIBIR · 🧩 CONSTRUIR</b>Escribe la fracción tú mismo o monta la operación de un problema y su resultado, como en el cuaderno.</div>
+        <div><b>💡 PISTAS</b>La primera pista te orienta; la segunda te enseña el primer paso, pero cuenta como un fallo para las estrellas.</div>
+        <div><b>📜 JUSTIFICANTE</b>Al terminar una estación copias el justificante con su código y lo entregas en Classroom.</div>
+      </div>
+      <div class="row end"><button class="btn primary" data-menu>Entendido</button></div>
+    </div>
+  </section>
+
+  <!-- ===== INTRO DE ESTACIÓN ===== -->
+  <section id="sIntro" class="hidden">
+    <div class="paper pop">
+      <div class="kicker" id="inKick"></div>
+      <h2 id="inTitle"></h2>
+      <div class="topic">
+        <div><b>🌿 BIOLOGÍA Y GEOLOGÍA</b><span id="inBio"></span></div>
+        <div><b>➗ MATEMÁTICAS</b><span id="inMath"></span></div>
+      </div>
+      <div class="row end"><button class="btn" data-menu>← Estaciones</button><button class="btn primary" id="bStart">Empezar</button></div>
+    </div>
+  </section>
+
+  <!-- ===== TAREA ===== -->
+  <section id="sTask" class="hidden">
+    <div class="topbar">
+      <span class="where" id="tWhere"></span>
+      <div class="chips"><span class="progress" id="tProg"></span><span class="chip drops" id="tDrops" aria-label="Reactivos"></span></div>
+    </div>
+    <div class="paper" id="tCard">
+      <div class="kicker" id="tKick"></div>
+      <div class="t-text" id="tText"></div>
+      <div class="t-visual" id="tVisual"></div>
+      <div class="t-answer" id="tAnswer"></div>
+      <div class="t-actions">
+        <div class="row"><button class="btn small" data-menu>✕ Salir</button><button class="btn small" id="bHint">💡 Pista</button></div>
+        <div class="row"><button class="btn primary" id="bCheck">Comprobar</button><button class="btn green hidden" id="bNext">Siguiente →</button></div>
+      </div>
+      <div class="fb hidden" id="fb"><img class="pichu" alt="πCHU" src="data:image/webp;base64,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"><div class="bubble" id="fbText"></div></div>
+      <div class="fact hidden" id="fact"><span class="ic">🔬</span><div><b>DATO CIENTÍFICO</b><span id="factText"></span></div></div>
+    </div>
+  </section>
+
+  <!-- ===== RESULTADO ===== -->
+  <section id="sResult" class="hidden">
+    <div class="paper pop">
+      <div class="kicker" id="rKick"></div>
+      <h2 id="rTitle"></h2>
+      <div class="bigstars" id="rStars"></div>
+      <div class="stats" id="rStats"></div>
+      <p class="muted" id="rTip"></p>
+      <div id="rCertBox">
+        <h3>📜 Justificante para Classroom</h3>
+        <p class="muted">Cópialo y pégalo como comentario en la tarea de Classroom. Si alguien cambia una cifra, el código no coincidirá.</p>
+        <pre class="cert" id="rCert"></pre>
+        <div class="row"><button class="btn" id="bCopy">📋 Copiar justificante</button></div>
+      </div>
+      <div class="row end" style="margin-top:12px"><button class="btn" data-menu>⌂ Estaciones</button><button class="btn primary" id="bRetry">↻ Repetir estación</button></div>
+    </div>
+  </section>
+
+  <!-- ===== DOCENTE ===== -->
+  <section id="sTeacher" class="hidden">
+    <div class="paper pop">
+      <h2>👩‍🏫 Zona docente</h2>
+      <h3>Grupo</h3>
+      <input class="tin" id="tGroup" maxlength="30" placeholder="p. ej. 1.º ESO C">
+      <h3>Comprobar un justificante</h3>
+      <p class="muted">Pega el texto que te ha entregado el alumno o alumna.</p>
+      <textarea id="tVerify" rows="7" placeholder="LABORATORIO πCHU · Justificante&#10;…&#10;Código: XXX-XXX"></textarea>
+      <div class="row"><button class="btn" id="bVerify">✔ Comprobar</button></div>
+      <p class="verify" id="verifyOut"></p>
+      <h3>Qué trabaja cada estación</h3>
+      <div class="muted" id="tMap"></div>
+      <h3>Progreso en este dispositivo</h3>
+      <div class="muted" id="tProgress"></div>
+      <div class="row end" style="margin-top:12px"><button class="btn" id="bWipe">Borrar progreso</button><button class="btn primary" data-menu>Guardar y volver</button></div>
+    </div>
+  </section>
+</div>
+
+<script>
+(function () {
+  'use strict';
+  const $ = (s) => document.querySelector(s);
+  const $$ = (s) => Array.from(document.querySelectorAll(s));
+
+  /* =================================================================
+     FRACCIONES
+     ================================================================= */
+  const gcd = (a, b) => { a = Math.abs(a); b = Math.abs(b); while (b) [a, b] = [b, a % b]; return a || 1; };
+  const lcm = (a, b) => (a / gcd(a, b)) * b;
+  const F = (n, d = 1) => (d < 0 ? { n: -n, d: -d } : { n, d });
+  const simp = (f) => { const g = gcd(f.n, f.d); return F(f.n / g, f.d / g); };
+  const add = (a, b) => simp(F(a.n * b.d + b.n * a.d, a.d * b.d));
+  const sub = (a, b) => simp(F(a.n * b.d - b.n * a.d, a.d * b.d));
+  const mul = (a, b) => simp(F(a.n * b.n, a.d * b.d));
+  const div = (a, b) => simp(F(a.n * b.d, a.d * b.n));
+  const eqv = (a, b) => !!a && !!b && a.n * b.d === b.n * a.d;
+  const cmp = (a, b) => a.n * b.d - b.n * a.d;
+  const isIrr = (f) => gcd(f.n, f.d) === 1;
+  const T = (f) => (f.d === 1 ? String(f.n) : f.n + '/' + f.d);           // texto plano
+  const fracHTML = (s) => String(s).replace(/(\d+)\/(\d+)/g, '<span class="fr"><i>$1</i><i>$2</i></span>');
+  const esc = (s) => String(s == null ? '' : s).replace(/[&<>"]/g, (c) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' }[c]));
+  const OPS = { '+': add, '−': sub, '·': mul, ':': div };
+
+  /* aleatorio */
+  const rnd = (a, b) => a + Math.floor(Math.random() * (b - a + 1));
+  const pick = (arr) => arr[Math.floor(Math.random() * arr.length)];
+
+  /* =================================================================
+     ESTACIONES Y TAREAS
+     Tipos: color · probeta · equiv · simplify · compare · qty · build
+     ================================================================= */
+  const STATIONS = [
+    {
+      id: 1, icon: '🌍', name: 'El planeta azul', topic: 'La Tierra y la hidrosfera',
+      bio: 'La hidrosfera es el agua de la Tierra: océanos, ríos, lagos, glaciares y aguas subterráneas. Casi toda es salada y la mayor parte del agua dulce está congelada.',
+      math: 'Qué es una fracción, fracción de un grupo, fracciones equivalentes y comparar.',
+      make: () => [
+        { type: 'color', rows: 4, cols: 5, emoji: '🌊', tone: '', want: F(3, 4), text: 'Aproximadamente 3/4 de la superficie de la Tierra están cubiertos de agua. Este mapa tiene 20 casillas: colorea de azul 3/4 del mapa.',
+          ask: { kind: 'frac', value: F(1, 4), prompt: '¿Qué fracción del mapa ha quedado sin colorear (tierra firme)?' },
+          fact: 'En realidad el agua cubre el 71 % de la superficie terrestre, un poco menos de 3/4. Por eso la Tierra se ve azul desde el espacio.' },
+        { type: 'color', rows: 3, cols: 4, emoji: '🧊', tone: '', want: F(2, 3), text: 'Unos 2/3 del agua dulce del planeta están congelados en glaciares y casquetes polares. Colorea 2/3 de estos 12 cubitos.',
+          ask: { kind: 'frac', value: F(1, 3), prompt: '¿Qué fracción del agua dulce NO está congelada?' },
+          fact: 'El agua dulce que no está helada está sobre todo bajo tierra (acuíferos). La de ríos y lagos es una parte muy pequeña: por eso hay que cuidarla.' },
+        (() => { const den = pick([6, 9, 12, 15]); return { type: 'equiv', from: F(1, 3), toDen: den, text: `El océano Pacífico cubre aproximadamente 1/3 de la superficie de la Tierra. Escribe esa fracción con denominador ${den}.`,
+          fact: 'El Pacífico es el océano más grande y más profundo: en la fosa de las Marianas llega a unos 11 000 m de profundidad.' }; })(),
+        { type: 'compare', a: F(1, 3), b: F(1, 5), la: 'Pacífico', lb: 'Atlántico', text: 'El Pacífico cubre unos 1/3 de la superficie terrestre y el Atlántico unos 1/5. Escríbelas con el mismo denominador y compáralas.',
+          fact: 'El Atlántico es el segundo océano más grande. Separa América de Europa y África y baña las costas de Andalucía occidental.' },
+        (() => { const d = 8, n = pick([3, 5]), tot = d * rnd(2, 4); return { type: 'qty', total: tot, want: F(n, d), emoji: '🦠', text: `En una gota de agua de charca observamos ${tot} microorganismos al microscopio. ${n}/${d} de ellos son algas. ¿Cuántas algas hay?`,
+          fact: 'Las algas microscópicas del plancton hacen la fotosíntesis y producen buena parte del oxígeno de la Tierra.' }; })(),
+      ],
+    },
+    {
+      id: 2, icon: '🌬️', name: 'El aire que respiramos', topic: 'La atmósfera',
+      bio: 'La atmósfera es la capa de gases que rodea la Tierra. El gas más abundante es el nitrógeno; el oxígeno, que respiramos, está en segundo lugar. Casi todo el aire está en la capa más baja, la troposfera.',
+      math: 'Fracción de una cantidad, lo que falta para la unidad, sumar con distinto denominador y comparar.',
+      make: () => [
+        { type: 'color', rows: 4, cols: 5, emoji: '🫧', tone: 'green', want: F(4, 5), text: 'Aproximadamente 4/5 del aire es nitrógeno. En esta muestra hay 20 moléculas: colorea las de nitrógeno.',
+          ask: { kind: 'frac', value: F(1, 5), prompt: '¿Qué fracción queda para el oxígeno y los demás gases?' },
+          fact: 'El nitrógeno del aire (78 %) no lo usamos al respirar, pero las plantas lo necesitan: lo toman del suelo gracias a algunas bacterias.' },
+        (() => { const v = pick([500, 600, 450]); return { type: 'qty', total: v, want: F(1, 5), emoji: null, unit: 'mL', text: `En cada respiración tranquila entran unos ${v} mL de aire en los pulmones. Si aproximadamente 1/5 es oxígeno, ¿cuántos mL de oxígeno entran?`,
+          fact: 'El oxígeno pasa de los alvéolos de los pulmones a la sangre, que lo lleva a todas las células.' }; })(),
+        { type: 'build', data: [F(39, 50), F(21, 100)], op: '+', result: F(99, 100), text: 'En el aire seco hay 39/50 de nitrógeno y 21/100 de oxígeno. ¿Qué fracción del aire forman los dos gases juntos? Escribe la operación y el resultado.',
+          opHint: '«Juntos» es sumar.', fact: 'Lo que falta hasta 100/100 (1/100) son otros gases: sobre todo argón, y una pequeñísima parte de dióxido de carbono, muy importante para el clima.' },
+        { type: 'compare', a: F(3, 4), b: F(1, 5), la: 'troposfera', lb: 'estratosfera', text: 'La troposfera contiene unas 3/4 partes de la masa del aire y la estratosfera, más o menos 1/5. Escríbelas con el mismo denominador y compáralas.',
+          fact: 'En la troposfera ocurren las nubes, la lluvia y el viento. En la estratosfera está la capa de ozono, que nos protege de los rayos ultravioleta.' },
+        (() => { const v = pick([60, 75, 90]); return { type: 'qty', total: v, want: F(1, 5), emoji: null, unit: 'm³', text: `Un aula tiene ${v} m³ de aire. ¿Cuántos m³ son de oxígeno, si es aproximadamente 1/5 del aire?`,
+          fact: 'Al respirar en un aula cerrada baja el oxígeno y sube el dióxido de carbono: por eso conviene ventilar.' }; })(),
+      ],
+    },
+    {
+      id: 3, icon: '🔬', name: 'Bajo el microscopio', topic: 'La célula',
+      bio: 'Todos los seres vivos están formados por células. Con el microscopio las observamos y, para verlas mejor, las teñimos con colorantes. La mayor parte del tiempo una célula no se está dividiendo (interfase).',
+      math: 'Fracciones equivalentes, simplificar hasta la fracción irreducible y comparar.',
+      make: () => [
+        { type: 'color', rows: 3, cols: 4, emoji: '🟣', tone: 'coral', want: F(2, 3), text: 'En una preparación al microscopio, 2/3 de las células han quedado teñidas de azul de metileno. Colorea las células teñidas.',
+          ask: { kind: 'count', value: 8, prompt: '¿Cuántas células de las 12 están teñidas?' },
+          fact: 'El azul de metileno tiñe sobre todo el núcleo, donde está el material genético (ADN) de la célula.' },
+        (() => { const f = pick([F(3, 4), F(2, 3), F(5, 6)]), k = pick([2, 3, 4]); return { type: 'equiv', from: f, toDen: f.d * k, text: `En la placa de cultivo A, ${T(f)} de la superficie está cubierta de bacterias. Para compararla con otra placa, escríbelo con denominador ${f.d * k}.`,
+          fact: 'Las bacterias son células procariotas: no tienen núcleo. En una placa de cultivo forman manchas llamadas colonias.' }; })(),
+        (() => { const o = pick([[18, 24], [20, 24], [21, 24], [15, 18]]); return { type: 'simplify', from: F(o[0], o[1]), text: `De ${o[1]} células observadas, ${o[0]} están en interfase (no se están dividiendo). Escribe la fracción irreducible.`,
+          fact: 'La interfase es la fase más larga de la vida de una célula: crece y copia su ADN antes de dividirse.' }; })(),
+        { type: 'compare', a: F(5, 8), b: F(2, 3), la: 'placa A', lb: 'placa B', text: 'La placa A tiene 5/8 de su superficie cubierta de moho y la placa B, 2/3. ¿Cuál tiene más moho? Escríbelas con el mismo denominador.',
+          fact: 'El moho es un hongo. Los hongos no son plantas: no hacen la fotosíntesis y se alimentan de materia orgánica.' },
+        (() => { const o = pick([[12, 16], [10, 15], [9, 12]]); return { type: 'simplify', from: F(o[0], o[1]), text: `En un trozo de hoja, ${o[0]} de cada ${o[1]} células tienen cloroplastos. Escribe la fracción irreducible.`,
+          fact: 'Los cloroplastos son los orgánulos donde se hace la fotosíntesis. Solo los tienen las células vegetales y las algas.' }; })(),
+      ],
+    },
+    {
+      id: 4, icon: '🧪', name: 'La mesa del laboratorio', topic: 'El trabajo en el laboratorio',
+      bio: 'En el laboratorio se mide con precisión: usamos probetas graduadas, pipetas y tubos de ensayo. Medir bien es parte del método científico.',
+      math: 'Sumar y restar fracciones: con el mismo denominador y con denominador común (m.c.m.).',
+      make: () => {
+        const sameDen = (() => { const n = pick([5, 7]); return { type: 'probeta', target: F(n, 8), vials: [F(1, 8), F(3, 8)], text: `Prepara ${n}/8 de litro de agua destilada para un experimento. Tienes vasitos de 1/8 y de 3/8 de litro.`,
+          fact: 'El agua destilada no tiene sales disueltas: por eso se usa en el laboratorio, para que no altere los experimentos.' }; })();
+        const pairs = rndOrder([
+          { target: F(5, 6), vials: [F(1, 2), F(1, 3)], what: 'medio de cultivo para bacterias', fact: 'Un medio de cultivo tiene los nutrientes que necesitan los microorganismos para crecer.' },
+          { target: F(7, 12), vials: [F(1, 3), F(1, 4)], what: 'disolución de lugol', fact: 'El lugol se vuelve azul oscuro al tocar almidón: así sabemos si un alimento (como la patata) tiene almidón.' },
+          { target: F(3, 4), vials: [F(1, 2), F(1, 8)], what: 'agua con sal para extraer ADN de un plátano', fact: 'Con agua, sal, jabón y alcohol se puede ver el ADN de las células del plátano: ¡forma unos hilos blancos!' },
+          { target: F(9, 10), vials: [F(2, 5), F(1, 2)], what: 'alcohol frío para la extracción de ADN', fact: 'El ADN no se disuelve en alcohol frío: por eso aparece como una nube blanca entre las dos capas.' },
+        ]);
+        const sub1 = pick([
+          { target: F(1, 6), vials: [F(1, 2)], out: [F(1, 3)], text: 'Necesitas exactamente 1/6 de litro de azul de metileno. Solo tienes un vaso de 1/2 litro y una pipeta que saca 1/3 de litro.', fact: 'Los colorantes se usan en cantidades pequeñas: con unas gotas basta para teñir las células.' },
+          { target: F(1, 4), vials: [F(2, 3)], out: [F(5, 12)], text: 'Necesitas 1/4 de litro de agua oxigenada. Tienes un vaso de 2/3 de litro y una pipeta que saca 5/12 de litro.', fact: 'El agua oxigenada hace espuma sobre una herida porque una sustancia de nuestras células (la catalasa) la descompone en agua y oxígeno.' },
+        ]);
+        const p = (o) => ({ type: 'probeta', target: o.target, vials: o.vials, out: o.out || [], text: o.text || `Prepara ${T(o.target)} de litro de ${o.what}. Tienes vasitos de ${o.vials.map(T).join(' y de ')} de litro.`, fact: o.fact });
+        return [sameDen, p(pairs[0]), p(pairs[1]), p(sub1), p(pairs[2])];
+      },
+    },
+    {
+      id: 5, icon: '🌳', name: 'Censo de seres vivos', topic: 'Los seres vivos y los ecosistemas',
+      bio: 'Los seres vivos se clasifican en grupos. La gran mayoría de las especies de animales son invertebrados, sobre todo insectos. En un ecosistema conviven muchas especies que se relacionan entre sí.',
+      math: 'Fracción de una cantidad y problemas: plantear la operación y resolverla.',
+      make: () => [
+        (() => { const n = pick([3, 5]), tot = 8 * rnd(2, 4); return { type: 'qty', total: tot, want: F(n, 8), emoji: '🐦', text: `En un censo de aves en las marismas de Doñana se cuentan ${tot} aves. ${n}/8 de ellas son migratorias. ¿Cuántas aves migratorias hay?`,
+          fact: 'Doñana es una parada clave para millones de aves que viajan entre Europa y África cada año.' }; })(),
+        { type: 'qty', total: 40, want: F(19, 20), emoji: null, unit: 'especies', text: 'Aproximadamente 19/20 de las especies animales conocidas son invertebrados. De cada 40 especies de animales, ¿cuántas son invertebrados?',
+          fact: 'Los invertebrados no tienen columna vertebral: insectos, arañas, moluscos, gusanos, estrellas de mar… Los vertebrados son solo una pequeña parte de los animales.' },
+        { type: 'build', data: [F(1, 3), F(1, 4)], op: '+', result: F(7, 12), text: 'En una charca, 1/3 de los animales son anfibios y 1/4 son peces. ¿Qué fracción de los animales son anfibios o peces? Escribe la operación y el resultado.',
+          opHint: 'Juntar dos grupos es sumar.', fact: 'Los anfibios (ranas, tritones, salamandras) nacen en el agua y respiran por branquias; de adultos casi todos respiran por pulmones y por la piel.' },
+        (() => { const tot = pick([20, 30, 40]); return { type: 'build', data: [F(2, 5), F(tot)], op: '·', result: F((2 * tot) / 5), text: `En una dehesa hay ${tot} árboles y 2/5 de ellos son encinas. ¿Cuántas encinas hay? Escribe la operación y el resultado.`,
+          opHint: '«2/5 de…» se calcula multiplicando.', fact: 'La encina es un árbol de hoja perenne, típico del bosque mediterráneo. Sus bellotas alimentan a muchos animales.' }; })(),
+        { type: 'build', data: [F(1, 2), F(3, 4)], op: '·', result: F(3, 8), text: 'En el huerto del instituto se cultivan 3/4 del terreno, y la mitad de esa parte son legumbres. ¿Qué fracción del huerto son legumbres?',
+          opHint: '«La mitad de» es multiplicar por 1/2.', fact: 'Las legumbres (garbanzos, lentejas, habas) tienen en sus raíces bacterias que fijan el nitrógeno del aire y abonan el suelo.' },
+      ],
+    },
+    {
+      id: 6, icon: '🧬', name: 'Expedición final', topic: 'Repaso de todo el curso',
+      bio: 'Una expedición científica mezcla todo: el agua, el aire, las células, el cuerpo humano y los seres vivos. Cada misión es un problema real.',
+      math: 'Problemas con las cuatro operaciones, probeta y fracción de una cantidad.',
+      make: () => [
+        (() => { const kg = pick([40, 45, 50, 55]); return { type: 'qty', total: kg, want: F(3, 5), emoji: null, unit: 'kg', text: `Aproximadamente 3/5 del cuerpo humano es agua. ¿Cuántos kilos de agua hay en una persona de ${kg} kg?`,
+          fact: 'El agua transporta nutrientes y oxígeno por la sangre y ayuda a regular la temperatura con el sudor.' }; })(),
+        { type: 'build', data: [F(3), F(1, 4)], op: ':', result: F(12), text: 'Tienes 3 litros de agua destilada y llenas tubos de ensayo de 1/4 de litro. ¿Cuántos tubos puedes llenar? Escribe la operación y el resultado.',
+          opHint: '¿Cuántas veces cabe 1/4 en 3? Eso es dividir.', fact: 'Los tubos de ensayo son de vidrio resistente al calor: se pueden calentar con cuidado en el mechero.' },
+        { type: 'probeta', target: F(11, 12), vials: [F(2, 3), F(1, 4), F(1, 6)], out: [], text: 'Para la última prueba necesitas 11/12 de litro de agua de mar filtrada. Tienes vasitos de 2/3, 1/4 y 1/6 de litro.',
+          fact: 'El agua de mar tiene unos 35 gramos de sal por litro. Por eso no se puede beber: deshidrataría el cuerpo.' },
+        { type: 'build', data: [F(5, 6), F(1, 4)], op: '−', result: F(7, 12), text: 'Una probeta tiene 5/6 de litro de agua del río. Usas 1/4 de litro para analizar los microorganismos. ¿Cuánta agua queda?',
+          opHint: '«Queda» después de usar: resta.', fact: 'Los microorganismos de un río indican si el agua está limpia: algunos solo viven en aguas muy puras.' },
+        { type: 'compare', a: F(13, 25), b: F(1, 2), la: 'manos y pies', lb: 'la mitad', text: 'El esqueleto adulto tiene 206 huesos; manos y pies juntos tienen 106, aproximadamente 13/25 del total. ¿Es más o menos de la mitad (1/2)? Escríbelas con el mismo denominador.',
+          fact: 'Cada mano tiene 27 huesos y cada pie 26. ¡Más de la mitad de tus huesos están en manos y pies!' },
+      ],
+    },
+  ];
+  function rndOrder(a) { const b = a.slice(); for (let i = b.length - 1; i > 0; i--) { const j = Math.floor(Math.random() * (i + 1)); [b[i], b[j]] = [b[j], b[i]]; } return b; }
+
+  /* =================================================================
+     GUARDADO (solo en este navegador)
+     ================================================================= */
+  const KEY = 'pichu.laboratorio.v1';
+  let save = { alias: '', group: '', prog: {} };
+  try { save = Object.assign(save, JSON.parse(localStorage.getItem(KEY) || '{}')); } catch (e) { /* sin guardado */ }
+  const persist = () => { try { localStorage.setItem(KEY, JSON.stringify(save)); } catch (e) { /* modo privado */ } };
+  const me = () => { const k = (save.alias || 'invitado').toLowerCase(); if (!save.prog[k]) save.prog[k] = {}; return save.prog[k]; };
+
+  /* =================================================================
+     SONIDO (muy breve, sintetizado)
+     ================================================================= */
+  let AC = null;
+  function beep(ok) {
+    try {
+      AC = AC || new (window.AudioContext || window.webkitAudioContext)();
+      const notes = ok ? [660, 880, 1320] : [240, 170];
+      notes.forEach((f, i) => { const o = AC.createOscillator(), g = AC.createGain(), t = AC.currentTime + i * 0.09; o.type = ok ? 'triangle' : 'square'; o.frequency.value = f; g.gain.setValueAtTime(0.0001, t); g.gain.exponentialRampToValueAtTime(0.08, t + 0.01); g.gain.exponentialRampToValueAtTime(0.0001, t + 0.16); o.connect(g); g.connect(AC.destination); o.start(t); o.stop(t + 0.2); });
+    } catch (e) { /* sin audio */ }
+  }
+  function toast(m) { const t = document.createElement('div'); t.className = 'toast'; t.textContent = m; document.body.appendChild(t); setTimeout(() => t.remove(), 2600); }
+
+  /* =================================================================
+     PANTALLAS
+     ================================================================= */
+  function show(id) { $$('#app > section').forEach((s) => s.classList.toggle('hidden', s.id !== id)); window.scrollTo(0, 0); }
+  function stars(n) { return [1, 2, 3].map((i) => `<span class="${i <= n ? '' : 'off'}">★</span>`).join(''); }
+  function renderMenu() {
+    $('#who').innerHTML = save.alias ? `👤 Trabajando como <b>${esc(save.alias)}</b> <button id="bWho">cambiar</button>` : '<button id="bWho">👤 Escribe tu alias</button>';
+    $('#bWho').onclick = () => askAlias(renderMenu);
+    const box = $('#stations'); box.innerHTML = '';
+    STATIONS.forEach((S) => {
+      const st = me()[S.id];
+      const b = document.createElement('button');
+      b.className = 'station';
+      b.innerHTML = `<span class="ic">${S.icon}</span><b>${S.id}. ${S.name}</b><small>${S.topic}</small><span class="st">${stars(st ? st.stars : 0)}</span>`;
+      b.setAttribute('aria-label', `Estación ${S.id}: ${S.name}. ${st ? st.stars + ' estrellas' : 'sin hacer'}`);
+      b.onclick = () => (save.alias ? openIntro(S.id) : askAlias(() => openIntro(S.id)));
+      box.appendChild(b);
+    });
+    show('sMenu');
+  }
+  let aliasThen = null;
+  function askAlias(then) { aliasThen = then; $('#aliasIn').value = save.alias || ''; $('#aliasErr').textContent = ''; show('sAlias'); setTimeout(() => $('#aliasIn').focus(), 50); }
+  $('#bAliasOk').onclick = () => {
+    const v = $('#aliasIn').value.trim();
+    if (!/^[A-Za-zÁÉÍÓÚÜÑáéíóúüñ0-9 _.\-]{2,20}$/.test(v)) { $('#aliasErr').textContent = 'Usa entre 2 y 20 letras o números.'; return; }
+    save.alias = v; persist(); (aliasThen || renderMenu)();
+  };
+  $('#aliasIn').addEventListener('keydown', (e) => { if (e.key === 'Enter') $('#bAliasOk').click(); });
+
+  let cur = null; // estación en curso
+  function openIntro(id) {
+    const S = STATIONS.find((s) => s.id === id);
+    $('#inKick').textContent = `ESTACIÓN ${S.id} · ${S.topic.toUpperCase()}`;
+    $('#inTitle').textContent = S.icon + ' ' + S.name;
+    $('#inBio').textContent = S.bio; $('#inMath').textContent = S.math;
+    $('#bStart').onclick = () => startStation(id);
+    show('sIntro');
+  }
+  function startStation(id) {
+    const S = STATIONS.find((s) => s.id === id);
+    cur = { S, tasks: S.make(), i: 0, drops: 5, errors: 0, hints: 0, bigHints: 0, start: Date.now(), firstTry: 0 };
+    show('sTask');
+    loadTask();
+  }
+
+  /* =================================================================
+     TAREA: marco común
+     ================================================================= */
+  let view = null;  // vista de la tarea actual
+  let hintLevel = 0, taskErrors = 0, solved = false;
+  const KIND_NAME = { color: '🖍️ Colorear', probeta: '🧪 Medir en la probeta', equiv: '🪞 Fracción equivalente', simplify: '✂️ Simplificar', compare: '⚖️ Comparar', qty: '🔢 Fracción de una cantidad', build: '🧩 Plantea y resuelve' };
+  function loadTask() {
+    const t = cur.tasks[cur.i];
+    hintLevel = 0; taskErrors = 0; solved = false;
+    $('#tWhere').textContent = `${cur.S.icon} ${cur.S.name}`;
+    $('#tProg').innerHTML = cur.tasks.map((_, k) => `<i class="${k < cur.i ? 'done' : k === cur.i ? 'now' : ''}"></i>`).join('');
+    drawDrops();
+    $('#tKick').textContent = `TAREA ${cur.i + 1} DE ${cur.tasks.length} · ${KIND_NAME[t.type]}`;
+    $('#tText').innerHTML = fracHTML(esc(t.text));
+    $('#tVisual').innerHTML = ''; $('#tAnswer').innerHTML = '';
+    $('#fb').classList.add('hidden'); $('#fact').classList.add('hidden');
+    $('#bCheck').classList.remove('hidden'); $('#bNext').classList.add('hidden'); $('#bHint').disabled = false;
+    view = VIEWS[t.type](t, $('#tVisual'), $('#tAnswer'));
+    $('#tCard').classList.remove('pop'); void $('#tCard').offsetWidth; $('#tCard').classList.add('pop');
+  }
+  function drawDrops() { $('#tDrops').innerHTML = Array.from({ length: 5 }, (_, k) => `<span class="${k < cur.drops ? '' : 'gone'}">⚗️</span>`).join(''); }
+  function say(html, mood) { const fb = $('#fb'); fb.className = 'fb ' + (mood || ''); $('#fbText').innerHTML = html; fb.classList.remove('hidden'); void fb.offsetWidth; }
+  $('#bCheck').onclick = () => {
+    if (!view || solved) return;
+    const r = view.check();
+    if (!r) return;
+    if (r.partial) { say(fracHTML(r.msg), 'hint'); return; }              // paso intermedio correcto o aviso sin coste
+    if (r.ok) {
+      if (r.more) { beep(true); say(fracHTML(r.msg), 'ok'); return; }       // fase 1 superada, queda la fase 2
+      solved = true; beep(true);
+      if (taskErrors === 0 && hintLevel < 2) cur.firstTry++;
+      say(fracHTML(r.msg || '¡Correcto!'), 'ok');
+      $('#factText').innerHTML = fracHTML(esc(cur.tasks[cur.i].fact)); $('#fact').classList.remove('hidden');
+      $('#bCheck').classList.add('hidden'); $('#bNext').classList.remove('hidden'); $('#bHint').disabled = true;
+      $('#bNext').textContent = cur.i + 1 < cur.tasks.length ? 'Siguiente →' : 'Terminar estación ✓';
+      setTimeout(() => $('#bNext').focus(), 30);
+      return;
+    }
+    // fallo: gasta un reactivo
+    beep(false);
+    taskErrors++; cur.errors++; cur.drops--; drawDrops();
+    say(fracHTML(r.msg) + (cur.drops > 0 ? `<br><small>⚗️ Te quedan ${cur.drops} reactivos.</small>` : ''), 'ko');
+    if (cur.drops <= 0) setTimeout(() => finishStation(false), 1600);
+  };
+  $('#bNext').onclick = () => { cur.i++; if (cur.i >= cur.tasks.length) finishStation(true); else loadTask(); };
+  $('#bHint').onclick = () => {
+    if (!view || solved) return;
+    hintLevel = Math.min(2, hintLevel + 1);
+    cur.hints++; if (hintLevel === 2) cur.bigHints++;
+    say('💡 ' + fracHTML(view.hint(hintLevel)) + (hintLevel === 2 ? '<br><small>(Esta pista cuenta como un fallo para las estrellas, pero no gasta reactivos.)</small>' : '<br><small>¿Necesitas más? Pulsa 💡 otra vez.</small>'), 'hint');
+  };
+
+  /* entradas */
+  function fracInput(opts) {
+    opts = opts || {};
+    const w = document.createElement('span'); w.className = 'fin';
+    w.innerHTML = `<input type="number" inputmode="numeric" min="0" aria-label="${opts.label || 'numerador'}"><span class="bar"></span><input type="number" inputmode="numeric" min="1" aria-label="denominador">`;
+    const [a, b] = w.querySelectorAll('input');
+    if (opts.den) { b.value = opts.den; b.readOnly = true; }
+    if (opts.onInput) { a.addEventListener('input', opts.onInput); b.addEventListener('input', opts.onInput); }
+    w.get = (allowInt) => {
+      const n = parseInt(a.value, 10), d = b.value === '' && allowInt ? 1 : parseInt(b.value, 10);
+      if (!Number.isFinite(n) || !Number.isFinite(d) || d <= 0 || n < 0) return null;
+      return F(n, d);
+    };
+    w.focus = () => a.focus();
+    return w;
+  }
+  function numInput(label) { const i = document.createElement('input'); i.type = 'number'; i.inputMode = 'numeric'; i.className = 'numin'; i.setAttribute('aria-label', label || 'respuesta'); return i; }
+  const need = (msg) => ({ partial: true, msg });
+
+  /** Diagnóstico de errores típicos al escribir una fracción */
+  function diagnose(got, want, ctx) {
+    ctx = ctx || {};
+    if (!got) return 'Escribe el numerador y el denominador.';
+    if (eqv(got, F(want.d, want.n))) return `Has escrito ${T(got)}: está al revés. El denominador (abajo) dice en cuántas partes se divide; el numerador (arriba), cuántas se toman.`;
+    if (ctx.a && ctx.b && (ctx.op === '+' || ctx.op === '−')) {
+      const nn = ctx.op === '+' ? ctx.a.n + ctx.b.n : ctx.a.n - ctx.b.n;
+      if (ctx.a.d !== ctx.b.d && nn > 0 && eqv(got, F(nn, ctx.a.d + ctx.b.d))) return `¡Cuidado! Has ${ctx.op === '+' ? 'sumado' : 'restado'} los numeradores y también los denominadores. Primero hay que poner el mismo denominador: ${T(ctx.a)} y ${T(ctx.b)} → m.c.m.(${ctx.a.d}, ${ctx.b.d}) = ${lcm(ctx.a.d, ctx.b.d)}.`;
+    }
+    if (got.d === want.d) return `El denominador ${got.d} está bien; revisa el numerador.`;
+    if (got.n === want.n) return 'El numerador está bien; revisa el denominador.';
+    return `${T(got)} no es correcto. Repasa el razonamiento paso a paso.`;
+  }
+
+  /* =================================================================
+     VISTAS DE CADA TIPO DE TAREA
+     ================================================================= */
+  const VIEWS = {};
+
+  /* ---- 🖍️ Colorear una rejilla ---- */
+  VIEWS.color = function (t, vis, ans) {
+    const total = t.rows * t.cols, target = (total * t.want.n) / t.want.d;
+    let phase = 1;
+    const wrap = document.createElement('div');
+    const grid = document.createElement('div'); grid.className = 'grid'; grid.style.gridTemplateColumns = `repeat(${t.cols}, auto)`;
+    const pill = document.createElement('div'); pill.className = 'count-pill';
+    const cells = [];
+    for (let k = 0; k < total; k++) {
+      const c = document.createElement('button'); c.className = 'cell'; c.type = 'button'; c.innerHTML = `<span class="e">${t.emoji}</span>`;
+      c.setAttribute('aria-label', 'casilla ' + (k + 1)); c.setAttribute('aria-pressed', 'false');
+      c.onclick = () => { if (phase !== 1) return; c.classList.toggle('on'); if (t.tone) c.classList.toggle(t.tone, c.classList.contains('on')); c.setAttribute('aria-pressed', c.classList.contains('on')); upd(); };
+      cells.push(c); grid.appendChild(c);
+    }
+    const on = () => cells.filter((c) => c.classList.contains('on')).length;
+    const upd = () => { pill.textContent = `Coloreadas: ${on()} de ${total}`; };
+    upd();
+    wrap.append(grid, pill); vis.appendChild(wrap);
+    let inp = null;
+    function phase2() {
+      phase = 2;
+      const p = document.createElement('div'); p.className = 'prompt'; p.innerHTML = fracHTML(esc(t.ask.prompt)); ans.appendChild(p);
+      inp = t.ask.kind === 'frac' ? fracInput() : numInput('número de casillas');
+      ans.appendChild(inp); setTimeout(() => inp.focus(), 30);
+    }
+    return {
+      check() {
+        if (phase === 1) {
+          const k = on();
+          if (k === target) {
+            if (!t.ask) return { ok: true, msg: `¡Exacto! ${total} : ${t.want.d} = ${total / t.want.d}, y ${total / t.want.d} · ${t.want.n} = ${target} casillas.` };
+            phase2();
+            return { ok: true, more: true, msg: `¡Bien coloreado! ${target} de ${total} = ${T(t.want)}. Ahora responde a la pregunta.` };
+          }
+          return { ok: false, msg: `Has coloreado ${k} de ${total}, es decir ${k}/${total}${gcd(k, total) > 1 && k ? ' = ' + T(simp(F(k, total))) : ''}. Pero se pedían ${T(t.want)} de ${total}. Piensa: ¿cuántas casillas hay en cada una de las ${t.want.d} partes iguales?` };
+        }
+        if (t.ask.kind === 'count') {
+          const v = parseInt(inp.value, 10);
+          if (!Number.isFinite(v)) return need('Escribe un número.');
+          return v === t.ask.value ? { ok: true, msg: `¡Sí! ${t.ask.value} de ${total}.` } : { ok: false, msg: `Cuenta las casillas coloreadas: no son ${v}.` };
+        }
+        const g = inp.get();
+        if (!g) return need('Escribe el numerador y el denominador.');
+        if (eqv(g, t.ask.value)) return { ok: true, msg: isIrr(g) ? `¡Correcto! ${T(g)}.` : `¡Correcto! ${T(g)} = ${T(t.ask.value)} (simplificada).` };
+        if (eqv(g, t.want)) return { ok: false, msg: `${T(g)} es lo que has coloreado. La pregunta es por la parte SIN colorear: lo que falta hasta el entero (1 = ${t.want.d}/${t.want.d}).` };
+        return { ok: false, msg: diagnose(g, t.ask.value) + ` Quedan ${total - target} casillas de ${total}.` };
+      },
+      hint(l) {
+        if (phase === 1) return l === 1 ? `El denominador ${t.want.d} dice en cuántos grupos iguales hay que repartir las ${total} casillas. ¿Cuántas casillas tiene cada grupo?` : `${total} : ${t.want.d} = ${total / t.want.d} casillas por grupo. Colorea ${t.want.n} grupos: ${t.want.n} · ${total / t.want.d} = ${target} casillas.`;
+        return t.ask.kind === 'frac' ? (l === 1 ? 'Cuenta las casillas sin colorear y escribe «sin colorear / total».' : `Quedan ${total - target} de ${total}: ${total - target}/${total}. ¿Se puede simplificar?`) : 'Cuenta las casillas coloreadas.';
+      },
+    };
+  };
+
+  /* ---- 🔢 Fracción de una cantidad ---- */
+  VIEWS.qty = function (t, vis, ans) {
+    const want = (t.total * t.want.n) / t.want.d;
+    if (t.emoji && t.total <= 40) {
+      const grid = document.createElement('div'); grid.className = 'grid'; const cols = t.total <= 16 ? 4 : t.total <= 24 ? 6 : 8; grid.style.gridTemplateColumns = `repeat(${cols}, auto)`;
+      for (let k = 0; k < t.total; k++) { const c = document.createElement('button'); c.type = 'button'; c.className = 'cell'; c.innerHTML = t.emoji; c.style.width = 'clamp(32px, 9vw, 44px)'; c.onclick = () => c.classList.toggle('on'); grid.appendChild(c); }
+      const wrap = document.createElement('div'); wrap.append(grid); const p = document.createElement('div'); p.className = 'count-pill'; p.textContent = 'Puedes tocar los dibujos para hacer grupos (es tu borrador).'; wrap.append(p); vis.appendChild(wrap);
+    }
+    const inp = numInput('respuesta'); const u = document.createElement('span'); u.textContent = t.unit || '';
+    ans.append(inp, u); setTimeout(() => inp.focus(), 30);
+    return {
+      check() {
+        const v = parseFloat(String(inp.value).replace(',', '.'));
+        if (!Number.isFinite(v)) return need('Escribe un número.');
+        if (v === want) return { ok: true, msg: `¡Correcto! ${T(t.want)} de ${t.total} = ${t.total} : ${t.want.d} · ${t.want.n} = ${want}${t.unit ? ' ' + t.unit : ''}.` };
+        if (v === t.total / t.want.d) return { ok: false, msg: `${v} es solo 1/${t.want.d} de ${t.total}. Pero se piden ${t.want.n} partes: multiplica por ${t.want.n}.` };
+        if (v === (t.total * t.want.d) / t.want.n) return { ok: false, msg: 'Has dividido entre el numerador y multiplicado por el denominador: es al revés.' };
+        if (v === t.total - want) return { ok: false, msg: `${v} es la otra parte (lo que NO cumple). Se pregunta por los ${T(t.want)}.` };
+        return { ok: false, msg: `No es ${v}. Calcula primero cuánto es 1/${t.want.d} de ${t.total}.` };
+      },
+      hint(l) { return l === 1 ? `Para calcular ${T(t.want)} de ${t.total}: divide ${t.total} entre el denominador y multiplica por el numerador.` : `${t.total} : ${t.want.d} = ${t.total / t.want.d}. Ahora multiplica por ${t.want.n}.`; },
+    };
+  };
+
+  /* ---- 🪞 Equivalente con un denominador dado (barras en vivo) ---- */
+  function barsSVG(f1, d2, n2) {
+    const W = 500, h = 34, pad = 4;
+    const seg = (y, d, n, col) => { let s = ''; for (let k = 0; k < d; k++) { const x = pad + (k * (W - 2 * pad)) / d, w = (W - 2 * pad) / d; s += `<rect x="${x}" y="${y}" width="${w}" height="${h}" fill="${k < n ? col : '#FFF8E8'}" stroke="#332B2A" stroke-width="2.5"/>`; } return s; };
+    const n2c = Math.max(0, Math.min(d2, n2 || 0));
+    return `<svg viewBox="0 0 ${W} ${2 * h + 34}" role="img" aria-label="Barras de fracciones">${seg(4, f1.d, f1.n, '#4C9BC9')}<text x="${W / 2}" y="${h + 22}" font-size="14" font-weight="900" text-anchor="middle" fill="#3F6E5C">la misma longitud</text>${seg(h + 30, d2, n2c, '#5A8A78')}</svg>`;
+  }
+  VIEWS.equiv = function (t, vis, ans) {
+    const want = (t.from.n * t.toDen) / t.from.d;
+    const bars = document.createElement('div'); bars.className = 'bars'; vis.appendChild(bars);
+    const lab = document.createElement('span'); lab.innerHTML = fracHTML(T(t.from)) + ' =';
+    const inp = fracInput({ den: t.toDen, onInput: () => { const g = inp.get(); bars.innerHTML = barsSVG(t.from, t.toDen, g ? g.n : 0); } });
+    bars.innerHTML = barsSVG(t.from, t.toDen, 0);
+    ans.append(lab, inp); setTimeout(() => inp.focus(), 30);
+    return {
+      check() {
+        const g = inp.get(); if (!g) return need('Escribe el numerador.');
+        if (g.n === want) return { ok: true, msg: `¡Correcto! ${T(t.from)} = ${want}/${t.toDen}: se ha multiplicado arriba y abajo por ${t.toDen / t.from.d}.` };
+        if (g.n === t.from.n + (t.toDen - t.from.d)) return { ok: false, msg: `Has sumado ${t.toDen - t.from.d} arriba y abajo. Para que sea equivalente hay que MULTIPLICAR los dos por el mismo número.` };
+        return { ok: false, msg: `${g.n}/${t.toDen} no ocupa lo mismo que ${T(t.from)}: mira las barras.` };
+      },
+      hint(l) { return l === 1 ? `¿Por qué número hay que multiplicar ${t.from.d} para obtener ${t.toDen}?` : `${t.from.d} · ${t.toDen / t.from.d} = ${t.toDen}. Multiplica también el numerador: ${t.from.n} · ${t.toDen / t.from.d}.`; },
+    };
+  };
+
+  /* ---- ✂️ Simplificar ---- */
+  VIEWS.simplify = function (t, vis, ans) {
+    const want = simp(t.from);
+    const bars = document.createElement('div'); bars.className = 'bars'; vis.appendChild(bars);
+    const redraw = () => { const g = inp.get(); bars.innerHTML = g && g.d <= 24 ? barsSVG(t.from, g.d, g.n) : barsSVG(t.from, 1, 0).replace('la misma longitud', 'escribe tu fracción: aparecerá aquí'); };
+    const lab = document.createElement('span'); lab.innerHTML = fracHTML(T(t.from)) + ' =';
+    const inp = fracInput({ onInput: () => redraw() }); ans.append(lab, inp); redraw(); setTimeout(() => inp.focus(), 30);
+    return {
+      check() {
+        const g = inp.get(); if (!g) return need('Escribe el numerador y el denominador.');
+        if (!eqv(g, t.from)) return { ok: false, msg: `${T(g)} no es equivalente a ${T(t.from)}. Al simplificar hay que DIVIDIR arriba y abajo entre el mismo número.` };
+        if (!isIrr(g)) return need(`${T(g)} es equivalente, ¡vas bien! Pero aún se puede simplificar: ${g.n} y ${g.d} se pueden dividir entre ${gcd(g.n, g.d)}.`);
+        return { ok: true, msg: `¡Fracción irreducible! ${T(t.from)} = ${T(want)} (se divide arriba y abajo entre ${t.from.n / want.n}).` };
+      },
+      hint(l) { return l === 1 ? `Busca un número que divida a la vez a ${t.from.n} y a ${t.from.d}. El mayor de todos es el m.c.d.` : `m.c.d.(${t.from.n}, ${t.from.d}) = ${gcd(t.from.n, t.from.d)}. Divide los dos entre ${gcd(t.from.n, t.from.d)}.`; },
+    };
+  };
+
+  /* ---- ⚖️ Comparar (con denominador común escrito) ---- */
+  VIEWS.compare = function (t, vis, ans) {
+    const L = lcm(t.a.d, t.b.d);
+    const row = (f, name) => { const r = document.createElement('div'); r.className = 'row center'; r.style.width = '100%'; r.innerHTML = `<span style="min-width:7.5em;text-align:right">${esc(name)}: ${fracHTML(T(f))} =</span>`; const i = fracInput(); r.appendChild(i); return { r, i }; };
+    const A = row(t.a, t.la), B = row(t.b, t.lb);
+    const sw = document.createElement('div'); sw.className = 'row center'; sw.style.width = '100%';
+    sw.innerHTML = `<span>${fracHTML(T(t.a))}</span><span class="signs">${['<', '=', '>'].map((s) => `<button type="button" class="sign" data-s="${s}" aria-label="${s === '<' ? 'menor que' : s === '>' ? 'mayor que' : 'igual a'}">${s}</button>`).join('')}</span><span>${fracHTML(T(t.b))}</span>`;
+    let sign = null;
+    sw.querySelectorAll('.sign').forEach((b) => (b.onclick = () => { sign = b.dataset.s; sw.querySelectorAll('.sign').forEach((x) => x.classList.toggle('on', x === b)); }));
+    const p = document.createElement('div'); p.className = 'prompt'; p.textContent = '1) Escribe las dos con el mismo denominador. 2) Elige el signo.';
+    ans.append(p, A.r, B.r, sw); setTimeout(() => A.i.focus(), 30);
+    return {
+      check() {
+        const ga = A.i.get(), gb = B.i.get();
+        if (!ga || !gb) return need('Escribe las dos fracciones con el mismo denominador.');
+        if (ga.d !== gb.d) return need('Las dos tienen que llevar el MISMO denominador.');
+        if (!eqv(ga, t.a)) return { ok: false, msg: `${T(ga)} no es equivalente a ${T(t.a)}. ${t.a.d} · ${ga.d / t.a.d} = ${ga.d}, así que el numerador es ${t.a.n} · ${ga.d / t.a.d}.`.replace(/NaN|Infinity/g, '?') };
+        if (!eqv(gb, t.b)) return { ok: false, msg: `${T(gb)} no es equivalente a ${T(t.b)}. Multiplica arriba y abajo por el mismo número.` };
+        if (!sign) return need('¡Bien escritas! Ahora elige el signo: <, = o >.');
+        const real = cmp(t.a, t.b) < 0 ? '<' : cmp(t.a, t.b) > 0 ? '>' : '=';
+        if (sign !== real) return { ok: false, msg: `Mira los numeradores: ${ga.n}/${ga.d} y ${gb.n}/${gb.d}. Con el mismo denominador, es mayor la que tiene el numerador mayor.` };
+        return { ok: true, msg: `¡Correcto! ${ga.n}/${ga.d} ${real} ${gb.n}/${gb.d}, así que ${T(t.a)} ${real} ${T(t.b)}.` };
+      },
+      hint(l) { return l === 1 ? `Busca un número que sea múltiplo de ${t.a.d} y de ${t.b.d} (el m.c.m.).` : `m.c.m.(${t.a.d}, ${t.b.d}) = ${L}. ${T(t.a)} = ${(t.a.n * L) / t.a.d}/${L}.`; },
+    };
+  };
+
+  /* ---- 🧩 Plantea y resuelve ---- */
+  VIEWS.build = function (t, vis, ans) {
+    const p = document.createElement('div'); p.className = 'prompt'; p.textContent = 'Escribe la operación con los datos del problema y su resultado (un número entero se escribe sin denominador o con denominador 1).';
+    const a = fracInput(), b = fracInput(), r = fracInput();
+    const ops = document.createElement('span'); ops.className = 'ops';
+    let op = null;
+    ['+', '−', '·', ':'].forEach((s) => { const x = document.createElement('button'); x.type = 'button'; x.className = 'op'; x.textContent = s; x.setAttribute('aria-label', { '+': 'sumar', '−': 'restar', '·': 'multiplicar', ':': 'dividir' }[s]); x.onclick = () => { op = s; ops.querySelectorAll('.op').forEach((y) => y.classList.toggle('on', y === x)); }; ops.appendChild(x); });
+    const eq = document.createElement('span'); eq.textContent = '=';
+    const line = document.createElement('div'); line.className = 'row center'; line.append(a, ops, b, eq, r);
+    ans.append(p, line); setTimeout(() => a.focus(), 30);
+    const comm = t.op === '+' || t.op === '·';
+    return {
+      check() {
+        const ga = a.get(true), gb = b.get(true), gr = r.get(true);
+        if (!ga || !gb) return need('Escribe los dos datos de la operación.');
+        if (!op) return need('Elige la operación: +, −, · o :');
+        const sameData = (eqv(ga, t.data[0]) && eqv(gb, t.data[1])) || (comm && eqv(ga, t.data[1]) && eqv(gb, t.data[0]));
+        const hasData = [ga, gb].every((x) => t.data.some((d) => eqv(d, x)));
+        if (!hasData) return { ok: false, msg: 'Usa los datos que aparecen en el enunciado.' };
+        if (op !== t.op) return { ok: false, msg: `Esa operación no resuelve el problema. ${t.opHint}` };
+        if (!sameData) return { ok: false, msg: `La operación es buena, pero el orden importa: en ${t.op === '−' ? 'una resta' : 'una división'} va primero ${T(t.data[0])}.` };
+        if (!gr) return need('¡Planteamiento correcto! Ahora escribe el resultado.');
+        if (eqv(gr, t.result)) return { ok: true, msg: `¡Correcto! ${T(t.data[0])} ${t.op} ${T(t.data[1])} = ${T(t.result)}${isIrr(gr) ? '' : ' (simplificada: ' + T(t.result) + ')'}.` };
+        return { ok: false, msg: 'El planteamiento está bien, pero el resultado no. ' + diagnose(gr, t.result, { a: t.data[0], b: t.data[1], op: t.op }) };
+      },
+      hint(l) {
+        if (l === 1) return t.opHint;
+        const x = t.data[0], y = t.data[1];
+        if (t.op === '+' || t.op === '−') { const L = lcm(x.d, y.d); return `${T(x)} ${t.op} ${T(y)}: m.c.m.(${x.d}, ${y.d}) = ${L} → ${(x.n * L) / x.d}/${L} ${t.op} ${(y.n * L) / y.d}/${L}.`; }
+        if (t.op === '·') return `${T(x)} · ${T(y)}: multiplica los numeradores (${x.n} · ${y.n}) y los denominadores (${x.d} · ${y.d}).`;
+        return `${T(x)} : ${T(y)} = ${T(x)} · ${y.d}/${y.n} (multiplica por la inversa).`;
+      },
+    };
+  };
+
+  /* ---- 🧪 La probeta ---- */
+  VIEWS.probeta = function (t, vis, ans) {
+    t.out = t.out || [];
+    let parts = 1, c = F(0);                      // divisiones de la probeta y contenido
+    const steps = [], poured = [];
+    const lab = document.createElement('div'); lab.className = 'lab';
+    const svgBox = document.createElement('div');
+    const ctrl = document.createElement('div'); ctrl.className = 'lab-ctrl';
+    ctrl.innerHTML = `
+      <div class="group"><b>1 · DIVIDE LA PROBETA</b><div class="divsel"><button class="btn small" type="button" data-d="-1" aria-label="menos partes">−</button><span id="pParts"></span><button class="btn small" type="button" data-d="1" aria-label="más partes">+</button></div></div>
+      <div class="group"><b>2 · ECHA${t.out.length ? ' Y SACA' : ''}</b><div class="vials" id="pVials"></div></div>
+      <div class="group"><b>3 · ETIQUETA</b><div class="row" id="pLabel"></div><div class="log" id="pLog"></div></div>`;
+    lab.append(svgBox, ctrl); vis.appendChild(lab);
+    const vials = ctrl.querySelector('#pVials');
+    t.vials.forEach((v) => { const b = document.createElement('button'); b.type = 'button'; b.className = 'vial'; b.innerHTML = `💧 + ${fracHTML(T(v))}`; b.onclick = () => pour(v, 1); vials.appendChild(b); });
+    t.out.forEach((v) => { const b = document.createElement('button'); b.type = 'button'; b.className = 'vial out'; b.innerHTML = `🩸 − ${fracHTML(T(v))}`; b.setAttribute('aria-label', 'sacar ' + T(v) + ' con la pipeta'); b.onclick = () => pour(v, -1); vials.appendChild(b); });
+    const emp = document.createElement('button'); emp.type = 'button'; emp.className = 'btn small'; emp.textContent = '↺ Vaciar'; emp.onclick = () => { c = F(0); steps.length = 0; poured.length = 0; log('Probeta vacía.'); draw(); }; vials.appendChild(emp);
+    const label = fracInput({ label: 'numerador de la etiqueta' }); ctrl.querySelector('#pLabel').append(label);
+    const logEl = ctrl.querySelector('#pLog');
+    const log = (m) => { logEl.innerHTML = fracHTML(m); };
+    ctrl.querySelectorAll('[data-d]').forEach((b) => (b.onclick = () => setParts(parts + +b.dataset.d)));
+    const fits = (f, p) => (f.n * p) % f.d === 0;
+    function setParts(p) {
+      if (p < 1 || p > 24) return;
+      if (!fits(c, p)) { log(`⚠️ Con ${p} partes, lo que ya hay (${T(c)}) no cae en ninguna marca. Vacía la probeta o elige otro número.`); return; }
+      parts = p; log(c.n ? `Ahora la probeta marca ${(c.n * p) / c.d}/${p} = ${T(c)}.` : `Probeta dividida en ${p} partes iguales: cada marca es 1/${p} de litro.`); draw();
+    }
+    function pour(v, s) {
+      const nc = s > 0 ? add(c, v) : sub(c, v);
+      if (nc.n < 0) { log('⚠️ No puedes sacar más líquido del que hay.'); return; }
+      if (cmp(nc, F(1)) > 0) { log('⚠️ ¡Se desborda! La probeta solo tiene 1 litro.'); return; }
+      if (!fits(v, parts)) { log(`⚠️ Con ${parts} ${parts === 1 ? 'parte' : 'partes'} no se puede medir ${T(v)}: no hay ninguna marca para ${T(v)}. Busca un número de partes que sirva.`); return; }
+      if (!fits(nc, parts)) { log(`⚠️ El líquido quedaría entre dos marcas: cambia el número de partes.`); return; }
+      c = nc; steps.push((s > 0 ? '+ ' : '− ') + T(v)); poured.push({ v, s });
+      log(`${s > 0 ? 'Echas' : 'Sacas'} ${T(v)} = ${(v.n * parts) / v.d}/${parts}. Ahora hay ${(c.n * parts) / c.d}/${parts}.`); draw();
+    }
+    function draw() {
+      $('#pParts').textContent = parts + (parts === 1 ? ' parte' : ' partes');
+      const W = 130, H = 330, x0 = 34, x1 = 96, top = 22, bot = 300, hh = bot - top;
+      const lvl = bot - (c.n / c.d) * hh;
+      const targetY = bot - (t.target.n / t.target.d) * hh;
+      let marks = '';
+      for (let k = 1; k < parts; k++) {
+        const y = bot - (k / parts) * hh;
+        marks += `<line x1="${x0}" y1="${y}" x2="${x0 + (parts <= 12 || k % 2 === 0 ? 22 : 12)}" y2="${y}" stroke="#332B2A" stroke-width="2"/>`;
+        if (parts <= 12 || k % 2 === 0) marks += `<text x="${x0 - 4}" y="${y + 4}" font-size="${parts > 12 ? 9 : 11}" font-weight="900" text-anchor="end" fill="#3F6E5C">${k}/${parts}</text>`;
+      }
+      svgBox.innerHTML = `<svg viewBox="0 0 ${W} ${H}" role="img" aria-label="Probeta con ${T(c)} de litro">
+        <rect x="${x0}" y="${lvl}" width="${x1 - x0}" height="${bot - lvl}" fill="#4C9BC9" opacity=".85"/>
+        ${c.n ? `<rect x="${x0}" y="${lvl}" width="${x1 - x0}" height="5" fill="#9fd0ea"/>` : ''}
+        <line x1="${x1 - 4}" y1="${targetY}" x2="${x1 + 14}" y2="${targetY}" stroke="#E46D4D" stroke-width="3" stroke-dasharray="4 3"/>
+        <text x="${x1 + 16}" y="${targetY + 4}" font-size="11" font-weight="900" fill="#A8402A">🎯</text>
+        ${marks}
+        <path d="M${x0} ${top} V${bot} Q${x0} ${bot + 14} ${(x0 + x1) / 2} ${bot + 14} Q${x1} ${bot + 14} ${x1} ${bot} V${top}" fill="none" stroke="#332B2A" stroke-width="4"/>
+        <line x1="${x0 - 8}" y1="${top}" x2="${x1 + 8}" y2="${top}" stroke="#332B2A" stroke-width="4" stroke-linecap="round"/>
+        <text x="${x0 - 4}" y="${top + 4}" font-size="12" font-weight="900" text-anchor="end" fill="#332B2A">1 L</text>
+        <text x="${x0 - 4}" y="${bot + 4}" font-size="12" font-weight="900" text-anchor="end" fill="#332B2A">0</text>
+      </svg>`;
+    }
+    draw();
+    log('El objetivo 🎯 está marcado en rojo. Empieza eligiendo en cuántas partes divides la probeta.');
+    return {
+      check() {
+        const g = label.get();
+        if (!c.n) return need('Primero llena la probeta.');
+        if (!g) return need('Escribe en la etiqueta cuánto líquido hay.');
+        if (!eqv(c, t.target)) {
+          const d = sub(t.target, c), pos = d.n > 0;
+          return { ok: false, msg: `En la probeta hay ${T(c)} de litro y el pedido es ${T(t.target)}: ${pos ? 'faltan' : 'sobran'} ${T(F(Math.abs(d.n), d.d))}. ${pos ? 'Echa más' : 'Vacía o saca un poco'}.` };
+        }
+        if (!eqv(g, c)) {
+          const nn = poured.reduce((a, p) => a + p.s * p.v.n, 0), dd = poured.reduce((a, p) => a + p.v.d, 0);
+          const marks = `Mira las marcas de la probeta: el líquido llega a ${(c.n * parts) / c.d}/${parts}.`;
+          if (poured.length > 1 && nn > 0 && eqv(g, F(nn, dd))) return { ok: false, msg: `La cantidad es correcta, pero en la etiqueta has sumado los numeradores y también los denominadores de los vasitos. ¡Eso no vale! ${marks}` };
+          return { ok: false, msg: 'La cantidad de la probeta es correcta, pero la etiqueta no. ' + diagnose(g, c) + ' ' + marks };
+        }
+        return { ok: true, msg: `¡Pedido perfecto! ${steps.join(' ').replace(/^\+ /, '')} = ${(c.n * parts) / c.d}/${parts}${(c.n * parts) / c.d + '/' + parts !== T(c) ? ' = ' + T(c) : ''} de litro.` };
+      },
+      hint(l) {
+        const all = t.vials.concat(t.out); let L = 1; all.forEach((v) => (L = lcm(L, v.d))); L = lcm(L, t.target.d);
+        if (l === 1) return `Necesitas un número de partes que sirva para medir ${all.map(T).join(', ')} y ${T(t.target)}: un múltiplo común de los denominadores.`;
+        return `Divide la probeta en ${L} partes. Así: ${all.map((v) => `${T(v)} = ${(v.n * L) / v.d}/${L}`).join(' · ')} y el pedido es ${(t.target.n * L) / t.target.d}/${L}.`;
+      },
+    };
+  };
+
+  /* =================================================================
+     FIN DE ESTACIÓN Y JUSTIFICANTE
+     ================================================================= */
+  const SALT = 'πCHU·Laboratorio·2026';
+  function certCode(lines) {
+    let h = 0x811c9dc5; const str = lines.join('\n') + SALT;
+    for (let i = 0; i < str.length; i++) { h ^= str.charCodeAt(i); h = Math.imul(h, 0x01000193) >>> 0; }
+    const c = h.toString(36).toUpperCase().padStart(7, '0').slice(-6);
+    return c.slice(0, 3) + '-' + c.slice(3);
+  }
+  let lastCert = '';
+  function finishStation(win) {
+    const S = cur.S, eff = cur.errors + cur.bigHints;
+    const st = win ? (eff <= 1 ? 3 : eff <= 3 ? 2 : 1) : 0;
+    if (win) { const prev = me()[S.id]; me()[S.id] = { stars: Math.max(prev ? prev.stars : 0, st), date: new Date().toISOString().slice(0, 10) }; persist(); }
+    $('#rKick').textContent = `ESTACIÓN ${S.id} · ${S.topic.toUpperCase()}`;
+    $('#rTitle').textContent = win ? (st === 3 ? '¡Trabajo de científica o científico!' : '¡Estación superada!') : 'Te has quedado sin reactivos';
+    $('#rStars').innerHTML = win ? stars(st) : '';
+    const mins = Math.max(1, Math.round((Date.now() - cur.start) / 60000));
+    $('#rStats').innerHTML = [[`${win ? cur.tasks.length : cur.i}/${cur.tasks.length}`, 'tareas'], [cur.errors, 'fallos'], [cur.hints, 'pistas'], [cur.firstTry, 'a la primera'], [cur.drops + ' ⚗️', 'reactivos'], [mins + ' min', 'tiempo']].map(([b, s]) => `<div><b>${b}</b><small>${s}</small></div>`).join('');
+    $('#rTip').innerHTML = win ? (st === 3 ? 'Has razonado cada paso: así se resuelven también los problemas del cuaderno.' : 'Para conseguir 3 estrellas, comprueba solo cuando estés seguro y usa la primera pista antes que la segunda.') : 'No pasa nada: repasa las pistas y vuelve a intentarlo. Los números cambian cada vez.';
+    const now = new Date(), pad = (n) => String(n).padStart(2, '0');
+    const lines = ['LABORATORIO πCHU · Justificante', 'Alias: ' + (save.alias || 'Invitado'), 'Grupo: ' + (save.group || '—'),
+      `Fecha: ${pad(now.getDate())}/${pad(now.getMonth() + 1)}/${now.getFullYear()} ${pad(now.getHours())}:${pad(now.getMinutes())}`,
+      `Estación ${S.id}: ${S.name} (${S.topic})`, 'Resultado: ' + (win ? 'SUPERADA ' + '★'.repeat(st) + '☆'.repeat(3 - st) : 'NO SUPERADA'),
+      `Tareas: ${win ? cur.tasks.length : cur.i}/${cur.tasks.length} · A la primera: ${cur.firstTry}`, `Fallos: ${cur.errors} · Pistas: ${cur.hints}`, `Tiempo: ${mins} min`];
+    lastCert = lines.join('\n') + '\nCódigo: ' + certCode(lines);
+    $('#rCert').textContent = lastCert;
+    $('#rCertBox').classList.toggle('hidden', !win);
+    $('#bRetry').onclick = () => startStation(S.id);
+    show('sResult');
+    if (win) beep(true);
+  }
+  $('#bCopy').onclick = () => {
+    try { navigator.clipboard.writeText(lastCert).then(() => toast('Justificante copiado: pégalo en Classroom'), () => selectCert()); } catch (e) { selectCert(); }
+  };
+  function selectCert() { const r = document.createRange(); r.selectNodeContents($('#rCert')); const s = getSelection(); s.removeAllRanges(); s.addRange(r); toast('Texto seleccionado: cópialo con Ctrl+C o mantén pulsado'); }
+
+  /* =================================================================
+     ZONA DOCENTE
+     ================================================================= */
+  function renderTeacher() {
+    $('#tGroup').value = save.group || '';
+    $('#tMap').innerHTML = STATIONS.map((S) => `<p><b>${S.icon} ${S.id}. ${esc(S.name)}</b> (${esc(S.topic)}): ${esc(S.math)}</p>`).join('');
+    const rows = Object.entries(save.prog).map(([k, p]) => `<p><b>${esc(k)}</b>: ${STATIONS.map((S) => `${S.id}:${p[S.id] ? '★'.repeat(p[S.id].stars) : '—'}`).join(' · ')}</p>`);
+    $('#tProgress').innerHTML = rows.length ? rows.join('') : 'Todavía no hay progreso guardado en este navegador.';
+    $('#verifyOut').textContent = '';
+    show('sTeacher');
+  }
+  $('#bVerify').onclick = () => {
+    const ls = $('#tVerify').value.replace(/\r/g, '').split('\n').map((l) => l.trim()).filter(Boolean);
+    const ci = ls.findIndex((l) => /^C[óo]digo:/i.test(l)); const out = $('#verifyOut');
+    if (ci < 0) { out.textContent = 'No encuentro la línea «Código:». Pega el justificante completo.'; out.className = 'verify ko'; return; }
+    const ok = certCode(ls.slice(0, ci)) === ls[ci].split(':').slice(1).join(':').trim().toUpperCase();
+    const alias = (ls.find((l) => l.startsWith('Alias:')) || '').slice(6).trim();
+    out.textContent = ok ? `✔ Justificante válido de «${alias}».` : '✘ El código no coincide: el texto se ha modificado o está incompleto.';
+    out.className = 'verify ' + (ok ? 'ok' : 'ko');
+  };
+  let wipeArmed = false;
+  $('#bWipe').onclick = (e) => {
+    if (!wipeArmed) { wipeArmed = true; e.currentTarget.textContent = '¿Seguro? Pulsa otra vez'; setTimeout(() => { wipeArmed = false; $('#bWipe').textContent = 'Borrar progreso'; }, 3500); return; }
+    save.prog = {}; persist(); wipeArmed = false; $('#bWipe').textContent = 'Borrar progreso'; renderTeacher(); toast('Progreso borrado');
+  };
+
+  /* navegación */
+  document.addEventListener('click', (e) => {
+    if (e.target.closest('[data-menu]')) {
+      if (!$('#sTeacher').classList.contains('hidden')) { save.group = $('#tGroup').value.trim().slice(0, 30); persist(); }
+      renderMenu();
+    }
+  });
+  $('#bHow').onclick = () => show('sHow');
+  $('#bTeacher').onclick = renderTeacher;
+  document.addEventListener('keydown', (e) => { if (e.key === 'Enter' && !$('#sTask').classList.contains('hidden') && e.target.tagName === 'INPUT') { e.preventDefault(); (solved ? $('#bNext') : $('#bCheck')).click(); } });
+
+  // gancho para pruebas automáticas
+  window.__LAB = { STATIONS, VIEWS, get cur() { return cur; }, startStation, F, eqv };
+  renderMenu();
+})();
+</script>
+</body>
+</html>

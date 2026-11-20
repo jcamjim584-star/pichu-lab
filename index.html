@@ -23,6 +23,7 @@
     .ficha-dato { display: inline-flex; align-items: center; gap: .3em; min-height: 44px; padding: .2em .8em;
       background: var(--noche-2); border: 3px solid var(--oro); font: inherit;
       font-weight: 900; color: var(--pergamino); }
+    .ficha-dato[hidden] { display: none; }
     button.ficha-dato { cursor: pointer; box-shadow: 0 3px 0 #000; }
     button.ficha-dato:hover { background: var(--violeta-oscuro); }
     button.ficha-dato:active { transform: translateY(2px); box-shadow: 0 1px 0 #000; }
@@ -631,14 +632,17 @@
       if (document.hidden) motor.parar(); else if (vista === "explorar" && $("#inicio").hidden) motor.arrancar();
     });
 
+    const logrosActivos = () => MQ.LOGROS.filter(l => { const j = MARCA.juegos.find(x => x.id === l.juego); return j && j.estado === "jugar"; });
     function pintarProgreso() {
       const d = MQ.leer(), n = MQ.nivel(d.xp);
       $("#nivelTxt").textContent = "⭐ Nivel " + n.nivel;
       $("#monedasTxt").textContent = "🪙 " + d.monedas;
       $("#monedasTxt").setAttribute("aria-label", d.monedas + " monedas");
-      const logros = MQ.LOGROS.filter(l => d.logros[l.id]).length;      // solo logros de juegos actuales
-      $("#bLogros").textContent = "🏅 " + logros + "/" + MQ.LOGROS.length;
-      $("#bLogros").setAttribute("aria-label", `Logros: ${logros} de ${MQ.LOGROS.length}`);
+      // Solo cuentan los logros de juegos disponibles; si no hay ninguno, el botón no se muestra
+      const lista = logrosActivos(), logros = lista.filter(l => d.logros[l.id]).length;
+      $("#bLogros").hidden = !lista.length;
+      $("#bLogros").textContent = "🏅 " + logros + "/" + lista.length;
+      $("#bLogros").setAttribute("aria-label", `Logros: ${logros} de ${lista.length}`);
       $("#xp").style.width = n.pct + "%"; $("#xpBarra").setAttribute("aria-valuenow", n.pct);
       $("#xpBarra").setAttribute("aria-valuetext", `${n.tiene} de ${n.hace_falta} puntos para el nivel ${n.nivel + 1}`);
       document.body.classList.toggle("sin-movimiento", MQ.sinMovimiento());
@@ -651,14 +655,14 @@
     document.addEventListener("keydown", e => { if (e.key === "Escape") cerrarVentana(); });
     $("#bLogros").addEventListener("click", () => {
       const d = MQ.leer();
-      ventana(`<h2>Logros y medallas</h2><div class="lista">` + MQ.LOGROS.map(l => { const m = MQ.MUNDOS.find(x => x.juego === l.juego);
+      ventana(`<h2>Logros y medallas</h2><div class="lista">` + logrosActivos().map(l => { const m = MQ.MUNDOS.find(x => x.juego === l.juego);
         return `<div class="item ${d.logros[l.id] ? "" : "apagado"}"><span class="ico" aria-hidden="true">${d.logros[l.id] ? l.icono : "?"}</span><div><b>${esc(l.titulo)}</b><span>${esc(m ? m.nombre + " · " : "")}${esc(l.desc)}</span></div>${d.logros[l.id] ? '<span aria-label="Conseguido">✅</span>' : ""}</div>`; }).join("") +
         `</div><button class="boton" type="button" data-cerrar data-foco>Cerrar</button>`);
     });
     function vAjustes() {
       const a = MQ.leer().ajustes;
       const fila = (k, t, s2) => `<div class="item"><div><b>${t}</b><span>${s2}</span></div><button class="interruptor" type="button" data-aj="${k}" aria-pressed="${!!a[k]}" aria-label="${t}">${a[k] ? "Sí" : "No"}</button></div>`;
-      ventana(`<h2>Ajustes de los juegos</h2><p style="margin:0">Valen para Fraction Merge y Equation Merge.</p><div class="lista">
+      ventana(`<h2>Ajustes de los juegos</h2><p style="margin:0">Valen para el mapa y para los juegos que los usan.</p><div class="lista">
         ${fila("sonido", "Sonidos", "Efectos de los juegos")}${fila("musica", "Música", "Melodía de fondo")}
         ${fila("animaciones", "Animaciones", "Desactívalas si te marean o el dispositivo va lento")}
         ${fila("tranquilo", "Modo tranquilo", "Menos presión: más movimientos en cada nivel")}</div>

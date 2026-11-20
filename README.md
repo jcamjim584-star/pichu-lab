@@ -8,7 +8,7 @@ El universo matemático de **Gaussoria** ha perdido los símbolos del conocimien
 y el jugador los recorre con **πCHU**, su guía y compañero. Web estática: HTML, CSS y JavaScript, sin frameworks,
 sin registro y sin recoger datos personales.
 
-## Qué incluye (versión 1.4.0)
+## Qué incluye (versión 1.5.0)
 - **Pantalla de inicio** con el logo GALOIS LEGACY y πCHU contando la historia (se salta al volver de un juego;
   `?inicio` la fuerza y `?mapa` la omite).
 - **Elige tu matemático**: Hipatia, Ada Lovelace, Emmy Noether, Sophie Germain, Gauss, Fibonacci, Ramanujan o Al-Juarismi
@@ -29,8 +29,8 @@ sin registro y sin recoger datos personales.
 |---|---|---|
 | Minas de los Primos (divisibilidad) | Divisibilidad exprés (modo fácil, `applets/minas/`) | Disponible |
 | Reino de Hielo y Fuego (enteros) | Integer Ninja | Disponible |
-| Bosque de las Fracciones | Fraction Merge (y Pizza Rush, en revisión) | Disponible |
-| Fortaleza del Álgebra (ecuaciones) | Equation Merge | Disponible |
+| Bosque de las Fracciones | Laboratorio πCHU (fracciones con Biología y Geología) | Disponible |
+| Fortaleza del Álgebra (ecuaciones) | — (Equation Merge, próximamente) | En la niebla |
 | Potencias, proporcionalidad, expresiones algebraicas, funciones, estadística, probabilidad, geometría | — | En la niebla (próximamente) |
 
 **Hoja de ruta de GALOIS LEGACY** (cada fase se prueba y documenta antes de la siguiente):
@@ -40,15 +40,16 @@ sin registro y sin recoger datos personales.
    Solo cambian el aspecto: **no tienen habilidades** (decisión del 20/11/2026). Galois se añadirá cuando tenga sprite.
 4. Primera mazmorra RPG (Reino de Hielo y Fuego) con combate por preguntas, reutilizando el motor de Integer Ninja.
 5. Todo en pixel art. ✅ Portada, páginas propias y marco «◀ Mapa» de los juegos (1.3.0). Pendiente: el interior de cada
-   juego (Integer Ninja, Fraction Merge y Equation Merge; Minas de los Primos ya llega en pixel art), sin quitar preguntas, niveles ni progreso.
+   juego (falta Integer Ninja; Minas de los Primos y el Laboratorio ya llegan en pixel art), sin quitar preguntas, niveles ni progreso.
 
 ### Juegos (detalle)
 | Juego | Curso (de momento no se muestra) | Estado |
 |---|---|---|
 | Divisibilidad exprés · Minas de los Primos (modo fácil: 10 preguntas de 4 opciones) | 1.º ESO | Disponible |
 | Factor Clash · duelos de divisibilidad | 1.º ESO | Retirado del mapa (1.4.0; su guardado se conserva) |
-| Fraction Merge · suma y fusiona fracciones | 1.º ESO | Disponible |
-| Equation Merge · ecuaciones de primer grado | 1.º ESO | Disponible |
+| Laboratorio πCHU · fracciones con Biología y Geología (6 estaciones) | 1.º ESO | Disponible |
+| Fraction Merge · suma y fusiona fracciones | 1.º ESO | Próximamente (1.5.0; su guardado se conserva) |
+| Equation Merge · ecuaciones de primer grado | 1.º ESO | Próximamente (1.5.0; su guardado se conserva) |
 | Pizza Rush · Pizzería πCHU v0.2 (fracciones: equivalencias, suma, multiplicación y división) | 1.º ESO | Próximamente (en revisión) |
 | Integer Ninja v0.5 · enteros: signos, comparar, sumas, −( ), productos y cocientes | 1.º ESO | Disponible |
 | Laboratorio de Proporcionalidad · cartas de ecuaciones · cartas de funciones | 1.º ESO · 4.º ESO · 1.º Bach | En diseño |
