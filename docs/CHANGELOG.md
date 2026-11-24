@@ -1,5 +1,16 @@
 # Registro de cambios
 
+## 1.5.1 · 24/11/2026 · El mapa de Gaussoria se ve mejor en el móvil y la tablet
+- **Más paisaje en el móvil**: en pantallas de menos de 600 px las casillas miden unos 26 px (antes 36), así que se ven unas
+  13 × 13 casillas en vez de 10 × 9 (`compartido/gaussoria.js`).
+- **La cruceta ya no tapa el mapa**: en el móvil en vertical va debajo del mapa; con el móvil en horizontal, a su derecha y el
+  mapa ocupa el alto de la pantalla. En tablet y ordenador sigue en la esquina, algo más transparente.
+- **Botón «Entrar» en el centro de la cruceta**: se enciende (con el texto «Entrar», no solo color) al pisar la puerta de un
+  reino abierto. Así se entra aunque el panel de πCHU quede más abajo en el móvil.
+- En el móvil (vertical y horizontal) la cabecera deja de ir fija arriba para no ocupar media pantalla.
+- Comprobado: «Todo correcto»; mapa en iPhone 13 (vertical y horizontal), Android de 320 px, tablet vertical y horizontal y
+  1280 px; sin errores en la consola, sin desbordamiento; la cruceta mueve al personaje y «Entrar» abre el Laboratorio.
+
 ## 1.5.0 · 20/11/2026 · El Laboratorio πCHU sustituye a Fraction Merge; Equation Merge, próximamente
 - **Reino 3 (Fracciones): Laboratorio πCHU** (`applets/laboratorio/`), de `jantoniolade-blip/pichu-lab` (rama `dev`,
   `juegos/fracciones`, copia del artefacto «Laboratorio πCHU»): fracciones con Biología y Geología en 6 estaciones.

@@ -351,8 +351,10 @@
     function redimensionar() {
       const r = lienzo.getBoundingClientRect(), dpr = window.devicePixelRatio || 1;
       lienzo.width = Math.max(1, Math.round(r.width * dpr)); lienzo.height = Math.max(1, Math.round(r.height * dpr));
-      // Casillas de unos 36 px en pantalla: entre 10 (móvil) y 16 (ordenador) de ancho, y al menos 8 de alto
-      const columnas = Math.max(10, Math.min(16, r.width / 36));
+      // Casillas de unos 36 px en pantalla (26 px en el móvil, para que se vea más paisaje):
+      // entre 12 y 16 casillas de ancho, y al menos 8 de alto
+      const tamCasilla = r.width < 600 ? 26 : 36;
+      const columnas = Math.max(12, Math.min(16, r.width / tamCasilla));
       k = Math.max(1, Math.min(Math.round(lienzo.width / (C * columnas)), Math.floor(lienzo.height / (C * 8))));
       vw = lienzo.width / k; vh = lienzo.height / k;       // lo que se ve, en píxeles de arte
       dibujar(performance.now());

@@ -8,7 +8,7 @@ El universo matemático de **Gaussoria** ha perdido los símbolos del conocimien
 y el jugador los recorre con **πCHU**, su guía y compañero. Web estática: HTML, CSS y JavaScript, sin frameworks,
 sin registro y sin recoger datos personales.
 
-## Qué incluye (versión 1.5.0)
+## Qué incluye (versión 1.5.1)
 - **Pantalla de inicio** con el logo GALOIS LEGACY y πCHU contando la historia (se salta al volver de un juego;
   `?inicio` la fuerza y `?mapa` la omite).
 - **Elige tu matemático**: Hipatia, Ada Lovelace, Emmy Noether, Sophie Germain, Gauss, Fibonacci, Ramanujan o Al-Juarismi
