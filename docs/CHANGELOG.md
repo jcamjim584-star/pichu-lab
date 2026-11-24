@@ -1,5 +1,110 @@
 # Registro de cambios
 
+## 1.5.1 · 24/11/2026 · El mapa de Gaussoria se ve mejor en el móvil y la tablet
+- **Más paisaje en el móvil**: en pantallas de menos de 600 px las casillas miden unos 26 px (antes 36), así que se ven unas
+  13 × 13 casillas en vez de 10 × 9 (`compartido/gaussoria.js`).
+- **La cruceta ya no tapa el mapa**: en el móvil en vertical va debajo del mapa; con el móvil en horizontal, a su derecha y el
+  mapa ocupa el alto de la pantalla. En tablet y ordenador sigue en la esquina, algo más transparente.
+- **Botón «Entrar» en el centro de la cruceta**: se enciende (con el texto «Entrar», no solo color) al pisar la puerta de un
+  reino abierto. Así se entra aunque el panel de πCHU quede más abajo en el móvil.
+- En el móvil (vertical y horizontal) la cabecera deja de ir fija arriba para no ocupar media pantalla.
+- Comprobado: «Todo correcto»; mapa en iPhone 13 (vertical y horizontal), Android de 320 px, tablet vertical y horizontal y
+  1280 px; sin errores en la consola, sin desbordamiento; la cruceta mueve al personaje y «Entrar» abre el Laboratorio.
+
+## 1.5.0 · 20/11/2026 · El Laboratorio πCHU sustituye a Fraction Merge; Equation Merge, próximamente
+- **Reino 3 (Fracciones): Laboratorio πCHU** (`applets/laboratorio/`), de `jantoniolade-blip/pichu-lab` (rama `dev`,
+  `juegos/fracciones`, copia del artefacto «Laboratorio πCHU»): fracciones con Biología y Geología en 6 estaciones.
+  Jugabilidad sin cambios. Sin Google Fonts (letras locales), paleta y letras GALOIS LEGACY en su capa pixel, rótulo nuevo y
+  vuelta con la insignia «◀ Mapa». Guarda en `pichu.laboratorio.v1`.
+- **Fraction Merge y Equation Merge pasan a «próximamente»**: el reino 4 queda en la niebla. Los juegos siguen en `applets/` y
+  sus guardados no se tocan; salen de la caché sin conexión.
+- Portada: los logros solo cuentan los de juegos disponibles (si no hay ninguno, el botón no aparece) y el texto de ajustes ya no
+  nombra juegos retirados.
+- Comprobado: «Todo correcto»; lista de reinos, Laboratorio (menú y alias) a 360, 390 y 1280 px, sin errores en la consola, sin
+  desbordamiento y sin peticiones a otros servidores.
+
+## 1.4.0 · 20/11/2026 · Minas de los Primos sustituye a Factor Clash
+- **Juego nuevo en el reino 1: Divisibilidad exprés** (`applets/minas/`), el modo fácil de πCHU ROYALE
+  (`jantoniolade-blip/pichu-lab`, rama `dev`, `juegos/divisibilidad/facil.html`): 10 preguntas de 4 opciones contra Múltiplax o
+  Prímox, sin perder vidas, con explicación tras cada respuesta. `motor.js` es copia literal (mismas preguntas y corrección).
+- Adaptado a las reglas: letras locales en lugar de Google Fonts, paleta y marco pixel GALOIS LEGACY, el matemático del mapa como
+  acompañante, guardado `pichu.minas.v1`, ✔/✘ además del color, una columna de temas en el móvil y resumen de estrellas en el mapa.
+- **Factor Clash** pasa a «pronto» y deja de abrirse desde el mapa; el juego sigue en `applets/expres/` y su guardado
+  `pichu.expres.v3` no se toca. Sale de la caché sin conexión (1,5 MB menos).
+- Comprobado: «Todo correcto»; partida completa con teclado (teclas 1–4), récord guardado, resumen en el mapa, a 390 px sin
+  desbordamiento, sin errores en la consola y sin ninguna petición a otros servidores.
+
+## 1.3.0 · 20/11/2026 · Todo en pixel art (portada) y marco Galois en los juegos
+- **Estilo pixel en toda la portada y en las páginas propias:** esquinas rectas y bordes «escalonados» (sin esquinas,
+  dibujados con sombras), botones con relieve de consola de 16 bits, pergamino con punteado pixel, pie de noche con almenas,
+  ventanas de logros y ajustes, «Mis datos», alias, cruceta y fichas de la cabecera con el mismo marco.
+- **Islas de la vista de lista en pixel art** (`compartido/img/galois/isla-verde|azul|violeta|niebla.png`, generadas por
+  `src/galois/generar_graficos.py`) en lugar de círculos de CSS.
+- **Marco Galois en los juegos** (`compartido/volver.js`): la insignia «◀ Mapa» es pixel, con la cara del matemático elegido
+  y letra pixel propia («GaloisPixel», para no pisar las letras del juego). Mide 44 px (antes 40, por debajo del mínimo).
+- **Arreglo:** el enlace de volver apuntaba a `../../index.html` desde `compartido/`, que en GitHub Pages (`/pichu-lab/`) se salía
+  de la web. Ahora va a `../index.html` (comprobado sirviendo la web en `/pichu-lab/`).
+- No cambia el interior de ningún juego (será el paso siguiente, juego a juego) ni ningún guardado.
+- Comprobado: «Todo correcto»; inicio, elegir, mapa, lista, logros, privacidad y Fraction Merge con la insignia a 390 y 1280 px,
+  sin errores en la consola ni desbordamiento horizontal.
+
+## 1.2.1 · 20/11/2026
+- **Arreglo:** en la primera visita la web ya no se recarga sola al activar el modo sin conexión (si el alumno pulsaba
+  «Empezar» en ese momento, volvía a la pantalla de inicio). Solo se recarga al instalar una actualización.
+- Los matemáticos no tendrán habilidades: solo cambian el aspecto (hoja de ruta actualizada). Galois se añadirá cuando tenga sprite.
+
+## 1.2.0 · 20/11/2026 · Elige tu matemático y personajes del Drive
+- **Elige tu matemático**: al empezar la aventura se elige entre los 8 matemáticos del Drive (Hipatia, Ada Lovelace, Emmy Noether,
+  Sophie Germain, Gauss, Fibonacci, Ramanujan y Al-Juarismi), cada uno con su época y una frase. Ese matemático es el que camina
+  por el mapa (mira hacia el lado al que anda y da un saltito en cada paso). Botón «Cambiar de matemático» en cualquier momento.
+- **Enemigos del Drive** junto a cada reino, en el mapa y en la vista de lista: Primox (divisibilidad), Negatrón (enteros),
+  Denominadorón (fracciones), Incógnita X (ecuaciones), Potenciator, Porcentajín, Polinomio mutante, Pendientor, Mediana traviesa
+  y Dado caótico. Geometría no tiene enemigo todavía (no hay ninguno en el Drive). Sustituyen a las imágenes .webp en la portada;
+  los juegos siguen usando sus personajes de siempre.
+- **Se quita el πCHU pequeño** que seguía al explorador (y el explorador provisional). πCHU sigue como guía en el bocadillo.
+- Hojas originales del Drive en `src/galois/drive/`; `generar_graficos.py` crea `compartido/img/galois/heroes/` y `enemigos/`.
+- `MUNDOS` gana el campo `enemigo`; lista nueva `HEROES`. `pichu.galois.v1` guarda también `heroe` (campo nuevo, sin cambiar los demás).
+- `tests/comprobar.mjs`: cada matemático y cada enemigo usado tiene sus imágenes y están en la caché sin conexión.
+- Comprobado: «Todo correcto»; en Chromium a 390 y 760 px, sin errores en la consola ni desbordamiento: inicio → elegir → mapa,
+  caminar, cambiar de matemático (queda marcado el elegido) y vista de lista con los enemigos nuevos.
+
+## 1.1.0 · 20/11/2026 · GALOIS LEGACY, fase 2 (mapa explorable)
+- El **Mapa de Gaussoria** se puede recorrer en vista cenital (pixel art de 16×16): un **explorador** provisional camina por los
+  caminos con **πCHU** detrás. Cada reino es un edificio con su número y su personaje; al pisar la puerta, πCHU cuenta qué reino es
+  y qué juego abre, y aparece el botón «Entrar en …». Los reinos sin juego tienen candado y niebla («¡muy pronto!»).
+- Controles: flechas o W A S D (con el mapa enfocado) e Intro para entrar; cruceta táctil en la esquina del mapa; tocar o hacer
+  clic en un sitio lleva andando hasta allí (si se toca un edificio, hasta su puerta).
+- **Ver como lista**: la vista de islas anterior sigue disponible con un botón; la web recuerda la vista elegida.
+- Accesibilidad: el lienzo tiene nombre e instrucciones, se anuncia la llegada a cada puerta (aviso `aria-live`), botones de 48 px,
+  y sin animaciones (sistema o ajuste de los juegos) el explorador salta de casilla en casilla y el agua no se mueve.
+- Archivo nuevo `compartido/gaussoria.js` (terreno en letras y motor). `MUNDOS` gana el campo `puerta: [columna, fila]`.
+- Guardado nuevo `pichu.galois.v1` (posición del explorador y vista). **No cambia ningún guardado anterior ni ningún juego.**
+  Al volver de un juego, el explorador aparece en la puerta por la que entró.
+- `src/galois/generar_graficos.py` crea también `pichu-mini.png` (πCHU pequeño que sigue al explorador).
+- `tests/comprobar.mjs`: cada reino tiene puerta, su edificio cabe sobre terreno libre sin montarse en otro, se entra desde abajo
+  y se llega andando desde la salida.
+- Privacidad y accesibilidad explican el mapa y la clave nueva.
+- Comprobado: `node tests/comprobar.mjs` «Todo correcto»; en Chromium a 390, 760 y 1280 px sin errores en la consola ni
+  desbordamiento horizontal; caminar con teclado, cruceta y toque; entrar con Intro en Fraction Merge y volver a la misma puerta;
+  reino en la niebla sin botón de entrar; vista de lista recordada al recargar; modo sin movimiento.
+
+## 1.0.0 · 19/11/2026 · GALOIS LEGACY, fase 1 (identidad)
+- πCHU pasa a ser **GALOIS LEGACY · El legado de los matemáticos — un juego de πCHU LAB**. Solo 1.º ESO.
+- **Pantalla de inicio** nueva: logo pixel art, subtítulo y πCHU (guía y compañero) contando la historia de Gaussoria en 4 pasos.
+- El Mapa de mundos pasa a ser el **Mapa de Gaussoria**: cada tema es un reino (Minas de los Primos, Reino de Hielo y Fuego,
+  Bosque de las Fracciones, Fortaleza del Álgebra…) y debajo se ve el juego que abre. Los reinos sin juego están «en la niebla».
+  Los personajes de cada isla se mantienen (por ahora hacen de enemigos y jefes).
+- Paleta nueva (verdes, azules, dorados y violetas) en `:root` de `marca.css`, con contraste AA comprobado. Los nombres de color
+  antiguos siguen funcionando como alias. Estilo pixel: esquinas rectas, bordes gruesos y sombras duras.
+- Letra pixel **Pixelify Sans** (OFL, en `compartido/fuentes/`) solo en títulos grandes; Lato en textos y números.
+- `src/galois/generar_graficos.py` crea el logo (letras pixel propias), πCHU en pixel art y los iconos de la app (`compartido/img/galois/`).
+- Botón de los juegos: «← πCHU» pasa a «← Mapa» con los colores nuevos. Manifiesto, privacidad y accesibilidad con el nombre nuevo.
+- `CLAUDE.md`: se cambian la regla 1 (los juegos se pueden adaptar sin quitar preguntas, niveles ni progreso) y la regla 4 (marca GALOIS LEGACY).
+- Arreglo: la portada tenía un envoltorio HTML duplicado (dos `<!doctype>` y dos `<body>`) que venía del artefacto.
+- No cambia ningún juego ni ningún guardado.
+- Comprobado: `node tests/comprobar.mjs` «Todo correcto»; inicio, mapa, un juego y privacidad a 390, 768 y 1280 px sin errores
+  en la consola y sin desbordamiento horizontal; el foco pasa al título del mapa al empezar.
+
 ## 0.9.2 · 18/11/2026
 - El repositorio se pone al día con el artefacto publicado en Claude (de 0.6.4 a 0.9.2), para poder editarlo también con Codex.
 - **Portada nueva: Mapa de mundos.** 11 islas (una por tema de 1.º ESO) unidas por un camino, con el personaje de cada juego;

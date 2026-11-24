@@ -131,9 +131,13 @@
       if (reg.waiting && navigator.serviceWorker.controller) alHaberNovedad(() => reg.waiting.postMessage("activar"));
       reg.addEventListener("updatefound", () => avisar(reg.installing));
     }).catch(() => { /* sin conexión no disponible: la web sigue funcionando */ });
+    // Solo se recarga si la página ya tenía una versión instalada (actualización).
+    // En la PRIMERA visita no: el modo sin conexión se activa en silencio y no se pierde
+    // lo que el alumno esté haciendo (antes volvía a la pantalla de inicio).
+    const habiaVersion = !!navigator.serviceWorker.controller;
     let recargando = false;
     navigator.serviceWorker.addEventListener("controllerchange", () => {
-      if (recargando) return; recargando = true; location.reload();
+      if (recargando || !habiaVersion) return; recargando = true; location.reload();
     });
   }
 

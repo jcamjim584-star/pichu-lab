@@ -1,11 +1,14 @@
 /* =========================================================
-   πCHU · marca.js
+   GALOIS LEGACY · marca.js  (un juego de πCHU LAB)
    Nombre, lema y lista de juegos. Para añadir un juego nuevo
    basta con añadir un objeto a MARCA.juegos (ver CLAUDE.md).
    ========================================================= */
 window.MARCA = {
-  nombre: "πCHU",
-  lema: "Matemáticas que no te esperabas",
+  nombre: "GALOIS LEGACY",
+  lema: "El legado de los matemáticos",
+  firma: "Un juego de πCHU LAB",
+  mundo: "Gaussoria",                       // el universo del juego
+  guia: "πCHU",                             // la mascota: guía y compañero del jugador
   // Centro y departamento (aparecen al pie de la portada). Para poner el logo del centro,
   // la imagen está en compartido/img/centro.jpg; con logo vacío ("") solo se ve el texto.
   centro: {
@@ -14,7 +17,7 @@ window.MARCA = {
     lugar: "Fuentes de Andalucía (Sevilla)",
     logo: "compartido/img/centro.jpg"
   },
-  version: "0.9.2",
+  version: "1.5.1",
   autor: "Juan Antonio Campos Jiménez",
 
   // Cursos: de momento la portada NO los muestra (se organiza por juegos).
@@ -25,6 +28,19 @@ window.MARCA = {
   // estado: "jugar" (disponible) | "pronto" (aún no subido o en diseño)
   juegos: [
     {
+      id: "minas",
+      titulo: "Divisibilidad exprés",
+      subtitulo: "Minas de los Primos",
+      curso: "1.º ESO",
+      saber: "Divisores, primos y potencias, MCD y mcm",
+      descripcion: "Modo fácil: 10 preguntas de 4 opciones contra Múltiplax o Prímox. Fallar no quita vidas: se ve la explicación y se sigue.",
+      simbolo: "÷",
+      // Viene del modo fácil de πCHU ROYALE; motor.js es copia literal del motor del Duelo de divisibilidad
+      url: "applets/minas/",
+      estado: "jugar",
+      claves: ["pichu.minas.v1"]
+    },
+    {
       id: "expres",
       titulo: "Factor Clash",
       subtitulo: "Duelos de divisibilidad",
@@ -32,8 +48,10 @@ window.MARCA = {
       saber: "Múltiplos, divisores, primos, MCD y mcm",
       descripcion: "Combates de cartas rápidos contra cinco rivales. Elige compañero, cumple la misión y usa su poder.",
       simbolo: "÷",
+      // Desde 1.4.0 el reino de divisibilidad abre Minas de los Primos. El juego sigue en applets/expres/
+      // y su guardado pichu.expres.v3 se conserva (no se borra nada).
       url: "applets/expres/",
-      estado: "jugar",
+      estado: "pronto",
       claves: ["pichu.expres.v3"]
     },
     {
@@ -50,6 +68,19 @@ window.MARCA = {
       claves: ["pichu.integerNinja.v1"]
     },
     {
+      id: "laboratorio",
+      titulo: "Laboratorio πCHU",
+      subtitulo: "Fracciones con Biología y Geología",
+      curso: "1.º ESO",
+      saber: "Fracciones: representar, medir, equivalentes, simplificar, operar y problemas",
+      descripcion: "Seis estaciones (la Tierra, la atmósfera, la célula, el laboratorio, los ecosistemas…) con tareas de colorear, medir en la probeta, escribir y construir operaciones.",
+      simbolo: "½",
+      // Viene de πCHU ROYALE (jantoniolade-blip/pichu-lab, rama dev, juegos/fracciones): copia del artefacto «Laboratorio πCHU»
+      url: "applets/laboratorio/",
+      estado: "jugar",
+      claves: ["pichu.laboratorio.v1"]
+    },
+    {
       id: "fraction-merge",
       titulo: "Fraction Merge",
       subtitulo: "Suma y fusiona fracciones",
@@ -58,8 +89,9 @@ window.MARCA = {
       descripcion: "Desliza y junta fichas: las fracciones se suman, y si llegan a 1 desaparecen. 13 niveles, poderes, un jefe final y partida infinita.",
       simbolo: "½",
       // Fuentes en src/fraction-merge/ → python3 src/fraction-merge/build.py genera applets/fraction-merge/index.html
+      // Desde 1.5.0: «próximamente» (el reino 3 abre el Laboratorio πCHU). Juego y guardado se conservan.
       url: "applets/fraction-merge/",
-      estado: "jugar",
+      estado: "pronto",
       claves: ["pichu.fraction-merge.v1", "pichu.mathquest.v1"]
     },
     {
@@ -72,8 +104,9 @@ window.MARCA = {
       simbolo: "x=",
       // Fuentes en src/equation-merge/ → python3 src/equation-merge/build.py genera applets/equation-merge/index.html
       // (Sustituye a Power Merge desde la 0.9.0; su guardado pichu.power-merge.v1 se conserva, sin uso)
+      // Desde 1.5.0: «próximamente» (el reino 4 queda en la niebla). Juego y guardado se conservan.
       url: "applets/equation-merge/",
-      estado: "jugar",
+      estado: "pronto",
       claves: ["pichu.equation-merge.v1", "pichu.mathquest.v1"]
     },
     {
