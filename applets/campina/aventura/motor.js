@@ -132,7 +132,7 @@
     $('campina').hidden = true; $('hud').hidden = false; $('controles').hidden = !tactilVisible();
     actualizarHUD();
     var ab = abiertas(id);
-    if (rutaDe(id)) { entrarRuta(id); mostrarAviso(wd.nombre + ' · ' + wd.lugar, 'Recorre las paradas del camino: monumentos, vecinos y retos.'); return; }
+    if (rutaDe(id)) { entrarRuta(id); return; }
     mostrarAviso(wd.nombre + ' · ' + wd.lugar, ab.length ? (ab.length > 1 ? 'Rutas abiertas: ' + ab.map(function (e) { return wd.aventuras[e - 1].nombre; }).join(' · ') : 'Aventura ' + ab[0] + ': ' + wd.aventuras[ab[0] - 1].nombre) : '¡Mundo completado! Puedes repetir los retos para practicar.');
   }
   function prepararEnemigos() {
@@ -762,7 +762,7 @@
     } else if (cual === 'ajustes') {
       cuerpo.innerHTML = '<h2>Ajustes</h2><h3>Matemático</h3><div class="heroes" id="aHeroes"></div>' +
         '<h3>Dificultad</h3><div class="difs">' + [['explorador', 'Explorador', '3 opciones, pistas ilimitadas, los fallos quitan medio corazón'], ['aventurero', 'Aventurero', '4 opciones, 2 pistas por reto'], ['maestro', 'Maestro', 'escribes las respuestas numéricas (en tableta y móvil eliges entre 4 opciones), sin pistas']].map(function (d) { return '<label><input type="radio" name="dif" value="' + d[0] + '"' + (G.dif === d[0] ? ' checked' : '') + '> <b>' + d[1] + '</b> <small>' + d[2] + '</small></label>'; }).join('') + '</div>' +
-        '<h3>Opciones</h3><label><input type="checkbox" id="aMus"' + (MUS.activa() ? ' checked' : '') + '> Música</label> <label>Volumen <input type="range" id="aVol" min="0" max="1" step="0.05" value="' + MUS.volumen() + '"></label><br><label><input type="checkbox" id="aSon"' + (G.sonido ? ' checked' : '') + '> Efectos de sonido</label> <label><input type="checkbox" id="aTac"' + (tactilVisible() ? ' checked' : '') + '> Controles táctiles en pantalla</label>' +
+        '<h3>Opciones</h3><label><input type="checkbox" id="aMus"' + (MUS.activa() ? ' checked' : '') + '> Música</label> <label>Volumen <input type="range" id="aVol" min="0" max="1" step="0.05" value="' + MUS.volumen() + '"></label><br><label><input type="checkbox" id="aSon"' + (G.sonido ? ' checked' : '') + '> Efectos de sonido</label> ' +
         '<h3>Perfil</h3><p>Alias: <b>' + esc(C.activo()) + '</b>. Cambia de alias o exporta tu progreso desde el <a href="coleccion/index.html">álbum</a>.</p>' +
         '<details><summary>Modo docente</summary><p>Permite abrir todos los mundos para revisarlos en clase. No concede cartas ni recompensas: hay que superar las aventuras igualmente.</p><input id="aCod" placeholder="Código docente" autocomplete="off"> <button type="button" id="aDoc">' + (docente() ? 'Desactivar' : 'Activar') + '</button> <span id="aDocMsg"></span></details>';
       var hs = heroesTodos(); $('aHeroes').innerHTML = hs.map(function (x) { return '<button type="button" data-h="' + x.id + '" aria-pressed="' + (x.id === G.heroeId) + '"><canvas width="32" height="44"></canvas><b>' + esc(x.corto) + '</b></button>'; }).join('');
@@ -771,10 +771,10 @@
       $('aMus').onchange = function () { MUS.activar(this.checked); pintarBotonMusica(); };
       $('aVol').oninput = function () { MUS.volumen(this.value); };
       $('aSon').onchange = function () { G.sonido = this.checked; try { localStorage.setItem('galoisLegacy.sonido', G.sonido ? '1' : '0'); } catch (e2) {} };
-      $('aTac').onchange = function () { try { localStorage.setItem('galoisLegacy.tactil', this.checked ? '1' : '0'); } catch (e2) {} };
+      // (1.7.0) Sin opción de controles táctiles: todos los pueblos se recorren por paradas
       $('aDoc').onclick = function () { try { if (docente()) { localStorage.removeItem('galoisLegacy.docente'); $('aDocMsg').textContent = 'Desactivado.'; } else if ($('aCod').value.trim().toUpperCase() === 'ALARIFES') { localStorage.setItem('galoisLegacy.docente', '1'); $('aDocMsg').textContent = 'Todos los mundos abiertos.'; } else $('aDocMsg').textContent = 'Código incorrecto.'; } catch (e2) {} };
     } else if (cual === 'ayuda') {
-      cuerpo.innerHTML = '<h2>Cómo se juega</h2><ul class="ayuda"><li><b>Moverse:</b> flechas o WASD (Mayúsculas para correr). En tableta y móvil, la cruceta: si la empujas hasta el borde, corres.</li><li><b>Hablar, abrir, examinar:</b> Espacio, Intro o E; en pantalla táctil, el botón A.</li><li><b>Misión:</b> sigue la marca amarilla <span style="color:#ffe28a">▮</span>. Cada mundo tiene cinco aventuras: exploración, combate, construcción, minijefe y jefe. En Fuentes de Andalucía, el Silo y la calle Carrera se pueden hacer en cualquier orden, y hay dos encargos opcionales (el horno y la romería) que siguen disponibles al terminar la historia.</li><li><b>Combates:</b> cada acierto daña al enemigo. Si fallas, verás por qué y recibirás otro reto parecido. Nunca pierdes monedas ni cartas.</li><li><b>Habilidad:</b> cada matemático tiene una habilidad que puedes usar una vez por combate.</li><li><b>Cofres del saber:</b> resuélvelos para ganar monedas; con ellas compras pociones.</li><li><b>Recompensas:</b> XP, niveles, monedas, insignias y cartas son del juego y <b>no cambian tus notas</b>.</li></ul>';
+      cuerpo.innerHTML = '<h2>Cómo se juega</h2><ul class="ayuda"><li><b>El camino:</b> cada pueblo es un recorrido por sus monumentos. Tu matemático va de parada en parada; con los números de arriba vuelves a cualquier parada ya visitada.</li><li><b>En cada parada:</b> lee el texto del monumento, habla con los vecinos y supera su reto. «Siguiente parada» se enciende cuando lo consigues.</li><li><b>Preguntas de los monumentos:</b> son cortas y no cuentan para nada; si fallas, vuelve a leer el texto.</li><li><b>Cruces:</b> en Fuentes de Andalucía, el Silo y la calle Carrera se pueden hacer en el orden que elijas. Los encargos (el horno y la romería) son opcionales.</li><li><b>Combates:</b> cada acierto daña al enemigo. Si fallas, verás por qué y recibirás otro reto parecido. Nunca pierdes monedas ni cartas.</li><li><b>Habilidad:</b> cada matemático tiene una habilidad que puedes usar una vez por combate.</li><li><b>Cofres del saber:</b> resuélvelos para ganar monedas; con ellas compras pociones en el puesto.</li><li><b>Teclado:</b> Tab para moverte por los botones, Intro para pulsar y para pasar los diálogos.</li><li><b>Recompensas:</b> XP, niveles, monedas, insignias y cartas son del juego y <b>no cambian tus notas</b>.</li></ul>';
     }
     m.hidden = false;
   }
@@ -885,6 +885,17 @@
     if (p.aventura === 5) {
       if (!hecha(G.rutaId, 5)) box.appendChild(boton('⚔ Desafiar a <b>' + esc(nombreEnemigo(wd.jefe)) + '</b> · Jefe', function () { hablarJefe(); }, 'prin'));
       else box.appendChild(boton('✔ Jefe vencido · repetir el combate para practicar', function () { hablarJefe(); }));
+    } else if (p.aventura && !v) {
+      // reto sin vecino: combate contra el enemigo de la etapa o construcción en el edificio en obras
+      var av = wd.aventuras[p.aventura - 1], sinE = Array.isArray(wd.sinEnemigo) ? wd.sinEnemigo : [];
+      var enemN = p.aventura === 3 || sinE.indexOf(p.aventura) >= 0 ? null : (p.aventura === 2 ? wd.enemigos[0] : wd.enemigos[1]);
+      var lanzar = function () {
+        if (p.aventura === 3) return dialogo([{ quien: p.nombre, txt: av.historia + ' Resuelve los retos para ponerlo a punto.' }], function () { iniciarAventura(3); });
+        var ent = enemigos.find(function (e) { return e.etapa === p.aventura; }) || null;
+        dialogo([{ quien: enemN ? nombreEnemigo(enemN) : p.nombre, txt: av.historia }], function () { iniciarAventura(p.aventura, ent); });
+      };
+      if (!hecha(G.rutaId, p.aventura)) box.appendChild(boton((p.aventura === 3 ? '🔨 ' : '⚔ ') + 'Aventura ' + p.aventura + ': <b>' + esc(av.nombre) + '</b> <small>(' + esc(av.tipo) + (enemN ? ' contra ' + esc(nombreEnemigo(enemN)) : '') + ')</small>', lanzar, 'prin'));
+      else box.appendChild(boton('✔ Aventura ' + p.aventura + ' superada · repetirla para practicar', lanzar, 'hecho'));
     } else if (v) {
       var etq = '💬 Hablar con ' + esc(v.nombre);
       if (p.aventura && !hecha(G.rutaId, p.aventura)) etq = '▶ Aventura ' + p.aventura + ': <b>' + esc(wd.aventuras[p.aventura - 1].nombre) + '</b> <small>(' + esc(v.nombre) + ')</small>';
@@ -909,8 +920,13 @@
       var ve = vecinos.find(function (x) { return x.encargo === p.encargo; }), enc = (wd.opcionales || []).find(function (o) { return o.hito === p.encargo; }) || {};
       if (ve) { var hecho = C.hitoHecho && C.hitoHecho(p.encargo); box.appendChild(boton('⭐ ' + (hecho ? 'Encargo hecho ✔: ' : 'Encargo opcional: ') + esc(enc.nombre || ve.nombre) + ' <small>(' + esc(ve.nombre) + ')</small>', function () { hablarEncargo(ve); }, hecho ? 'hecho' : '')); }
     }
+    (p.charla || []).forEach(function (n) {
+      var vc = vecinoLlamado(n); if (!vc) return;
+      var ls = vc.dialogo.filter(function (t) { return !/botón|⤴|cruceta/.test(t); });
+      if (ls.length) box.appendChild(boton('💬 Hablar con ' + esc(vc.nombre), function () { dialogo(ls.map(function (t) { return { quien: vc.nombre, txt: t, v: vc }; })); }));
+    });
     if (p.tienda) { var vt = vecinos.find(function (x) { return x.tienda; }); box.appendChild(boton('🧪 Puesto de pociones', function () { if (vt) hablar(vt); else abrirMenu('tienda'); })); }
-    if (p.aventura && hecha(G.rutaId, p.aventura) && p.aventura !== 5) box.appendChild(boton('✔ Aventura ' + p.aventura + ' superada · repetirla para practicar', function () { iniciarAventura(p.aventura, null, v); }, 'hecho'));
+    if (p.aventura && v && hecha(G.rutaId, p.aventura) && p.aventura !== 5) box.appendChild(boton('✔ Aventura ' + p.aventura + ' superada · repetirla para practicar', function () { iniciarAventura(p.aventura, null, v); }, 'hecho'));
     box.querySelectorAll('.hecho').forEach(function (b) { if (/abierto/.test(b.textContent)) b.disabled = true; });
   }
   function pintarNavRuta(i) {

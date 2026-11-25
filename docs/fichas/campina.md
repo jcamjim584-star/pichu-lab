@@ -25,7 +25,7 @@
 - `volver.js` se carga (regla 1); la clase `en-juego` lo esconde dentro de pueblos y combates para no tapar la cruceta.
 
 ## Recorrido por paradas (1.7.0)
-- Los pueblos con ruta en `aventura/rutas.js` se juegan de parada en parada (sin cruceta). De momento, solo Fuentes de Andalucía.
+- Los 10 pueblos se juegan de parada en parada (sin cruceta) con las rutas de `aventura/rutas.js` (1.8.0). Fuentes tiene 10 paradas y un cruce; los demás, 6.
 - Cada parada: monumento (PNG de `assets/patrimonio/` o edificio pixel del juego), texto, vecino y acciones (aventura, cofres,
   encargo, tienda) o una pregunta corta. Las paradas con el mismo `grupo` forman un cruce (se hacen en cualquier orden).
 - Guardado propio: `galoisLegacy.ruta.v1` → `{ alias: { m1: { idParada: true } } }` (preguntas de monumento acertadas).
@@ -33,7 +33,8 @@
 
 ## Pendiente (consultar con Juan Antonio)
 - Revisar los textos y preguntas de las paradas de Fuentes (`aventura/rutas.js`).
-- Convertir los otros 9 pueblos al recorrido por paradas.
+- El código de la exploración libre sigue en `motor.js` (sin uso) por si se quiere recuperar.
+- Revisar los textos y preguntas de las paradas de los otros 9 pueblos.
 - Claves de guardado: no siguen `pichu.<id>.vN` (regla 2). Cambiarlas exige migrar sin borrar las antiguas.
 - Álbum: 4 cartas cargan fotografías de otros servidores (Wikimedia, Grupo Joly, El Mundo y otra web). La regla 3 lo prohíbe:
   habría que guardarlas en el repositorio (si la licencia lo permite) o dejar su marcador «Falta la fotografía».

@@ -97,5 +97,35 @@ for (const m of MUNDOS.filter(m => m.enemigo)) {
   }
 }
 
+
+// 7. La Campiña: recorridos por paradas (applets/campina/aventura/rutas.js)
+{
+  const base = join(raiz, "applets/campina");
+  const falso = () => new Proxy(function () {}, { get: (t, k) => (k === "canvas" ? { width: 1, height: 1 } : falso()), apply: () => falso(), set: () => true });
+  const ctxC = { window: {}, document: { createElement: () => ({ getContext: () => falso() }) }, Math, JSON, Object, Array, String, Number };
+  for (const f of ["shared/galois-data.js", "coleccion/datos.js", "shared/galois-sprites.js", "shared/galois-escenarios.js", "aventura/mundos.js", "aventura/rutas.js"])
+    vm.runInNewContext(readFileSync(join(base, f), "utf8"), ctxC);
+  const R = ctxC.window.GaloisRutas, MW = ctxC.window.GaloisMundos, E = ctxC.window.GaloisEscenarios;
+  for (const id of Object.keys(R)) {
+    const ruta = R[id], def = MW.lista.find(m => m.id === +id), nombre = `Campiña, ruta ${id}`;
+    const etapas = ruta.filter(p => p.aventura).map(p => p.aventura).sort().join("");
+    ok(`${nombre}: tiene las 5 aventuras una sola vez`, etapas === "12345", etapas);
+    ok(`${nombre}: el jefe está en la última parada`, ruta[ruta.length - 1].aventura === 5);
+    const ids = new Set();
+    for (const p of ruta) {
+      ok(`${nombre}: id de parada único (${p.id})`, !ids.has(p.id)); ids.add(p.id);
+      ok(`${nombre} · ${p.nombre}: tiene texto`, !!(p.texto && p.texto.length > 20));
+      if (p.img) { ok(`${nombre} · ${p.nombre}: existe ${p.img}`, existsSync(join(base, p.img))); ok(`${nombre} · ${p.nombre}: ${p.img} en la caché`, ARCHIVOS.includes("applets/campina/" + p.img)); }
+      else ok(`${nombre} · ${p.nombre}: edificio pixel conocido (${p.sprite})`, !!(p.sprite && E.EDIF ? E.EDIF[p.sprite] : p.sprite));
+      for (const n of [p.vecino, ...(p.charla || [])].filter(Boolean)) ok(`${nombre} · ${p.nombre}: existe el vecino «${n}»`, def.vecinos.some(v => v.nombre === n));
+      for (const c of p.cofres || []) ok(`${nombre} · ${p.nombre}: existe el cofre ${c}`, def.cofres.some(x => x.id === c));
+      if (p.encargo) ok(`${nombre} · ${p.nombre}: existe el encargo ${p.encargo}`, def.vecinos.some(v => v.encargo === p.encargo));
+      if (p.pregunta) ok(`${nombre} · ${p.nombre}: pregunta con 1 correcta y 2 incorrectas distintas`, p.pregunta.mal.length === 2 && !p.pregunta.mal.includes(p.pregunta.ok));
+    }
+    const usados = ruta.flatMap(p => p.cofres || []);
+    ok(`${nombre}: todos los cofres del pueblo están en alguna parada`, def.cofres.every(c => usados.includes(c.id)), def.cofres.map(c => c.id).filter(c => !usados.includes(c)).join(", "));
+  }
+}
+
 console.log(fallos ? `\n${fallos} comprobaciones fallidas` : "\nTodo correcto");
 process.exit(fallos ? 1 : 0);

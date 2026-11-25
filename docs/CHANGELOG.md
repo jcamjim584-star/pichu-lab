@@ -1,5 +1,23 @@
 # Registro de cambios
 
+## 1.8.0 · 25/11/2026 · La Campiña: los diez pueblos se recorren por paradas
+- **Los otros 9 pueblos pasan al recorrido por paradas** (Carmona, Écija, Marchena, Estepa, Osuna, Triana, Alcalá de Guadaíra,
+  Itálica y Sevilla): 6 paradas cada uno con sus 3 monumentos pixel art y 3 edificios del juego. Ya no queda exploración libre
+  en ningún pueblo: sin cruceta, salto ni ataque. Se quita la opción «Controles táctiles» de Ajustes.
+- En cada pueblo: aventura 1 con su vecino (azulejos/piezas en la escena), aventura 2 y 4 contra sus enemigos, aventura 3 en el
+  edificio en obras, una parada de monumento con pregunta corta (con tienda y cofre) y el jefe en la última parada. Los 3 cofres
+  del saber de cada pueblo están repartidos por las paradas. Los vecinos de conversación siguen ahí, sin las frases de la
+  exploración (botón B, salto).
+- El motor ya lanza retos sin vecino (combate contra el enemigo de la etapa o construcción en el edificio en obras).
+- La ayuda del juego explica el recorrido; se quita el aviso de llegada que tapaba el monumento.
+- `tests/comprobar.mjs` comprueba las rutas: 5 aventuras por pueblo, jefe al final, imágenes existentes y en la caché, vecinos,
+  cofres y encargos que existen, preguntas bien formadas y todos los cofres repartidos (334 comprobaciones nuevas).
+- Comprobado: «Todo correcto»; los 10 pueblos jugados enteros de la primera parada al jefe en tamaño iPhone 13; menús de
+  Ajustes, Misiones, Inventario y Ayuda; sin errores en la consola. Publicado en el artefacto.
+- **Por revisar (Juan Antonio)**: textos y preguntas de `aventura/rutas.js` (salen sobre todo de las fichas de las cartas;
+  los añadidos nuevos: Palacio de Benamejí y de Peñaflor, Torre de la Victoria, San Juan Bautista de Marchena, Capilla del Carmen,
+  termas de Itálica y Patio de las Doncellas).
+
 ## 1.7.0 · 25/11/2026 · La Campiña: Fuentes de Andalucía se recorre por paradas
 - **Recorrido por paradas** en Fuentes de Andalucía (decisión de Juan Antonio del 25/11/2026): ya no se anda libremente, así que
   desaparecen la cruceta, el salto y el ataque con el compás (y con él el escudo por sorpresa). El matemático va de parada en
