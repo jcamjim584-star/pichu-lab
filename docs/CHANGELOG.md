@@ -1,5 +1,10 @@
 # Registro de cambios
 
+## 1.6.1 · 25/11/2026 · La Campiña: el trigal ya no parpadea
+- El trigo alternaba dos dibujos cada medio segundo para «mecerse»; en iPhone y tableta el trigal entero parecía aparecer y
+  desaparecer. Ahora está quieto (`applets/campina/shared/galois-escenarios.js`); el agua sigue moviéndose.
+- Publicado también en el artefacto (mismo enlace). Comprobado: «Todo correcto», sin errores en la consola.
+
 ## 1.6.0 · 25/11/2026 · Llega la Campiña al repositorio, con portada, elección de matemático y sin parpadeo
 - **GALOIS LEGACY · La Campiña** (`applets/campina/`): la aventura RPG del artefacto «Galois Legacy»
   (claude.ai/artifact/TSUtLR5wQwBpbcGH6x1KAz), con sus diez mundos de la Campiña sevillana, retos, cofres y álbum de cartas.

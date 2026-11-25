@@ -34,7 +34,8 @@
         if (huella > .42) b.set((wx + 1) % T, wy, '#aad6ed');
       }
     } },
-    'w': { anim: 2, dibujar: function (b, x, y, f) {
+    // Trigo quieto (1.6.1): al alternar dos dibujos cada medio segundo, en iPhone y tableta el trigal parecía aparecer y desaparecer
+    'w': { dibujar: function (b, x, y, f) {
       b.rect(0, 0, T, T, '#ab833d');
       for (var i = 0; i < 6; i++) {
         var tallo = 1 + i * 3, punta = tallo - (f && i % 2 ? 1 : 0);
