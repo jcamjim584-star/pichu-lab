@@ -1,0 +1,32 @@
+<!doctype html>
+<html lang="es">
+<head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<meta name="theme-color" content="#211736"><meta name="description" content="Álbum de cartas coleccionables de Galois Legacy: patrimonio, fútbol, devociones e historia de la Campiña sevillana.">
+<title>Álbum de la Campiña · Galois Legacy</title><link rel="stylesheet" href="estilo.css"></head>
+<body>
+<div class="shell">
+<header class="cab">
+  <nav><a href="../index.html">◀ Volver a la aventura</a><span>GALOIS LEGACY · CAMPIÑA SEVILLANA</span></nav>
+  <div class="heading"><span class="sello" aria-hidden="true">✦</span><div><small>LOS TESOROS DEL COMPÁS</small><h1>Álbum de cartas sevillanas</h1><p>Recupera las cartas del patrimonio, la historia, el fútbol y las tradiciones de Sevilla. Las siete de Fuentes de Andalucía llevan fotografía real con su crédito.</p></div></div>
+</header>
+<section class="panel perfil" aria-label="Perfil de colección">
+  <div><label for="alias">Tu alias de explorador (sin apellidos)</label><div class="perfil-controls"><input id="alias" maxlength="28" autocomplete="off" placeholder="Explorador"><button id="saveAlias" type="button">Usar perfil</button></div><p class="nota">Cada alias guarda una colección diferente en este navegador. No se envían datos a ningún servidor.</p></div>
+  <div class="stats"><strong id="nCards">0 / 61</strong><span>cartas recuperadas</span><progress id="progress" value="0" max="61" aria-label="Progreso del álbum"></progress><small id="nWorlds">0 de 10 reinos completos</small></div>
+</section>
+<section class="panel rpg-panel" aria-label="Progreso del aventurero"><div id="rpg" class="rpg"></div><details><summary>🏆 Logros</summary><ul id="logros" class="logros"></ul></details></section>
+<div class="toolbar panel">
+  <div class="filtros"><label for="fWorld">Mundo<select id="fWorld"><option value="">Todos los mundos</option></select></label>
+  <label for="fCat">Colección<select id="fCat"><option value="">Todas las familias</option></select></label>
+  <label for="fRar">Rareza<select id="fRar"><option value="">Todas</option></select></label>
+  <label for="fState">Estado<select id="fState"><option value="">Todas</option><option value="owned">Conseguidas</option><option value="locked">Por descubrir</option></select></label></div>
+  <div class="acciones"><button type="button" id="export">↓ Exportar progreso</button><label class="importa" for="importFile">↑ Importar progreso</label><input id="importFile" type="file" accept=".json,application/json" hidden></div>
+</div>
+<p id="feedback" class="feedback" role="status" aria-live="polite"></p>
+<p id="fotosAviso" role="status" aria-live="polite" hidden></p>
+<section id="album" class="album" aria-label="Cartas coleccionables"></section>
+<section class="panel instrucciones"><h2>Cómo conseguir las cartas</h2><p>Cada aventura superada (o cada reto distinto de los minijuegos de Divisibilidad, Enteros y Fracciones) descubre al azar una de las cinco cartas normales de su mundo. La sexta, legendaria, se gana venciendo al jefe del mundo con como mucho un error. No se obtienen cartas solo por entrar en una pantalla.</p><p><strong>Fuentes de Andalucía (mundo 1)</strong> funciona por hitos: cada una de sus siete cartas corresponde a un hito concreto del capítulo (las cinco aventuras, las bandejas del Jueves Lardero y el camino de la ermita de la romería). Cada hito concede siempre la misma carta y <strong>solo la primera vez</strong>; las dos opcionales siguen disponibles después de terminar la historia.</p><p>Las monedas, la experiencia y las insignias son recompensas del juego: <strong>no cambian ninguna nota</strong>.</p><p><strong>Importante:</strong> esta colección es cultural y opcional; los motivos religiosos se presentan como patrimonio artístico, sin ninguna obligación de participación religiosa. El álbum usa ilustraciones originales, salvo las siete cartas de Fuentes de Andalucía, que muestran fotografías de sus autores con el crédito y el enlace a la fuente en el reverso de cada carta. No está afiliado a clubes de fútbol ni hermandades.</p></section>
+<footer>Galois Legacy · Proyecto educativo independiente · Diseño inspirado en Sevilla y su Campiña</footer>
+</div>
+<dialog id="detalle"><div id="dialogContent"></div><button id="close" type="button" aria-label="Cerrar ficha">Cerrar ficha ×</button></dialog>
+<script src="datos.js"></script><script src="../shared/galois-sprites.js"></script><script src="../shared/galois-escenarios.js"></script><script src="arte.js"></script><script src="bridge.js"></script><script src="album.js"></script>
+</body></html>

@@ -1,0 +1,63 @@
+:root{--fondo:#18152b;--panel:#302446;--borde:#e8b35b;--crema:#fff0cf;--turquesa:#80e0d0;--morado:#a77de0;--rojo:#db7380}*{box-sizing:border-box}body{margin:0;background:radial-gradient(ellipse at 50% -10%,#52436d 0,transparent 60%),#18152b;color:var(--crema);font:18px/1.4 system-ui,"Segoe UI",sans-serif}button,input,select{font:inherit}button,a,.importa{cursor:pointer}a{color:#9ddcee}button,.importa{background:#f3c672;border:2px solid #171029;border-radius:4px;color:#291b31;font-weight:800;padding:9px 12px;box-shadow:3px 3px 0 #12101d;text-decoration:none}button:focus-visible,a:focus-visible,input:focus-visible,select:focus-visible{outline:3px solid #87eee0;outline-offset:3px}.shell{max-width:1200px;margin:auto;padding:16px 16px 45px}.cab nav{display:flex;align-items:center;justify-content:space-between;gap:12px;flex-wrap:wrap;font-size:14px;letter-spacing:1px;padding:4px 0 22px}.cab nav a{text-decoration:none}.cab nav span{color:#c7b7dc}.heading{display:flex;align-items:center;gap:20px;margin-bottom:28px}.heading .sello{display:grid;place-items:center;width:98px;height:98px;background:#422a6d;border:7px double #f4c66b;box-shadow:7px 7px 0 #100c1b;border-radius:16px;color:#f9d889;font-size:55px;flex:none}.heading small{letter-spacing:3px;color:var(--turquesa);font-weight:800}.heading h1{font-family:Georgia,serif;color:#f6cd75;text-shadow:3px 3px 0 #1c122b;font-size:clamp(29px,5vw,53px);margin:4px 0 8px}.heading p{margin:0;color:#dcd2e9}.panel{background:linear-gradient(135deg,#352648,#261e3a);border:3px solid #6b4b7d;box-shadow:5px 5px 0 #100c1a;border-radius:8px;padding:18px;margin-bottom:18px}.perfil{display:grid;grid-template-columns:1fr minmax(210px,275px);gap:20px;align-items:center}.perfil label,.toolbar label{font-weight:700;display:block;margin-bottom:5px}.perfil-controls{display:flex;gap:8px;margin-top:8px;flex-wrap:wrap}.perfil-controls input{min-width:140px;flex:1}.perfil input,.toolbar select{background:#170f29;color:#f4e3ca;border:2px solid #9a7fb7;padding:8px 10px;border-radius:4px}.nota{font-size:13px;line-height:1.5;color:#c6b9d6;margin:9px 0 0}.stats{display:flex;flex-direction:column;gap:2px}.stats strong{font:700 37px Georgia,serif;color:var(--borde)}.stats span,.stats small{color:#d9ccea}.stats progress{margin:8px 0;width:100%;height:13px;accent-color:#80d9bd}.toolbar{display:flex;justify-content:space-between;align-items:end;gap:18px;flex-wrap:wrap}.filtros,.acciones{display:flex;gap:10px;flex-wrap:wrap}.toolbar select{display:block;width:100%;min-width:160px;margin-top:6px}.acciones button,.acciones .importa{font-size:14px}.feedback{min-height:20px;color:var(--turquesa);margin:12px 4px}.album{display:grid;grid-template-columns:repeat(auto-fill,minmax(170px,1fr));gap:17px;margin-top:8px;margin-bottom:30px}.card{border:4px solid #816a94;border-radius:10px;padding:7px;background:linear-gradient(160deg,#594164,#251d32);box-shadow:5px 6px 0 #0b0915;position:relative;min-width:0;transition:transform .15s ease}.card.owned{border-color:#e4bd6f}.card.rare{border-color:#83cecd}.card.epic{border-color:#ba92ed}.card.legend{border-color:#f4ca60;box-shadow:0 0 0 2px #a67b2d,5px 6px 0 #0b0915}.card button{display:block;padding:0;border:0;background:none;color:inherit;width:100%;text-align:center;box-shadow:none;border-radius:0}.card button:hover{transform:translateY(-2px)}.art{height:185px;overflow:hidden;border:3px solid #161227;border-radius:4px;background:#38244d;position:relative}.art img{width:100%;height:100%;display:block;object-fit:cover;image-rendering:pixelated}.card.locked .art img{filter:grayscale(1) brightness(.38)}.lock{position:absolute;inset:0;display:grid;place-items:center;font-size:46px;color:#f4e1c3;text-shadow:3px 3px #140e20}.tag{font-size:10px;letter-spacing:1px;text-transform:uppercase;font-weight:900;color:#231527;background:#f4ca76;margin-top:7px;padding:4px 6px;border-radius:2px}.card h3{font:700 15px/1.3 Georgia,serif;min-height:41px;display:grid;place-items:center;margin:8px 0 4px}.card p{font-size:12px;color:#d4c7d7;margin:0 0 7px}.card .world{font-size:11px;display:block;color:#d8be8e;margin-bottom:5px}.card.locked h3,.card.locked p{color:#9b95a5}.instrucciones h2{font-size:21px;color:var(--borde);margin:0 0 8px}.instrucciones p{margin:8px 0;color:#e0d3e6;font-size:15px}footer{text-align:center;font-size:13px;color:#ac9cbf;padding:15px}dialog{max-width:min(92vw,450px);max-height:90vh;overflow:auto;border:4px solid #efbd66;border-radius:10px;background:#261e39;color:#f6e5cb;padding:18px;box-shadow:8px 8px 0 #110d1a}dialog::backdrop{background:#0b091dcc}dialog .art{height:240px;max-width:290px;margin:auto}dialog h2{font:700 29px Georgia,serif;color:#f9ce7a;text-align:center}dialog .fact{font-size:16px;line-height:1.5}dialog small{color:#bdb0d4}dialog a{display:inline-block;margin:8px 0}dialog button{width:100%;margin-top:12px}@media(max-width:670px){.perfil{grid-template-columns:1fr}.heading .sello{display:none}.album{grid-template-columns:repeat(2,minmax(0,1fr));gap:10px}.art{height:150px}.card h3{font-size:13px}.shell{padding:12px}.panel{padding:13px}.toolbar select{min-width:135px}}@media(prefers-reduced-motion:reduce){*,*:before,*:after{animation:none!important;transition:none!important;scroll-behavior:auto!important}}
+
+/* --- Galois Legacy: cartas pixel art, volteo y rarezas --- */
+.cab nav{gap:16px}.card .flip{position:relative;aspect-ratio:128/176;perspective:700px;margin-bottom:8px}
+.flip .cara{position:absolute;inset:0;backface-visibility:hidden;transition:transform .6s steps(8)}
+.flip .cara img{width:100%;height:100%;display:block;image-rendering:pixelated}
+.flip .dorso{transform:rotateY(180deg)}.flip.girada .frente{transform:rotateY(180deg)}.flip.girada .dorso{transform:rotateY(360deg)}
+.card.nueva .frente{animation:revela 1.1s .2s both steps(10)}.card.nueva .dorso{animation:oculta 1.1s .2s both steps(10)}
+@keyframes revela{from{transform:rotateY(-180deg)}to{transform:rotateY(0)}}@keyframes oculta{from{transform:rotateY(0)}to{transform:rotateY(180deg)}}
+.card.nueva{animation:salta .5s 1.2s steps(4)}@keyframes salta{50%{transform:translateY(-8px)}}
+.card .lock{position:absolute;inset:0;display:grid;place-items:center;font-size:44px;color:#ffe28a;text-shadow:3px 3px 0 #120c1e}
+.card.locked img{filter:saturate(.6) brightness(.8)}
+.r-rara .flip{filter:drop-shadow(0 0 4px #6ab4f0)}.r-epica .flip{filter:drop-shadow(0 0 6px #c49af0)}.r-legendaria .flip{filter:drop-shadow(0 0 8px #ffe28a)}
+.brillo{position:absolute;inset:0;pointer-events:none;background:linear-gradient(115deg,transparent 30%,rgba(255,255,255,.55) 45%,transparent 60%);background-size:250% 100%;mix-blend-mode:screen;animation:brilla 2.6s linear infinite}
+@keyframes brilla{from{background-position:120% 0}to{background-position:-120% 0}}
+.ficha-carta{display:flex;flex-direction:column;align-items:center;gap:8px}.flip.grande{width:min(256px,70vw);aspect-ratio:128/176}.girar{margin-top:4px}
+dl.meta{display:grid;grid-template-columns:auto 1fr;gap:4px 10px;font-size:15px}dl.meta dt{color:#c7b7dc}dl.meta dd{margin:0}
+.rpg-panel{display:block}.rpg{display:flex;flex-wrap:wrap;gap:18px;align-items:center}
+.rpg .nivel{flex:1 1 220px}.rpg .nivel b{font-size:22px;color:#f6cd75}.barra{height:14px;background:#1a1124;border:2px solid #120c1e;margin:4px 0}.barra i{display:block;height:100%;background:linear-gradient(#9df07a 0 50%,#5ab84a 50%)}
+.moneda{display:inline-block;width:16px;height:16px;background:#f2c14e;border:2px solid #8a5a10;border-radius:50%;vertical-align:-2px;margin-right:4px}
+.insignias{display:flex;gap:4px;flex-wrap:wrap}.ins{width:30px;height:30px;display:grid;place-items:center;background:#241930;border:2px solid #4a3a5a;color:#6a5a7a;font-weight:800;font-size:14px}.ins.ok{background:#f2c14e;border-color:#8a5a10;color:#2a1a10;box-shadow:0 0 6px #ffe28a}
+.logros{list-style:none;padding:0;display:grid;grid-template-columns:repeat(auto-fill,minmax(220px,1fr));gap:8px;margin:10px 0 0}.logros li{display:grid;grid-template-columns:32px 1fr;gap:0 8px;background:#241930;padding:8px;border:2px solid #3a2a4a;opacity:.6}.logros li.ok{opacity:1;border-color:#f2c14e}.logros li span{grid-row:span 2;font-size:24px}.logros small{color:#c7b7dc}
+details summary{cursor:pointer;margin-top:10px;font-weight:800}
+@media (prefers-reduced-motion:reduce){.flip .cara,.brillo,.card.nueva,.card.nueva .frente,.card.nueva .dorso{animation:none;transition:none}}
+.card.r-comun{border-color:#b8bccb}.card.r-rara{border-color:#6ab4f0}.card.r-epica{border-color:#c49af0}.card.r-legendaria{border-color:#f4ca60;box-shadow:0 0 0 2px #a67b2d,5px 6px 0 #0b0915}
+
+/* =======================================================================
+   Cartas fotográficas de Fuentes de Andalucía (álbum Memoria fontaniega)
+   Marco de azulejo, esquinas en rombo y sello dorado, segun la referencia
+   visual del proyecto. Solo afecta a las cartas con fotografía (.foto).
+   ======================================================================= */
+:root{--oro:#dfbd78;--tinta:#101827;--marfil:#fff2d7}
+.card.foto{position:relative;isolation:isolate;background:var(--tinta);background-image:repeating-conic-gradient(from 45deg,var(--tint,#326bbc) 0 25%,#18243d 0 50%);background-size:14px 14px;border-color:var(--oro);box-shadow:0 8px 22px #0008,0 0 0 2px #0008}
+.card.foto button:hover{transform:none}
+.card.foto:hover{transform:translateY(-2px)}
+.card.foto .cara{overflow:hidden;border-radius:5px}
+.card.foto .cara.frente img{object-fit:cover;object-position:var(--crop,50% 50%);image-rendering:auto}
+.card.foto .tag{background:var(--oro);color:#231527}
+.card.foto h3{background:#111a2b;border:1px solid var(--oro);border-radius:4px;padding:7px 6px;color:var(--marfil)}
+.card.foto .world{color:#e2c694}
+.card.foto .marco{position:absolute;left:7px;right:7px;top:7px;aspect-ratio:128/176;z-index:3;border:1px solid var(--oro);border-radius:8px;pointer-events:none}
+.card.foto .marco i{position:absolute;width:16px;height:16px;border:2px solid #f9e5ae;outline:1px solid var(--tint,#326bbc);background:var(--tint,#326bbc);transform:rotate(45deg) scale(.7);border-radius:3px}
+.card.foto .marco i:nth-child(1){top:2px;left:2px}.card.foto .marco i:nth-child(2){top:2px;right:2px}
+.card.foto .marco i:nth-child(3){bottom:2px;left:2px}.card.foto .marco i:nth-child(4){bottom:2px;right:2px}
+.card.foto .sello,.ficha-carta.foto .sello{position:absolute;top:10px;left:50%;transform:translateX(-50%);z-index:4;display:grid;place-items:center;width:30px;height:30px;border:2px solid var(--oro);background:var(--tinta);border-radius:50%;color:var(--oro);font-size:15px;line-height:1;pointer-events:none}
+/* Ficha ampliada */
+.ficha-carta.foto .flip.grande{position:relative}
+.ficha-carta.foto .cara{overflow:hidden;border-radius:6px}
+.ficha-carta.foto .cara.frente img{object-fit:cover;object-position:var(--crop,50% 50%);image-rendering:auto}
+.ficha-carta.foto .marco{position:absolute;inset:5px;z-index:3;border:1px solid var(--oro);border-radius:8px;pointer-events:none}
+.ficha-carta.foto .marco i{position:absolute;width:18px;height:18px;border:2px solid #f9e5ae;outline:1px solid var(--tint,#326bbc);background:var(--tint,#326bbc);transform:rotate(45deg) scale(.72);border-radius:3px}
+.ficha-carta.foto .marco i:nth-child(1){top:2px;left:2px}.ficha-carta.foto .marco i:nth-child(2){top:2px;right:2px}
+.ficha-carta.foto .marco i:nth-child(3){bottom:2px;left:2px}.ficha-carta.foto .marco i:nth-child(4){bottom:2px;right:2px}
+dialog .credito{margin:12px 0 0;padding-top:9px;border-top:1px solid #6b4b7d;font-size:13px;line-height:1.5;color:#d8cbb4}
+dialog .credito b{color:var(--oro)}
+dialog .credito small{display:block;margin-top:4px;color:#bdb0d4}
+/* Marcador temporal cuando una fotografía no carga */
+.card.sin-foto,.ficha-carta.sin-foto{border-style:dashed}
+.marcador{position:absolute;inset:0;z-index:2;display:grid;place-content:center;gap:5px;padding:10px;text-align:center;background:repeating-linear-gradient(45deg,#1b2436 0 8px,#141c2d 8px 16px)}
+.marcador b{color:var(--oro);font:800 10px/1.3 system-ui;letter-spacing:.07em;text-transform:uppercase}
+.marcador small{color:#cfc3ae;font:400 10px/1.3 system-ui}
+#fotosAviso{margin:10px 4px;padding:10px 12px;border:2px dashed var(--oro);border-radius:6px;background:#2a2016;color:#ffe9c0;font-size:14px;line-height:1.5}
+@media(max-width:660px){.card.foto .sello{width:24px;height:24px;font-size:12px;top:8px}.card.foto .marco i{width:12px;height:12px}}

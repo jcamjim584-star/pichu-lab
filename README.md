@@ -8,7 +8,7 @@ El universo matemático de **Gaussoria** ha perdido los símbolos del conocimien
 y el jugador los recorre con **πCHU**, su guía y compañero. Web estática: HTML, CSS y JavaScript, sin frameworks,
 sin registro y sin recoger datos personales.
 
-## Qué incluye (versión 1.5.1)
+## Qué incluye (versión 1.6.0)
 - **Pantalla de inicio** con el logo GALOIS LEGACY y πCHU contando la historia (se salta al volver de un juego;
   `?inicio` la fuerza y `?mapa` la omite).
 - **Elige tu matemático**: Hipatia, Ada Lovelace, Emmy Noether, Sophie Germain, Gauss, Fibonacci, Ramanujan o Al-Juarismi
@@ -48,6 +48,7 @@ sin registro y sin recoger datos personales.
 | Divisibilidad exprés · Minas de los Primos (modo fácil: 10 preguntas de 4 opciones) | 1.º ESO | Disponible |
 | Factor Clash · duelos de divisibilidad | 1.º ESO | Retirado del mapa (1.4.0; su guardado se conserva) |
 | Laboratorio πCHU · fracciones con Biología y Geología (6 estaciones) | 1.º ESO | Disponible |
+| GALOIS LEGACY · La Campiña: aventura RPG por 10 pueblos de Sevilla, con portada y elección de matemático (`applets/campina/`, ficha `docs/fichas/campina.md`) | 1.º ESO | Disponible por enlace directo (aún no sale en el mapa de Gaussoria) |
 | Fraction Merge · suma y fusiona fracciones | 1.º ESO | Próximamente (1.5.0; su guardado se conserva) |
 | Equation Merge · ecuaciones de primer grado | 1.º ESO | Próximamente (1.5.0; su guardado se conserva) |
 | Pizza Rush · Pizzería πCHU v0.2 (fracciones: equivalencias, suma, multiplicación y división) | 1.º ESO | Próximamente (en revisión) |

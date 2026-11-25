@@ -1,0 +1,153 @@
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<meta name="theme-color" content="#0c1424">
+<meta name="description" content="GALOIS LEGACY · El legado de los matemáticos — un juego de πCHU LAB. Aventura RPG de Matemáticas de 1.º ESO por la Campiña sevillana.">
+<title>Galois Legacy</title>
+<style>:root{color-scheme:dark;background:#0c1424}</style>
+<link rel="stylesheet" href="shared/galois-theme.css">
+<link rel="stylesheet" href="aventura/aventura.css">
+<script src="../../compartido/volver.js" defer></script>
+</head>
+<body>
+<canvas id="lienzo" aria-label="Mundo de la aventura" role="img"></canvas>
+
+<!-- HUD -->
+<header id="hud" class="hud" hidden>
+  <div class="h-izq">
+    <span class="h-heroe" id="hHeroe"></span>
+    <span class="h-nivel"><b id="hNivel">Nv 1</b><span class="xp"><i id="hXp"></i></span></span>
+    <span class="h-monedas"><span class="moneda" aria-hidden="true"></span><b id="hMonedas">0</b><span class="sr"> monedas</span></span>
+    <span class="h-poc">🧪<b id="hPociones">0</b><span class="sr"> pociones</span></span>
+  </div>
+  <div class="h-mision"><small id="hMundo"></small><b id="hMision"></b></div>
+  <nav class="h-der" aria-label="Menú del juego">
+    <button type="button" id="bMenu" title="Misiones">📜<span class="sr">Misiones</span></button>
+    <button type="button" id="bInv" title="Inventario">🎒<span class="sr">Inventario</span></button>
+    <button type="button" id="bAjustes" title="Ajustes">⚙<span class="sr">Ajustes</span></button>
+    <button type="button" id="bMusica" title="Música" aria-pressed="true">🎵<span class="sr">Música</span></button>
+    <button type="button" id="bCampina" title="Mapa de la Campiña">🗺<span class="sr">Mapa de la Campiña</span></button>
+  </nav>
+</header>
+
+<!-- Controles táctiles -->
+<div id="controles" class="controles" hidden>
+  <div id="cruceta" class="cruceta" aria-label="Cruceta de movimiento"><span></span></div>
+  <button type="button" id="botonS" class="botonS" aria-label="Saltar">⤴</button>
+  <button type="button" id="botonB" class="botonB" aria-label="Atacar con el compás">B</button>
+  <button type="button" id="botonA" class="botonA" aria-label="Acción: hablar, abrir o examinar">A</button>
+</div>
+
+<div id="aviso" class="aviso" role="status" hidden></div>
+
+<!-- Diálogo -->
+<div id="dialogo" class="dialogo gl-box" role="dialog" aria-live="polite" hidden>
+  <b id="dQuien"></b><p id="dTexto"></p><span class="mas" aria-hidden="true">▼</span>
+</div>
+
+<!-- Panel de reto / combate -->
+<section id="reto" class="reto gl-box" aria-labelledby="rTitulo" hidden>
+  <div class="r-cab">
+    <div><h2 id="rTitulo"></h2><small id="rTipo"></small></div>
+    <div class="r-estado"><span id="rVidas" class="vidas" role="img"></span><small id="rProgreso"></small></div>
+  </div>
+  <p id="rFase" class="fase"></p>
+  <p id="rTexto" class="enunciado"></p>
+  <div id="rVisual" class="visual"></div>
+  <div id="rOpciones" class="opciones"></div>
+  <p id="rPista" class="pista" hidden></p>
+  <div id="rExpl" class="expl" role="status" hidden></div>
+  <div class="r-acciones">
+    <button type="button" id="rHab" class="hab"></button>
+    <button type="button" id="rPistaBtn">💡 Pista</button>
+    <button type="button" id="rPocion">🧪 Poción</button>
+    <button type="button" id="rHuir" class="sec">Salir</button>
+  </div>
+</section>
+
+<!-- Recompensa -->
+<section id="premio" class="premio" aria-labelledby="pTitulo" hidden>
+  <div class="gl-box p-caja">
+    <canvas id="pCofre" class="cofre-anim" width="64" height="64" aria-hidden="true"></canvas>
+    <h2 id="pTitulo"></h2>
+    <div id="pCuerpo"></div>
+    <button type="button" class="gl-btn" id="pSeguir">Continuar ▶</button>
+  </div>
+</section>
+
+<!-- Portada del juego -->
+<section id="portada" class="portada" aria-labelledby="ptTitulo" hidden>
+  <canvas id="ptLienzo" class="pt-lienzo" aria-hidden="true"></canvas>
+  <div class="pt-caja">
+    <p class="pt-firma">πCHU LAB presenta</p>
+    <h1 id="ptTitulo" class="pt-titulo">GALOIS<br>LEGACY</h1>
+    <p class="pt-lema">El legado de los matemáticos</p>
+    <p class="pt-sub">Una aventura de Matemáticas por la Campiña sevillana</p>
+    <div class="pt-botones">
+      <button type="button" class="gl-btn" id="ptContinuar" hidden>▶ Continuar</button>
+      <button type="button" class="gl-btn" id="ptEmpezar">▶ Empezar aventura</button>
+      <button type="button" class="gl-btn azul" id="ptCambiar" hidden>Cambiar de matemático</button>
+    </div>
+    <p class="pt-pie" id="ptPie"></p>
+  </div>
+</section>
+
+<!-- Elección de personaje -->
+<section id="eleccion" class="eleccion" aria-labelledby="elTitulo" hidden>
+  <header class="el-cab">
+    <button type="button" class="gl-btn azul el-volver" id="elVolver">◀ Portada</button>
+    <h1 id="elTitulo"><span class="gl-cinta">Elige tu matemático</span></h1>
+  </header>
+  <div class="el-cuerpo">
+    <div class="el-lista gl-box" id="elLista" role="radiogroup" aria-label="Matemáticos"></div>
+    <aside class="el-ficha gl-box" id="elFicha" aria-live="polite">
+      <canvas id="elSprite" class="el-sprite" width="64" height="88" aria-hidden="true"></canvas>
+      <div id="elTexto"></div>
+      <button type="button" class="gl-btn verde" id="elListo">¡A la Campiña! ▶</button>
+    </aside>
+  </div>
+</section>
+
+<!-- Mapa general de la Campiña -->
+<section id="campina" class="campina" hidden>
+  <header class="c-cab">
+    
+    <h1><span class="gl-cinta">La Campiña Sevillana</span></h1>
+    <div><button type="button" class="gl-btn azul" id="cPortada">◀ Portada</button> <button type="button" class="gl-btn azul" id="cMusica" aria-pressed="true">🎵<span class="sr"> Música</span></button> <button type="button" class="gl-btn azul" id="cAyuda">? Ayuda</button> <button type="button" class="gl-btn azul" id="cAjustes">⚙ Héroe y dificultad</button> <a class="gl-btn azul" href="coleccion/index.html">🃏 Álbum</a></div>
+  </header>
+  <div class="c-cuerpo">
+    <div class="c-mapa gl-box"><div class="c-lienzo"><img src="assets/galois/mapa/campina-sevillana.svg" alt="Mapa de los diez mundos de la Campiña sevillana" width="192" height="120"><div id="cMarcas"></div></div></div>
+    <aside id="cFicha" class="c-ficha gl-box" aria-live="polite"></aside>
+  </div>
+</section>
+
+<!-- Menú -->
+<section id="menu" class="menu" hidden>
+  <div class="gl-box m-caja" role="dialog" aria-label="Menú">
+    <nav class="pest" role="tablist">
+      <button type="button" role="tab" data-pest="misiones">📜 Misiones</button>
+      <button type="button" role="tab" data-pest="inventario">🎒 Inventario</button>
+      <button type="button" role="tab" data-pest="tienda">🏪 Tienda</button>
+      <button type="button" role="tab" data-pest="ajustes">⚙ Ajustes</button>
+      <button type="button" role="tab" data-pest="ayuda">? Ayuda</button>
+    </nav>
+    <div id="mCuerpo" class="m-cuerpo"></div>
+    <button type="button" class="gl-btn" id="mCerrar">Cerrar ✕</button>
+  </div>
+</section>
+
+<script src="shared/galois-data.js"></script>
+<script src="coleccion/datos.js"></script>
+<script src="shared/galois-sprites.js"></script>
+<script src="shared/galois-escenarios.js"></script>
+<script src="coleccion/arte.js"></script>
+<script src="coleccion/bridge.js"></script>
+<script src="aventura/retos.js"></script>
+<script src="aventura/mundos.js"></script>
+<script src="shared/galois-musica.js"></script>
+<script src="aventura/portada.js"></script>
+<script src="aventura/motor.js"></script>
+</body>
+</html>

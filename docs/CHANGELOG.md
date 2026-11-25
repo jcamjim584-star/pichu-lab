@@ -1,5 +1,27 @@
 # Registro de cambios
 
+## 1.6.0 · 25/11/2026 · Llega la Campiña al repositorio, con portada, elección de matemático y sin parpadeo
+- **GALOIS LEGACY · La Campiña** (`applets/campina/`): la aventura RPG del artefacto «Galois Legacy»
+  (claude.ai/artifact/TSUtLR5wQwBpbcGH6x1KAz), con sus diez mundos de la Campiña sevillana, retos, cofres y álbum de cartas.
+  Preguntas, niveles, mecánicas y guardado sin cambios. Carga `volver.js`; la insignia «◀ Mapa» se esconde dentro de los
+  pueblos y combates para no tapar la cruceta. De momento se abre por enlace directo (no sale en el mapa de Gaussoria).
+- **Portada nueva** (`aventura/portada.js`): atardecer pixel art dibujado con código (trigal que se mece, olivos, pueblo blanco con
+  campanario, molino, estrellas) y el matemático elegido en el camino. Botones «Empezar aventura» o, si ya hay progreso,
+  «Continuar» y «Cambiar de matemático». Quieta si el sistema pide menos movimiento. Al volver del álbum no se repite.
+- **Elige tu matemático** antes del mapa: los 11 (Galois, Gauss, Euler, Noether, Hipatia, Ada, Fibonacci, Fermat, Germain,
+  Ramanujan y Al-Juarismi) con su época, su aporte y su habilidad real en combate. Se maneja con flechas y Tab. Se guarda en la
+  misma clave de siempre (`galoisLegacy.heroe`), así que nadie pierde nada.
+- **Arreglado el parpadeo del paisaje en iPhone y tableta al andar**: al arrastrar el dedo, la barra del navegador se movía, la
+  ventana cambiaba de tamaño y cada cambio borraba el lienzo. Ahora el lienzo solo se toca si cambia de verdad y se repinta en el
+  acto, y el dedo ya no arrastra la página mientras se juega.
+- **Sin Google Fonts** (regla 3): Pixelify Sans (títulos y botones grandes) y Lato (textos y números) desde `assets/fuentes/`.
+- El mismo arreglo, la portada y la elección se han publicado en el artefacto (mismo enlace).
+- Comprobado: «Todo correcto»; portada, elección, mapa de la Campiña y pueblo en iPhone 13 (390 px), tablet y 1280 px; andar con
+  la cruceta táctil mientras cambia el tamaño de la ventana sin fotogramas vacíos; sin errores en la consola y sin peticiones a
+  otros servidores al jugar.
+- **Pendiente (consultar)**: el juego guarda en claves `galoisLegacy.*` (la regla 2 pide `pichu.<id>.vN`), y el álbum muestra 4
+  fotografías enlazadas desde otros servidores (Wikimedia y medios de prensa), lo que choca con la regla 3.
+
 ## 1.5.1 · 24/11/2026 · El mapa de Gaussoria se ve mejor en el móvil y la tablet
 - **Más paisaje en el móvil**: en pantallas de menos de 600 px las casillas miden unos 26 px (antes 36), así que se ven unas
   13 × 13 casillas en vez de 10 × 9 (`compartido/gaussoria.js`).

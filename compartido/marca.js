@@ -17,7 +17,7 @@ window.MARCA = {
     lugar: "Fuentes de Andalucía (Sevilla)",
     logo: "compartido/img/centro.jpg"
   },
-  version: "1.5.1",
+  version: "1.6.0",
   autor: "Juan Antonio Campos Jiménez",
 
   // Cursos: de momento la portada NO los muestra (se organiza por juegos).
@@ -79,6 +79,22 @@ window.MARCA = {
       url: "applets/laboratorio/",
       estado: "jugar",
       claves: ["pichu.laboratorio.v1"]
+    },
+    {
+      id: "campina",
+      titulo: "GALOIS LEGACY · La Campiña",
+      subtitulo: "Aventura RPG por la Campiña sevillana",
+      curso: "1.º ESO",
+      saber: "Diez mundos: naturales, potencias y raíces, divisibilidad, enteros, fracciones, proporcionalidad, álgebra, ecuaciones, funciones, estadística y probabilidad",
+      descripcion: "Explora diez pueblos de la Campiña con tu matemático, habla con los vecinos, abre cofres del saber y vence a los jefes con retos de Matemáticas. Álbum de cartas del patrimonio.",
+      simbolo: "🗺",
+      // Viene del artefacto «Galois Legacy» (claude.ai/artifact/TSUtLR5wQwBpbcGH6x1KAz). Desde 1.6.0 tiene portada y elección
+      // de personaje. PENDIENTE: guarda con claves galoisLegacy.* (no siguen la regla pichu.<id>.vN) y el álbum enlaza
+      // 4 fotografías de otros servidores (regla 3). Ver docs/fichas/campina.md.
+      url: "applets/campina/",
+      estado: "jugar",
+      claves: ["galoisLegacy.coleccion.v1", "galoisLegacy.coleccion.perfil.v1", "galoisLegacy.album.vistas.v1", "galoisLegacy.heroe",
+               "galoisLegacy.sonido", "galoisLegacy.tactil", "galoisLegacy.docente", "galoisLegacy.musica", "galoisLegacy.musica.vol"]
     },
     {
       id: "fraction-merge",

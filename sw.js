@@ -8,7 +8,7 @@
 
    Si añades un juego, añade su ruta a ARCHIVOS.
    ========================================================= */
-const VERSION = "pichu-v1.5.1";
+const VERSION = "pichu-v1.6.0";
 
 const ARCHIVOS = [
   "./",
@@ -94,7 +94,50 @@ const ARCHIVOS = [
   "applets/integer-ninja/",
   "applets/laboratorio/",
   "applets/laboratorio/pixel-skin.css",
-  "applets/laboratorio/pixel-sprites.js"
+  "applets/laboratorio/pixel-sprites.js",
+  "applets/campina/",
+  "applets/campina/assets/fuentes/lato-latin-400-normal.woff2",
+  "applets/campina/assets/fuentes/lato-latin-700-normal.woff2",
+  "applets/campina/assets/fuentes/lato-latin-900-normal.woff2",
+  "applets/campina/assets/fuentes/pixelify-sans-latin-400-normal.woff2",
+  "applets/campina/assets/fuentes/pixelify-sans-latin-700-normal.woff2",
+  "applets/campina/assets/galois/mapa/campina-sevillana.svg",
+  "applets/campina/assets/pichu-royale/enemigos/dado_caotico.png",
+  "applets/campina/assets/pichu-royale/enemigos/denominadoron.png",
+  "applets/campina/assets/pichu-royale/enemigos/despejador_oscuro.png",
+  "applets/campina/assets/pichu-royale/enemigos/equilibrius.png",
+  "applets/campina/assets/pichu-royale/enemigos/grafico_tramposo.png",
+  "applets/campina/assets/pichu-royale/enemigos/incognita_x.png",
+  "applets/campina/assets/pichu-royale/enemigos/mediana_traviesa.png",
+  "applets/campina/assets/pichu-royale/enemigos/multiplax.png",
+  "applets/campina/assets/pichu-royale/enemigos/negatron.png",
+  "applets/campina/assets/pichu-royale/enemigos/parabola_vortice.png",
+  "applets/campina/assets/pichu-royale/enemigos/parentesis_maldito.png",
+  "applets/campina/assets/pichu-royale/enemigos/pendientor.png",
+  "applets/campina/assets/pichu-royale/enemigos/polinomio_mutante.png",
+  "applets/campina/assets/pichu-royale/enemigos/porcentajin.png",
+  "applets/campina/assets/pichu-royale/enemigos/potenciator.png",
+  "applets/campina/assets/pichu-royale/enemigos/primox.png",
+  "applets/campina/assets/pichu-royale/enemigos/radicosmico.png",
+  "applets/campina/assets/pichu-royale/enemigos/ruleta_imposible.png",
+  "applets/campina/assets/pichu-royale/enemigos/senor_escala.png",
+  "applets/campina/assets/pichu-royale/enemigos/simplifract.png",
+  "applets/campina/aventura/aventura.css",
+  "applets/campina/aventura/motor.js",
+  "applets/campina/aventura/mundos.js",
+  "applets/campina/aventura/portada.js",
+  "applets/campina/aventura/retos.js",
+  "applets/campina/coleccion/album.js",
+  "applets/campina/coleccion/arte.js",
+  "applets/campina/coleccion/bridge.js",
+  "applets/campina/coleccion/datos.js",
+  "applets/campina/coleccion/estilo.css",
+  "applets/campina/coleccion/index.html",
+  "applets/campina/shared/galois-data.js",
+  "applets/campina/shared/galois-escenarios.js",
+  "applets/campina/shared/galois-musica.js",
+  "applets/campina/shared/galois-sprites.js",
+  "applets/campina/shared/galois-theme.css"
 ];
 
 // Estrategia (desde 0.6.2): PRIMERO LA RED, y la copia guardada solo si no hay conexión.

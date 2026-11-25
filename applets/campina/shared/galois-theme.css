@@ -1,0 +1,110 @@
+/* =========================================================
+   GALOIS LEGACY — tema común pixel art 16-bit
+   Verdes, azules, dorados y violetas (documento de diseño).
+   Solo aspecto visual. Los juegos siguen usando pichu-theme.css
+   hasta que se adapten (fase 5): ambos temas conviven.
+   ========================================================= */
+/* Letras locales (sin servidores externos): Pixelify Sans para títulos grandes y Lato para textos y números */
+@font-face{font-family:"Pixelify Sans";font-weight:400;font-display:swap;src:url("../assets/fuentes/pixelify-sans-latin-400-normal.woff2") format("woff2")}
+@font-face{font-family:"Pixelify Sans";font-weight:700;font-display:swap;src:url("../assets/fuentes/pixelify-sans-latin-700-normal.woff2") format("woff2")}
+@font-face{font-family:"Lato";font-weight:400;font-display:swap;src:url("../assets/fuentes/lato-latin-400-normal.woff2") format("woff2")}
+@font-face{font-family:"Lato";font-weight:700;font-display:swap;src:url("../assets/fuentes/lato-latin-700-normal.woff2") format("woff2")}
+@font-face{font-family:"Lato";font-weight:900;font-display:swap;src:url("../assets/fuentes/lato-latin-900-normal.woff2") format("woff2")}
+:root {
+  --gl-noche: #0c1424;      /* fondo */
+  --gl-noche-2: #142037;
+  --gl-panel: #1b2a45;      /* paneles de piedra azul */
+  --gl-panel-2: #24375a;
+  --gl-oro: #f2c14e;
+  --gl-oro-claro: #ffe28a;
+  --gl-oro-osc: #b07a1c;
+  --gl-crema: #fbf0d6;
+  --gl-azul: #4f9ee8;
+  --gl-azul-osc: #2a64a8;
+  --gl-verde: #6cc35a;
+  --gl-verde-osc: #2f7d33;
+  --gl-violeta: #9a6be0;
+  --gl-violeta-osc: #4a2b86;
+  --gl-rojo: #e0565b;
+  --gl-negro: #0a0814;
+  --gl-texto-suave: #b9c6dd;
+
+  --gl-font: "Pixelify Sans", "Trebuchet MS", system-ui, sans-serif;   /* títulos y botones grandes */
+  --gl-texto: "Lato", "Trebuchet MS", system-ui, sans-serif;            /* textos, números y etiquetas */
+  --gl-u: 4px;
+}
+
+/* Marco: borde oscuro + filo dorado + esquinas recortadas + sombra dura */
+.gl-box {
+  position: relative;
+  background: var(--gl-panel);
+  color: var(--gl-crema);
+  border: var(--gl-u) solid var(--gl-negro);
+  box-shadow:
+    inset 0 0 0 2px var(--gl-oro-osc),
+    inset 0 0 0 4px rgba(0,0,0,.35),
+    var(--gl-u) var(--gl-u) 0 var(--gl-negro);
+  clip-path: polygon(
+    0 var(--gl-u), var(--gl-u) var(--gl-u), var(--gl-u) 0,
+    calc(100% - var(--gl-u)) 0, calc(100% - var(--gl-u)) var(--gl-u), 100% var(--gl-u),
+    100% calc(100% - var(--gl-u)), calc(100% - var(--gl-u)) calc(100% - var(--gl-u)), calc(100% - var(--gl-u)) 100%,
+    var(--gl-u) 100%, var(--gl-u) calc(100% - var(--gl-u)), 0 calc(100% - var(--gl-u))
+  );
+}
+
+/* Cinta dorada para títulos (como la del cartel de referencia) */
+.gl-cinta {
+  display: inline-block;
+  font-family: var(--gl-font);
+  text-transform: uppercase;
+  letter-spacing: 1px;
+  color: var(--gl-negro);
+  background: linear-gradient(var(--gl-oro-claro) 0 50%, var(--gl-oro) 50% 100%);
+  border: var(--gl-u) solid var(--gl-negro);
+  box-shadow: inset 0 -4px 0 var(--gl-oro-osc), var(--gl-u) var(--gl-u) 0 var(--gl-negro);
+  padding: 4px 18px 6px;
+  line-height: 1.15;
+}
+
+.gl-titulo {
+  font-family: var(--gl-font);
+  font-weight: 400;
+  text-transform: uppercase;
+  color: var(--gl-oro);
+  text-shadow: 3px 3px 0 var(--gl-negro), -1px -1px 0 var(--gl-negro), 1px -1px 0 var(--gl-negro), -1px 1px 0 var(--gl-negro);
+  letter-spacing: 1px;
+  line-height: 1.2;
+}
+
+.gl-btn {
+  font-family: var(--gl-font);
+  font-size: 24px;
+  line-height: 1.1;
+  color: var(--gl-negro);
+  background: var(--gl-oro);
+  border: var(--gl-u) solid var(--gl-negro);
+  box-shadow: inset -4px -4px 0 var(--gl-oro-osc), inset 4px 4px 0 rgba(255,255,255,.45), 0 4px 0 var(--gl-negro);
+  padding: 10px 18px 12px;
+  min-height: 48px;
+  min-width: 48px;
+  cursor: pointer;
+  text-transform: uppercase;
+  text-decoration: none;
+  display: inline-flex; align-items: center; justify-content: center; gap: 8px;
+  -webkit-tap-highlight-color: transparent;
+}
+.gl-btn:hover { filter: brightness(1.1); }
+.gl-btn:active { transform: translateY(4px); box-shadow: inset -4px -4px 0 var(--gl-oro-osc), inset 4px 4px 0 rgba(255,255,255,.45), 0 0 0 var(--gl-negro); }
+.gl-btn.azul { background: var(--gl-azul); color: #fff; box-shadow: inset -4px -4px 0 var(--gl-azul-osc), inset 4px 4px 0 rgba(255,255,255,.35), 0 4px 0 var(--gl-negro); text-shadow: 2px 2px 0 var(--gl-negro); }
+.gl-btn.verde { background: var(--gl-verde); box-shadow: inset -4px -4px 0 var(--gl-verde-osc), inset 4px 4px 0 rgba(255,255,255,.35), 0 4px 0 var(--gl-negro); }
+
+:focus-visible { outline: 4px dashed var(--gl-azul); outline-offset: 4px; }
+
+.gl-sprite, img.gl-sprite { image-rendering: pixelated; image-rendering: crisp-edges; }
+
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after { animation-duration: .001ms !important; animation-iteration-count: 1 !important; transition-duration: .001ms !important; }
+}
+
+html, body, button, input, select { font-variant-ligatures: none; font-feature-settings: "liga" 0, "clig" 0; }
+html { font-synthesis: none; }
