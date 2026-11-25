@@ -1,0 +1,321 @@
+{
+  "proyecto": "Galois Legacy",
+  "estilo": "Pixel art 16 bits",
+  "assets": [
+    {
+      "localidad": "fuentes-de-andalucia",
+      "id": "castillo-del-hierro",
+      "nombre": "Castillo del Hierro",
+      "archivo": "fuentes-de-andalucia/castillo-del-hierro.png",
+      "ancho": 377,
+      "alto": 361,
+      "transparente": true
+    },
+    {
+      "localidad": "fuentes-de-andalucia",
+      "id": "santa-maria-la-blanca",
+      "nombre": "Santa María la Blanca",
+      "archivo": "fuentes-de-andalucia/santa-maria-la-blanca.png",
+      "ancho": 347,
+      "alto": 527,
+      "transparente": true
+    },
+    {
+      "localidad": "fuentes-de-andalucia",
+      "id": "fuente-de-la-reina",
+      "nombre": "Fuente de la Reina",
+      "archivo": "fuentes-de-andalucia/fuente-de-la-reina.png",
+      "ancho": 345,
+      "alto": 250,
+      "transparente": true
+    },
+    {
+      "localidad": "fuentes-de-andalucia",
+      "id": "castillo-de-la-monclova",
+      "nombre": "Castillo de la Monclova",
+      "archivo": "fuentes-de-andalucia/castillo-de-la-monclova.png",
+      "ancho": 396,
+      "alto": 368,
+      "transparente": true
+    },
+    {
+      "localidad": "fuentes-de-andalucia",
+      "id": "silo",
+      "nombre": "Silo",
+      "archivo": "fuentes-de-andalucia/silo.png",
+      "ancho": 340,
+      "alto": 465,
+      "transparente": true
+    },
+    {
+      "localidad": "fuentes-de-andalucia",
+      "id": "calle-carrera",
+      "nombre": "Casas señoriales de la calle Carrera",
+      "archivo": "fuentes-de-andalucia/calle-carrera.png",
+      "ancho": 385,
+      "alto": 363,
+      "transparente": true
+    },
+    {
+      "localidad": "fuentes-de-andalucia",
+      "id": "iglesia-san-jose",
+      "nombre": "Iglesia de San José",
+      "archivo": "fuentes-de-andalucia/iglesia-san-jose.png",
+      "ancho": 429,
+      "alto": 453,
+      "transparente": true
+    },
+    {
+      "localidad": "fuentes-de-andalucia",
+      "id": "capilla-de-la-aurora",
+      "nombre": "Capilla de Nuestra Señora de la Aurora",
+      "archivo": "fuentes-de-andalucia/capilla-de-la-aurora.png",
+      "ancho": 300,
+      "alto": 420,
+      "transparente": true
+    },
+    {
+      "localidad": "carmona",
+      "id": "puerta-de-sevilla",
+      "nombre": "Alcázar de la Puerta de Sevilla",
+      "archivo": "carmona/puerta-de-sevilla.png",
+      "ancho": 504,
+      "alto": 305,
+      "transparente": true
+    },
+    {
+      "localidad": "carmona",
+      "id": "puerta-de-cordoba",
+      "nombre": "Puerta de Córdoba",
+      "archivo": "carmona/puerta-de-cordoba.png",
+      "ancho": 387,
+      "alto": 316,
+      "transparente": true
+    },
+    {
+      "localidad": "carmona",
+      "id": "murallas",
+      "nombre": "Murallas de Carmona",
+      "archivo": "carmona/murallas.png",
+      "ancho": 534,
+      "alto": 301,
+      "transparente": true
+    },
+    {
+      "localidad": "ecija",
+      "id": "torre-san-juan",
+      "nombre": "Torre de San Juan",
+      "archivo": "ecija/torre-san-juan.png",
+      "ancho": 230,
+      "alto": 380,
+      "transparente": true
+    },
+    {
+      "localidad": "ecija",
+      "id": "palacio-penaflor",
+      "nombre": "Palacio de Peñaflor",
+      "archivo": "ecija/palacio-penaflor.png",
+      "ancho": 522,
+      "alto": 294,
+      "transparente": true
+    },
+    {
+      "localidad": "ecija",
+      "id": "palacio-benameji",
+      "nombre": "Palacio de Benamejí",
+      "archivo": "ecija/palacio-benameji.png",
+      "ancho": 482,
+      "alto": 327,
+      "transparente": true
+    },
+    {
+      "localidad": "marchena",
+      "id": "arco-de-la-rosa",
+      "nombre": "Arco de la Rosa",
+      "archivo": "marchena/arco-de-la-rosa.png",
+      "ancho": 452,
+      "alto": 291,
+      "transparente": true
+    },
+    {
+      "localidad": "marchena",
+      "id": "san-juan-bautista",
+      "nombre": "Iglesia de San Juan Bautista",
+      "archivo": "marchena/san-juan-bautista.png",
+      "ancho": 442,
+      "alto": 350,
+      "transparente": true
+    },
+    {
+      "localidad": "marchena",
+      "id": "olivar-cortijo",
+      "nombre": "Olivar y cortijo",
+      "archivo": "marchena/olivar-cortijo.png",
+      "ancho": 560,
+      "alto": 284,
+      "transparente": true
+    },
+    {
+      "localidad": "estepa",
+      "id": "torre-del-homenaje",
+      "nombre": "Torre del Homenaje",
+      "archivo": "estepa/torre-del-homenaje.png",
+      "ancho": 544,
+      "alto": 362,
+      "transparente": true
+    },
+    {
+      "localidad": "estepa",
+      "id": "torre-de-la-victoria",
+      "nombre": "Torre de la Victoria",
+      "archivo": "estepa/torre-de-la-victoria.png",
+      "ancho": 150,
+      "alto": 361,
+      "transparente": true
+    },
+    {
+      "localidad": "estepa",
+      "id": "obrador-de-mantecados",
+      "nombre": "Obrador de mantecados",
+      "archivo": "estepa/obrador-de-mantecados.png",
+      "ancho": 473,
+      "alto": 311,
+      "transparente": true
+    },
+    {
+      "localidad": "osuna",
+      "id": "antigua-universidad",
+      "nombre": "Antigua Universidad",
+      "archivo": "osuna/antigua-universidad.png",
+      "ancho": 472,
+      "alto": 329,
+      "transparente": true
+    },
+    {
+      "localidad": "osuna",
+      "id": "colegiata",
+      "nombre": "Colegiata de la Asunción",
+      "archivo": "osuna/colegiata.png",
+      "ancho": 472,
+      "alto": 322,
+      "transparente": true
+    },
+    {
+      "localidad": "osuna",
+      "id": "coto-de-las-canteras",
+      "nombre": "Coto de las Canteras",
+      "archivo": "osuna/coto-de-las-canteras.png",
+      "ancho": 542,
+      "alto": 320,
+      "transparente": true
+    },
+    {
+      "localidad": "triana",
+      "id": "puente-isabel-ii",
+      "nombre": "Puente de Isabel II",
+      "archivo": "triana/puente-isabel-ii.png",
+      "ancho": 570,
+      "alto": 264,
+      "transparente": true
+    },
+    {
+      "localidad": "triana",
+      "id": "capilla-del-carmen",
+      "nombre": "Capilla del Carmen",
+      "archivo": "triana/capilla-del-carmen.png",
+      "ancho": 266,
+      "alto": 336,
+      "transparente": true
+    },
+    {
+      "localidad": "triana",
+      "id": "taller-de-ceramica",
+      "nombre": "Taller de cerámica",
+      "archivo": "triana/taller-de-ceramica.png",
+      "ancho": 502,
+      "alto": 272,
+      "transparente": true
+    },
+    {
+      "localidad": "alcala-de-guadaira",
+      "id": "castillo",
+      "nombre": "Castillo de Alcalá de Guadaíra",
+      "archivo": "alcala-de-guadaira/castillo.png",
+      "ancho": 509,
+      "alto": 323,
+      "transparente": true
+    },
+    {
+      "localidad": "alcala-de-guadaira",
+      "id": "molino-san-juan",
+      "nombre": "Molino de San Juan",
+      "archivo": "alcala-de-guadaira/molino-san-juan.png",
+      "ancho": 368,
+      "alto": 304,
+      "transparente": true
+    },
+    {
+      "localidad": "alcala-de-guadaira",
+      "id": "molino-benarosa",
+      "nombre": "Molino de Benarosa",
+      "archivo": "alcala-de-guadaira/molino-benarosa.png",
+      "ancho": 442,
+      "alto": 291,
+      "transparente": true
+    },
+    {
+      "localidad": "italica",
+      "id": "anfiteatro",
+      "nombre": "Anfiteatro de Itálica",
+      "archivo": "italica/anfiteatro.png",
+      "ancho": 477,
+      "alto": 316,
+      "transparente": true
+    },
+    {
+      "localidad": "italica",
+      "id": "casa-de-los-pajaros",
+      "nombre": "Casa de los Pájaros",
+      "archivo": "italica/casa-de-los-pajaros.png",
+      "ancho": 410,
+      "alto": 293,
+      "transparente": true
+    },
+    {
+      "localidad": "italica",
+      "id": "termas",
+      "nombre": "Termas romanas",
+      "archivo": "italica/termas.png",
+      "ancho": 446,
+      "alto": 286,
+      "transparente": true
+    },
+    {
+      "localidad": "sevilla",
+      "id": "giralda",
+      "nombre": "Giralda",
+      "archivo": "sevilla/giralda.png",
+      "ancho": 329,
+      "alto": 469,
+      "transparente": true
+    },
+    {
+      "localidad": "sevilla",
+      "id": "patio-de-las-doncellas",
+      "nombre": "Patio de las Doncellas",
+      "archivo": "sevilla/patio-de-las-doncellas.png",
+      "ancho": 449,
+      "alto": 403,
+      "transparente": true
+    },
+    {
+      "localidad": "sevilla",
+      "id": "jardines-del-alcazar",
+      "nombre": "Jardines del Alcázar",
+      "archivo": "sevilla/jardines-del-alcazar.png",
+      "ancho": 436,
+      "alto": 373,
+      "transparente": true
+    }
+  ]
+}

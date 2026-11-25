@@ -1,5 +1,26 @@
 # Registro de cambios
 
+## 1.7.0 · 25/11/2026 · La Campiña: Fuentes de Andalucía se recorre por paradas
+- **Recorrido por paradas** en Fuentes de Andalucía (decisión de Juan Antonio del 25/11/2026): ya no se anda libremente, así que
+  desaparecen la cruceta, el salto y el ataque con el compás (y con él el escudo por sorpresa). El matemático va de parada en
+  parada por el camino de trigo; en cada una hay un monumento o sitio singular con su texto, su vecino y su reto.
+- 10 paradas: IES (aventura 1, se tocan los 3 azulejos en la escena), Forja (aventura 2), San José, Santa María la Blanca,
+  **cruce** Silo (aventura 3) / calle Carrera (aventura 4, puesto de pociones) en el orden que se elija, Capilla de la Aurora
+  (encargo del horno), Castillo de la Monclova, Castillo del Hierro (encargo de la romería) y Fuente de la Reina (jefe).
+- Las paradas que solo son monumento tienen **una pregunta corta** sobre su texto (sin nota): si se falla, se tacha la opción y
+  se vuelve a leer. «Siguiente parada» se activa al superar el reto obligatorio de cada parada.
+- Las aventuras, preguntas, cofres del saber, encargos, cartas, monedas y el guardado son los de siempre. Lo nuevo se guarda
+  aparte en `galoisLegacy.ruta.v1` (preguntas de monumentos acertadas, por alias); no se toca ningún guardado anterior.
+- **35 monumentos pixel art** de `jantoniolade-blip/pichu-lab` (`assets/galois-legacy/patrimonio`) copiados a
+  `applets/campina/assets/patrimonio/` y comprimidos sin pérdida visible (de 8,9 MB a 2,1 MB). Fuentes usa sus 8; los otros
+  9 pueblos siguen de momento con exploración libre hasta que se conviertan.
+- Archivos: `aventura/rutas.js` (paradas, textos y preguntas), sección «Recorrido por paradas» de `aventura/motor.js`, estilos en
+  `aventura/aventura.css`; la portada dibuja también el fondo de campo de las paradas.
+- Comprobado: «Todo correcto»; Fuentes jugado entero de la primera parada al jefe (con el cruce y una pregunta fallada) en iPhone
+  13, tablet horizontal y 1280 px; los combates se ven completos; sin errores en la consola. Publicado en el artefacto.
+- **Por revisar (Juan Antonio)**: los textos y preguntas de los monumentos de `aventura/rutas.js`, sobre todo Castillo del Hierro e
+  Iglesia de San José.
+
 ## 1.6.1 · 25/11/2026 · La Campiña: el trigal ya no parpadea
 - El trigo alternaba dos dibujos cada medio segundo para «mecerse»; en iPhone y tableta el trigal entero parecía aparecer y
   desaparecer. Ahora está quieto (`applets/campina/shared/galois-escenarios.js`); el agua sigue moviéndose.

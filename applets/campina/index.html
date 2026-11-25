@@ -67,6 +67,27 @@
   </div>
 </section>
 
+<!-- Recorrido por paradas (pueblos con ruta en aventura/rutas.js) -->
+<section id="ruta" class="ruta" aria-labelledby="ruNombre" hidden>
+  <div class="ru-escena">
+    <canvas id="ruFondo" class="ru-fondo" aria-hidden="true"></canvas>
+    <div id="ruMon" class="ru-mon"><img id="ruImg" alt="" hidden><canvas id="ruSprite" role="img" hidden></canvas></div>
+    <canvas id="ruVecino" class="ru-pj ru-vecino" width="32" height="44" aria-hidden="true"></canvas>
+    <canvas id="ruEnemigo" class="ru-pj ru-enemigo" width="64" height="64" aria-hidden="true"></canvas>
+    <canvas id="ruHeroe" class="ru-pj ru-heroe" width="32" height="44" aria-hidden="true"></canvas>
+    <div id="ruAzulejos" class="ru-azulejos"></div>
+  </div>
+  <div class="ru-panel gl-box">
+    <ol id="ruPasos" class="ru-pasos" aria-label="Paradas del recorrido"></ol>
+    <p id="ruLugar" class="ru-lugar"></p>
+    <h2 id="ruNombre" tabindex="-1"></h2>
+    <p id="ruTexto" class="ru-texto"></p>
+    <div id="ruPregunta" class="ru-pregunta" hidden></div>
+    <div id="ruAcciones" class="ru-acciones"></div>
+    <div id="ruNav" class="ru-nav"></div>
+  </div>
+</section>
+
 <!-- Recompensa -->
 <section id="premio" class="premio" aria-labelledby="pTitulo" hidden>
   <div class="gl-box p-caja">
@@ -146,6 +167,7 @@
 <script src="coleccion/bridge.js"></script>
 <script src="aventura/retos.js"></script>
 <script src="aventura/mundos.js"></script>
+<script src="aventura/rutas.js"></script>
 <script src="shared/galois-musica.js"></script>
 <script src="aventura/portada.js"></script>
 <script src="aventura/motor.js"></script>

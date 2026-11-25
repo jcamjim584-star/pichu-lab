@@ -98,7 +98,7 @@
     e.preventDefault();
   }, { passive: false });
   function pintarFotograma() {
-    if (W && (G.modo === 'mapa' || G.modo === 'dialogo')) dibujarMapa();
+    if (W && !G.enRuta && (G.modo === 'mapa' || G.modo === 'dialogo')) dibujarMapa();
     else if (G.modo === 'batalla' && G.batalla) { try { dibujarBatalla(); } catch (e) {} }
   }
 
@@ -132,6 +132,7 @@
     $('campina').hidden = true; $('hud').hidden = false; $('controles').hidden = !tactilVisible();
     actualizarHUD();
     var ab = abiertas(id);
+    if (rutaDe(id)) { entrarRuta(id); mostrarAviso(wd.nombre + ' · ' + wd.lugar, 'Recorre las paradas del camino: monumentos, vecinos y retos.'); return; }
     mostrarAviso(wd.nombre + ' · ' + wd.lugar, ab.length ? (ab.length > 1 ? 'Rutas abiertas: ' + ab.map(function (e) { return wd.aventuras[e - 1].nombre; }).join(' · ') : 'Aventura ' + ab[0] + ': ' + wd.aventuras[ab[0] - 1].nombre) : '¡Mundo completado! Puedes repetir los retos para practicar.');
   }
   function prepararEnemigos() {
@@ -195,7 +196,10 @@
     var dentro = !/^(portada|eleccion|campina)$/.test(G.modo || '');
     if (dentro !== modoDentro) { modoDentro = dentro; document.documentElement.classList.toggle('en-juego', dentro); }
     var dt = Math.min(.05, (ahora - ultimo) / 1000); ultimo = ahora; G.t += dt;
-    if (G.modo === 'mapa' || G.modo === 'dialogo') { if (G.modo === 'mapa') actualizarMapa(dt); actualizarEnemigos(dt); dibujarMapa(); }
+    if (G.enRuta && G.modo === 'mapa') volverARuta();
+    if (G.enRuta) { var rh = G.modo === 'batalla'; if ($('ruta').hidden !== rh) $('ruta').hidden = rh; }
+    if (G.enRuta && G.modo !== 'batalla') { /* en el recorrido no hay exploración libre */ }
+    else if (G.modo === 'mapa' || G.modo === 'dialogo') { if (G.modo === 'mapa') actualizarMapa(dt); actualizarEnemigos(dt); dibujarMapa(); }
     else if (G.modo === 'batalla') { actualizarBatalla(dt); dibujarBatalla(); }
     else if (G.modo === 'campina') { ctx.fillStyle = '#0c1424'; ctx.fillRect(0, 0, VW, VH); }
     requestAnimationFrame(bucle);
@@ -535,7 +539,7 @@
     G.cofreInt = setInterval(function () { x2.clearRect(0, 0, 64, 64); x2.drawImage(E.objeto('cofre', Math.min(3, fr), leg ? 'legendaria' : (r.cartas && r.cartas.some(function (c) { return c.rareza === 'epica'; }) ? 'epica' : '')), 0, 0, 64, 64); if (++fr > 3) clearInterval(G.cofreInt); }, REDUCIDO ? 0 : 180);
     $('pSeguir').focus({ preventScroll: true });
   }
-  $('pSeguir').onclick = function () { $('premio').hidden = true; $('hud').hidden = false; MUS.tocar('mundo', { mundo: W.id }); G.batalla = null; G.modo = 'mapa'; $('controles').hidden = !tactilVisible(); prepararEnemigos(); empujarJugador(); actualizarHUD(); var ab = abiertas(W.id); mostrarAviso(ab.length ? (ab.length > 1 ? 'Puedes seguir por dos rutas' : 'Siguiente: aventura ' + ab[0]) : '¡Mundo completado!', ab.length ? ab.map(function (e) { return W.datos.aventuras[e - 1].nombre; }).join(' · ') : 'Sal por el camino del sur para volver a la Campiña.'); };
+  $('pSeguir').onclick = function () { $('premio').hidden = true; $('hud').hidden = false; MUS.tocar('mundo', { mundo: W.id }); G.batalla = null; G.modo = 'mapa'; $('controles').hidden = !tactilVisible(); prepararEnemigos(); empujarJugador(); actualizarHUD(); if (G.enRuta) return; var ab = abiertas(W.id); mostrarAviso(ab.length ? (ab.length > 1 ? 'Puedes seguir por dos rutas' : 'Siguiente: aventura ' + ab[0]) : '¡Mundo completado!', ab.length ? ab.map(function (e) { return W.datos.aventuras[e - 1].nombre; }).join(' · ') : 'Sal por el camino del sur para volver a la Campiña.'); };
 
   /* =====================================================================
      DIBUJO
@@ -716,7 +720,7 @@
     }
   }
   function abrirCampina() {
-    G.modo = 'campina'; MUS.tocar('campina'); $('hud').hidden = true; $('controles').hidden = true; $('campina').hidden = false;
+    salirRuta(); G.modo = 'campina'; MUS.tocar('campina'); $('hud').hidden = true; $('controles').hidden = true; $('campina').hidden = false;
     var cont = $('cMarcas'); cont.innerHTML = '';
     D.mundos.forEach(function (w) {
       var ok = desbloqueado(w.id), p = pendiente(w.id), n = 5 - (p === 0 ? 0 : 6 - p) ;
@@ -786,13 +790,151 @@
   $('cAjustes').onclick = function () { abrirMenu('ajustes'); };
   $('cAyuda').onclick = function () { abrirMenu('ayuda'); };
 
+  /* ---------- Recorrido por paradas (1.7.0) ----------
+     En los pueblos que tienen ruta en aventura/rutas.js ya no se anda libremente (sin cruceta,
+     salto ni ataque): se va de parada en parada. Las aventuras, cofres, encargos y la tienda
+     son los mismos de siempre; solo cambia cómo se llega a ellos. */
+  var RUTAS = window.GaloisRutas || {}, RUTA_CLAVE = 'galoisLegacy.ruta.v1';
+  function rutaDe(id) { return Array.isArray(RUTAS[id]) && RUTAS[id].length ? RUTAS[id] : null; }
+  function rutaLeer() { try { var d = JSON.parse(localStorage.getItem(RUTA_CLAVE) || '{}'); return d && typeof d === 'object' ? d : {}; } catch (e) { return {}; } }
+  function rutaVistas() { var d = rutaLeer(), a = d[C.activo()] || {}; return a['m' + G.rutaId] || {}; }
+  function rutaMarcar(id) { var d = rutaLeer(), al = C.activo(); d[al] = d[al] || {}; var m = d[al]['m' + G.rutaId] = d[al]['m' + G.rutaId] || {}; m[id] = true; try { localStorage.setItem(RUTA_CLAVE, JSON.stringify(d)); } catch (e) {} }
+  function paradaHecha(p) { return (!p.aventura || hecha(G.rutaId, p.aventura)) && (!p.pregunta || !!rutaVistas()[p.id]); }
+  // una parada se puede visitar si todas las anteriores obligatorias están hechas (los cruces no se bloquean entre sí)
+  function paradaAlcanzable(i) {
+    var R = rutaDe(G.rutaId), g = R[i].grupo;
+    for (var k = 0; k < i; k++) { if (g && R[k].grupo === g) continue; if (!paradaHecha(R[k])) return false; }
+    return true;
+  }
+  function frontera() { var R = rutaDe(G.rutaId); for (var i = 0; i < R.length; i++) if (!paradaHecha(R[i]) && paradaAlcanzable(i)) return i; return R.length - 1; }
+  // siguientes posibles desde la parada i: varias si hay un cruce por delante
+  function siguientes(i) {
+    var R = rutaDe(G.rutaId), g = R[i].grupo;
+    if (g) { var otras = []; R.forEach(function (p, k) { if (k !== i && p.grupo === g && !paradaHecha(p)) otras.push(k); }); if (otras.length) return otras; }
+    var j = i + 1; while (j < R.length && g && R[j].grupo === g) j++;
+    if (j >= R.length) return [];
+    var g2 = R[j].grupo;
+    if (g2) { var grupo = []; for (var k2 = j; k2 < R.length && R[k2].grupo === g2; k2++) if (!paradaHecha(R[k2])) grupo.push(k2); if (grupo.length) return grupo; while (j < R.length && R[j].grupo === g2) j++; return j < R.length ? [j] : []; }
+    return [j];
+  }
+  function vecinoLlamado(n) { return vecinos.find(function (v) { return v.nombre === n; }); }
+  function entrarRuta(id) {
+    document.documentElement.classList.add('en-ruta');
+    G.enRuta = true; G.rutaId = id; G.modo = 'ruta'; G.rutaPos = frontera();
+    $('controles').hidden = true; $('ruta').hidden = false; pintarFondoRuta(); mostrarParada(G.rutaPos, false);
+  }
+  function salirRuta() { document.documentElement.classList.remove('en-ruta'); G.enRuta = false; $('ruta').hidden = true; }
+  function verNav() { setTimeout(function () { try { $('ruNav').scrollIntoView({ block: 'nearest', behavior: REDUCIDO ? 'auto' : 'smooth' }); } catch (e) {} }, 60); }
+  function volverARuta() { G.modo = 'ruta'; $('controles').hidden = true; mostrarParada(G.rutaPos, false); if (paradaHecha(rutaDe(G.rutaId)[G.rutaPos])) verNav(); }
+  function pintarFondoRuta() {
+    var c = $('ruFondo'), r = c.getBoundingClientRect(), k = 3, w = Math.max(80, Math.ceil(r.width / k)), h = Math.max(60, Math.ceil(r.height / k));
+    if (c.width !== w || c.height !== h) { c.width = w; c.height = h; }
+    window.GaloisPortada.dibujar(c.getContext('2d'), w, h, 0, null, { campo: true });
+  }
+  addEventListener('resize', function () { if (G.enRuta && !$('ruta').hidden) pintarFondoRuta(); });
+  function pintarSprite(canvas, hoja, anim, dir, t) { var x = canvas.getContext('2d'); x.imageSmoothingEnabled = false; x.clearRect(0, 0, canvas.width, canvas.height); S.pintar(x, hoja, anim, dir, t, canvas.width / 2, canvas.height - 2, canvas.width / hoja.fw); }
+  var ruAnim = null;
+  function mostrarParada(i, andando) {
+    var R = rutaDe(G.rutaId), p = R[i], wd = W.datos; G.rutaPos = i;
+    // monumento: PNG del patrimonio o edificio pixel del juego
+    var img = $('ruImg'), sp = $('ruSprite');
+    if (p.img) { img.src = p.img; img.alt = p.nombre; img.hidden = false; sp.hidden = true; }
+    else { img.hidden = true; sp.hidden = false; var ed = E.edificio(p.sprite || 'casa', p.o || {}); sp.width = ed.canvas.width; sp.height = ed.canvas.height; var sx = sp.getContext('2d'); sx.imageSmoothingEnabled = false; sx.clearRect(0, 0, sp.width, sp.height); sx.drawImage(ed.canvas, 0, 0); sp.setAttribute('aria-label', p.nombre); }
+    // personajes: vecino y, si la aventura tiene enemigo pendiente, el enemigo
+    var v = p.vecino && vecinoLlamado(p.vecino), cv = $('ruVecino'), ce = $('ruEnemigo');
+    if (v) { cv.hidden = false; pintarSprite(cv, v.hoja, 'idle', 'down', 0); } else cv.hidden = true;
+    var enemId = null;
+    if (p.aventura && !hecha(G.rutaId, p.aventura)) { var sin = Array.isArray(wd.sinEnemigo) ? wd.sinEnemigo : []; if (sin.indexOf(p.aventura) < 0) enemId = p.aventura === 2 ? wd.enemigos[0] : p.aventura === 4 ? wd.enemigos[1] : p.aventura === 5 ? wd.jefe : null; }
+    if (enemId) { ce.hidden = false; pintarSprite(ce, S.hojaEnemigo(enemId, p.aventura === 5 ? { jefe: true, fase: 1 } : null), 'idle', 'left', 0); ce.title = nombreEnemigo(enemId); } else ce.hidden = true;
+    // pasos
+    $('ruPasos').innerHTML = R.map(function (q, k) { var ok = paradaHecha(q), al = paradaAlcanzable(k); return '<li><button type="button" data-k="' + k + '"' + (al ? '' : ' disabled') + (k === i ? ' aria-current="step"' : '') + ' class="' + (ok ? 'ok' : '') + '" aria-label="Parada ' + (k + 1) + ': ' + esc(q.nombre) + (ok ? ', hecha' : al ? '' : ', bloqueada') + '">' + (ok ? '✔' : k + 1) + '</button></li>'; }).join('');
+    $('ruPasos').querySelectorAll('button').forEach(function (b) { b.onclick = function () { irA(+b.dataset.k); }; });
+    $('ruLugar').textContent = wd.lugar + ' · parada ' + (i + 1) + ' de ' + R.length + (p.grupo ? ' · cruce de caminos' : '');
+    $('ruNombre').textContent = p.nombre; $('ruTexto').textContent = p.texto;
+    pintarPreguntaRuta(p); pintarAccionesRuta(p, v); pintarNavRuta(i);
+    // héroe: llega andando por el camino
+    var h = $('ruHeroe'), hoja = S.hojaHeroe(G.heroeId), t0 = performance.now(), dur = (andando && !REDUCIDO) ? 1100 : 0;
+    cancelAnimationFrame(ruAnim);
+    $('ruMon').classList.remove('llega'); void $('ruMon').offsetWidth; if (dur) $('ruMon').classList.add('llega');
+    (function paso(ahora) {
+      var u = dur ? Math.min(1, (ahora - t0) / dur) : 1;
+      h.style.setProperty('--avance', String(u));
+      pintarSprite(h, hoja, u < 1 ? 'walk' : 'idle', u < 1 ? 'right' : 'down', u < 1 ? S.indice(hoja, 'walk', (ahora - t0) / 1000) : 0);
+      if (u < 1) ruAnim = requestAnimationFrame(paso);
+    })(t0);
+    actualizarHUD();
+  }
+  function irA(k) { if (!paradaAlcanzable(k)) return; mostrarParada(k, k !== G.rutaPos); var t = $('ruNombre'); try { t.focus({ preventScroll: true }); } catch (e) {} }
+  function pintarPreguntaRuta(p) {
+    var caja = $('ruPregunta');
+    if (!p.pregunta) { caja.hidden = true; caja.innerHTML = ''; return; }
+    caja.hidden = false; var q = p.pregunta;
+    if (rutaVistas()[p.id]) { caja.innerHTML = '<p class="ru-q ok">✔ ' + esc(q.q) + ' <b>' + esc(q.ok) + '</b></p>'; return; }
+    var ops = [q.ok].concat(q.mal), orden = ops.map(function (o, k) { return { o: o, k: (k * 7 + p.id.length) % 5 }; }).sort(function (a, b) { return a.k - b.k; });
+    caja.innerHTML = '<p class="ru-q">❓ ' + esc(q.q) + '</p><div class="ru-ops">' + orden.map(function (x) { return '<button type="button" class="op">' + esc(x.o) + '</button>'; }).join('') + '</div><p class="ru-por" role="status"></p>';
+    caja.querySelectorAll('.op').forEach(function (b) {
+      b.onclick = function () {
+        if (b.textContent === q.ok) { SFX.ok(); rutaMarcar(p.id); mostrarAviso('¡Bien visto!', q.por); mostrarParada(G.rutaPos, false); verNav(); }
+        else { SFX.mal(); b.classList.add('mal', 'tachada'); b.disabled = true; caja.querySelector('.ru-por').textContent = '✖ No es eso. Vuelve a leer el texto de la parada.'; }
+      };
+    });
+  }
+  function boton(txt, fn, cls) { var b = document.createElement('button'); b.type = 'button'; b.className = 'ru-acc ' + (cls || ''); b.innerHTML = txt; b.onclick = fn; return b; }
+  function pintarAccionesRuta(p, v) {
+    var box = $('ruAcciones'), wd = W.datos; box.innerHTML = ''; $('ruAzulejos').innerHTML = '';
+    if (p.aventura === 5) {
+      if (!hecha(G.rutaId, 5)) box.appendChild(boton('⚔ Desafiar a <b>' + esc(nombreEnemigo(wd.jefe)) + '</b> · Jefe', function () { hablarJefe(); }, 'prin'));
+      else box.appendChild(boton('✔ Jefe vencido · repetir el combate para practicar', function () { hablarJefe(); }));
+    } else if (v) {
+      var etq = '💬 Hablar con ' + esc(v.nombre);
+      if (p.aventura && !hecha(G.rutaId, p.aventura)) etq = '▶ Aventura ' + p.aventura + ': <b>' + esc(wd.aventuras[p.aventura - 1].nombre) + '</b> <small>(' + esc(v.nombre) + ')</small>';
+      box.appendChild(boton(etq, function () { hablar(v); }, p.aventura && !hecha(G.rutaId, p.aventura) ? 'prin' : ''));
+    }
+    // aventura 1: los tres azulejos aparecen en la escena después de hablar con Inés
+    if (p.aventura === 1 && !hecha(G.rutaId, 1) && G.hablado.mision1 && Object.keys(G.recogidos).length < 3) {
+      [[18, 70], [52, 82], [80, 66]].forEach(function (pos, k) {
+        if (G.recogidos[k]) return;
+        var b = document.createElement('button'); b.type = 'button'; b.className = 'azulejo'; b.style.left = pos[0] + '%'; b.style.top = pos[1] + '%';
+        b.setAttribute('aria-label', 'Azulejo suelto ' + (k + 1)); b.textContent = '✦';
+        b.onclick = function () { G.recogidos[k] = true; SFX.cofre(); var n = Object.keys(G.recogidos).length; mostrarAviso('Azulejo ' + n + ' de 3', n === 3 ? 'Vuelve a hablar con ' + v.nombre : ''); mostrarParada(G.rutaPos, false); };
+        $('ruAzulejos').appendChild(b);
+      });
+      var n = Object.keys(G.recogidos).length; box.insertBefore(Object.assign(document.createElement('p'), { className: 'ru-nota', textContent: 'Toca los azulejos brillantes ✦ de la escena (' + n + '/3).' }), box.firstChild);
+    }
+    (p.cofres || []).forEach(function (id) {
+      var c = cofres.find(function (x) { return x.id === id; }); if (!c) return;
+      box.appendChild(c.abierto ? boton('🗝 Cofre del saber · abierto ✔', function () {}, 'hecho') : boton('🗝 Cofre del saber <small>(opcional, da monedas)</small>', function () { abrirCofre(c); }));
+    });
+    if (p.encargo) {
+      var ve = vecinos.find(function (x) { return x.encargo === p.encargo; }), enc = (wd.opcionales || []).find(function (o) { return o.hito === p.encargo; }) || {};
+      if (ve) { var hecho = C.hitoHecho && C.hitoHecho(p.encargo); box.appendChild(boton('⭐ ' + (hecho ? 'Encargo hecho ✔: ' : 'Encargo opcional: ') + esc(enc.nombre || ve.nombre) + ' <small>(' + esc(ve.nombre) + ')</small>', function () { hablarEncargo(ve); }, hecho ? 'hecho' : '')); }
+    }
+    if (p.tienda) { var vt = vecinos.find(function (x) { return x.tienda; }); box.appendChild(boton('🧪 Puesto de pociones', function () { if (vt) hablar(vt); else abrirMenu('tienda'); })); }
+    if (p.aventura && hecha(G.rutaId, p.aventura) && p.aventura !== 5) box.appendChild(boton('✔ Aventura ' + p.aventura + ' superada · repetirla para practicar', function () { iniciarAventura(p.aventura, null, v); }, 'hecho'));
+    box.querySelectorAll('.hecho').forEach(function (b) { if (/abierto/.test(b.textContent)) b.disabled = true; });
+  }
+  function pintarNavRuta(i) {
+    var R = rutaDe(G.rutaId), nav = $('ruNav'), p = R[i]; nav.innerHTML = '';
+    var prev = -1; for (var k = i - 1; k >= 0; k--) if (paradaAlcanzable(k)) { prev = k; break; }
+    var bA = boton('◀ Anterior', function () { irA(prev); }, 'sec'); bA.disabled = prev < 0; nav.appendChild(bA);
+    var sig = siguientes(i), listo = paradaHecha(p);
+    if (!sig.length) {
+      nav.appendChild(boton(faltan(G.rutaId).length ? (p.aventura === 5 ? 'Vence al jefe para terminar ' + W.datos.lugar : 'Te falta terminar alguna parada') : '🗺 Volver a la Campiña ▶', function () { if (!faltan(G.rutaId).length) abrirCampina(); }, 'gl-btn'));
+      if (faltan(G.rutaId).length) nav.lastChild.disabled = true;
+      return;
+    }
+    if (!listo) { var b0 = boton('Siguiente parada ▶', function () {}, 'gl-btn'); b0.disabled = true; nav.appendChild(b0); nav.appendChild(Object.assign(document.createElement('p'), { className: 'ru-nota', textContent: p.aventura && !hecha(G.rutaId, p.aventura) ? 'Supera la aventura de esta parada para seguir.' : 'Responde la pregunta para seguir.' })); return; }
+    if (sig.length > 1) { nav.appendChild(Object.assign(document.createElement('p'), { className: 'ru-nota', textContent: '🔀 Cruce de caminos: elige por dónde seguir (después harás el otro).' })); }
+    sig.forEach(function (k) { nav.appendChild(boton((sig.length > 1 ? '➜ ' : 'Siguiente: ') + esc(R[k].nombre) + ' ▶', function () { irA(k); }, 'gl-btn')); });
+  }
+
   /* ---------- Portada y elección de personaje (1.1) ---------- */
   var ptAnim = null, elAnim = null, elegido = null;
   function hayProgreso() {
     try { if (localStorage.getItem('galoisLegacy.heroe')) return true; } catch (e) {}
     var e = estado(); return !!(e && (e.xp > 0 || Object.keys(e.aventuras || {}).length));
   }
-  function ocultarJuego() { $('hud').hidden = true; $('controles').hidden = true; $('campina').hidden = true; $('menu').hidden = true; }
+  function ocultarJuego() { salirRuta(); $('hud').hidden = true; $('controles').hidden = true; $('campina').hidden = true; $('menu').hidden = true; }
   function abrirPortada() {
     G.modo = 'portada'; ocultarJuego(); $('eleccion').hidden = true; $('portada').hidden = false;
     var sigue = hayProgreso();

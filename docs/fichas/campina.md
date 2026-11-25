@@ -6,7 +6,7 @@
 | Saberes | 10 mundos: naturales, potencias y raíces (Fuentes de Andalucía) · divisibilidad (Carmona) · enteros (Écija) · fracciones (Marchena) · proporcionalidad (Estepa) · álgebra (Osuna) · ecuaciones (Triana) · funciones (Alcalá de Guadaíra) · estadística (Itálica) · probabilidad (Sevilla) |
 | Dónde | `applets/campina/` → `index.html`, `aventura/` (motor, retos, mundos, portada), `shared/` (sprites, escenarios, música, tema), `coleccion/` (álbum de cartas), `assets/` |
 | Origen | Artefacto «Galois Legacy» (claude.ai/artifact/TSUtLR5wQwBpbcGH6x1KAz), versión 1795446700-384d, más los cambios de la 1.6.0 |
-| Guardado | `galoisLegacy.coleccion.v1` (progreso por alias: cartas, retos, nivel, monedas…), `galoisLegacy.coleccion.perfil.v1` (alias activo), `galoisLegacy.album.vistas.v1`, `galoisLegacy.heroe`, `galoisLegacy.musica`, `galoisLegacy.musica.vol`, `galoisLegacy.sonido`, `galoisLegacy.tactil`, `galoisLegacy.docente` |
+| Guardado | `galoisLegacy.ruta.v1` (recorrido), `galoisLegacy.coleccion.v1` (progreso por alias: cartas, retos, nivel, monedas…), `galoisLegacy.coleccion.perfil.v1` (alias activo), `galoisLegacy.album.vistas.v1`, `galoisLegacy.heroe`, `galoisLegacy.musica`, `galoisLegacy.musica.vol`, `galoisLegacy.sonido`, `galoisLegacy.tactil`, `galoisLegacy.docente` |
 
 ## Cómo se juega
 - Portada → elegir matemático → mapa de la Campiña → entrar en un pueblo.
@@ -24,7 +24,16 @@
   la letra anterior (Jersey 10) era muy estrecha.
 - `volver.js` se carga (regla 1); la clase `en-juego` lo esconde dentro de pueblos y combates para no tapar la cruceta.
 
+## Recorrido por paradas (1.7.0)
+- Los pueblos con ruta en `aventura/rutas.js` se juegan de parada en parada (sin cruceta). De momento, solo Fuentes de Andalucía.
+- Cada parada: monumento (PNG de `assets/patrimonio/` o edificio pixel del juego), texto, vecino y acciones (aventura, cofres,
+  encargo, tienda) o una pregunta corta. Las paradas con el mismo `grupo` forman un cruce (se hacen en cualquier orden).
+- Guardado propio: `galoisLegacy.ruta.v1` → `{ alias: { m1: { idParada: true } } }` (preguntas de monumento acertadas).
+- Para convertir otro pueblo: añadir su lista en `rutas.js` con sus 3 monumentos y repartir las 5 aventuras.
+
 ## Pendiente (consultar con Juan Antonio)
+- Revisar los textos y preguntas de las paradas de Fuentes (`aventura/rutas.js`).
+- Convertir los otros 9 pueblos al recorrido por paradas.
 - Claves de guardado: no siguen `pichu.<id>.vN` (regla 2). Cambiarlas exige migrar sin borrar las antiguas.
 - Álbum: 4 cartas cargan fotografías de otros servidores (Wikimedia, Grupo Joly, El Mundo y otra web). La regla 3 lo prohíbe:
   habría que guardarlas en el repositorio (si la licencia lo permite) o dejar su marcador «Falta la fotografía».

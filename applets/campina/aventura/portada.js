@@ -94,9 +94,10 @@
     }
   }
 
-  function dibujar(c, W, H, t, heroeId) {
+  function dibujar(c, W, H, t, heroeId, op) {
+    op = op || {};
     c.imageSmoothingEnabled = false;
-    var hor = Math.floor(H * (H > W ? .64 : .58));   // en vertical, el título va en el cielo
+    var hor = Math.floor(H * (op.campo ? .5 : H > W ? .64 : .58));   // en vertical, el título va en el cielo
     cielo(c, W, H, hor);
     estrellas(c, W, hor, t);
     sol(c, W, hor);
@@ -109,9 +110,8 @@
     lomas(c, W, hor + 10, hor * .14, '#2f4a5c', 4.1, t, 0);
     // pueblo blanco sobre la loma
     var px = Math.floor(W * (H > W ? .06 : .1)), base = hor + 6;
-    for (k = 0; k < 9; k++) casa(c, px + k * 8 + Math.floor(h(k, 4) * 3), base - 6 - Math.floor(h(k, 5) * 4), 7 + Math.floor(h(k, 6) * 3), 6, k % 3 ? '#c0623a' : '#a8502e');
-    campanario(c, px + 30, base - 4);
-    molino(c, Math.floor(W * .82), hor + 9, t);
+    if (!op.campo) for (k = 0; k < 9; k++) casa(c, px + k * 8 + Math.floor(h(k, 4) * 3), base - 6 - Math.floor(h(k, 5) * 4), 7 + Math.floor(h(k, 6) * 3), 6, k % 3 ? '#c0623a' : '#a8502e');
+    if (!op.campo) { campanario(c, px + 30, base - 4); molino(c, Math.floor(W * .82), hor + 9, t); }
     lomas(c, W, hor + 22, 10, '#3E9A5E', 7.7, t, 0);
     lomas(c, W, hor + 26, 6, '#2f7d45', 2.2, t, 0);
     for (k = 0; k < 14; k++) olivo(c, Math.floor(h(k, 11) * W), hor + 20 + Math.floor(h(k, 12) * 6), k);

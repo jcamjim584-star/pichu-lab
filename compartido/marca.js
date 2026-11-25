@@ -17,7 +17,7 @@ window.MARCA = {
     lugar: "Fuentes de Andalucía (Sevilla)",
     logo: "compartido/img/centro.jpg"
   },
-  version: "1.6.1",
+  version: "1.7.0",
   autor: "Juan Antonio Campos Jiménez",
 
   // Cursos: de momento la portada NO los muestra (se organiza por juegos).
@@ -93,7 +93,7 @@ window.MARCA = {
       // 4 fotografías de otros servidores (regla 3). Ver docs/fichas/campina.md.
       url: "applets/campina/",
       estado: "jugar",
-      claves: ["galoisLegacy.coleccion.v1", "galoisLegacy.coleccion.perfil.v1", "galoisLegacy.album.vistas.v1", "galoisLegacy.heroe",
+      claves: ["galoisLegacy.ruta.v1", "galoisLegacy.coleccion.v1", "galoisLegacy.coleccion.perfil.v1", "galoisLegacy.album.vistas.v1", "galoisLegacy.heroe",
                "galoisLegacy.sonido", "galoisLegacy.tactil", "galoisLegacy.docente", "galoisLegacy.musica", "galoisLegacy.musica.vol"]
     },
     {
